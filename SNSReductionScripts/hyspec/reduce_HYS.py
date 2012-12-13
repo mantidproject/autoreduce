@@ -101,34 +101,40 @@ def SpurionPromptPulse2(Ei_meV,msd=1800.0,tail_length_us = 3000.0,talk=False):
         TIB_high_us = 0.0
     return [TIB_low_us, TIB_high_us]
 
-
-
-
-
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
-
-
-
-## For testing
-#nexus_file="/SNS/HYS/IPTS-8018/data/HYS_11331_event.nxs"
-#output_directory="/SNS/HYS/shared/autoreduce/testoutput/"
-
 filename = os.path.split(nexus_file)[-1]
+instrument = filename.split('_')[0]
 run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
+out_prefix = instrument + "_" + run_number
 
 autows = "__auto_ws"
 
-processed_filename = os.path.join(output_directory, "HYS_" + run_number + "_spe.nxs")
-nxspe_filename=os.path.join(output_directory, "HYS_" + run_number + ".nxspe")
+processed_filename = os.path.join(output_directory, out_prefix + "_spe.nxs")
+nxspe_filename=os.path.join(output_directory, out_prefix + ".nxspe")
 
 # Load the data
 LoadEventNexus(Filename=nexus_file, OutputWorkspace=autows)
+
 # Get Ei
-Ei=mtd[autows].getRun()['EnergyRequest'].getStatistics().mean
+run=mtd[autows].getRun()
+if not run.hasProperty('EnergyRequest'):
+  f = open(output_directory+ out_prefix + ".error", 'w')
+  f.write("EnergyRequest was not found")
+  f.close()
+  sys.exit("1")
+
+Ei=run['EnergyRequest'].getStatistics().mean
+
 # Get Angle
-s1=mtd[autows].getRun()['s1'].getStatistics().mean
+if not run.hasProperty('s1'):
+  f = open(output_directory+ out_prefix + ".error", 'w')
+  f.write("s1 was not found")
+  f.close()
+  sys.exit("1")
+
+s1=run['s1'].getStatistics().mean
 
 # Work out some energy bins
 emin = -(2.0*Ei)
@@ -139,13 +145,10 @@ energy_bins = "%f,%f,%f" % (emin,estep,emax)
 #TIB limits
 tib=SpurionPromptPulse2(Ei)
 
-
 #reduction command
 DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-		GroupingFile='/SNS/HYS/IPTS-8004/shared/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
+		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out")
-
-
 
 # Save files
 SaveNexus(Filename=processed_filename, InputWorkspace="out")
