@@ -1,7 +1,7 @@
 Summary: autoreduce-mq
 Name: autoreduce-mq
 Version: 1.0
-Release: 11 
+Release: 12 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -34,6 +34,7 @@ install -m 755	 ../autoreduce-mq/usr/bin/ingestReduced_mq.py	 %{buildroot}%{_bin
 install -m 755	 ../autoreduce-mq/usr/bin/queueListener.py	 %{buildroot}%{_bindir}/queueListener.py
 install -m 755	 ../autoreduce-mq/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
 install -m 755	 ../autoreduce-mq/usr/bin/sendMessage.py	 %{buildroot}%{_bindir}/sendMessage.py
+install -m 755	 ../autoreduce-mq/usr/bin/process_run.sh	 %{buildroot}%{_bindir}/process_run.sh
 
 %post
 chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
@@ -45,3 +46,4 @@ chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 %attr(755, -, -) %{_bindir}/queueListener.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
 %attr(755, -, -) %{_bindir}/sendMessage.py
+%attr(755, -, -) %{_bindir}/process_run.sh
