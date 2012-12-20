@@ -55,7 +55,7 @@ if [[ ${#updateList[*]} -ne 0 ]]; then
   done
 fi
 
-git commit -m 'Updated reduction script"
+git commit -m 'Updated reduction script by cron job'
 git push
 
 
