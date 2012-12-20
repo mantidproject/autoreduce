@@ -19,7 +19,6 @@ def send(destination, message, persistent='true'):
     user = config.get('authentication', 'user')
     password = config.get('authentication', 'password')
 
-    print user, password
     brokers = [("workflowdb1.sns.gov", 61613), ("workflowdb2.sns.gov", 61613)]
 
     conn = stomp.Connection(host_and_ports=brokers,

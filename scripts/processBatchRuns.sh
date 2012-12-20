@@ -33,18 +33,51 @@ function searchDBRunList()
   return 0
 }
 
+function getSpecifiedRunList()
+{
+  range=$1
+  startRun=`echo "$range" | cut -d - -f 1`
+  endRun=`echo "$range" | cut -d - -f 2`
+  run=$startRun
+  while [[ "$run" -le "$endRun" ]]; do
+    specifiedRunList[${#specifiedRunList[*]}]=$run
+    run=$((run + 1))
+  done
+}
+
+function filterSpecifiedRunList()
+{
+  for specifiedRun in ${specifiedRunList[@]}; do
+    if [[ "$1" -eq "$specifiedRun" ]]; then
+      return 1 
+    fi
+  done
+  return 0
+}
+
 function processingRuns()
 {
   for file in $1; do
     filename=$(echo $file | awk -F "/" '{print $6}')   
     runInfo=$(echo $filename | awk -F "." '{print $1}')
     run=$(echo $runInfo | awk -F "_" '{print $2}')
-    searchDBRunList $run
-    return="$?"
-    if [[ $return -eq 0 ]]; then
-      echo "python /usr/bin/sendMessage.py "$file
-      #/usr/bin/python /usr/bin/sendMessage $file
-      #sleep 10 
+    if [[ ${#specifiedRunList[*]} -ne 0 ]]; then
+      filterSpecifiedRunList $run
+      return="$?"
+      if [[ $return -eq 1 ]]; then
+        runFlag=1
+      else
+        runFlag=0
+      fi
+    fi
+    if [[ $runFlag -eq 1 ]]; then
+      searchDBRunList $run
+      return="$?"
+      if [[ $return -eq 0 ]]; then
+        echo "python /usr/bin/sendMessage.py "$file
+        /usr/bin/python /usr/bin/sendMessage.py $file
+        sleep 20 
+      fi
     fi
   done
 }
@@ -59,7 +92,16 @@ if [ -z "$1" ]
 fi
 
 path=$1
-echo "PATH="$path
+echo "PATH = "$path
+
+if [ "$#" -eq 2 ]; then
+  echo "run range = "$2
+  getSpecifiedRunList $2
+else
+  echo "Run range is not specified"
+fi
+
+echo ${specifiedRunList[@]}
 
 facility=$(echo $path | awk -F"/" '{print $2}')    
 instrument=$(echo $path | awk -F"/" '{print $3}')    
@@ -70,7 +112,8 @@ dbRunList=()
 
 urlBase=http://icat.sns.gov:8080/icat-rest-ws/experiment
 url=$urlBase"/"$facility"/"$instrument"/"$proposal
-echo "Calling ICAT4 web service at: "$url
+echo
+echo "--Calling ICAT4 web service-- "$url
 xmlParse $url
 getDBRunList
 echo 
@@ -89,4 +132,5 @@ getDBRunList
 echo "Runs in ICAT after update:"
 echo ${dbRunList[@]}
 
+echo
 echo "====Done with sync runs===="
