@@ -12,6 +12,7 @@ if [ "$ret" -eq 2 ]; then
 elif [ "$ret" -eq 1 ]; then
   echo "$file1 and $file2 differ"
   cp $file2 $file1
+  updateList[${#updateList[*]}]=$file1 
 else
   echo "$file1 and $file2 are the same file"
 fi
@@ -44,5 +45,19 @@ for file in /SNS/users/3qr/workspace/projects/autoreduce/autoreduce/SNSReduction
     fi
   fi
 done
+
+echo
+echo "List of files to be updated in git:"${updateList[@]}
+if [[ ${#updateList[*]} -ne 0 ]]; then
+  for file in ${updateList[@]}; do
+    echo $file
+    git add $file
+  done
+fi
+
+git commit -m 'Updated reduction script"
+git push
+
+
 
 
