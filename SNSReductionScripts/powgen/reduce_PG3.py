@@ -6,9 +6,9 @@ from MantidFramework import mtd
 mtd.initialize()
 from mantidsimple import *
 
-cal_dir = "/SNS/PG3/2012_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_FERNS_d10805_2012_08_29.cal")
-char_file = os.path.join(cal_dir, "PG3_characterization_2012_08_27-HR.txt")
+cal_dir = "/SNS/PG3/2013_1_11A_CAL/"
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d11475_2012_11_29.cal")
+char_file = os.path.join(cal_dir, "PG3_characterization_2012_11_29-HR-PAC-BGSub.txt")
 #MODE = 0664
 
 #from mantidsimple import *

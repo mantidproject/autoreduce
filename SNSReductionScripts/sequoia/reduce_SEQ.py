@@ -7,18 +7,21 @@ from numpy import *
 from string import *
 from MaskBTP import *
 
+# Logs at: /var/log/SNS_applications/autoreduce.log
+
 class ExperimentLog(object):
     def __init__(self):
-        self.log_list=['vChTrans','proton_charge','Speed1','Phase1','Speed2','Phase2','Speed3','Phase3','EnergyRequest','s1t','s1r','s1l','s1b','vAttenuator2','vAttenuator1','svpressure','dvpressure']
-        self.cols=[1,1,4,4,4,4,4,4,1,1,1,1,1,1,1,4,4]
+        self.log_list=['vChTrans','Speed1','Phase1','Speed2','Phase2','Speed3','Phase3','EnergyRequest','s1t','s1r','s1l','s1b','vAttenuator2','vAttenuator1','svpressure','dvpressure']
+        self.cols=[1,4,4,4,4,4,4,1,1,1,1,1,1,1,4,4,4]
         self.SERotOptions=['CCR13VRot','SEOCRot']
+        self.SETempOptions=['SampleTemp']
 
     def log_line_gen(self,IWSName):
         """
         IWSName is a string of the workspace name
         """
         h=mtd[IWSName]
-        outstr=str(h.getRunNumber())+','+str(h.getTitle())+','+ h.getRun()['start_time'].value+','+ h.getRun()['end_time'].value+','+str(h.getRun()['duration'].value)+','
+        outstr=str(h.getRunNumber())+','+str(h.getTitle()).replace(' ','_').replace(',','_')+','+ h.getRun()['start_time'].value+','+ h.getRun()['end_time'].value+','+str(h.getRun()['duration'].value)+','+str(h.getRun().getProtonCharge())+','
         for cn,idx in zip(self.cols,self.log_list):
             try:
                 jk=h.getRun()[idx].getStatistics()
@@ -36,6 +39,14 @@ class ExperimentLog(object):
                 else:
                     outstr=outstr+'N/A, N/A, N/A, N/A,'
   
+        #check for sample environment temperature reading
+        for SET in self.SETempOptions:
+            if self.log_list.count(SET)==0:
+                if h.getRun().hasProperty(SET):
+                    SEVals=h.getRun().getProperty(SET).getStatistics()
+                    outstr=outstr+"%s,%s,%s,%s,"%(SEVals.mean,SEVals.maximum,SEVals.minimum,SEVals.standard_deviation)
+                    self.log_list.append(SET)
+                    self.cols.append(4)
         #check sample environment rotation stage
         angle=0.
         for SE in self.SERotOptions:
@@ -72,7 +83,7 @@ class ExperimentLog(object):
 
         h_f=open(fname,'a')  # append to the file unless it does not exist 
         if create_h_flag:
-            strtmp='run_number,title,start_time,end_time,duration,'
+            strtmp='run_number,title,start_time,end_time,duration,proton_charge,'
             for idx,nc in zip(self.log_list,self.cols):
                 if nc==1:
 	                strtmp=strtmp+idx+','
@@ -110,7 +121,7 @@ def autoloader(filename,outdir):
     angle=elog.save_line(outdir+'experiment_summary.csv','__MonWS',Efixed,T0)
 
     runnum=str(__MonWS.getRun()['run_number'].value)     
-    Estep=Eguess*0.002
+    Estep=Eguess*0.005
     Elow=-Eguess*0.5
     Ehigh=Eguess*0.95
     Erange='%g,%g,%g'%(Elow,Estep,Ehigh)   
@@ -118,7 +129,19 @@ def autoloader(filename,outdir):
  
     if Efixed!='N/A':
         LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
-        FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+        #Fix that all time series log values start at the same time as the proton_charge
+        r=mtd['__IWS'].getRun()
+        for x in r.keys():
+        	if x not in ['duration','proton_charge','start_time','run_title','run_start','run_number','gd_prtn_chrg','end_time']:
+        		try:
+        			ShiftTime('__IWS',x)
+        		except:
+    			    pass
+
+	#Filter chopper 3 bad events
+	valC3=r['Phase3'].getStatistics().median
+	FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
+        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
         return [runnum,Efixed,T0,Erange,angle]
     else:
         #do not load data if we cannot process it
@@ -130,13 +153,12 @@ def quick_process(IWS,Erange,Efixed,T0):
     """
     ChangeBinOffset(InputWorkspace=IWS,OutputWorkspace="__OWS",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
     ChangeBinOffset(InputWorkspace="__OWS",OutputWorkspace="__OWS",Offset=T0)
-    												#normalize by proton charge
     ConvertUnits(InputWorkspace="__OWS",OutputWorkspace="__OWS",Target="Wavelength",EMode="Direct",EFixed=Efixed)	#The algorithm for He3 tube efficiency requires wavelength units
     He3TubeEfficiency(InputWorkspace="__OWS",OutputWorkspace="__OWS")												#Apply correction due to absorption in He3
     ConvertUnits(InputWorkspace="__OWS",OutputWorkspace="__OWS",Target="DeltaE",EMode="Direct",EFixed=Efixed)		#Switch  to energy transfer
     CorrectKiKf(InputWorkspace="__OWS",OutputWorkspace="__OWS")													    #Apply k_i/k_f factor
-    Rebin(InputWorkspace="__OWS",OutputWorkspace="__OWS",Params=Erange,PreserveEvents=False)						#Make sure the bins are correct
-    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
+    Rebin(InputWorkspace="__OWS",OutputWorkspace="__OWS",Params=Erange,PreserveEvents=True)						#Make sure the bins are correct
+#    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
     
 def WS_clean():
     DeleteWorkspace('__IWS')
@@ -162,7 +184,8 @@ class V_norm_obj(object):
             LoadNexus(Filename=outdir+"van.nx5",OutputWorkspace="__VAN")
         else:   
             LoadEventNexus(Filename=self.vanfile,OutputWorkspace="__VAN")
-            ConvertUnits(InputWorkspace="__VAN",OutputWorkspace="__VAN",Target="Wavelength",EMode="Elastic")
+            ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
+	    ConvertUnits(InputWorkspace="__VAN",OutputWorkspace="__VAN",Target="Wavelength",EMode="Elastic")
             Rebin(InputWorkspace="__VAN",OutputWorkspace="__VAN",Params=self.wlstr,PreserveEvents=False)			#integrate all events in the range given by wlstr
             ConvertToDistribution("__VAN")
             NormaliseByCurrent(InputWorkspace="__VAN",OutputWorkspace="__VAN")									#normalize by proton charge
@@ -177,6 +200,21 @@ class V_norm_obj(object):
             MaskDetectors(Workspace="__VAN",MaskedWorkspace="__MASK")												#Mask "VAN". This prevents dividing by 0		
             DeleteWorkspace(Workspace="__MASK")																	#Mask is carried by VAN workspace
             SaveNexus(InputWorkspace="__VAN",Filename=self.outdir+"van.nx5")
+
+
+def ShiftTime(WName,lg_name):
+	"""
+	shift the time in a given log to match the time in the proton charge log"
+	"""
+	H_IN = mtd[WName]
+	PC =  H_IN.getRun()['proton_charge'].firstTime()
+	#print "P="+str(PC)+"\n"
+	P =  H_IN.getRun()[lg_name].firstTime()
+	#print "P="+str(P)+"\n"
+	Tdiff = PC-P
+	Tdiff_num = Tdiff.total_milliseconds()*1E-3
+	#print "Tdiff="+str(Tdiff_num)+"\n"
+	ChangeLogTime(InputWorkspace=WName, OutputWorkspace = WName, LogName = lg_name, TimeOffset = Tdiff_num)
 
 
 
@@ -200,11 +238,12 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="Auto_reduced"
     #Vanadium and masking    
-    Vanadium="/SNS/SEQ/shared/2012_B/V_files/SEQ_29666_event.nxs"
+    Vanadium="/SNS/SEQ/shared/2012_B/V_files/SEQ_30675_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.3,0.9,1.2",outdir,maskfile=maskfile,ld_saved_fl=True)
-    Norm.MaskBTP(Bank="62,65,98,99,100,101,102,141")
+    Norm.MaskBTP(Bank="38,75,76,99,100,101,102,114,115,120")
     Norm.MaskBTP(Pixel="1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128")
+    Norm.MaskBTP(Bank="74",Tube="8")
     Norm.CreateMasksAndVanadiumNormalization()
 
     #end changes
@@ -220,13 +259,16 @@ if __name__ == "__main__":
 	# save nexus file for combining data later before V normalization
 	AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
 	SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
-	NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
-        Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
-        if NXSPE_flag:
-            
-            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
-        if clean:
-            WS_clean()
+    #FilterBadPulses(InputWorkspace="__OWS",OutputWorkspace = "__OWS",LowerCutoff = 50)
+    NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
+    ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+    ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
+    Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
+    if NXSPE_flag:            
+        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
+    if clean:
+        WS_clean()
 
     
 

@@ -200,13 +200,16 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="Auto_reduced"
     #Vanadium and masking    
-    Vanadium="/SNS/ARCS/2012_2_18_CAL/data/ARCS_29205_event.nxs"
+    Vanadium="/SNS/ARCS/2012_2_18_CAL/data/ARCS_31471_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.35,0.4,0.75",outdir,maskfile=maskfile,ld_saved_fl=True)
-    #Norm.MaskBTP(Bank="62,65,98,99,100,101,102,141")
+    # Standard end of tube masking
     Norm.MaskBTP(Pixel="1,2,3,4,5,6,7,122,123,124,125,126,127,128")
     Norm.MaskBTP(Bank="70",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,117,118,119,120,121,122,123,124,125,126,127,128")
     Norm.MaskBTP(Bank="71",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,13,14,115,116,117,118,119,120,121,122,123,124,125,126,127,128")
+    # Special masking as needed
+    Norm.MaskBTP(Bank="18")
+
     Norm.CreateMasksAndVanadiumNormalization()
 
     #end changes
