@@ -208,7 +208,7 @@ if __name__ == "__main__":
     Norm.MaskBTP(Bank="70",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,117,118,119,120,121,122,123,124,125,126,127,128")
     Norm.MaskBTP(Bank="71",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,13,14,115,116,117,118,119,120,121,122,123,124,125,126,127,128")
     # Special masking as needed
-    Norm.MaskBTP(Bank="18")
+    #Norm.MaskBTP(Bank="18")
 
     Norm.CreateMasksAndVanadiumNormalization()
 
