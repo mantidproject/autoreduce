@@ -55,7 +55,7 @@ function filterSpecifiedRunList()
   return 0
 }
 
-function processingRuns()
+function processRuns()
 {
   for file in $1; do
     filename=$(echo $file | awk -F "/" '{print $6}')   
@@ -74,7 +74,7 @@ function processingRuns()
       searchDBRunList $run
       return="$?"
       if [[ $return -eq 0 ]]; then
-        echo "python /usr/bin/sendMessage.py "$file
+        echo "python /usr/bin/sendMessage.py "$file | sed "s/^/$(date)  /" >> $logfile
         /usr/bin/python /usr/bin/sendMessage.py $file
         sleep 20 
       fi
@@ -82,8 +82,10 @@ function processingRuns()
   done
 }
 
+logfile=/var/log/SNS_applications/processBatchRuns.log
 echo 
-echo "====Syncing up archive and catalog runs===="
+echo "====Syncing up archive and catalog ADARA runs===="
+echo "====Syncing up archive and catalog ADARA runs====" | sed "s/^/$(date)  /" >> $logfile
 
 if [ -z "$1" ] 
   then
@@ -93,6 +95,8 @@ fi
 
 path=$1
 echo "PATH = "$path
+echo "PATH = "$path | sed "s/^/$(date)  /" >> $logfile
+
 
 if [ "$#" -eq 2 ]; then
   echo "run range = "$2
@@ -112,25 +116,23 @@ dbRunList=()
 
 urlBase=http://icat.sns.gov:8080/icat-rest-ws/experiment
 url=$urlBase"/"$facility"/"$instrument"/"$proposal
-echo
-echo "--Calling ICAT4 web service-- "$url
+echo "--Calling ICAT4 web service-- "$url | sed "s/^/$(date)  /" >> $logfile
+
 xmlParse $url
 getDBRunList
-echo 
-echo "Runs in ICAT:"
-echo ${dbRunList[@]}
+echo "Runs in ICAT:" | sed "s/^/$(date)  /" >> $logfile
+echo ${dbRunList[@]} | sed "s/^/$(date)  /" >> $logfile
 
-echo 
-echo "--Sending POSTPROCESS.DATA_READY message--"
-processingRuns $path"/*"
+echo "--Sending POSTPROCESS.DATA_READY message--" | sed "s/^/$(date)  /" >> $logfile
+processRuns $path"/*"
 
 unset xmlTokens 
 unset dbRunList
-echo 
 xmlParse $url 
 getDBRunList
-echo "Runs in ICAT after update:"
-echo ${dbRunList[@]}
+echo "Runs in ICAT after update:" | sed "s/^/$(date)  /" >> $logfile
+echo ${dbRunList[@]} | sed "s/^/$(date)  /" >> $logfile
 
-echo
 echo "====Done with sync runs===="
+echo "====Done with sync runs====" | sed "s/^/$(date)  /" >> $logfile
+echo >> $logfile
