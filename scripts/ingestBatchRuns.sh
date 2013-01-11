@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ingestBatchRuns.sh is used to sync up pre ADARA runs in archive and ICAT4 
+
 function xmlParse()
 {
   inputXml=`curl -s "$1"`
@@ -117,7 +119,7 @@ proposal=$(echo $path | awk -F"/" '{print $4}')
 xmlTokens=()
 dbRunList=()
 
-urlBase=http://icat.sns.gov:8080/icat-rest-ws/experiment
+urlBase=http://icat.sns.gov:2080/icat-rest-ws/experiment
 url=$urlBase"/"$facility"/"$instrument"/"$proposal
 echo "--Calling ICAT4 web service-- "$url | sed "s/^/$(date)  /" >> $logfile
 

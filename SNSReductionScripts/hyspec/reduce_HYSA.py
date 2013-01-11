@@ -134,7 +134,7 @@ class AutoReduction():
       f = open(self._output_directory + out_prefix + ".error", 'w')
       f.write("EnergyRequest was not found")
       f.close()
-      sys.exit("1")
+      raise ValueError("EnergyRequest was not found")
     
     Ei = run['EnergyRequest'].getStatistics().mean
     self._Ei = Ei
@@ -144,7 +144,7 @@ class AutoReduction():
       f = open(self._output_directory + out_prefix + ".error", 'w')
       f.write("s1 was not found")
       f.close()
-      sys.exit("1")
+      raise ValueError("s1 was not found")
     
     s1 = run['s1'].getStatistics().mean
     

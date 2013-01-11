@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# processBatchRuns.sh is used to syncp up ADARA runs in archive and ICAT4
+
 function xmlParse()
 {
   inputXml=`curl -s "$1"`
