@@ -17,63 +17,76 @@ def ingestReduced(facilityName, instrumentName, investigationName, runNumber, se
     config = ConfigParser.RawConfigParser()
     config.read('/etc/autoreduce/icat4.cfg')
 
-
-    print "Begin getInvestigation at: ", str(datetime.now()) 
-    #investigation = getInvestigation(instrument, invName, runNumber, sessionId, service, factory)
-    print "End getInvestigation at: ", str(datetime.now()) 
-
     directory = "/" + facilityName + "/" + instrumentName + "/" +  investigationName + "/shared/autoreduce"
     print "reduction output directory: " + directory
-
-    print "Search investigation: ", str(datetime.now()) 
-    investigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + investigationName + "'] <-> Dataset [name = '" + runNumber + "'] <-> Instrument [name = '" + instrumentName + "']")
-
-    if len(investigations) == 1:
-        investigation = investigations[0]
-    else:
-        return 1
-
-    #set dataset name 
-    dataset = factory.create("dataset")
-
+    
     dsType = factory.create("datasetType")
     dsType.id = config.get('DatasetType', 'reduced')
+	
+    dataset = factory.create("dataset")
     dataset.type = dsType
-    dataset.name = runNumber  
+    dataset.name = runNumber
     dataset.location = directory
     datafiles = []
-
+	
     pattern =  '*' + runNumber + '*'
     print "pattern: " + pattern
     listing = glob.glob(os.path.join(directory, pattern))
     for filepath in listing:
-        filename =os.path.basename(filepath )
-        datafile = factory.create("datafile")
-        datafile.location = filepath 
-        datafile.name = filename
-        extension = os.path.splitext(filename)[1][1:]
-        dfFormat = factory.create("datafileFormat")
-        dfFormat.id = config.get('DatafileFormat', extension)
-        datafile.datafileFormat = dfFormat 
-        modTime = os.path.getmtime(filepath)
-        modTime = os.path.getmtime(filepath)
-        datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
-        datafile.fileSize = os.path.getsize(filepath)
-
-        datafiles.append(datafile)
-
+	    filename =os.path.basename(filepath )
+	    datafile = factory.create("datafile")
+	    datafile.location = filepath 
+	    datafile.name = filename
+	    extension = os.path.splitext(filename)[1][1:]
+	    dfFormat = factory.create("datafileFormat")
+	    dfFormat.id = config.get('DatafileFormat', extension)
+	    datafile.datafileFormat = dfFormat 
+	    modTime = os.path.getmtime(filepath)
+	    modTime = os.path.getmtime(filepath)
+	    datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
+	    datafile.fileSize = os.path.getsize(filepath)
+	
+	    datafiles.append(datafile)
+	
     dataset.datafiles = datafiles
     dataset.type = dsType
-    dataset.investigation = investigation
-    dataset.sample = investigation.samples[0]
+	    
+    dbDatasets = service.search(sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(instrumentName) + "'] <-> DatasetType [name = 'reduced']")
+
+    if len(dbDatasets) == 0:
+    
+        dbInvestigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + str(investigationName) + "'] <-> Instrument [name = '" + instrumentName + "']")
         
-    print "Updating dataset: ", str(datetime.now()) 
-    service.create(sessionId, dataset)
+        if len(dbInvestigations) == 1:
+            investigation = dbInvestigations[0]
+        else:
+            print "ERROR, there should be only one investigation per instrument per investigation name"  
+            return 1
 
-     
-    print "INVESTIGATION:"
-    print "  NAME: %s"%(str(investigation.name))
-
+        print "Creating dataset: ", str(datetime.now())
+        dataset.investigation = investigation
+        dataset.sample = investigation.samples[0]
+        service.create(sessionId, dataset)
+            
+    elif len(dbDatasets) == 1:
+    
+        print "reduced dataset %s is already cataloged, updating reduced dataset..."%(dataset.name)
+        
+        dbDataset = dbDatasets[0]
+        print "  dataset: %s"%(str(dbDataset.id))
+        
+        # update "one to many" relationships
+        if hasattr(dbDataset, "datafiles"):
+            dfs = getattr(dbDataset, "datafiles")
+            service.deleteMany(sessionId, dfs)
+            
+        for df in datafiles:
+ 		    df.dataset = dbDataset
+        service.createMany(sessionId, datafiles)
+        
+    else:
+        print "ERROR, there should be only one dataset per run number per type reduced" 
+    
     print "DATASET:"
     print "  RUN NUMBER: %s"%(str(dataset.name))
     print "  TITLE: %s"%(str(dataset.description))

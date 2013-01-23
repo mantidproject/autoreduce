@@ -33,29 +33,62 @@ def ingestNexus(infilename, sessionId, service, factory):
     except:
         print('except')
 
+    investigation = factory.create("investigation")
+
+    #find facility, investigation_type 
+    facility = factory.create("facility")
+    facility.id = config.get('Facility', 'sns')
+    investigation.facility = facility
+        
+    invType = factory.create("investigationType")
+    invType.id = config.get('InvestigationType', 'experiment')
+    investigation.type = invType 
+  
     #investigation name 
     file.opendata('experiment_identifier')
-    name = file.getdata()
+    investigation.name = file.getdata()
     file.closedata()
 
     #investigation run number 
     file.opendata('collection_identifier')
-    visitId = file.getdata()
+    investigation.visitId = file.getdata()
     file.closedata()
 
     #investigation title
     file.opendata('title')
-    title = file.getdata()
+    investigation.title = file.getdata()
     file.closedata()
+    
+    #set dataset name 
+    dataset = factory.create("dataset")
 
     #dataset run number
     file.opendata('run_number')
-    runNumber = file.getdata() 
+    dataset.name = file.getdata() 
     file.closedata()
 
     #dataset notes 
+    file.opendata('title')
+    dataset.description = file.getdata()
+    file.closedata()
+    
+    #dataset notes 
     file.opendata('notes')
     notes = file.getdata()
+    file.closedata()
+    
+    dsType = factory.create("datasetType")
+    dsType.id = config.get('DatasetType', 'experiment_raw')
+    dataset.type = dsType
+    
+    #set dataset start time 
+    file.opendata('start_time')
+    dataset.startDate = file.getdata()
+    file.closedata()
+
+    #set dataset end time 
+    file.opendata('end_time')
+    dataset.endDate = file.getdata()
     file.closedata()
 
     #dataset proton_charge 
@@ -78,55 +111,12 @@ def ingestNexus(infilename, sessionId, service, factory):
     file.opendata('name')
     for attr,value in file.attrs():
         if attr == 'short_name':
-            instrumentName = value 
             instrument = factory.create("instrument")
+            instrument.name = value 
             instrument.id = config.get('Instrument', value.lower())
+            investigation.instrument = instrument 
     file.closedata()
     file.closegroup()
-
-    print "Search investigation: ", str(datetime.now()) 
-    investigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + name + "' AND visitId = '" + visitId + "'] <-> Instrument [name = '" + instrumentName + "']")
-
-    if len(investigations) == 0:
-        investigation = factory.create("investigation")
-        createInv = True
-
-        #find facility, investigation_type 
-        facility = factory.create("facility")
-        facility.id = config.get('Facility', 'sns')
-        investigation.facility = facility
-        
-        invType = factory.create("investigationType")
-        invType.id = config.get('InvestigationType', 'experiment')
-        investigation.type = invType 
-
-        investigation.name = name 
-        investigation.visitId = visitId 
-        investigation.instrument = instrument 
-        investigation.title = title 
-    else:
-        createInv = False 
-        print "found investigation"
-        investigation = investigations[0]
-
-    #set dataset name 
-    dataset = factory.create("dataset")
-
-    dsType = factory.create("datasetType")
-    dsType.id = config.get('DatasetType', 'experiment_raw')
-    dataset.type = dsType
-    dataset.name = runNumber 
-    dataset.description = title 
-  
-    #set dataset start time 
-    file.opendata('start_time')
-    dataset.startDate = file.getdata()
-    file.closedata()
-
-    #set dataset end time 
-    file.opendata('end_time')
-    dataset.endDate = file.getdata()
-    file.closedata()
 
     run_path = posixpath.abspath(posixpath.join(infilename, '../..'))
     dataset.location = run_path
@@ -197,7 +187,6 @@ def ingestNexus(infilename, sessionId, service, factory):
     dataset.datafiles = datafiles
 
     samples = []
-    investigationUsers = []
 
     for a ,nxclass in file.entries():
 
@@ -243,67 +232,103 @@ def ingestNexus(infilename, sessionId, service, factory):
             #investigationUser = setInvestigationUser(file, sessionId, factory, service)
             #investigationUsers.append(investigationUser)
 
-    #investigation.investigationUsers = investigationUsers
 
     file.closegroup()
     file.close()
-    if createInv == True:
-        #Create new investigation
-        datasets = []
-        datasets.append(dataset)
-        investigation.datasets = datasets
-        investigation.samples = samples
-        print "Creating new investigation: ", str(datetime.now()) 
-        invId = service.create(sessionId, investigation)
+    
+    dbDatasets = service.search(sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(instrument.name) + "'] <-> DatasetType [name = 'experiment_raw']")
 
-        print "Getting dataset: ", str(datetime.now()) 
-        newInvestigations = service.search(sessionId, "Investigation INCLUDE Dataset [id = '" + str(invId) + "']")
+    if len(dbDatasets) == 0:
+    
+        dbInvestigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
         
-        if len(newInvestigations) == 1:
-            newInvestigation = newInvestigations[0]
+        if len(dbInvestigations) == 0: 
+            print "New IPTS: creating investigation, sample, run..."
+            # create new investigation
+            invId = service.create(sessionId, investigation)
+            investigation.id = invId
+            print "  invId: %s"%(str(invId))
+            
+            # create new sample
+            sample.investigation = investigation
+            sampleId = service.create(sessionId, sample)
+            sample.id = sampleId
+            print "  sampleId: %s"%(str(sampleId))
         
-        if len(newInvestigation.datasets) == 1:
-            newDatasets = newInvestigation.datasets
-            newDataset = newDatasets[0]
-        
-        print "Getting sample ", str(datetime.now()) 
-        newInvestigations = service.search(sessionId, "Investigation INCLUDE Sample [id = '" + str(invId) + "']")
-        
-        if len(newInvestigations) == 1:
-            newInvestigation = newInvestigations[0]
-            newSamples = newInvestigation.samples
-        
-        newDataset.sample = newSamples
-        newDataset.investigation = newInvestigation
-        newDataset.type = dsType
-        print "Updating dataset: ", str(datetime.now()) 
-        service.update(sessionId, newDataset)
-
-    else:
-        #Found investigation, may create new sample or add new dataset
-        print "Searching investigation and dataset ", str(datetime.now()) 
-        investigations = service.search(sessionId, "Investigation [name = '" + investigation.name + "'] <-> Instrument [name = '" + instrumentName + "'] <-> Dataset [name = '" + dataset.name + "']")
-        if len(investigations) == 0:
-            createSample = True 
-            for invSample in investigation.samples:
-                if invSample.name == sample.name: 
-                    createSample = False 
-                    sample = invSample
-                    break
-
-            if createSample == True:
+        elif len(dbInvestigations) == 1:
+            investigation = dbInvestigations[0]
+            dbSamples = investigation.samples
+            
+            newSample = True
+            for dbSample in dbSamples:
+                if dbSample.name == sample.name:
+                    sample.id = dbSample.id
+                    newSample = False
+            
+            if newSample == True:
+                print "New run: existing investigation, creating sample and run..."
                 sample.investigation = investigation
-                print "Adding new sample to existing investigation: ", str(datetime.now()) 
-                sample.id = service.create(sessionId, sample)
- 
-            dataset.investigation = investigation
-            dataset.sample = sample 
-            dataset.type = dsType
-            print "Adding new dataset to investigation: ", str(datetime.now()) 
-            service.create(sessionId, dataset)
+                sampleId = service.create(sessionId, sample)
+                sample.id = sampleId
+            else:
+                print "New run: existing investigation and sample, creating run..."
+            
         else:
-            print "Run " + runNumber + " is already cataloged."
-         
+            print "ERROR, there should be only one investigation per instrument per investigation name"  
+
+        # create new dataset
+        dataset.sample = sample
+        dataset.investigation = investigation
+        datasetId = service.create(sessionId, dataset)
+        print "  datasetId: %s"%(str(datasetId))
+            
+    elif len(dbDatasets) == 1:
+    
+        print "Run %s is already cataloged, updating catalog..."%(dataset.name)
+        
+        dbDataset = dbDatasets[0]
+        print "  datasetId: %s"%(str(dbDataset.id))
+        
+        # update "one to many" relationships
+        
+        if hasattr(dbDataset, "datafiles"):
+            dfs = getattr(dbDataset, "datafiles")
+            service.deleteMany(sessionId, dfs)
+            
+        for df in datafiles:
+ 		    df.dataset = dbDataset
+        service.createMany(sessionId, datafiles)
+        
+        # update "many to one" relationships
+        
+        ds = service.get(sessionId, "Dataset INCLUDE 1", dbDataset.id)
+        print "  ds: %s"%(str(ds))
+        
+        investigation.id = ds.investigation.id
+        
+        dbSamples = service.search(sessionId, "Sample <-> Investigation [id = '" + str(ds.investigation.id) + "']")
+        updateSample = True
+        for sa in dbSamples:
+            if sa.name == sample.name:
+                sample = sa
+                updateSample = False
+                print "  sample: %s"%(str(sample))
+             
+        if updateSample == True:
+            sample.id = ds.sample.id
+            sample.investigation = investigation
+            service.update(sessionId, sample)
+        
+        dataset.id = ds.id
+        dataset.sample = sample
+        dataset.investigation = investigation   
+        
+        service.update(sessionId, dataset)
+        service.update(sessionId, investigation)
+
+        
+    else:
+        print "ERROR, there should be only one dataset per run number per type experiment_raw" 
 
     print "INVESTIGATION:"
     print "  NAME: %s"%(str(investigation.name))
@@ -323,45 +348,6 @@ def ingestNexus(infilename, sessionId, service, factory):
     print "  NAME: %s"%(str(sample.name))
 
     return investigation
-
-
-def setInvestigationUser(file, sessionId, factory, service):
-    file.opendata('facility_user_id')
-    facility_user_id = file.getdata()
-    file.closedata()
-
-    user = factory.create("user")
-    user.name = "Hello" 
-    #service.create(sessionId, user)
-
-    investigationUser = factory.create("investigationUser")
-    investigationUser.user = user
-
-    '''print "facility_user_id: %s"%(facility_user_id)
-    searchKey = "User [name = '" + facility_user_id + "']"
-    users = service.search(sessionId, searchKey)
-
-    investigationUser = factory.create("investigationUser")
-
-    for user in users:
-        print user.name
-
-    if len(users) != 1:
-        print "Couldn't find user: %s"%(facility_user_id)
-        user = factory.create("user")
-        user.name = facility_user_id
-        file.opendata('name')
-        user.fullName = file.getdata()
-        file.closedata()
-        service.create(sessionId, user)
-        investigationUser.user = user 
-    else :
-        print "Found user: %s"%(facility_user_id)
-        #investigationUser.user = users[0]        
-        user = factory.create("user")
-        user.name = "Hello" 
-        investigationUser.user = user'''
-    return investigationUser
 
 def main(argv):
     args = sys.argv[1:]
