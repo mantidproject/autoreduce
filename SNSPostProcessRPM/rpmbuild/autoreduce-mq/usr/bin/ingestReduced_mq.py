@@ -20,24 +20,21 @@ class IngestReduced():
         plugin = "db"
     
         client = Client("https://" + hostAndPort + "/ICATService/ICAT?wsdl")
-        service = client.service
-        factory = client.factory
-        self._service = service
-        self._factory = factory
+        self._service = client.service
+        self._factory = client.factory
  
-        credentials = factory.create("credentials")
-        entry = factory.create("credentials.entry")
+        credentials = self._factory.create("credentials")
+        entry = self._factory.create("credentials.entry")
         entry.key = "username"
         entry.value = "root"
         credentials.entry.append(entry)
-        entry = factory.create("credentials.entry")
+        entry = self._factory.create("credentials.entry")
         entry.key = "password"
         entry.value = password
         credentials.entry.append(entry)
     
         print "Begin login at: ", str(datetime.now()) 
-        sessionId = service.login(plugin, credentials)
-        self._sessionId = sessionId
+        self._sessionId = self._service.login(plugin, credentials)
         print "End login at: ", str(datetime.now()) 
    
     def logout(self): 
@@ -52,18 +49,6 @@ class IngestReduced():
     
         directory = "/" + self._facilityName + "/" + self._instrumentName + "/" +  self._investigationName + "/shared/autoreduce"
         print "reduction output directory: " + directory
-    
-        print "Search investigation: ", str(datetime.now()) 
-        investigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + self._investigationName + "'] <-> Dataset [name = '" + self._runNumber + "'] <-> Instrument [name = '" + self._instrumentName + "']")
-    
-        if len(investigations) == 1:
-            print "Investigation found", str(datetime.now()) 
-            investigation = investigations[0]
-        else:
-            print "Investigation not found", str(datetime.now()) 
-            return 1
-    
-        print "End getInvestigation at: ", str(datetime.now()) 
     
         #set dataset name 
         dataset = self._factory.create("dataset")
@@ -96,16 +81,43 @@ class IngestReduced():
     
         dataset.datafiles = datafiles
         dataset.type = dsType
-        dataset.investigation = investigation
-        dataset.sample = investigation.samples[0]
+        
+        dbDatasets = self._service.search(self._sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(self._instrumentName) + "'] <-> DatasetType [name = 'reduced']")
+
+        if len(dbDatasets) == 0:
+    
+            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(self._investigationName) + "'] <-> Instrument [name = '" + self._instrumentName + "']")
+        
+            if len(dbInvestigations) == 1:
+                investigation = dbInvestigations[0]
+            else:
+                print "ERROR, there should be only one investigation per instrument per investigation name"  
+                return 1
+
+            print "Creating dataset: ", str(datetime.now())
+            dataset.investigation = investigation
+            dataset.sample = investigation.samples[0]
+            self._service.create(self._sessionId, dataset)
             
-        print "Updating dataset: ", str(datetime.now()) 
-        self._service.create(self._sessionId, dataset)
+        elif len(dbDatasets) == 1:
     
-         
-        print "INVESTIGATION:"
-        print "  NAME: %s"%(str(investigation.name))
-    
+            print "reduced dataset %s is already cataloged, updating reduced dataset..."%(dataset.name)
+        
+            dbDataset = dbDatasets[0]
+            print "  dataset: %s"%(str(dbDataset.id))
+        
+            # update "one to many" relationships
+            if hasattr(dbDataset, "datafiles"):
+                dfs = getattr(dbDataset, "datafiles")
+                self._service.deleteMany(self._sessionId, dfs)
+            
+            for df in datafiles:
+                 df.dataset = dbDataset
+            self._service.createMany(self._sessionId, datafiles)
+        
+        else:
+            print "ERROR, there should be only one dataset per run number per type reduced" 
+
         print "DATASET:"
         print "  RUN NUMBER: %s"%(str(dataset.name))
         print "  TITLE: %s"%(str(dataset.description))

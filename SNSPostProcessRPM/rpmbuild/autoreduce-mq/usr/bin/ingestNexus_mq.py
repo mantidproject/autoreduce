@@ -16,24 +16,21 @@ class IngestNexus():
         password = config.get('icat41', 'password')
         plugin = "db"
         client = Client("https://" + hostAndPort + "/ICATService/ICAT?wsdl")
-        service = client.service
-        factory = client.factory
-        self._service = service
-        self._factory = factory
+        self._service = client.service
+        self._factory = client.factory
     
-        credentials = factory.create("credentials")
-        entry = factory.create("credentials.entry")
+        credentials = self._factory.create("credentials")
+        entry = self._factory.create("credentials.entry")
         entry.key = "username"
         entry.value = "root"
         credentials.entry.append(entry)
-        entry = factory.create("credentials.entry")
+        entry = self._factory.create("credentials.entry")
         entry.key = "password"
         entry.value = password
         credentials.entry.append(entry)
     
         print "Begin login at: ", str(datetime.now()) 
-        sessionId = service.login(plugin, credentials)
-        self._sessionId = sessionId
+        self._sessionId = self._service.login(plugin, credentials)
         print "End login at: ", str(datetime.now()) 
    
     def logout(self): 
@@ -52,32 +49,62 @@ class IngestNexus():
         file.opengroup('entry')
     
         listing = file.getentries()
-         
+        
+        investigation = self._factory.create("investigation")
+        
+        #find facility, investigation_type 
+        facility = self._factory.create("facility")
+        facility.id = config.get('Facility', 'sns')
+        investigation.facility = facility
+            
+        invType = self._factory.create("investigationType")
+        invType.id = config.get('InvestigationType', 'experiment')
+        investigation.type = invType 
+
         #investigation name 
         if listing.has_key('experiment_identifier'):
             file.opendata('experiment_identifier')
-            name = file.getdata()
+            investigation.name = file.getdata()
             file.closedata()
         else:
-            name = "IPTS-0000"
+            investigation.name = "IPTS-0000"
     
         #investigation title
         if listing.has_key('title'):
             file.opendata('title')
-            title = file.getdata()
+            investigation.title = file.getdata()
             file.closedata()
         else:
-            title = "NONE"
+            investigation.title = "NONE"
+    
+        #create dataset
+        dataset = self._factory.create("dataset")
     
         #dataset run number
         file.opendata('run_number')
-        runNumber = file.getdata() 
+        dataset.name = file.getdata() 
         file.closedata()
     
         #dataset notes 
         if listing.has_key('notes'):
             file.opendata('notes')
-            notes = file.getdata()
+            dataset.description = file.getdata()
+            file.closedata()
+    
+        dsType = self._factory.create("datasetType")
+        dsType.id = config.get('DatasetType', 'experiment_raw')
+        dataset.type = dsType
+    
+        #set dataset start time
+        if listing.has_key('start_time'):
+            file.opendata('start_time')
+            dataset.startDate = file.getdata()
+            file.closedata()
+
+        #set dataset end time
+        if listing.has_key('end_time'): 
+            file.opendata('end_time')
+            dataset.endDate = file.getdata()
             file.closedata()
     
         #dataset proton_charge 
@@ -100,54 +127,12 @@ class IngestNexus():
         file.opendata('name')
         for attr,value in file.attrs():
             if attr == 'short_name':
-                instrumentName = value
                 instrument = self._factory.create("instrument")
+                instrument.name = value 
                 instrument.id = config.get('Instrument', value.lower())
+                investigation.instrument = instrument 
         file.closedata()
         file.closegroup()
-    
-        print "Search investigation: ", str(datetime.now()) 
-        investigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + name + "'] <-> Instrument [name = '" + instrumentName + "']")
-    
-        if len(investigations) == 0:
-            investigation = self._factory.create("investigation")
-            createInv = True
-    
-            #find facility, investigation_type 
-            facility = self._factory.create("facility")
-            facility.id = config.get('Facility', 'sns')
-            investigation.facility = facility
-            
-            invType = self._factory.create("investigationType")
-            invType.id = config.get('InvestigationType', 'experiment')
-            investigation.type = invType 
-    
-            investigation.name = name 
-            investigation.instrument = instrument 
-            investigation.title = title 
-        else:
-            createInv = False 
-            print "found investigation"
-            investigation = investigations[0]
-    
-        #set dataset name 
-        dataset = self._factory.create("dataset")
-    
-        dsType = self._factory.create("datasetType")
-        dsType.id = config.get('DatasetType', 'experiment_raw')
-        dataset.type = dsType
-        dataset.name = runNumber 
-        dataset.description = title 
-      
-        #set dataset start time 
-        file.opendata('start_time')
-        dataset.startDate = file.getdata()
-        file.closedata()
-    
-        #set dataset end time 
-        file.opendata('end_time')
-        dataset.endDate = file.getdata()
-        file.closedata()
     
         #set dataset parameters
         parameters = []
@@ -181,7 +166,7 @@ class IngestNexus():
             datasetParameter.type = parameterType 
             datasetParameter.numericValue = duration 
             parameters.append(datasetParameter)
-    
+                
         dataset.parameters = parameters
         dataset.location = self._infilename 
     
@@ -200,12 +185,12 @@ class IngestNexus():
         datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
         datafile.fileSize = os.path.getsize(filepath)
         datafiles.append(datafile)
-    
+        
         runPath = posixpath.abspath(posixpath.join(self._infilename, '../../adara'))
         print runPath
         for dirpath, dirnames, filenames in os.walk(runPath):
             for filename in [f for f in filenames]:
-                if runNumber in filename:
+                if dataset.name in filename:
                     datafile = self._factory.create("datafile")
                     filepath = os.path.join(dirpath,filename)
                     extension = os.path.splitext(filename)[1][1:]
@@ -217,16 +202,16 @@ class IngestNexus():
                     modTime = os.path.getmtime(filepath)
                     datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
                     datafile.fileSize = os.path.getsize(filepath)
-    
+        
                     datafiles.append(datafile)
-    
+        
         dataset.datafiles = datafiles
-    
+        
         samples = []
-    
+        
         sample = self._factory.create("sample")
         sample.name = 'NONE'
-    
+        
         if listing.has_key('sample'):
             file.opengroup('sample')
             listSample = file.getentries()
@@ -234,9 +219,11 @@ class IngestNexus():
                 file.opendata('name')
                 sample.name = file.getdata()
                 file.closedata()
-    
+            else:
+                sample.name = "NONE"
+        
             sampleParameters = []
-    
+        
             #set sample nature
             if listSample.has_key('nature'):
                 file.opendata('nature')
@@ -250,12 +237,12 @@ class IngestNexus():
                     sampleParameter.type = parameterType
                     sampleParameter.stringValue = nature 
                     sampleParameters.append(sampleParameter)
-            
+                
             if listSample.has_key('identifier'):
                 file.opendata('identifier')
                 identifier = file.getdata()
                 file.closedata()
-      
+          
                 if identifier:
                     parameterType = self._factory.create("parameterType")
                     parameterType.id = config.get('ParameterType', 'identifier')
@@ -264,87 +251,120 @@ class IngestNexus():
                     sampleParameter.type = parameterType
                     sampleParameter.stringValue = identifier
                     sampleParameters.append(sampleParameter)
-           
+               
             if len(sampleParameters): 
                 sample.parameters = sampleParameters
-    
+        
         samples.append(sample)
-    
+        
         file.closegroup()
         file.close()
-        if createInv == True:
-            #Create new investigation
-            datasets = []
-            datasets.append(dataset)
-            investigation.datasets = datasets
-            investigation.samples = samples
-            print "Creating new investigation: ", str(datetime.now()) 
-            invId = self._service.create(self._sessionId, investigation)
+        
+        dbDatasets = self._service.search(self._sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(instrument.name) + "'] <-> DatasetType [name = 'experiment_raw']")
+
+        if len(dbDatasets) == 0:
     
-            print "Getting dataset: ", str(datetime.now()) 
-            newInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Dataset [id = '" + str(invId) + "']")
+            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
+        
+            if len(dbInvestigations) == 0: 
+                print "New IPTS: creating investigation, sample, run..."
+                # create new investigation
+                invId = self._service.create(self._sessionId, investigation)
+                investigation.id = invId
+                print "  invId: %s"%(str(invId))
             
-            if len(newInvestigations) == 1:
-                newInvestigation = newInvestigations[0]
+                # create new sample
+                sample.investigation = investigation
+                sampleId = self._service.create(self._sessionId, sample)
+                sample.id = sampleId
+                print "  sampleId: %s"%(str(sampleId))
+        
+            elif len(dbInvestigations) == 1:
+                investigation = dbInvestigations[0]
+                dbSamples = investigation.samples
             
-            if len(newInvestigation.datasets) == 1:
-                newDatasets = newInvestigation.datasets
-                newDataset = newDatasets[0]
+                newSample = True
+                for dbSample in dbSamples:
+                    if dbSample.name == sample.name:
+                        sample.id = dbSample.id
+                        newSample = False
             
-            print "Getting sample ", str(datetime.now()) 
-            newInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [id = '" + str(invId) + "']")
-            
-            if len(newInvestigations) == 1:
-                newInvestigation = newInvestigations[0]
-                newSamples = newInvestigation.samples
-            
-            newDataset.sample = newSamples
-            newDataset.investigation = newInvestigation
-            newDataset.type = dsType
-            print "Updating dataset: ", str(datetime.now()) 
-            self._service.update(self._sessionId, newDataset)
-    
-        else:
-            #Found investigation, may create new sample or add new dataset
-            print "Searching investigation and dataset ", str(datetime.now()) 
-            investigations = self._service.search(self._sessionId, "Investigation [name = '" + investigation.name + "']  <-> Instrument [name = '" + instrumentName + "']<-> Dataset [name = '" + dataset.name + "']")
-            if len(investigations) == 0:
-                createSample = True 
-                for invSample in investigation.samples:
-                    if invSample.name == sample.name: 
-                        createSample = False 
-                        sample = invSample
-                        break
-    
-                if createSample == True:
+                if newSample == True:
+                    print "New run: existing investigation, creating sample and run..."
                     sample.investigation = investigation
-                    print "Adding new sample to existing investigation: ", str(datetime.now()) 
-                    sample.id = self._service.create(self._sessionId, sample)
-     
-                dataset.investigation = investigation
-                dataset.sample = sample 
-                dataset.type = dsType
-                print "Adding new dataset to investigation: ", str(datetime.now()) 
-                self._service.create(self._sessionId, dataset)
+                    sampleId = self._service.create(self._sessionId, sample)
+                    sample.id = sampleId
+                else:
+                    print "New run: existing investigation and sample, creating run..."
+            
             else:
-                print "Run " + runNumber + " is already cataloged."
+                print "ERROR, there should be only one investigation per instrument per investigation name"  
+
+            # create new dataset
+            dataset.sample = sample
+            dataset.investigation = investigation
+            datasetId = self._service.create(self._sessionId, dataset)
+            print "  datasetId: %s"%(str(datasetId))
+            
+        elif len(dbDatasets) == 1:
+    
+            print "Run %s is already cataloged, updating catalog..."%(dataset.name)
+        
+            dbDataset = dbDatasets[0]
+            print "  datasetId: %s"%(str(dbDataset.id))
+        
+            # update "one to many" relationships
+        
+            if hasattr(dbDataset, "datafiles"):
+                dfs = getattr(dbDataset, "datafiles")
+                self._service.deleteMany(self._sessionId, dfs)
+            
+            for df in datafiles:
+                 df.dataset = dbDataset
+            self._service.createMany(self._sessionId, datafiles)
+        
+            # update "many to one" relationships
+        
+            ds = self._service.get(self._sessionId, "Dataset INCLUDE 1", dbDataset.id)   
+            investigation.id = ds.investigation.id
+        
+            dbSamples = self._service.search(self._sessionId, "Sample <-> Investigation [id = '" + str(ds.investigation.id) + "']")
+            updateSample = True
+            for sa in dbSamples:
+                if sa.name == sample.name:
+                    sample = sa
+                    updateSample = False
+                    print "  sample: %s"%(str(sample))
              
-    
-        '''print "INVESTIGATION:"
+            if updateSample == True:
+                sample.id = ds.sample.id
+                sample.investigation = investigation
+                self._service.update(self._sessionId, sample)
+        
+            dataset.id = ds.id
+            dataset.sample = sample
+            dataset.investigation = investigation   
+        
+            self._service.update(self._sessionId, dataset)
+            self._service.update(self._sessionId, investigation)
+       
+        else:
+            print "ERROR, there should be only one dataset per run number per type experiment_raw"        
+        
+        print "INVESTIGATION:"
+        print "  ID: %s"%(str(investigation.id))
         print "  NAME: %s"%(str(investigation.name))
-    
+        
         print "DATASET:"
         print "  RUN NUMBER: %s"%(str(dataset.name))
         print "  TITLE: %s"%(str(dataset.description))
         print "  START TIME: %s"%(str(dataset.startDate))
         print "  END TIME: %s"%(str(dataset.endDate))
-    
+        
         for datafile in dataset.datafiles:
             print "DATAFILE:"
             print "  NAME: %s"%(str(datafile.name))
             print "  LOCATION: %s"%(str(datafile.location))
-    
+        
         print "SAMPLE: "
-        print "  NAME: %s"%(str(sample.name))'''
-    
-        print investigation
+        print "  NAME: %s"%(str(sample.name))
