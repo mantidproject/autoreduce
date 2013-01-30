@@ -198,9 +198,9 @@ if __name__ == "__main__":
 
     clean=True
     NXSPE_flag=True
-    outpre="Auto_reduced"
+    outpre="ARCS"
     #Vanadium and masking    
-    Vanadium="/SNS/ARCS/2012_2_18_CAL/data/ARCS_31471_event.nxs"
+    Vanadium="/SNS/ARCS/2013_1_18_CAL/data/ARCS_31795_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.35,0.4,0.75",outdir,maskfile=maskfile,ld_saved_fl=True)
     # Standard end of tube masking
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     if al!=None:
         [runnum,Efixed,T0,Erange,angle]=al   
         quick_process('__IWS',Erange,Efixed,T0)
-	outfile=outpre+'_'+runnum
+	outfile=outpre+'_'+runnum+'_autoreduced'
 	# save nexus file for combining data later before V normalization
 	AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
 	SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")

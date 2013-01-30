@@ -1,27 +1,31 @@
 import sys,os
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
+from string import *
 
 config['default.facility']="SNS"
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
+w=Load(nexus_file)
+Ei=w.getRun()['EnergyRequest'].firstValue()
+erange=str(-Ei)+','+str(0.01*Ei)+','+str(0.95*Ei)
+
 DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
+             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
+             EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
-             IncidentEnergyGuess=5.0,
-             UseIncidentEnergyGuess=True,
-             TimeZeroGuess=50.0,
              TimeIndepBackgroundSub=True,
-             TibTofRangeStart=45000.0,
-             TibTofRangeEnd=49000.0,
-#             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-6343/0/57514/NeXus/CNCS_57514_event.nxs",
-#             UseBoundsForDetVan=True,
-#             DetVanIntRangeLow=52000.0,
-#             DetVanIntRangeHigh=53000.0,
-#             DetVanIntRangeUnits="TOF"
+             TibTofRangeStart=23000.0,
+             TibTofRangeEnd=25000.0,
+             DetectorVanadiumInputFile="/SNS/CNCS/shared/Va_from_IPTS-7477/CNCS_57794_event.nxs",
+             UseBoundsForDetVan=True,
+             DetVanIntRangeLow=52000.0,
+             DetVanIntRangeHigh=53000.0,
+             DetVanIntRangeUnits="TOF",
             )
 
 filename = os.path.split(nexus_file)[-1]

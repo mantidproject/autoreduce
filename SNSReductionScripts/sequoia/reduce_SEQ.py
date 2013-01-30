@@ -236,14 +236,14 @@ if __name__ == "__main__":
 
     clean=True
     NXSPE_flag=True
-    outpre="Auto_reduced"
+    outpre="SEQ"
     #Vanadium and masking    
-    Vanadium="/SNS/SEQ/shared/2012_B/V_files/SEQ_30675_event.nxs"
+    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_31279_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.3,0.9,1.2",outdir,maskfile=maskfile,ld_saved_fl=True)
-    Norm.MaskBTP(Bank="38,75,76,99,100,101,102,114,115,120")
+    Norm.MaskBTP(Bank="70,99,100,101,102,110")
     Norm.MaskBTP(Pixel="1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128")
-    Norm.MaskBTP(Bank="74",Tube="8")
+    Norm.MaskBTP(Bank="96",Tube="8")
     Norm.CreateMasksAndVanadiumNormalization()
 
     #end changes
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     if al!=None:
         [runnum,Efixed,T0,Erange,angle]=al   
         quick_process('__IWS',Erange,Efixed,T0)
-	outfile=outpre+'_'+runnum
+	outfile=outpre+'_'+runnum+'_autoreduced'
 	# save nexus file for combining data later before V normalization
 	AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
 	SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
