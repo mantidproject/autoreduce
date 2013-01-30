@@ -62,22 +62,22 @@ class IngestReduced():
     
         pattern =  '*' + self._runNumber + '*'
         print "pattern: " + pattern
-        listing = glob.glob(os.path.join(directory, pattern))
-        for filepath in listing:
-            filename =os.path.basename(filepath )
-            datafile = self._factory.create("datafile")
-            datafile.location = filepath 
-            datafile.name = filename
-            extension = os.path.splitext(filename)[1][1:]
-            dfFormat = self._factory.create("datafileFormat")
-            dfFormat.id = config.get('DatafileFormat', extension)
-            datafile.datafileFormat = dfFormat 
-            modTime = os.path.getmtime(filepath)
-            modTime = os.path.getmtime(filepath)
-            datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
-            datafile.fileSize = os.path.getsize(filepath)
+        for dirpath, dirnames, filenames in os.walk(directory):    
+            listing = glob.glob(os.path.join(dirpath, pattern))
+            for filepath in listing:
+                filename =os.path.basename(filepath )
+                datafile = self._factory.create("datafile")
+                datafile.location = filepath 
+                datafile.name = filename
+                extension = os.path.splitext(filename)[1][1:]
+                dfFormat = self._factory.create("datafileFormat")
+                dfFormat.id = config.get('DatafileFormat', extension)
+                datafile.datafileFormat = dfFormat 
+                modTime = os.path.getmtime(filepath)
+                datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
+                datafile.fileSize = os.path.getsize(filepath)
     
-            datafiles.append(datafile)
+                datafiles.append(datafile)
     
         dataset.datafiles = datafiles
         dataset.type = dsType
