@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil 
-sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/mantidunstable/bin")
 from MantidFramework import mtd
 mtd.initialize()
 from mantidsimple import *
@@ -10,9 +10,9 @@ cal_dir = "/SNS/NOM/IPTS-7234/shared/"
 cal_file  = os.path.join(cal_dir, "NOM_calibrate_d9748_2012_12_07.cal")
 char_file = "/SNS/users/pf9/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
 binning = (300,-0.0004,16667)
-sam_back =     9906
-van      =     9900
-van_back =     9903
+sam_back =     11670
+van      =     11671
+van_back =     11670
 
 #from mantidsimple import *
 

@@ -112,12 +112,13 @@ out_prefix = instrument + "_" + run_number
 
 autows = "__auto_ws"
 
-processed_filename = os.path.join(output_directory, out_prefix + "_spe.nxs")
-nxspe_filename=os.path.join(output_directory, out_prefix + ".nxspe")
+#processed_filename = os.path.join(output_directory, out_prefix + "_spe.nxs")
+#nxspe_filename=os.path.join(output_directory, out_prefix + ".nxspe")
 processed_filename1 = os.path.join(output_directory, "msk_tube/" + out_prefix + "_msk_tube_spe.nxs")
 nxspe_filename1=os.path.join(output_directory, "msk_tube/" + out_prefix + "_msk_tube.nxspe")
-processed_filename2 = os.path.join(output_directory, "pwdr_focus/" + out_prefix + "_pwder_focus_spe.nxs")
-nxspe_filename2=os.path.join(output_directory, "pwdr_focus/" + out_prefix + "_pwder_focus.nxspe")
+print(nxspe_filename1)
+#processed_filename2 = os.path.join(output_directory, "pwdr_focus/" + out_prefix + "_pwder_focus_spe.nxs")
+#nxspe_filename2=os.path.join(output_directory, "pwdr_focus/" + out_prefix + "_pwder_focus.nxspe")
 processed_filename3 = os.path.join(output_directory, "4pixel/" + out_prefix + "_4pixel_spe.nxs")
 nxspe_filename3=os.path.join(output_directory, "4pixel/" + out_prefix + "_4pixel.nxspe")
 
@@ -154,42 +155,45 @@ tib=SpurionPromptPulse2(Ei)
 
 
 #reduction command
-DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-		IncidentBeamNormalisation='ByCurrent',
-		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out")
 #DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-#		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
-#		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out1")
+#		IncidentBeamNormalisation='ByCurrent',
+#		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out")
+DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
+		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
+              HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
+		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out1")
 #DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
 #		GroupingFile='/SNS/HYS/shared/autoreduce/16x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
+#              HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 #		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out2")
-#DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-#		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
-#		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
+DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
+		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
+              HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
+		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
 
-str1=str(range(1,9)).strip(']').strip('[')
-str2=str(range(121,129)).strip(']').strip('[')
-tomask=str1+','+str2
+#str1=str(range(1,9)).strip(']').strip('[')
+#str2=str(range(121,129)).strip(']').strip('[')
+#tomask=str1+','+str2
 
-MaskBTP(Workspace='out',Pixel=tomask)
+#MaskBTP(Workspace='out',Pixel=tomask)
 
-out2=GroupDetectors('out','/SNS/HYS/shared/autoreduce/16x1pixels.xml')
-out3=GroupDetectors('out','/SNS/HYS/shared/autoreduce/4x1pixels.xml')
+#out2=GroupDetectors('out','/SNS/HYS/shared/autoreduce/16x1pixels.xml')
+#out3=GroupDetectors('out','/SNS/HYS/shared/autoreduce/4x1pixels.xml')
 
-str1=str(range(1,41)).strip(']').strip('[')
-str2=str(range(89,129)).strip(']').strip('[')
-tomask=str1+','+str2
+#str1=str(range(1,41)).strip(']').strip('[')
+#str2=str(range(89,129)).strip(']').strip('[')
+#tomask=str1+','+str2
 
-MaskBTP(Workspace='out',Pixel=tomask)
-out1=GroupDetectors('out','/SNS/HYS/shared/autoreduce/128x1pixels.xml')
+#MaskBTP(Workspace='out',Pixel=tomask)
+#out1=GroupDetectors('out','/SNS/HYS/shared/autoreduce/128x1pixels.xml')
 
 # Save files
 #SaveNexus(Filename=processed_filename, InputWorkspace="out")
 #SaveNXSPE(Filename=nxspe_filename, InputWorkspace="out", Psi=str(s1), KiOverKfScaling='1')
 SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
 SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1')
-SaveNexus(Filename=processed_filename2, InputWorkspace="out2")
-SaveNXSPE(Filename=nxspe_filename2, InputWorkspace="out2", Psi=str(s1), KiOverKfScaling='1')
+#SaveNexus(Filename=processed_filename2, InputWorkspace="out2")
+#SaveNXSPE(Filename=nxspe_filename2, InputWorkspace="out2", Psi=str(s1), KiOverKfScaling='1')
 SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
 SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
 
