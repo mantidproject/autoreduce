@@ -60,3 +60,9 @@ print "%s: %s" % ("brokers", brokers)
 
 l = QueueListener(brokers, user, password, queues)
 l.processing_loop()
+
+#TODO: uncomment this to use the amq_consumer
+#from amq_consumer import Listener, Client
+#c = Client(brokers, user, password, queues)
+#c.set_listener(Listener(config))
+#c.listen_and_wait(0.1)
