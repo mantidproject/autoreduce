@@ -3,6 +3,7 @@
 import os
 import sys
 from numpy import *
+#from MaskBTP import *
 
 mantid_root = "/opt/mantidnightly"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
@@ -20,10 +21,7 @@ class AutoReduction():
      # for energy in mev returns velocity in m/s
     return sqrt(self._Ei/5.227e-6)
 
-  def SpurionPromptPulse2(self):
-    msd=1800.0
-    tail_length_us=3000.0
-    talk=False
+  def SpurionPromptPulse2(self, msd = 1800.0, tail_length_us = 3000.0, talk = False):
     #More sophisticated
     dist_mm = 39000.0 + msd + 4500.0
 #    T0_moderator = 4.0 + 107.0 / (1.0 + (self._Ei / 31.0)*(self._Ei / 31.0)*(self._Ei / 31.0))
@@ -31,12 +29,12 @@ class AutoReduction():
     t_focEle_us = 39000.0 / self.E2V() * 1000.0 + T0_moderator
     t_samp_us = (dist_mm - 4500.0) / self.E2V() * 1000.0 + T0_moderator
     t_det_us = dist_mm / self.E2V() * 1000 + T0_moderator
-    frame_start_us = t_det_us - 16667 / 2
-    frame_end_us = t_det_us + 16667 / 2
-    index_under_frame = divide(int(t_det_us), 16667)
+    frame_start_us = t_det_us - 16667/2
+    frame_end_us = t_det_us + 16667/2
+    index_under_frame = divide(int(t_det_us),16667)
     pre_lead_us = 16667 * index_under_frame
     pre_tail_us = pre_lead_us + tail_length_us
-    post_lead_us = 16667 * (1 + index_under_frame)
+    post_lead_us = 16667 * (1+ index_under_frame)
     post_tail_us = post_lead_us + tail_length_us
     E_final_meV = -1
     E_transfer_meV = -1
@@ -44,32 +42,32 @@ class AutoReduction():
     MinTIB_us = 2000.0
     slop_frac = 0.2
     #print t_focEle_us,pre_lead_us,frame_start_us,MinTIB_us,slop_frac
-    if (t_focEle_us < pre_lead_us) and (t_focEle_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    if (t_focEle_us < pre_lead_us) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before focus element-1'
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
-    elif (frame_start_us > pre_tail_us) and (t_focEle_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    elif (frame_start_us>pre_tail_us) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before focus element-2'
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
-    elif t_focEle_us - pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_focEle_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    elif t_focEle_us-pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before focus element-3'
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
-    elif t_samp_us - pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_samp_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    elif t_samp_us-pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before sample-1'
         TIB_high_us = t_samp_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
-    elif t_samp_us - pre_tail_us > MinTIB_us / 1.5 * (slop_frac + 1.0) and (t_samp_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    elif t_samp_us-pre_tail_us > MinTIB_us / 1.5 * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before sample-2'
         TIB_high_us = t_samp_us - MinTIB_us / 1.5 * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us / 1.5
-    elif t_samp_us - pre_tail_us > MinTIB_us / 2.0 * (slop_frac + 1.0) and (t_samp_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)):
+    elif t_samp_us-pre_tail_us > MinTIB_us / 2.0 * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
             print 'choosing TIB just before sample-3'
         TIB_high_us = t_samp_us - MinTIB_us / 2.0 * slop_frac / 2.0
@@ -122,8 +120,12 @@ class AutoReduction():
     config['default.facility'] = "SNS"
     autows = "__auto_ws"
     
-    processed_filename = os.path.join(self._output_directory, out_prefix + "_spe.nxs")
-    nxspe_filename = os.path.join(self._output_directory, out_prefix + ".nxspe")
+    processed_filename1 = os.path.join(self._output_directory, "msk_tube/" + out_prefix + "_msk_tube_spe.nxs")
+    nxspe_filename1=os.path.join(self._output_directory, "msk_tube/" + out_prefix + "_msk_tube.nxspe")
+    print(nxspe_filename1)
+
+    processed_filename3 = os.path.join(self._output_directory, "4pixel/" + out_prefix + "_4pixel_spe.nxs")
+    nxspe_filename3=os.path.join(self._output_directory, "4pixel/" + out_prefix + "_4pixel.nxspe")
     
     # Load the data
     LoadEventNexus(Filename=self._nexus_file, OutputWorkspace=autows)
@@ -159,12 +161,22 @@ class AutoReduction():
     
     #reduction command
     DgsReduction(SampleInputWorkspace=autows, IncidentEnergyGuess=Ei, EnergyTransferRange=energy_bins,
-            GroupingFile='/SNS/HYSA/shared/autoreduce/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
-            TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out")
+		GroupingFile='/SNS/HYSA/shared/autoreduce/128x1pixels.xml', IncidentBeamNormalisation='ByCurrent', HardMaskFile='/SNS/HYSA/shared/autoreduce/MonsterMask.xml',
+            TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1")
     
+    DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
+		GroupingFile='/SNS/HYSA/shared/autoreduce/4x1pixels.xml',       
+    IncidentBeamNormalisation='ByCurrent',
+              HardMaskFile='/SNS/HYSA/shared/autoreduce/TubeTipMask.xml',
+		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
+
     # Save files
-    SaveNexus(Filename=processed_filename, InputWorkspace="out")
-    SaveNXSPE(Filename=nxspe_filename, InputWorkspace="out", Psi=str(s1), KiOverKfScaling='1')
+    SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
+    SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
+
+    SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
+    SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
+
 
 
 
