@@ -13,8 +13,8 @@ class ExperimentLog(object):
     def __init__(self):
         self.log_list=['vChTrans','Speed1','Phase1','Speed2','Phase2','Speed3','Phase3','EnergyRequest','s1t','s1r','s1l','s1b','vAttenuator2','vAttenuator1','svpressure','dvpressure']
         self.cols=[1,4,4,4,4,4,4,1,1,1,1,1,1,1,4,4,4]
-        self.SERotOptions=['CCR13VRot','SEOCRot']
-        self.SETempOptions=['SampleTemp']
+        self.SERotOptions=['CCR13VRot','SEOCRot','CCR16Rot']
+        self.SETempOptions=['SampleTemp','sampletemp','SensorA']
 
     def log_line_gen(self,IWSName):
         """
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="SEQ"
     #Vanadium and masking    
-    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_33854_event.nxs"
+    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_37464_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.3,0.9,1.2",outdir,maskfile=maskfile,ld_saved_fl=True)
     Norm.MaskBTP(Bank="70,99,100,101,102,110")

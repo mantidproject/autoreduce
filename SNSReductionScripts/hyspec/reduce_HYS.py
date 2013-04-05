@@ -147,7 +147,7 @@ s1=run['s1'].getStatistics().mean
 # Work out some energy bins
 emin = -(2.0*Ei)
 emax = Ei*0.9
-estep = 0.1
+estep = 0.05
 energy_bins = "%f,%f,%f" % (emin,estep,emax)
 
 #TIB limits
@@ -158,7 +158,7 @@ tib=SpurionPromptPulse2(Ei)
 #DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
 #		IncidentBeamNormalisation='ByCurrent',
 #		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out")
-DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
+DgsReduction(SampleInputWorkspace=autows,SampleInputMonitorWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
 		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
               HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out1")
@@ -166,7 +166,7 @@ DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRa
 #		GroupingFile='/SNS/HYS/shared/autoreduce/16x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
 #              HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 #		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out2")
-DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
+DgsReduction(SampleInputWorkspace=autows,SampleInputMonitorWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
 		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml', IncidentBeamNormalisation='ByCurrent',
               HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
