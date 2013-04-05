@@ -1,7 +1,7 @@
 Summary: autoreduce-mq
 Name: autoreduce-mq
-Version: 1.0
-Release: 15 
+Version: 1.1
+Release: 1 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -27,23 +27,21 @@ Autoreduce program to automatically reduce neutron data after a run
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_sysconfdir}/autoreduce
 install -m 664	../autoreduce-mq/etc/autoreduce/icat4.cfg	 %{buildroot}%{_sysconfdir}/autoreduce/icat4.cfg
+install -m 664	../autoreduce-mq/etc/autoreduce/post_process_consumer.conf	 %{buildroot}%{_sysconfdir}/autoreduce/post_process_consumer.conf
 install -m 755 -d 	 ../autoreduce-mq/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
 install -m 755	 ../autoreduce-mq/usr/bin/ingestNexus_mq.py	 %{buildroot}%{_bindir}/ingestNexus_mq.py
 install -m 755	 ../autoreduce-mq/usr/bin/ingestReduced_mq.py	 %{buildroot}%{_bindir}/ingestReduced_mq.py
 install -m 755	 ../autoreduce-mq/usr/bin/queueListener.py	 %{buildroot}%{_bindir}/queueListener.py
 install -m 755	 ../autoreduce-mq/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
-install -m 755	 ../autoreduce-mq/usr/bin/sendMessage.py	 %{buildroot}%{_bindir}/sendMessage.py
-install -m 755	 ../autoreduce-mq/usr/bin/process_run.sh	 %{buildroot}%{_bindir}/process_run.sh
 
 %post
 chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 
 %files
 %config %{_sysconfdir}/autoreduce/icat4.cfg
+%config %{_sysconfdir}/autoreduce/post_process_consumer.conf
 %attr(755, -, -) %{_bindir}/ingestNexus_mq.py
 %attr(755, -, -) %{_bindir}/ingestReduced_mq.py
 %attr(755, -, -) %{_bindir}/queueListener.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
-%attr(755, -, -) %{_bindir}/sendMessage.py
-%attr(755, -, -) %{_bindir}/process_run.sh

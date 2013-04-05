@@ -3,7 +3,7 @@ VERSION = "1.4.2"
 
 from suds.client import Client
 
-import nxs, os, numpy, sys, posixpath, glob
+import nxs, os, numpy, sys, posixpath, glob, logging
 import xml.utils.iso8601, ConfigParser
 from datetime import datetime
 
@@ -33,14 +33,14 @@ class IngestReduced():
         entry.value = password
         credentials.entry.append(entry)
     
-        print "Begin login at: ", str(datetime.now()) 
+        logging.info("Begin login at: %s" % datetime.now())
         self._sessionId = self._service.login(plugin, credentials)
-        print "End login at: ", str(datetime.now()) 
+        logging.info("End login at: %s" % datetime.now())
    
     def logout(self): 
-        print "Begin logout at: ", str(datetime.now()) 
+        logging.info("Begin logout at: %s" % datetime.now())
         self._service.logout(self._sessionId)
-        print "End logout at: ", str(datetime.now()) 
+        logging.info("End logout at: %s" % datetime.now())
 
     def execute(self):
     
@@ -48,7 +48,7 @@ class IngestReduced():
         config.read('/etc/autoreduce/icat4.cfg')
     
         directory = "/" + self._facilityName + "/" + self._instrumentName + "/" +  self._investigationName + "/shared/autoreduce"
-        print "reduction output directory: " + directory
+        logging.info("reduction output directory: %s" % directory)
     
         #set dataset name 
         dataset = self._factory.create("dataset")
@@ -61,7 +61,7 @@ class IngestReduced():
         datafiles = []
     
         pattern =  '*' + self._runNumber + '*'
-        print "pattern: " + pattern
+        logging.info("pattern: %s" % pattern)
         for dirpath, dirnames, filenames in os.walk(directory):    
             listing = glob.glob(os.path.join(dirpath, pattern))
             for filepath in listing:
@@ -91,20 +91,20 @@ class IngestReduced():
             if len(dbInvestigations) == 1:
                 investigation = dbInvestigations[0]
             else:
-                print "ERROR, there should be only one investigation per instrument per investigation name"  
+                logging.error("ERROR, there should be only one investigation per instrument per investigation name") 
                 return 1
 
-            print "Creating dataset: ", str(datetime.now())
+            logging.info("Creating dataset: %s" % datetime.now())
             dataset.investigation = investigation
             dataset.sample = investigation.samples[0]
             self._service.create(self._sessionId, dataset)
             
         elif len(dbDatasets) == 1:
     
-            print "reduced dataset %s is already cataloged, updating reduced dataset..."%(dataset.name)
+            logging.info("reduced dataset %s is already cataloged, updating reduced dataset... %s " % (dataset.name))
         
             dbDataset = dbDatasets[0]
-            print "  dataset: %s"%(str(dbDataset.id))
+            logging.info("  dataset: %s" % str(dbDataset.id))
         
             # update "one to many" relationships
             if hasattr(dbDataset, "datafiles"):
@@ -116,15 +116,15 @@ class IngestReduced():
             self._service.createMany(self._sessionId, datafiles)
         
         else:
-            print "ERROR, there should be only one dataset per run number per type reduced" 
+            logging.error("ERROR, there should be only one dataset per run number per type reduced")
 
-        print "DATASET:"
-        print "  RUN NUMBER: %s"%(str(dataset.name))
-        print "  TITLE: %s"%(str(dataset.description))
-        print "  START TIME: %s"%(str(dataset.startDate))
-        print "  END TIME: %s"%(str(dataset.endDate))
+        logging.info("DATASET:")
+        logging.info("  RUN NUMBER: %s" % str(dataset.name))
+        logging.info("  TITLE: %s" % str(dataset.description))
+        logging.info("  START TIME: %s" % str(dataset.startDate))
+        logging.info("  END TIME: %s" % str(dataset.endDate))
     
         for datafile in dataset.datafiles:
-            print "DATAFILE:"
-            print "  NAME: %s"%(str(datafile.name))
-            print "  LOCATION: %s"%(str(datafile.location))
+            logging.info("DATAFILE:")
+            logging.info("  NAME: %s" % str(datafile.name))
+            logging.info("  LOCATION: %s" %str(datafile.location))

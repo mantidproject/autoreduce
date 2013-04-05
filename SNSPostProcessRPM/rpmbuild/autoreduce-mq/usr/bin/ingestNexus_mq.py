@@ -3,7 +3,7 @@ VERSION = "1.4.2"
 
 from suds.client import Client
 
-import nxs, os, numpy, sys, posixpath
+import nxs, os, numpy, sys, posixpath, logging
 import xml.utils.iso8601, ConfigParser
 from datetime import datetime
 
@@ -29,17 +29,16 @@ class IngestNexus():
         entry.value = password
         credentials.entry.append(entry)
     
-        print "Begin login at: ", str(datetime.now()) 
+        logging.info("Begin login at: %s" % datetime.now())
         self._sessionId = self._service.login(plugin, credentials)
-        print "End login at: ", str(datetime.now()) 
+        logging.info("End login at: %s" % datetime.now()) 
    
     def logout(self): 
-        print "Begin logout at: ", str(datetime.now()) 
+        logging.info("Begin logout at: %s" % datetime.now())
         self._service.logout(self._sessionId)
-        print "End logout at: ", str(datetime.now()) 
+        logging.info("Begin logout at: %s" % datetime.now())
     
     def execute(self):
-      
         #find facility, investigation_type 
         config = ConfigParser.RawConfigParser()
         config.read('/etc/autoreduce/icat4.cfg')
@@ -187,7 +186,7 @@ class IngestNexus():
         datafiles.append(datafile)
         
         runPath = posixpath.abspath(posixpath.join(self._infilename, '../../adara'))
-        print runPath
+        logging.info("ADARA directory: %s" % runPath) 
         for dirpath, dirnames, filenames in os.walk(runPath):
             for filename in [f for f in filenames]:
                 if dataset.name in filename:
@@ -267,17 +266,17 @@ class IngestNexus():
             dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
         
             if len(dbInvestigations) == 0: 
-                print "New IPTS: creating investigation, sample, run..."
+                logging.info("New IPTS: creating investigation, sample, run...")
                 # create new investigation
                 invId = self._service.create(self._sessionId, investigation)
                 investigation.id = invId
-                print "  invId: %s"%(str(invId))
+                logging.info("  invId: %s" % str(invId))
             
                 # create new sample
                 sample.investigation = investigation
                 sampleId = self._service.create(self._sessionId, sample)
                 sample.id = sampleId
-                print "  sampleId: %s"%(str(sampleId))
+                logging.info("  sampleId: %s" % str(sampleId))
         
             elif len(dbInvestigations) == 1:
                 investigation = dbInvestigations[0]
@@ -290,28 +289,28 @@ class IngestNexus():
                         newSample = False
             
                 if newSample == True:
-                    print "New run: existing investigation, creating sample and run..."
+                    logging.info("New run: existing investigation, creating sample and run...")
                     sample.investigation = investigation
                     sampleId = self._service.create(self._sessionId, sample)
                     sample.id = sampleId
                 else:
-                    print "New run: existing investigation and sample, creating run..."
+                    logging.info("New run: existing investigation and sample, creating run...")
             
             else:
-                print "ERROR, there should be only one investigation per instrument per investigation name"  
+                logging.error("ERROR, there should be only one investigation per instrument per investigation name")
 
             # create new dataset
             dataset.sample = sample
             dataset.investigation = investigation
             datasetId = self._service.create(self._sessionId, dataset)
-            print "  datasetId: %s"%(str(datasetId))
+            logging.info("  datasetId: %s" % str(datasetId))
             
         elif len(dbDatasets) == 1:
     
-            print "Run %s is already cataloged, updating catalog..."%(dataset.name)
+            logging.info("Run %s is already cataloged, updating catalog..." % dataset.name)
         
             dbDataset = dbDatasets[0]
-            print "  datasetId: %s"%(str(dbDataset.id))
+            logging.info("  datasetId: %s" % str(dbDataset.id))
         
             # update "one to many" relationships
         
@@ -334,7 +333,7 @@ class IngestNexus():
                 if sa.name == sample.name:
                     sample = sa
                     updateSample = False
-                    print "  sample: %s"%(str(sample))
+                    logging.info("  sample: %s" % str(sample))
              
             if updateSample == True:
                 sample.id = ds.sample.id
@@ -349,22 +348,22 @@ class IngestNexus():
             self._service.update(self._sessionId, investigation)
        
         else:
-            print "ERROR, there should be only one dataset per run number per type experiment_raw"        
+            logging.error("ERROR, there should be only one dataset per run number per type experiment_raw")       
         
-        print "INVESTIGATION:"
-        print "  ID: %s"%(str(investigation.id))
-        print "  NAME: %s"%(str(investigation.name))
+        logging.info("INVESTIGATION:")
+        logging.info("  ID: %s" % str(investigation.id))
+        logging.info("  NAME: %s" % str(investigation.name))
         
-        print "DATASET:"
-        print "  RUN NUMBER: %s"%(str(dataset.name))
-        print "  TITLE: %s"%(str(dataset.description))
-        print "  START TIME: %s"%(str(dataset.startDate))
-        print "  END TIME: %s"%(str(dataset.endDate))
+        logging.info("DATASET:")
+        logging.info("  RUN NUMBER: %s" % str(dataset.name))
+        logging.info("  TITLE: %s" % str(dataset.description))
+        logging.info("  START TIME: %s" % str(dataset.startDate))
+        logging.info("  END TIME: %s" % str(dataset.endDate))
         
         for datafile in dataset.datafiles:
-            print "DATAFILE:"
-            print "  NAME: %s"%(str(datafile.name))
-            print "  LOCATION: %s"%(str(datafile.location))
+            logging.info("DATAFILE:")
+            logging.info("  NAME: %s" % str(datafile.name))
+            logging.info("  LOCATION: %s" % str(datafile.location))
         
-        print "SAMPLE: "
-        print "  NAME: %s"%(str(sample.name))
+        logging.info("SAMPLE: ")
+        logging.info("  NAME: %s" % str(sample.name))
