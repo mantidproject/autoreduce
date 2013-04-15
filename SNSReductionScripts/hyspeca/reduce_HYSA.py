@@ -7,8 +7,6 @@ from numpy import *
 mantid_root = "/opt/mantidnightly"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 
-from mantid.simpleapi import *
-
 class AutoReduction():
   def __init__(self, nexus_file, output_directory):
     print nexus_file, output_directory
@@ -117,6 +115,14 @@ class AutoReduction():
       out_prefix = instrument + "_" + run_number
       self._out_prefix = out_prefix
       
+      # Set the output log filename
+      os.environ['MANTIDLOGPATH'] = os.path.join(self._output_directory, self._out_prefix + ".log")
+
+      # Now we can import the Mantid  
+      import mantid
+      from mantid.simpleapi import mtd, logger, config
+      from mantid.simpleapi import LoadEventNexus, DgsReduction, SaveNexus, SaveNXSPE
+
       config['default.facility'] = "SNS"
       autows = "__auto_ws"
       
@@ -171,6 +177,9 @@ class AutoReduction():
       SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
       SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
       
+      # Clear the log filename 
+      os.unsetenv('MANTIDLOGPATH')
+
     except RuntimeError, e:
       self.writeError()
       raise e
