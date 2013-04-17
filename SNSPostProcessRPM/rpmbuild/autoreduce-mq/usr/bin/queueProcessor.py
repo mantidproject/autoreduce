@@ -98,15 +98,15 @@ class PostProcessListener(Listener):
                     self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
                 except RuntimeError, e:
                     logging.info("REDUCTION RuntimeError")
-                    data["error"] = "REDUCTION RuntimeError: %s " % e 
+                    data["error"] = "REDUCTION: %s " % e 
                     self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
                 except KeyError, e:
                     logging.info("REDUCTION KeyError")
-                    data["error"] = "REDUCTION KeyError: %s " % e 
+                    data["error"] = "REDUCTION: %s " % e 
                     self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
                 except Exception, e:
                     logging.info("REDUCTION Exception")
-                    data["error"] = "REDUCTION Error: %s " % e 
+                    data["error"] = "REDUCTION: %s " % e 
                     self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
             
             else:

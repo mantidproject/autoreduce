@@ -74,10 +74,10 @@ function processRuns()
       searchDBRunList $run
       return="$?"
       if [[ $return -eq 0 ]]; then
-        for nexusFile in `find $file -name "*event.nxs" -print`
+        for nexusFile in `find $file -name "*.nxs" -print`
         do
           echo $nexusFile
-          if [ -e $nexusFile ] && ! [ -h $nexusFile ]; then
+          if [ -e $nexusFile ] && ! [ -h $nexusFile ] && [[ $nexusFile != *_histo.nxs ]]; then
             ingestNexus=/usr/bin/ingestNexus
             echo $ingestNexus $nexusFile | sed "s/^/$(date)  /" >> $logfile
             $ingestNexus $nexusFile $plugin $hostAndPort $password | sed "s/^/$(date)  /" >> $logfile

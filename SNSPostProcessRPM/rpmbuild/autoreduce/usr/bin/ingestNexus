@@ -240,7 +240,7 @@ def ingestNexus(infilename, sessionId, service, factory):
 
     if len(dbDatasets) == 0:
     
-        dbInvestigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
+        dbInvestigations = service.search(sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "' AND visitId = '" + str(investigation.visitId) + "'] <-> Instrument [name = '" + instrument.name + "']")
         
         if len(dbInvestigations) == 0: 
             print "New IPTS: creating investigation, sample, run..."
@@ -274,7 +274,7 @@ def ingestNexus(infilename, sessionId, service, factory):
                 print "New run: existing investigation and sample, creating run..."
             
         else:
-            print "ERROR, there should be only one investigation per instrument per investigation name"  
+            print "ERROR, there should be only one investigation per instrument per investigation name per visit"  
 
         # create new dataset
         dataset.sample = sample
