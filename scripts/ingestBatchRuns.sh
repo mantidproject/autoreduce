@@ -119,7 +119,7 @@ proposal=$(echo $path | awk -F"/" '{print $4}')
 xmlTokens=()
 dbRunList=()
 
-urlBase=http://icat.sns.gov:2080/icat-rest-ws/experiment
+urlBase=http://icat-testing.sns.gov:2080/icat-rest-ws/experiment
 url=$urlBase"/"$facility"/"$instrument"/"$proposal
 echo "--Calling ICAT4 web service-- "$url | sed "s/^/$(date)  /" >> $logfile
 

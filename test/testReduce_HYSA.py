@@ -1,4 +1,4 @@
-import sys, imp, errno
+import sys, imp, errno, subprocess
 
 reduce_script = "reduce_HYSA"
 #reduce_script_path = "/SNS/HYSA/shared/autoreduce/" + reduce_script + ".py"
@@ -8,7 +8,7 @@ print reduce_script_path
 
 f = open('/tmp/shelly/shelly.txt', 'w')
 
-path = "/SNS/HYSA/IPTS-8562/nexus/HYSA_18901.nxs.h5"
+path = "/SNS/HYSA/IPTS-8562/nexus/HYSA_18902.nxs.h5"
 #path = "/SNS/HYS/IPTS-8908/0/15055/NeXus/HYS_15055_event.nxs"
 out_dir = "/tmp/shelly/"
 #out_dir = "/SNS/HYSA/IPTS-8018/shared/autoreduce/"
@@ -17,11 +17,13 @@ print out_dir
 
 try:
   f.write("loading source\n")
-  m = imp.load_source(reduce_script, reduce_script_path)
-  f.write("init reduction\n")
-  reduction = m.AutoReduction(path, out_dir)
-  f.write("executing\n")
-  reduction.execute()
+  cmd = "python " + reduce_script_path + " " + path + " " + out_dir
+  print ("cmd %s " % cmd)
+  out = subprocess.call(cmd, shell=True)
+  print ("out %s " % out)
+  #m = imp.load_source(reduce_script, reduce_script_path)
+  #reduction = m.AutoReduction(path, out_dir)
+  #reduction.execute()
   f.write("done executing\n")
 except ValueError, e:
   print("ValueError: %s " % e)

@@ -92,9 +92,14 @@ class PostProcessListener(Listener):
                 try:
                     logging.info("Calling /queue/"+self.configuration.reduction_started_queue)             
                     self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
-                    m = imp.load_source(reduce_script, reduce_script_path)
-                    reduction = m.AutoReduction(path, out_dir)
-                    reduction.execute()
+                    #m = imp.load_source(reduce_script, reduce_script_path)
+                    #reduction = m.AutoReduction(path, out_dir)
+                    #reduction.execute()
+                    cmd = "python " + reduce_script_path + " " + path + " " + out_dir
+                    loggin.info("cmd: " + cmd)
+                    out = subprocess.call(cmd, shell=True)
+                    loggin.info("subprocess out " + out)
+
                     self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
                 except RuntimeError, e:
                     logging.info("REDUCTION RuntimeError")
