@@ -2,7 +2,7 @@
 """
 ActiveMQ client for Post Process
 """
-import os, sys, json, logging, imp
+import os, sys, json, logging, imp, subprocess
 from queueListener import Client, Configuration, Listener
 
 post_processing_bin = sys.path.append("/usr/bin") 
@@ -96,9 +96,9 @@ class PostProcessListener(Listener):
                     #reduction = m.AutoReduction(path, out_dir)
                     #reduction.execute()
                     cmd = "python " + reduce_script_path + " " + path + " " + out_dir
-                    loggin.info("cmd: " + cmd)
+                    #logging.info("cmd: " + cmd)
                     out = subprocess.call(cmd, shell=True)
-                    loggin.info("subprocess out " + out)
+                    #logging.info("subprocess out " + out)
 
                     self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
                 except RuntimeError, e:
