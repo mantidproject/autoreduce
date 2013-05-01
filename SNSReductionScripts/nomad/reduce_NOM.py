@@ -6,10 +6,10 @@ from MantidFramework import mtd
 mtd.initialize()
 from mantidsimple import *
 
-cal_dir = "/SNS/NOM/IPTS-8585/shared/"
+cal_dir = "/SNS/NOM/IPTS-8459/shared/"
 cal_file  = os.path.join(cal_dir, "NOM_calibrate_d13012_2013_04_12.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     13013
+sam_back =     13396
 van      =     13015
 van_back =     13014
 
