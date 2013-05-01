@@ -101,7 +101,7 @@ class IngestReduced():
             
         elif len(dbDatasets) == 1:
     
-            logging.info("reduced dataset %s is already cataloged, updating reduced dataset... %s " % (dataset.name))
+            logging.info("reduced dataset %s is already cataloged, updating reduced dataset... " % (dataset.name))
         
             dbDataset = dbDatasets[0]
             logging.info("  dataset: %s" % str(dbDataset.id))

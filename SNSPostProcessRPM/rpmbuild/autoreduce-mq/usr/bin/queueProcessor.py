@@ -3,6 +3,7 @@
 ActiveMQ client for Post Process
 """
 import os, sys, json, logging, imp, subprocess
+from string import join
 from queueListener import Client, Configuration, Listener
 
 post_processing_bin = sys.path.append("/usr/bin") 
@@ -67,8 +68,8 @@ class PostProcessListener(Listener):
                 path = str(data['data_file'])
             else: 
                 data["error"] = "data_file is missing"
-                logging.error("error=" + message)
-                self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, message)
+                logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data)) 
+                self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
                 return
         except:
             logging.error("Could not process JSON message")
@@ -76,59 +77,80 @@ class PostProcessListener(Listener):
 
  
         if destination == '/queue/REDUCTION.DATA_READY':
-            param = path.split("/")
-            if len(param) > 5:
-                facility = param[1]
-                instrument = param[2]
-                proposal = param[3]
-                out_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/"
-                #out_dir = "/tmp/shelly/"
-                reduce_script = "reduce_" + instrument
-                reduce_script_path = "/" + facility + "/" + instrument + "/shared/autoreduce/" + reduce_script  + ".py"
-                logging.info("reduce_script: "+reduce_script)
-                logging.info("reduce_script_path: "+reduce_script_path)
-                logging.info("input file: " + path + "out directory: " + out_dir)
-                logging.info("Reduction: " + facility + ", " + instrument)
-                try:
-                    logging.info("Calling /queue/"+self.configuration.reduction_started_queue)             
-                    self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
-                    #m = imp.load_source(reduce_script, reduce_script_path)
-                    #reduction = m.AutoReduction(path, out_dir)
-                    #reduction.execute()
+            try:
+                logging.info("Calling /queue/"+self.configuration.reduction_started_queue+message)             
+                self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
+                param = path.split("/")
+                if len(param) > 5:
+                    facility = param[1]
+                    instrument = param[2]
+                    proposal = param[3]
+                    filename = param[5]
+                    run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
+                    logging.info("run_number: "+run_number)
+                    out_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/"
+                    log_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/reduction_log/"
+                    #out_dir = "/tmp/shelly/"
+                    #log_dir = "/tmp/shelly/reduction_log/"
+                    if not os.path.exists(log_dir):
+                      os.makedirs(log_dir)
+                    #reduce_script = "reduce_" + instrument + "_testing"
+                    reduce_script = "reduce_" + instrument
+                    reduce_script_path = "/" + facility + "/" + instrument + "/shared/autoreduce/" + reduce_script  + ".py"
+                    logging.info("reduce_script: "+reduce_script)
+                    logging.info("reduce_script_path: "+reduce_script_path)
+                    logging.info("input file: " + path + "out directory: " + out_dir)
+                    logging.info("Reduction: " + facility + ", " + instrument)
+                
                     cmd = "python " + reduce_script_path + " " + path + " " + out_dir
-                    #logging.info("cmd: " + cmd)
-                    out = subprocess.call(cmd, shell=True)
-                    #logging.info("subprocess out " + out)
-
-                    self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
-                except RuntimeError, e:
-                    logging.info("REDUCTION RuntimeError")
-                    data["error"] = "REDUCTION: %s " % e 
-                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
-                except KeyError, e:
-                    logging.info("REDUCTION KeyError")
-                    data["error"] = "REDUCTION: %s " % e 
-                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
-                except Exception, e:
-                    logging.info("REDUCTION Exception")
-                    data["error"] = "REDUCTION: %s " % e 
-                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
-            
-            else:
-                data["error"] = "REDUCTION Error: failed to parse data_file " + path
-                logging.info("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))     
+                    logging.info("cmd: " + cmd)
+                    out_log = os.path.join(log_dir, instrument + "_" + run_number + ".log")
+                    out_err = os.path.join(out_dir, instrument + "_" + run_number + ".err")
+                    logFile=open(out_log, "w")
+                    errFile=open(out_err, "w")
+                    proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
+                    proc.communicate()
+                    logFile.close()
+                    errFile.close()
+                    if os.stat(out_err).st_size == 0:
+                      os.remove(out_err)
+                      logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
+                      self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
+                    else:
+                      errFile=open(out_err, "r")
+                      errList = errFile.readlines()
+                      try:                     
+                        idx = errList.index("    raise e\n")+1
+                      except ValueError:
+                        idx = 0
+                      data["error"] = "REDUCTION: %s " % join(errList[idx:])
+                      errFile.close()
+                      logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
+                      self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))             
+                else:
+                    data["error"] = "REDUCTION Error: failed to parse data_file " + path
+                    logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))     
+                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))  
+            except Exception, e:
+                data["error"] = "REDUCTION: %s " % e 
+                logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
                 self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
+            
+
 
         elif destination == '/queue/CATALOG.DATA_READY':
             try:
-                self._send_connection.send('/queue/'+self.configuration.catalog_started_queue, message)
                 logging.info("path=" + path)
+                logging.info("Calling /queue/"+self.configuration.catalog_started_queue+message)  
+                self._send_connection.send('/queue/'+self.configuration.catalog_started_queue, message)
                 ingestNexus = IngestNexus(path)
                 ingestNexus.execute()
                 ingestNexus.logout()
+                logging.info("Calling /queue/"+self.configuration.catalog_complete_queue+message)
                 self._send_connection.send('/queue/'+self.configuration.catalog_complete_queue, message)
             except Exception, e:
                 data["error"] = "CATALOG Error: %s" % e
+                logging.error("Calling /queue/"+self.configuration.catalog_error_queue + json.dumps(data))     
                 self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
 
         elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
@@ -146,22 +168,25 @@ class PostProcessListener(Listener):
                         run_number = param3[1]
                         try:
                             logging.info("Reduction Catalog: " + facility + ", " + instrument + ", " + ipts + ", " + run_number)
+                            logging.info("Calling /queue/"+self.configuration.reduction_catalog_started_queue+message)
                             self._send_connection.send('/queue/'+self.configuration.reduction_catalog_started_queue, message)
                             ingestReduced = IngestReduced(facility, instrument, ipts, run_number)
                             ingestReduced.execute()
                             ingestReduced.logout()
+                            logging.info("Calling /queue/"+self.configuration.reduction_catalog_complete_queue+message)
                             self._send_connection.send('/queue/'+self.configuration.reduction_catalog_complete_queue, message)
                         except Exception, e:
-                            data["error"] = "REDUCTION_CATALOG Catalog Error: %s" % e
+                            data["error"] = "REDUCTION_CATALOG Error: %s" % e
+                            logging.error("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
                             self._send_connection.send('/queue/'+self.configuration.reduction_catalog_error_queue, json.dumps(data))
 
             else:
                 data["error"] = "REDUCTION_CATALOG Error: failed to parse data_file " + path
-                logging.info("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
+                logging.error("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
                 self._send_connection.send('/queue/'+self.configuration.reduction_catalog_error_queue, json.dumps(data))
 
         
-        print "Done with post processing"
+        logging.info("Done with post processing")
 
 
 def run():
