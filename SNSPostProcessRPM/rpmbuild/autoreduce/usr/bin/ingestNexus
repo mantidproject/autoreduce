@@ -227,13 +227,6 @@ def ingestNexus(infilename, sessionId, service, factory):
             sample.parameters = sampleParameters
             samples.append(sample)
 
-        if nxclass == "NXuser":
-            a = "a"
-            #investigationUser = setInvestigationUser(file, sessionId, factory, service)
-            #investigationUsers.append(investigationUser)
-
-
-    file.closegroup()
     file.close()
     
     dbDatasets = service.search(sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(instrument.name) + "'] <-> DatasetType [name = 'experiment_raw']")
