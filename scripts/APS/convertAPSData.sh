@@ -27,8 +27,7 @@ if [[ $aLen == "6" ]]; then
   runNumber=${arrIN[$aLen-3]}"_"${arrIN[$aLen-2]}"_"${arrIN[$aLen-1]}
   echo "run number = "$runNumber
 fi
-#metaFile=$archDir"/"$instrument"_"$runNumber"_metadata.cfg" 
-metaFile=$archDir"/"$runNumber"_metadata.cfg" 
+metaFile=$archDir"/"$instrument"_"$runNumber"_metadata.cfg" 
 echo "metaFile= "$metaFile
 
 #filter junk and dark frames
@@ -44,7 +43,7 @@ for tifFile in `find $file -name "*.tif" -print`; do
     meta=$tifFile".metadata" 
     if [ -f $meta ]; then
       fileBase=`awk -F "=" '/fileBase/ { print $2 }' $meta`
-      echo "["$runNumber"_"$(echo "$fileBase" | tr -d $'\r')"]" >> $metaFile
+      echo "["$instrument"_"$runNumber"_"$(echo "$fileBase" | tr -d $'\r')"]" >> $metaFile
       width=`awk -F "=" '/width/ { print $2 }' $meta`
       echo "width="$width >> $metaFile
       height=`awk -F "=" '/height/ { print $2 }' $meta`
