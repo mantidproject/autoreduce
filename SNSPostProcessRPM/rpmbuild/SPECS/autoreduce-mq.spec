@@ -1,7 +1,7 @@
 Summary: autoreduce-mq
 Name: autoreduce-mq
-Version: 1.1
-Release: 6 
+Version: 1.2
+Release: 1 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -16,7 +16,7 @@ Requires: python-suds
 
 
 %description
-Autoreduce program to automatically reduce neutron data after a run
+Autoreduce program to automatically catalog and reduce neutron data
 
 %prep
 %setup -q -n %{name}
@@ -27,7 +27,6 @@ Autoreduce program to automatically reduce neutron data after a run
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_sysconfdir}/autoreduce
 install -m 664	../autoreduce-mq/etc/autoreduce/icat4.cfg	 %{buildroot}%{_sysconfdir}/autoreduce/icat4.cfg
-install -m 664	../autoreduce-mq/etc/autoreduce/post_process_consumer.conf	 %{buildroot}%{_sysconfdir}/autoreduce/post_process_consumer.conf
 install -m 755 -d 	 ../autoreduce-mq/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
 install -m 755	 ../autoreduce-mq/usr/bin/ingestNexus_mq.py	 %{buildroot}%{_bindir}/ingestNexus_mq.py
@@ -40,7 +39,6 @@ chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 
 %files
 %config %{_sysconfdir}/autoreduce/icat4.cfg
-%config %{_sysconfdir}/autoreduce/post_process_consumer.conf
 %attr(755, -, -) %{_bindir}/ingestNexus_mq.py
 %attr(755, -, -) %{_bindir}/ingestReduced_mq.py
 %attr(755, -, -) %{_bindir}/queueListener.py

@@ -1,21 +1,19 @@
 Summary: autoreduce
 Name: autoreduce
-Version: 1.2
-Release: 12 
+Version: 1.3
+Release: 1 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
 License: Unknown
 Source: autoreduce.tgz
-Requires: libNeXus.so.0()(64bit) libc.so.6()(64bit) libc.so.6(GLIBC_2.2.5)(64bit)
-Requires: mantid 
-Requires: mantidnightly
-Requires: python-suds 
+Requires: libc.so.6()(64bit) libc.so.6(GLIBC_2.2.5)(64bit)
+Requires: stomp 
 %define debug_package %{nil}
 
 
 %description
-Autoreduce program to automatically reduce neutron data after a run
+Sending message to active MQ when a pre ADARA run is produced
 
 %prep
 %setup -q -n %{name}
@@ -24,24 +22,14 @@ Autoreduce program to automatically reduce neutron data after a run
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{_sysconfdir}/autoreduce
-install -m 664	../autoreduce/etc/autoreduce/icat4.cfg	 %{buildroot}%{_sysconfdir}/autoreduce/icat4.cfg
 install -m 755 -d 	 ../autoreduce/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
-install -m 755	 ../autoreduce/usr/bin/ingestNexus	 %{buildroot}%{_bindir}/ingestNexus
-install -m 755	 ../autoreduce/usr/bin/ingestReduced	 %{buildroot}%{_bindir}/ingestReduced
 install -m 755	 ../autoreduce/usr/bin/process_run.sh	 %{buildroot}%{_bindir}/process_run.sh
-install -m 755	 ../autoreduce/usr/bin/post_process.sh	 %{buildroot}%{_bindir}/post_process.sh
+install -m 755	 ../autoreduce/usr/bin/sendMessage.py	 %{buildroot}%{_bindir}/sendMessage.py
 mkdir -p %{buildroot}%{_libdir}
-install -m 755 -d 	 ../autoreduce/usr/lib/autoreduce	 %{buildroot}%{_libdir}/autoreduce
 
 %post
-chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 
 %files
-%config %{_sysconfdir}/autoreduce/icat4.cfg
-%attr(755, -, -) %{_bindir}/ingestNexus
-%attr(755, -, -) %{_bindir}/ingestReduced
 %attr(755, -, -) %{_bindir}/process_run.sh
-%attr(755, -, -) %{_bindir}/post_process.sh
-%attr(755, -, -) %{_libdir}/autoreduce
+%attr(755, -, -) %{_bindir}/sendMessage.py

@@ -66,11 +66,39 @@ class PostProcessListener(Listener):
             
             if data.has_key('data_file'):
                 path = str(data['data_file'])
-            else: 
+                logging.info("path = " + path)
+            else:
                 data["error"] = "data_file is missing"
-                logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data)) 
+
+            if data.has_key('facility'):
+                facility = str(data['facility']).upper()
+                logging.info("facility: "+facility)
+            else: 
+                data["error"] = "facility is missing"
+
+            if data.has_key('instrument'):
+                instrument = str(data['instrument']).upper()
+                logging.info("instrument: "+instrument)
+            else:
+                data["error"] = "instrument is missing"
+
+            if data.has_key('ipts'):
+                proposal = str(data['ipts']).upper()
+                logging.info("proposal: "+proposal)
+            else:
+                data["error"] = "ipts is missing"
+                
+            if data.has_key('run_number'):
+                run_number = str(data['run_number'])
+                logging.info("run_number: "+run_number)
+            else:
+                data["error"] = "run_number is missing"
+
+            if data.has_key('error'):
+                logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data))
                 self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
                 return
+
         except:
             logging.error("Could not process JSON message")
             logging.error(str(sys.exc_value))
@@ -80,57 +108,47 @@ class PostProcessListener(Listener):
             try:
                 logging.info("Calling /queue/"+self.configuration.reduction_started_queue+message)             
                 self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
-                param = path.split("/")
-                if len(param) > 5:
-                    facility = param[1]
-                    instrument = param[2]
-                    proposal = param[3]
-                    filename = param[5]
-                    run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
-                    logging.info("run_number: "+run_number)
-                    out_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/"
-                    log_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/reduction_log/"
-                    #out_dir = "/tmp/shelly/"
-                    #log_dir = "/tmp/shelly/reduction_log/"
-                    if not os.path.exists(log_dir):
-                      os.makedirs(log_dir)
-                    #reduce_script = "reduce_" + instrument + "_testing"
-                    reduce_script = "reduce_" + instrument
-                    reduce_script_path = "/" + facility + "/" + instrument + "/shared/autoreduce/" + reduce_script  + ".py"
-                    logging.info("reduce_script: "+reduce_script)
-                    logging.info("reduce_script_path: "+reduce_script_path)
-                    logging.info("input file: " + path + "out directory: " + out_dir)
-                    logging.info("Reduction: " + facility + ", " + instrument)
+
+                out_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/"
+                log_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/reduction_log/"
+
+                if not os.path.exists(log_dir):
+                    os.makedirs(log_dir)
+                    
+                reduce_script = "reduce_" + instrument
+                reduce_script_path = "/" + facility + "/" + instrument + "/shared/autoreduce/" + reduce_script  + ".py"
+                logging.info("reduce_script: "+reduce_script)
+                logging.info("reduce_script_path: "+reduce_script_path)
+                logging.info("input file: " + path + "out directory: " + out_dir)
+                logging.info("Reduction: " + facility + ", " + instrument)
                 
-                    cmd = "python " + reduce_script_path + " " + path + " " + out_dir
-                    logging.info("cmd: " + cmd)
-                    out_log = os.path.join(log_dir, instrument + "_" + run_number + ".log")
-                    out_err = os.path.join(out_dir, instrument + "_" + run_number + ".err")
-                    logFile=open(out_log, "w")
-                    errFile=open(out_err, "w")
-                    proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
-                    proc.communicate()
-                    logFile.close()
-                    errFile.close()
-                    if os.stat(out_err).st_size == 0:
-                      os.remove(out_err)
-                      logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
-                      self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
-                    else:
-                      errFile=open(out_err, "r")
-                      errList = errFile.readlines()
-                      try:                     
-                        idx = errList.index("    raise e\n")+1
-                      except ValueError:
-                        idx = 0
-                      data["error"] = "REDUCTION: %s " % join(errList[idx:])
-                      errFile.close()
-                      logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
-                      self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))             
+                cmd = "python " + reduce_script_path + " " + path + " " + out_dir
+                logging.info("cmd: " + cmd)
+                out_log = os.path.join(log_dir, instrument + "_" + run_number + ".log")
+                out_err = os.path.join(out_dir, instrument + "_" + run_number + ".err")
+                logFile=open(out_log, "w")
+                errFile=open(out_err, "w")
+                proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
+                proc.communicate()
+                logFile.close()
+                errFile.close()
+                
+                if os.stat(out_err).st_size == 0:
+                    os.remove(out_err)
+                    logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
+                    self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
                 else:
-                    data["error"] = "REDUCTION Error: failed to parse data_file " + path
-                    logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))     
-                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))  
+                    errFile=open(out_err, "r")
+                    errList = errFile.readlines()
+                    try:                     
+                        idx = errList.index("    raise e\n")+1
+                    except ValueError:
+                        idx = 0
+                    data["error"] = "REDUCTION: %s " % join(errList[idx:])
+                    errFile.close()
+                    logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
+                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))             
+    
             except Exception, e:
                 data["error"] = "REDUCTION: %s " % e 
                 logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
@@ -154,37 +172,20 @@ class PostProcessListener(Listener):
                 self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
 
         elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
-            param = path.split("/")
-            if len(param) > 5:
-                facility = param[1]
-                instrument = param[2]
-                ipts = param[3]
-                filename = param[5]
-                
-                param2 = filename.split(".")
-                if len(param2) > 2:
-                    param3 = param2[0].split("_")
-                    if len(param3) > 1:
-                        run_number = param3[1]
-                        try:
-                            logging.info("Reduction Catalog: " + facility + ", " + instrument + ", " + ipts + ", " + run_number)
-                            logging.info("Calling /queue/"+self.configuration.reduction_catalog_started_queue+message)
-                            self._send_connection.send('/queue/'+self.configuration.reduction_catalog_started_queue, message)
-                            ingestReduced = IngestReduced(facility, instrument, ipts, run_number)
-                            ingestReduced.execute()
-                            ingestReduced.logout()
-                            logging.info("Calling /queue/"+self.configuration.reduction_catalog_complete_queue+message)
-                            self._send_connection.send('/queue/'+self.configuration.reduction_catalog_complete_queue, message)
-                        except Exception, e:
-                            data["error"] = "REDUCTION_CATALOG Error: %s" % e
-                            logging.error("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
-                            self._send_connection.send('/queue/'+self.configuration.reduction_catalog_error_queue, json.dumps(data))
 
-            else:
-                data["error"] = "REDUCTION_CATALOG Error: failed to parse data_file " + path
+            try:
+                logging.info("Reduction Catalog: " + facility + ", " + instrument + ", " + proposal + ", " + run_number)
+                logging.info("Calling /queue/"+self.configuration.reduction_catalog_started_queue+message)
+                self._send_connection.send('/queue/'+self.configuration.reduction_catalog_started_queue, message)
+                ingestReduced = IngestReduced(facility, instrument, proposal, run_number)
+                ingestReduced.execute()
+                ingestReduced.logout()
+                logging.info("Calling /queue/"+self.configuration.reduction_catalog_complete_queue+message)
+                self._send_connection.send('/queue/'+self.configuration.reduction_catalog_complete_queue, message)
+            except Exception, e:
+                data["error"] = "REDUCTION_CATALOG Error: %s" % e
                 logging.error("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
                 self._send_connection.send('/queue/'+self.configuration.reduction_catalog_error_queue, json.dumps(data))
-
         
         logging.info("Done with post processing")
 
