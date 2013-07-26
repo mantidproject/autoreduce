@@ -2,7 +2,7 @@
 """
 ActiveMQ client for Post Process
 """
-import os, sys, json, logging, imp, subprocess
+import os, sys, json, logging, imp, subprocess, socket
 from string import join
 from queueListener import Client, Configuration, Listener
 
@@ -98,6 +98,8 @@ class PostProcessListener(Listener):
                 logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data))
                 self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
                 return
+            
+            data["information"] = socket.gethostname()
 
         except:
             logging.error("Could not process JSON message")

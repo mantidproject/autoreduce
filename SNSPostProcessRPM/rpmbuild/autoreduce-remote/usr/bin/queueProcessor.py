@@ -6,6 +6,12 @@ import os, sys, json, logging, imp, subprocess
 from string import join
 from queueListener import Client, Configuration, Listener
 
+from MantidFramework import mtd
+import mantid.simpleapi as api
+mtd.initialize()
+from mantidsimple import *
+
+
 post_processing_bin = sys.path.append("/usr/bin") 
 
 class StreamToLogger(object):
@@ -22,9 +28,7 @@ class StreamToLogger(object):
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    filename='/tmp/work/3qr/post_process.log',
-    #filename=conf.log_dir+"/post_process.log",
-    #filename='/var/log/SNS_applications/post_process.log',
+    filename="/var/log/SNS_applications/post_process.log",
     filemode='a'
 )
                             
@@ -66,12 +70,11 @@ class PostProcessListener(Listener):
             else: 
                 data["error"] = "data_file is missing"
 
-            facility = "SNS"
-            #            if data.has_key('facility'):
-            #                facility = str(data['facility']).upper()
-            #                logging.info("facility: "+facility)
-            #            else: 
-            #                data["error"] = "facility is missing"
+            if data.has_key('facility'):
+                facility = str(data['facility']).upper()
+                logging.info("facility: "+facility)
+            else: 
+                data["error"] = "facility is missing"
                 
             if data.has_key('instrument'):
                 instrument = str(data['instrument']).upper()
@@ -100,16 +103,25 @@ class PostProcessListener(Listener):
                 os.makedirs(out_dir)
                 
             err_dir = self.configuration.log_dir
-            logging.info("input file: " + path + "out directory: " + out_dir)
-        
-            cmd = "qsub -v data_file='" + path + "',facility='" + facility + "',instrument='" + instrument + "',out_dir='" + out_dir + "' -l nodes=4:ppn=1 " + root_dir + "/qsub_job.sh"
+            logging.info("input file: " + path + ", out directory: " + out_dir)
+            
+            #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
+            #We would like to get MaxChunkSize from an env variable in the future
+            
+            Chunks = api.DetermineChunking(Filename=path,MaxChunkSize=32.0)
+            nodesDesired = Chunks.rowCount()
+            logging.info("nodesDesired: " + str(nodesDesired))
+            if nodesDesired > 32:
+                nodesDesired = 32
+                
+            cmd = "qsub -v data_file='" + path + "',facility='" + facility + "',instrument='" + instrument + "',out_dir='" + out_dir + "' -l nodes=" + str(nodesDesired) + ":ppn=1 " + root_dir + "/startMPIRun.sh"
             logging.info("cmd: " + cmd)
             out_log = os.path.join(out_dir, instrument + "_" + run_number + ".log")
             out_err = os.path.join(err_dir, instrument + "_" + run_number + ".err")
             logFile=open(out_log, "w")
             errFile=open(out_err, "w")
             proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
-            proc.communicate()-l nodes=4:ppn=1 
+            proc.communicate()
             logFile.close()
             errFile.close()
             logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
@@ -127,10 +139,7 @@ def run():
     Run an instance of the Post Process ActiveMQ consumer
     """
     # Look for configuration
-    #conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
-    conf = Configuration('/SNS/users/3qr/testParaReduction/post_process_consumer.conf')
-                                            
-
+    conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
     
     c = Client(conf.brokers, conf.amq_user, conf.amq_pwd,
                conf.root_dir, conf.log_dir, conf.queues,  "post_process_consumer")

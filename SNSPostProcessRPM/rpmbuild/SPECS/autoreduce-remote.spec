@@ -1,7 +1,7 @@
 Summary: autoreduce-remote
 Name: autoreduce-remote
 Version: 0.0 
-Release: 2 
+Release: 3 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -25,9 +25,11 @@ install -m 755 -d 	 ../autoreduce-remote/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
 install -m 755	 ../autoreduce-remote/usr/bin/queueListener.py	 %{buildroot}%{_bindir}/queueListener.py
 install -m 755	 ../autoreduce-remote/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
-install -m 755	 ../autoreduce-remote/usr/bin/qsub_job.sh %{buildroot}%{_bindir}/qsub_job.sh
+install -m 755	 ../autoreduce-remote/usr/bin/startMPIRun.sh %{buildroot}%{_bindir}/startMPIRun.sh
+install -m 755	 ../autoreduce-remote/usr/bin/startQueueProcessor.sh %{buildroot}%{_bindir}/startQueueProcessor.sh
 
 %files
 %attr(755, -, -) %{_bindir}/queueListener.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
-%attr(755, -, -) %{_bindir}/qsub_job.sh
+%attr(755, -, -) %{_bindir}/startMPIRun.sh
+%attr(755, -, -) %{_bindir}/startQueueProcessor.sh
