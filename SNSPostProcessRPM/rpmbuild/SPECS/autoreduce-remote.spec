@@ -25,11 +25,13 @@ install -m 755 -d 	 ../autoreduce-remote/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
 install -m 755	 ../autoreduce-remote/usr/bin/queueListener.py	 %{buildroot}%{_bindir}/queueListener.py
 install -m 755	 ../autoreduce-remote/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
-install -m 755	 ../autoreduce-remote/usr/bin/startMPIRun.sh %{buildroot}%{_bindir}/startMPIRun.sh
-install -m 755	 ../autoreduce-remote/usr/bin/startQueueProcessor.sh %{buildroot}%{_bindir}/startQueueProcessor.sh
+install -m 755	 ../autoreduce-remote/usr/bin/doJob.py	 %{buildroot}%{_bindir}/doJob.py
+install -m 755	 ../autoreduce-remote/usr/bin/startJob.sh %{buildroot}%{_bindir}/startJob.sh
+install -m 755	 ../autoreduce-remote/usr/bin/remoteJob.sh %{buildroot}%{_bindir}/remoteJob.sh
 
 %files
 %attr(755, -, -) %{_bindir}/queueListener.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
-%attr(755, -, -) %{_bindir}/startMPIRun.sh
-%attr(755, -, -) %{_bindir}/startQueueProcessor.sh
+%attr(755, -, -) %{_bindir}/doJob.py
+%attr(755, -, -) %{_bindir}/startJob.sh
+%attr(755, -, -) %{_bindir}/remoteJob.sh

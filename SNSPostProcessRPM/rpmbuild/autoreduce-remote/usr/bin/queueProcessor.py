@@ -6,13 +6,8 @@ import os, sys, json, logging, imp, subprocess
 from string import join
 from queueListener import Client, Configuration, Listener
 
-from MantidFramework import mtd
-import mantid.simpleapi as api
-mtd.initialize()
-from mantidsimple import *
 
-
-post_processing_bin = sys.path.append("/usr/bin") 
+post_processing_bin = sys.path.append("/sw/fermi/autoreduction") 
 
 class StreamToLogger(object):
     #Fake file-like stream object that redirects writes to a logger instance.
@@ -58,15 +53,16 @@ class PostProcessListener(Listener):
             self._send_connection = self.configuration.get_client('post_process_listener') 
             
         # Decode the incoming message
-        try:
-            destination = headers["destination"]
-            logging.info("destination=" + destination)
+        logging.info("destination=" + headers['destination'])
+        #if headers['destination']=='/queue/'+self.configuration.ready_queue:
+        if headers['destination']=='/queue/FERMI_REDUCTION.DATA_READY':
+            logging.info("destination=" + headers['destination'])
             logging.info("message=" + message)
             data = json.loads(message)
-            
+
             if data.has_key('data_file'):
-                path = str(data['data_file'])
-                logging.info("path = " + path)
+                data_file = str(data['data_file'])
+                logging.info("data_file = " + data_file)
             else: 
                 data["error"] = "data_file is missing"
 
@@ -75,13 +71,19 @@ class PostProcessListener(Listener):
                 logging.info("facility: "+facility)
             else: 
                 data["error"] = "facility is missing"
-                
+                        
             if data.has_key('instrument'):
                 instrument = str(data['instrument']).upper()
                 logging.info("instrument: "+instrument)
             else: 
                 data["error"] = "instrument is missing"
                 
+            if data.has_key('ipts'):
+                proposal = str(data['ipts']).upper()
+                logging.info("proposal: "+proposal)
+            else: 
+                data["error"] = "instrument is missing"
+                        
             if data.has_key('run_number'):
                 run_number = str(data['run_number'])
                 logging.info("run_number: "+run_number)
@@ -89,51 +91,15 @@ class PostProcessListener(Listener):
                 data["error"] = "run_number is missing"      
 
             if data.has_key('error'):
-                logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data)) 
-                self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
+                logging.info("Calling /queue/"+self.configuration.reduction_error_queue+json.dumps(data)) 
+                c.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
                 return
-                
-            logging.info("Calling /queue/"+self.configuration.reduction_started_queue+message)             
-            self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
-            
-            root_dir = self.configuration.root_dir
-            
-            out_dir = self.configuration.log_dir + "/reduction_log/"
-            if not os.path.exists(out_dir):
-                os.makedirs(out_dir)
-                
-            err_dir = self.configuration.log_dir
-            logging.info("input file: " + path + ", out directory: " + out_dir)
-            
-            #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
-            #We would like to get MaxChunkSize from an env variable in the future
-            
-            Chunks = api.DetermineChunking(Filename=path,MaxChunkSize=32.0)
-            nodesDesired = Chunks.rowCount()
-            logging.info("nodesDesired: " + str(nodesDesired))
-            if nodesDesired > 32:
-                nodesDesired = 32
-                
-            cmd = "qsub -v data_file='" + path + "',facility='" + facility + "',instrument='" + instrument + "',out_dir='" + out_dir + "' -l nodes=" + str(nodesDesired) + ":ppn=1 " + root_dir + "/startMPIRun.sh"
+                        
+            cmd = "/sw/fermi/autoreduction/scripts/startJob.sh " + facility + " " + instrument + " " + proposal + " " + run_number + " " + data_file + " "
             logging.info("cmd: " + cmd)
-            out_log = os.path.join(out_dir, instrument + "_" + run_number + ".log")
-            out_err = os.path.join(err_dir, instrument + "_" + run_number + ".err")
-            logFile=open(out_log, "w")
-            errFile=open(out_err, "w")
-            proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
-            proc.communicate()
-            logFile.close()
-            errFile.close()
-            logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
-            self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
-        except Exception, e:
-            data["error"] = "REDUCTION: %s " % e 
-            logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
-            self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
+            subprocess.call(cmd, shell=True)
+
             
-        logging.info("Done with reduction on fermi")
-
-
 def run():
     """
     Run an instance of the Post Process ActiveMQ consumer
@@ -142,7 +108,7 @@ def run():
     conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
     
     c = Client(conf.brokers, conf.amq_user, conf.amq_pwd,
-               conf.root_dir, conf.log_dir, conf.queues,  "post_process_consumer")
+               conf.queues,  "post_process_consumer")
     c.set_listener(PostProcessListener(conf))
     c.listen_and_wait(0.1)
 

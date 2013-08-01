@@ -171,24 +171,11 @@ class IngestNexus():
     
         datafiles = []
     
-        filepath = os.path.dirname(self._infilename)
-        filename = os.path.basename(self._infilename)
-        datafile = self._factory.create("datafile")
-        extension = os.path.splitext(filename)[1][1:]
-        datafile.name = filename
-        datafile.location = self._infilename 
-        dfFormat = self._factory.create("datafileFormat")
-        dfFormat.id = config.get('DatafileFormat', extension)
-        datafile.datafileFormat = dfFormat
-        modTime = os.path.getmtime(filepath)
-        datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
-        datafile.fileSize = os.path.getsize(filepath)
-        datafiles.append(datafile)
-        
-        runPath = posixpath.abspath(posixpath.join(self._infilename, '../../adara'))
-        logging.info("ADARA directory: %s" % runPath) 
+        runPath = posixpath.abspath(posixpath.join(self._infilename, '../..'))
+        logging.info("run directory: %s" % runPath) 
         for dirpath, dirnames, filenames in os.walk(runPath):
             for filename in [f for f in filenames]:
+                #if dataset.name in filename and os.path.islink(filename) != False:
                 if dataset.name in filename:
                     datafile = self._factory.create("datafile")
                     filepath = os.path.join(dirpath,filename)

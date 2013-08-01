@@ -11,7 +11,7 @@ def send(destination, message, persistent='true'):
     @param message: message content
     """
 
-    config_file = '/SNS/users/3qr/testParaReduction/post_process_consumer.conf'
+    config_file = '/etc/autoreduce/post_process_consumer.conf'
     if config_file is not None and os.path.exists(config_file):
         cfg = open(config_file, 'r')
         json_encoded = cfg.read()

@@ -119,11 +119,34 @@ class Client(object):
         This method will simply return once the connection is terminated.
         @param waiting_period: sleep time between connection to a broker
         """
-        self.connect()
-        while(self._connected):
-            if threading.active_count()==1:
-                self._connection.stop()
-            time.sleep(waiting_period)
+        try:
+            self.connect()
+        except:
+            logging.error("Problem starting AMQ client: %s" % sys.exc_value)
+
+        last_heartbeat = 0
+        while(True):
+            try:
+                if self._connection is None or self._connection.is_connected() is False:
+                    self.connect()
+                    
+                time.sleep(waiting_period)
+                
+                try:
+                    if time.time()-last_heartbeat>5:
+                        last_heartbeat = time.time()
+                        data_dict = {"src_name": "autoreduce",
+                                     "status": "0"}
+                        message = json.dumps(data_dict)
+                        self._connection.send(destination="/topic/SNS.COMMON.STATUS.AUTOREDUCE.0",
+                                              message=message,
+                                              persistent='true')
+                except:
+                    logging.error("Problem sending heartbeat")
+                
+            except:
+                logging.error("Problem connecting to AMQ broker")
+                time.sleep(5.0)
             
     def send(self, destination, message, persistent='true'):
         """

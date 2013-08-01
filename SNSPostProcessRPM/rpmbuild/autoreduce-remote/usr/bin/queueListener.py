@@ -35,7 +35,7 @@ class Client(object):
     Holds the connection to a broker
     """
     
-    def __init__(self, brokers, user, passcode, root_dir, log_dir,
+    def __init__(self, brokers, user, passcode, 
                  queues=None, consumer_name="amq_consumer"):
         """
         @param brokers: list of brokers we can connect to
@@ -47,8 +47,6 @@ class Client(object):
         self._brokers = brokers
         self._user = user
         self._passcode = passcode
-        self._root_dir = root_dir
-        self._log_dir = log_dir
         self._connection = None
         self._connected = False
         self._queues = queues
@@ -149,7 +147,6 @@ class Configuration(object):
     brokers = [('localhost', 61613)]
     queues = ['foo.bar']
 
-
     def __init__(self, config_file=None):
         # Look for configuration
         if config_file is not None and os.path.exists(config_file):
@@ -167,20 +164,17 @@ class Configuration(object):
                     if config.has_key('amq_pwd'):
                         self.amq_pwd = config['amq_pwd']
                                                 
-                    if config.has_key('root_dir'):
-                        self.root_dir = config['root_dir']
-                        
-                    if config.has_key('log_dir'):
-                        self.log_dir = config['log_dir']
-                                      
                     if config.has_key('brokers'):
                         brokers = config['brokers']
                         self.brokers = []
                         for b in brokers:
                             self.brokers.append( (b[0], b[1]) )
-                    
+                            
                     if config.has_key('amq_queues'):
                         self.queues = config['amq_queues']
+                    
+                    if config.has_key('ready_queue'):
+                        self.ready_queue = config['ready_queue']
                         
                     if config.has_key('reduction_started_queue'):
                         self.reduction_started_queue = config['reduction_started_queue']
@@ -202,4 +196,4 @@ class Configuration(object):
         @param client_name: name of the client
         @param queues: list of queues to be added to default list of queues
         """
-        return Client(self.brokers, self.amq_user, self.amq_pwd, self.root_dir, self.log_dir, queues, client_name)
+        return Client(self.brokers, self.amq_user, self.amq_pwd, queues, client_name)

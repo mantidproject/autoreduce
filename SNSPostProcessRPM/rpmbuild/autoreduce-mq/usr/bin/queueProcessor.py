@@ -126,8 +126,8 @@ class PostProcessListener(Listener):
                 
                 cmd = "python " + reduce_script_path + " " + path + " " + out_dir
                 logging.info("cmd: " + cmd)
-                out_log = os.path.join(log_dir, instrument + "_" + run_number + ".log")
-                out_err = os.path.join(out_dir, instrument + "_" + run_number + ".err")
+                out_log = os.path.join(log_dir, os.path.basename(path) + ".log")
+                out_err = os.path.join(out_dir, os.path.basename(path) + ".err")
                 logFile=open(out_log, "w")
                 errFile=open(out_err, "w")
                 proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
