@@ -159,7 +159,6 @@ class Client(object):
             self._connection = self.get_connection()
         self._connection.send(destination=destination, message=message, persistent=persistent)
 
-
 class Configuration(object):
     """
         Read and process configuration file and provide an easy way to create a configured Client object
@@ -174,7 +173,7 @@ class Configuration(object):
     def __init__(self, config_file=None):
         # Look for configuration
         if config_file is not None and os.path.exists(config_file):
-            logging.info("Found configuration: %s" % config_file)
+            logging.info("found configuration file at: %s" % config_file)
             cfg = open(config_file, 'r')
             json_encoded = cfg.read()
             try:
@@ -197,32 +196,35 @@ class Configuration(object):
                     if config.has_key('amq_queues'):
                         self.queues = config['amq_queues']
                         
-                    if config.has_key('catalog_started_queue'):
-                        self.catalog_started_queue = config['catalog_started_queue']
+                    if config.has_key('postprocess_error'):
+                        self.postprocess_error = config['postprocess_error']
                         
-                    if config.has_key('catalog_complete_queue'):
-                        self.catalog_complete_queue = config['catalog_complete_queue']
+                    if config.has_key('catalog_started'):
+                        self.catalog_started = config['catalog_started']
                         
-                    if config.has_key('catalog_error_queue'):
-                        self.catalog_error_queue = config['catalog_error_queue']
+                    if config.has_key('catalog_complete'):
+                        self.catalog_complete = config['catalog_complete']
                         
-                    if config.has_key('reduction_started_queue'):
-                        self.reduction_started_queue = config['reduction_started_queue']
-                                            
-                    if config.has_key('reduction_complete_queue'):
-                        self.reduction_complete_queue = config['reduction_complete_queue']
-                                            
-                    if config.has_key('reduction_error_queue'):
-                        self.reduction_error_queue = config['reduction_error_queue']
+                    if config.has_key('catalog_error'):
+                        self.catalog_error = config['catalog_error']
                         
-                    if config.has_key('reduction_catalog_started_queue'):
-                        self.reduction_catalog_started_queue = config['reduction_catalog_started_queue']
+                    if config.has_key('reduction_started'):
+                        self.reduction_started = config['reduction_started']
                                             
-                    if config.has_key('reduction_catalog_complete_queue'):
-                        self.reduction_catalog_complete_queue = config['reduction_catalog_complete_queue']
+                    if config.has_key('reduction_complete'):
+                        self.reduction_complete = config['reduction_complete']
                                             
-                    if config.has_key('reduction_catalog_error_queue'):
-                        self.reduction_catalog_error_queue = config['reduction_catalog_error_queue']
+                    if config.has_key('reduction_error'):
+                        self.reduction_error = config['reduction_error']
+                        
+                    if config.has_key('reduction_catalog_started'):
+                        self.reduction_catalog_started = config['reduction_catalog_started']
+                                            
+                    if config.has_key('reduction_catalog_complete'):
+                        self.reduction_catalog_complete = config['reduction_catalog_complete']
+                                            
+                    if config.has_key('reduction_catalog_error'):
+                        self.reduction_catalog_error = config['reduction_catalog_error']
                         
                     if config.has_key('log_file'):
                         self.log_file = config['log_file']

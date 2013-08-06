@@ -4,7 +4,10 @@ ActiveMQ client for Post Process
 """
 import os, sys, json, logging, imp, subprocess, socket
 from string import join
-from queueListener import Client, Configuration, Listener
+import json, sys
+from PostProcess import PostProcess 
+from queueListener import Listener, Client,Configuration
+
 
 post_processing_bin = sys.path.append("/usr/bin") 
 os.environ['NEXUSLIB'] = "/usr/lib64/libNeXus.so"
@@ -56,140 +59,35 @@ class PostProcessListener(Listener):
         
         if self._send_connection is None:
             self._send_connection = self.configuration.get_client('post_process_listener') 
-            
-        # Decode the incoming message
+        
         try:
-            destination = headers["destination"]
-            logging.info("destination=" + destination)
-            logging.info("message=" + message)
+            logging.info("message: " + message)
             data = json.loads(message)
-            
-            if data.has_key('data_file'):
-                path = str(data['data_file'])
-                logging.info("path = " + path)
-            else:
-                data["error"] = "data_file is missing"
+            logging.info("data: " + str(data))
+        except ValueError:   
+            logging.error("Could not load JSON data: " + message)
+            self._send_connection.send("/queue/POSTPROCESS.ERROR", "Could not load JSON data" + message)
+            logging.info("Called /queue/POSTPROCESS.ERROR -- " + "Could not load JSON data: " + message)
+            return
+        
+        try:
+            pp = PostProcess(data, self.configuration)
+        except ValueError as e:
+            data["error"] = str(e)
+            logging.error("JSON data is incomplete: " + json.dumps(data) )
+            self._send_connection.send("/queue/POSTPROCESS.ERROR", json.dumps(data))
+            logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
+            return
 
-            if data.has_key('facility'):
-                facility = str(data['facility']).upper()
-                logging.info("facility: "+facility)
-            else: 
-                data["error"] = "facility is missing"
-
-            if data.has_key('instrument'):
-                instrument = str(data['instrument']).upper()
-                logging.info("instrument: "+instrument)
-            else:
-                data["error"] = "instrument is missing"
-
-            if data.has_key('ipts'):
-                proposal = str(data['ipts']).upper()
-                logging.info("proposal: "+proposal)
-            else:
-                data["error"] = "ipts is missing"
-                
-            if data.has_key('run_number'):
-                run_number = str(data['run_number'])
-                logging.info("run_number: "+run_number)
-            else:
-                data["error"] = "run_number is missing"
-
-            if data.has_key('error'):
-                logging.info("Calling /queue/"+self.configuration.catalog_error_queue+json.dumps(data))
-                self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
-                return
-            
-            data["information"] = socket.gethostname()
-
-        except:
-            logging.error("Could not process JSON message")
-            logging.error(str(sys.exc_value))
-
- 
+        destination = headers["destination"]
         if destination == '/queue/REDUCTION.DATA_READY':
-            try:
-                logging.info("Calling /queue/"+self.configuration.reduction_started_queue+message)             
-                self._send_connection.send('/queue/'+self.configuration.reduction_started_queue, message)
-
-                out_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/"
-                log_dir = "/"+facility+"/"+instrument+"/"+proposal+"/shared/autoreduce/reduction_log/"
-
-                if not os.path.exists(log_dir):
-                    os.makedirs(log_dir)
-                    
-                reduce_script = "reduce_" + instrument
-                reduce_script_path = "/" + facility + "/" + instrument + "/shared/autoreduce/" + reduce_script  + ".py"
-                logging.info("reduce_script: "+reduce_script)
-                logging.info("reduce_script_path: "+reduce_script_path)
-                logging.info("input file: " + path + "out directory: " + out_dir)
-                logging.info("Reduction: " + facility + ", " + instrument)
-                
-                cmd = "python " + reduce_script_path + " " + path + " " + out_dir
-                logging.info("cmd: " + cmd)
-                out_log = os.path.join(log_dir, os.path.basename(path) + ".log")
-                out_err = os.path.join(out_dir, os.path.basename(path) + ".err")
-                logFile=open(out_log, "w")
-                errFile=open(out_err, "w")
-                proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
-                proc.communicate()
-                logFile.close()
-                errFile.close()
-                
-                if os.stat(out_err).st_size == 0:
-                    os.remove(out_err)
-                    logging.info("Calling /queue/"+self.configuration.reduction_complete_queue+message)             
-                    self._send_connection.send('/queue/'+self.configuration.reduction_complete_queue, message)
-                else:
-                    errFile=open(out_err, "r")
-                    errList = errFile.readlines()
-                    try:                     
-                        idx = errList.index("    raise e\n")+1
-                    except ValueError:
-                        idx = 0
-                    data["error"] = "REDUCTION: %s " % join(errList[idx:])
-                    errFile.close()
-                    logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
-                    self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))             
-    
-            except Exception, e:
-                data["error"] = "REDUCTION: %s " % e 
-                logging.error("Calling /queue/"+self.configuration.reduction_error_queue + json.dumps(data))
-                self._send_connection.send('/queue/'+self.configuration.reduction_error_queue, json.dumps(data))
-            
-
+            pp.reduce()
 
         elif destination == '/queue/CATALOG.DATA_READY':
-            try:
-                logging.info("path=" + path)
-                logging.info("Calling /queue/"+self.configuration.catalog_started_queue+message)  
-                self._send_connection.send('/queue/'+self.configuration.catalog_started_queue, message)
-                ingestNexus = IngestNexus(path)
-                ingestNexus.execute()
-                ingestNexus.logout()
-                logging.info("Calling /queue/"+self.configuration.catalog_complete_queue+message)
-                self._send_connection.send('/queue/'+self.configuration.catalog_complete_queue, message)
-            except Exception, e:
-                data["error"] = "CATALOG Error: %s" % e
-                logging.error("Calling /queue/"+self.configuration.catalog_error_queue + json.dumps(data))     
-                self._send_connection.send('/queue/'+self.configuration.catalog_error_queue, json.dumps(data))
+            pp.catalogRaw()
 
         elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
-
-            try:
-                logging.info("Reduction Catalog: " + facility + ", " + instrument + ", " + proposal + ", " + run_number)
-                logging.info("Calling /queue/"+self.configuration.reduction_catalog_started_queue+message)
-                self._send_connection.send('/queue/'+self.configuration.reduction_catalog_started_queue, message)
-                ingestReduced = IngestReduced(facility, instrument, proposal, run_number)
-                ingestReduced.execute()
-                ingestReduced.logout()
-                logging.info("Calling /queue/"+self.configuration.reduction_catalog_complete_queue+message)
-                self._send_connection.send('/queue/'+self.configuration.reduction_catalog_complete_queue, message)
-            except Exception, e:
-                data["error"] = "REDUCTION_CATALOG Error: %s" % e
-                logging.error("Calling /queue/"+self.configuration.reduction_catalog_error_queue + json.dumps(data))     
-                self._send_connection.send('/queue/'+self.configuration.reduction_catalog_error_queue, json.dumps(data))
-        
-        logging.info("Done with post processing")
+            pp.catalogReduced()
 
 
 def run():
@@ -198,12 +96,8 @@ def run():
     """
     # Look for configuration
     conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
-
-    queues = conf.queues
-    #queues.append(conf.catalog_data_ready_queue)
-    
     c = Client(conf.brokers, conf.amq_user, conf.amq_pwd,
-               queues, "post_process_consumer")
+               conf.queues, "post_process_consumer")
     c.set_listener(PostProcessListener(conf))
     c.listen_and_wait(0.1)
 
