@@ -107,7 +107,7 @@ class PostProcess:
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            proposal_shared_dir =  = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
             #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
