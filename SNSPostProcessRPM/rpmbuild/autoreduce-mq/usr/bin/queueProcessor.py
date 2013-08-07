@@ -5,12 +5,9 @@ ActiveMQ client for Post Process
 import os, sys, json, logging, imp, subprocess, socket
 from string import join
 import json, sys
+
 from PostProcess import PostProcess 
 from queueListener import Listener, Client,Configuration
-
-
-post_processing_bin = sys.path.append("/usr/bin") 
-os.environ['NEXUSLIB'] = "/usr/lib64/libNeXus.so"
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
@@ -29,7 +26,7 @@ class StreamToLogger(object):
                                         
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
     filename='/var/log/SNS_applications/post_process.log',
     filemode='a'
 )
@@ -59,37 +56,11 @@ class PostProcessListener(Listener):
         
         if self._send_connection is None:
             self._send_connection = self.configuration.get_client('post_process_listener') 
-        
-        try:
-            logging.info("message: " + message)
-            data = json.loads(message)
-            logging.info("data: " + str(data))
-        except ValueError:   
-            logging.error("Could not load JSON data: " + message)
-            self._send_connection.send("/queue/POSTPROCESS.ERROR", "Could not load JSON data" + message)
-            logging.info("Called /queue/POSTPROCESS.ERROR -- " + "Could not load JSON data: " + message)
-            return
-        
-        try:
-            pp = PostProcess(data, self.configuration)
-        except ValueError as e:
-            data["error"] = str(e)
-            logging.error("JSON data is incomplete: " + json.dumps(data) )
-            self._send_connection.send("/queue/POSTPROCESS.ERROR", json.dumps(data))
-            logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
-            return
 
         destination = headers["destination"]
-        if destination == '/queue/REDUCTION.DATA_READY':
-            pp.reduce()
-
-        elif destination == '/queue/CATALOG.DATA_READY':
-            pp.catalogRaw()
-
-        elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
-            pp.catalogReduced()
-
-
+        subprocess.Popen(["python", "/usr/bin/PostProcess.py", destination, message])
+        
+        
 def run():
     """
     Run an instance of the Post Process ActiveMQ consumer

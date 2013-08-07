@@ -1,7 +1,7 @@
 """
 Base ActiveMQ consumer class
 """
-import time, stomp, logging, json, os, sys, threading
+import time, stomp, logging, json, os, sys, threading, socket
 
 class Listener(stomp.ConnectionListener):
     """
@@ -9,7 +9,6 @@ class Listener(stomp.ConnectionListener):
     A fully implemented class should overload the on_message() method to process incoming messages.
     """
 
- 
     def __init__(self, configuration=None, connection=None,
                  results_ready_queue=None):
         """
@@ -135,7 +134,7 @@ class Client(object):
                 try:
                     if time.time()-last_heartbeat>5:
                         last_heartbeat = time.time()
-                        data_dict = {"src_name": "autoreduce",
+                        data_dict = {"src_name": socket.gethostname(),
                                      "status": "0"}
                         message = json.dumps(data_dict)
                         self._connection.send(destination="/topic/SNS.COMMON.STATUS.AUTOREDUCE.0",

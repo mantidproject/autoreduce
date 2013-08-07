@@ -1,10 +1,10 @@
-import json, logging, socket, os, subprocess
+import json, socket, os, subprocess, logging, sys
 from string import join
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
-from queueListener import Client
-
+from queueListener import Client, Configuration
+ 
 class StreamToLogger(object):
     #Fake file-like stream object that redirects writes to a logger instance.
     def __init__(self, logger, log_level=logging.INFO):
@@ -15,21 +15,31 @@ class StreamToLogger(object):
     def write(self, buf):
         for line in buf.rstrip().splitlines():
             self.logger.log(self.log_level, line.rstrip())
-                                        
+        
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+    format="%(asctime)s %(levelname)s %(name)s %(process)d/%(threadName)s: %(message)s",
     filename='/var/log/SNS_applications/post_process.log',
     filemode='a'
 )
-  
+                     
+stdout_logger = logging.getLogger('STDOUT')
+sl = StreamToLogger(stdout_logger, logging.INFO)
+sys.stdout = sl
+ 
+stderr_logger = logging.getLogger('STDERR')
+sl = StreamToLogger(stderr_logger, logging.ERROR)
+sys.stderr = sl
 
+
+                
 class PostProcess:
     def __init__(self, data, conf):
 
+        os.environ['NEXUSLIB'] = "/usr/lib64/libNeXus.so"
+        logging.info("json data: " + str(data))
+        data["information"] = socket.gethostname()
         self.data = data
-        self.data["information"] = socket.gethostname()
-        logging.info("json data: " + str(self.data))
         self.conf = conf
 
         try:
@@ -115,7 +125,7 @@ class PostProcess:
                 os.makedirs(log_dir)
             
             cmd = "python " + reduce_script_path + " " + self.data_file + " " + proposal_shared_dir
-            logging.info("reduction started: " + cmd)
+            logging.info("reduction subprocess started: " + cmd)
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
             out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
             logFile=open(out_log, "w")
@@ -124,7 +134,7 @@ class PostProcess:
             proc.communicate()
             logFile.close()
             errFile.close()
-            logging.info("reduction completed")
+            logging.info("reduction subprocess completed")
             
             if os.stat(out_err).st_size == 0:
                 os.remove(out_err)
@@ -155,3 +165,33 @@ class PostProcess:
     
     def getData(self):
         return self.data
+    
+    
+if __name__ == "__main__":
+    try:
+        destination, message = sys.argv[1:3]
+        logging.info("destination: " + destination)
+        logging.info("message: " + message)
+        data = json.loads(message)
+        logging.info("data: " + str(data))
+    except ValueError as e:
+        data["error"] = str(e)
+        logging.error("JSON data is incomplete: " + json.dumps(data) )
+        self._send_connection.send("/queue/POSTPROCESS.ERROR", json.dumps(data))
+        logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
+
+    conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
+        
+    pp = PostProcess(data, conf)
+    if destination == '/queue/REDUCTION.DATA_READY':
+        pp.reduce()
+
+    elif destination == '/queue/CATALOG.DATA_READY':
+        pp.catalogRaw()
+
+    elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
+        pp.catalogReduced()
+
+
+
+
