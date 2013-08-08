@@ -1,5 +1,4 @@
 import json, socket, os, subprocess, logging, sys
-from string import join
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
@@ -111,14 +110,13 @@ class PostProcess:
         try:         
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
-
-            instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            #instrument_shared_dir = "/tmp/shelly2/"
+            #instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
+            instrument_shared_dir = "/tmp/shelly2/"
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/shelly2/"
+            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
@@ -141,19 +139,18 @@ class PostProcess:
                 self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))  
                 logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))     
             else:
-                errFile=open(out_err, "r")
-                errList = errFile.readlines()
-                try:                     
-                    idx = errList.index("    raise e\n")+1
-                except ValueError:
-                    idx = 0
-                self.data["error"] = "REDUCTION: %s " % join(errList[idx:])
+                maxLineLength=80
+                fp=file(out_err, "r")
+                fp.seek(-maxLineLength-1, 2) # 2 means "from the end of the file"
+                lastLine = fp.readlines()[-1]
+                errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
+                self.data["error"] = "REDUCTION: %s" % errMsg
                 errFile.close()
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))       
 
         except Exception, e:
-            self.data["error"] = "REDUCTION Error: %s " % e 
+            self.data["error"] = "REDUCTION Error: %s " % e
             logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
             self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
             
@@ -191,6 +188,8 @@ if __name__ == "__main__":
 
     elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
         pp.catalogReduced()
+        
+    sys.exit()
 
 
 

@@ -2,42 +2,10 @@
 """
 ActiveMQ client for Post Process
 """
-import os, sys, json, logging, imp, subprocess, socket
-from string import join
-import json, sys
+import os, sys, subprocess, psutil, time
 
 from PostProcess import PostProcess 
 from queueListener import Listener, Client,Configuration
-
-from ingestNexus_mq import IngestNexus
-from ingestReduced_mq import IngestReduced
-
-
-class StreamToLogger(object):
-    #Fake file-like stream object that redirects writes to a logger instance.
-    def __init__(self, logger, log_level=logging.INFO):
-        self.logger = logger
-        self.log_level = log_level
-        self.linebuf = ''
- 
-    def write(self, buf):
-        for line in buf.rstrip().splitlines():
-            self.logger.log(self.log_level, line.rstrip())
-                                        
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    filename='/var/log/SNS_applications/post_process.log',
-    filemode='a'
-)
-                            
-stdout_logger = logging.getLogger('STDOUT')
-sl = StreamToLogger(stdout_logger, logging.INFO)
-sys.stdout = sl
- 
-stderr_logger = logging.getLogger('STDERR')
-sl = StreamToLogger(stderr_logger, logging.ERROR)
-sys.stderr = sl
 
 
 class PostProcessListener(Listener):
@@ -58,7 +26,12 @@ class PostProcessListener(Listener):
             self._send_connection = self.configuration.get_client('post_process_listener') 
 
         destination = headers["destination"]
-        subprocess.Popen(["python", "/usr/bin/PostProcess.py", destination, message])
+        proc = subprocess.Popen(["python", "/usr/bin/PostProcess.py", destination, message])
+        
+        #while proc.poll() is None:
+        #    print "Still working"
+        #    time.sleep(1.0)
+
         
         
 def run():
