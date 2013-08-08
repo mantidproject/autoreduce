@@ -110,13 +110,13 @@ class PostProcess:
         try:         
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
-            #instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            instrument_shared_dir = "/tmp/shelly2/"
+            instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
+            #instrument_shared_dir = "/tmp/shelly2/"
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            proposal_shared_dir = "/tmp/shelly2/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
