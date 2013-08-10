@@ -12,7 +12,6 @@ Requires: mantid
 Requires: mantidunstable 
 Requires: mantidnightly
 Requires: python-suds 
-Requires: python-psutil
 Requires: python-stomp.py
 %define debug_package %{nil}
 
