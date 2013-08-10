@@ -1,7 +1,7 @@
 Summary: autoreduce-mq
 Name: autoreduce-mq
 Version: 1.2
-Release: 9 
+Release: 11 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -12,8 +12,8 @@ Requires: mantid
 Requires: mantidunstable 
 Requires: mantidnightly
 Requires: python-suds 
-Requires: psutil
-Requires: stomp 
+Requires: python-psutil
+Requires: python-stomp.py
 %define debug_package %{nil}
 
 
@@ -33,9 +33,12 @@ install -m 755 -d 	 ../autoreduce-mq/usr	 %{buildroot}/usr
 mkdir -p %{buildroot}%{_bindir}
 install -m 755	 ../autoreduce-mq/usr/bin/ingestNexus_mq.py	 %{buildroot}%{_bindir}/ingestNexus_mq.py
 install -m 755	 ../autoreduce-mq/usr/bin/ingestReduced_mq.py	 %{buildroot}%{_bindir}/ingestReduced_mq.py
-install -m 755	 ../autoreduce-mq/usr/bin/queueListener.py	 %{buildroot}%{_bindir}/queueListener.py
 install -m 755	 ../autoreduce-mq/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
-install -m 755	 ../autoreduce-mq/usr/bin/PostProcess.py	 %{buildroot}%{_bindir}/PostProcess.py
+install -m 755	 ../autoreduce-mq/usr/bin/Configuration.py	 %{buildroot}%{_bindir}/Configuration.py
+install -m 755	 ../autoreduce-mq/usr/bin/Listener.py	 %{buildroot}%{_bindir}/Listener.py
+install -m 755	 ../autoreduce-mq/usr/bin/PostProcessQueueConnector.py	 %{buildroot}%{_bindir}/PostProcessQueueConnector.py
+install -m 755	 ../autoreduce-mq/usr/bin/PostProcessQueueHandler.py	 %{buildroot}%{_bindir}/PostProcessQueueHandler.py
+install -m 755	 ../autoreduce-mq/usr/bin/PostProcessAdmin.py	 %{buildroot}%{_bindir}/PostProcessAdmin.py
 
 %post
 chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
@@ -44,6 +47,9 @@ chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 %config %{_sysconfdir}/autoreduce/icat4.cfg
 %attr(755, -, -) %{_bindir}/ingestNexus_mq.py
 %attr(755, -, -) %{_bindir}/ingestReduced_mq.py
-%attr(755, -, -) %{_bindir}/queueListener.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
-%attr(755, -, -) %{_bindir}/PostProcess.py
+%attr(755, -, -) %{_bindir}/Configuration.py
+%attr(755, -, -) %{_bindir}/Listener.py
+%attr(755, -, -) %{_bindir}/PostProcessAdmin.py
+%attr(755, -, -) %{_bindir}/PostProcessQueueConnector.py
+%attr(755, -, -) %{_bindir}/PostProcessQueueHandler.py

@@ -29,9 +29,6 @@ def send(destination, message, persistent='true'):
             if config.has_key('brokers'):
                  brokers = config['brokers']
 
-            if config.has_key('amq_queues'):
-                 destination = config['destination']
-
         except:
             logging.error("Could not read configuration file:\n %s" % str(sys.exc_value))
     elif config_file is not None:

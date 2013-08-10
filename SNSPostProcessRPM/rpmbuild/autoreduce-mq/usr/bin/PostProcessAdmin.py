@@ -2,7 +2,8 @@ import json, socket, os, subprocess, logging, sys
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
-from queueListener import Client, Configuration
+from Configuration import Configuration
+from PostProcessQueueConnector import PostProcessQueueConnector
  
 class StreamToLogger(object):
     #Fake file-like stream object that redirects writes to a logger instance.
@@ -23,19 +24,15 @@ logging.basicConfig(
 )
                      
 stdout_logger = logging.getLogger('STDOUT')
-sl = StreamToLogger(stdout_logger, logging.INFO)
-sys.stdout = sl
- 
+sl = StreamToLogger(stdout_logger, logging.INFO) 
 stderr_logger = logging.getLogger('STDERR')
 sl = StreamToLogger(stderr_logger, logging.ERROR)
 sys.stderr = sl
 
 
-                
-class PostProcess:
+class PostProcessAdmin:
     def __init__(self, data, conf):
 
-        os.environ['NEXUSLIB'] = "/usr/lib64/libNeXus.so"
         logging.info("json data: " + str(data))
         data["information"] = socket.gethostname()
         self.data = data
@@ -110,13 +107,13 @@ class PostProcess:
         try:         
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
-            instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            #instrument_shared_dir = "/tmp/shelly2/"
+            #instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
+            instrument_shared_dir = "/tmp/shelly2/"
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/shelly2/"
+            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
@@ -144,8 +141,9 @@ class PostProcess:
                 fp.seek(-maxLineLength-1, 2) # 2 means "from the end of the file"
                 lastLine = fp.readlines()[-1]
                 errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
+                fp.close()
+                proc.kill()
                 self.data["error"] = "REDUCTION: %s" % errMsg
-                errFile.close()
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))       
 
@@ -156,8 +154,8 @@ class PostProcess:
             
 
     def send(self, destination, data):
-        c = Client(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd, self.conf.queues, "post_process_consumer")
-        c.send(destination, json.dumps(self.data))
+        ppQConnector = PostProcessQueueConnector(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd, self.conf.queues, "post_process_consumer")
+        ppQConnector.send(destination, json.dumps(self.data))
         
     
     def getData(self):
@@ -179,7 +177,7 @@ if __name__ == "__main__":
 
     conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         
-    pp = PostProcess(data, conf)
+    pp = PostProcessAdmin(data, conf)
     if destination == '/queue/REDUCTION.DATA_READY':
         pp.reduce()
 
