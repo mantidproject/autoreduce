@@ -1,8 +1,8 @@
+#!/usr/bin/env python
 """
-Base ActiveMQ consumer class
+Post Process Queue Connector. It listens and sends messages to the acticeMQ.
 """
-import time, stomp, logging, json, os, sys, threading, socket
-from PostProcessQueueHandler import PostProcessQueueHandler
+import time, stomp, logging, json, sys, socket
 from Listener import Listener
 
 class PostProcessQueueConnector(object):

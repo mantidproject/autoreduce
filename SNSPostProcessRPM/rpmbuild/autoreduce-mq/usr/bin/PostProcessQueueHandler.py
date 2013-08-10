@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-ActiveMQ client for Post Process
+Post Process Queue Handler. It dispatches job based on numbers of cores on the machine
 """
-import os, sys, subprocess, psutil, time, logging, stomp
+import subprocess, time, logging
 from Listener import Listener
 
 
@@ -12,11 +12,9 @@ class PostProcessQueueHandler(Listener):
     """
     ## Connection used for sending messages
 
-    def __init__(self, conf):
+    def __init__(self):
         self._proc_list = []
-        self._send_connection = None
-        self._conf = conf
-        
+   
     
     def on_message(self, headers, message):
         """
@@ -24,18 +22,19 @@ class PostProcessQueueHandler(Listener):
         @param headers: message headers
         @param message: JSON-encoded message content
         """
-        
-        if self._send_connection is None:
-            self._send_connection = self._conf.get_client('post_process_consumer') 
 
         destination = headers["destination"]
         proc = subprocess.Popen(["python", "/usr/bin/PostProcessAdmin.py", destination, message])
         self._proc_list.append(proc)
-        
-                
+                          
         while len(self._proc_list) > 4:
-            logging.info("Still working: " + str(len(self._proc_list)))
+            logging.info("There are " + str(len(self._proc_list)) + " processors running at the moment, wait for a second")
             time.sleep(1.0)
-            for i in self._proc_list:
-                if i.poll() is not None:
-                    self._proc_list.remove(i)
+            self.updateChildProcessList()
+                          
+        self.updateChildProcessList()
+            
+    def updateChildProcessList(self):
+        for i in self._proc_list:
+            if i.poll() is not None:
+                self._proc_list.remove(i)

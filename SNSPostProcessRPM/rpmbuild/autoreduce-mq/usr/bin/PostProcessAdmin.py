@@ -1,34 +1,14 @@
-import json, socket, os, subprocess, logging, sys
+#!/usr/bin/env python
+"""
+Post Process Administrator. It kicks off cataloging and reduction jobs.
+"""
+import logging, json, socket, os, sys, subprocess
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
 from Configuration import Configuration
 from PostProcessQueueConnector import PostProcessQueueConnector
  
-class StreamToLogger(object):
-    #Fake file-like stream object that redirects writes to a logger instance.
-    def __init__(self, logger, log_level=logging.INFO):
-        self.logger = logger
-        self.log_level = log_level
-        self.linebuf = ''
- 
-    def write(self, buf):
-        for line in buf.rstrip().splitlines():
-            self.logger.log(self.log_level, line.rstrip())
-        
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(process)d/%(threadName)s: %(message)s",
-    filename='/var/log/SNS_applications/post_process.log',
-    filemode='a'
-)
-                     
-stdout_logger = logging.getLogger('STDOUT')
-sl = StreamToLogger(stdout_logger, logging.INFO) 
-stderr_logger = logging.getLogger('STDERR')
-sl = StreamToLogger(stderr_logger, logging.ERROR)
-sys.stderr = sl
-
 
 class PostProcessAdmin:
     def __init__(self, data, conf):
@@ -107,13 +87,13 @@ class PostProcessAdmin:
         try:         
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
-            #instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            instrument_shared_dir = "/tmp/shelly2/"
+            instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
+            #instrument_shared_dir = "/tmp/shelly2/"
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            proposal_shared_dir = "/tmp/shelly2/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
@@ -141,8 +121,6 @@ class PostProcessAdmin:
                 fp.seek(-maxLineLength-1, 2) # 2 means "from the end of the file"
                 lastLine = fp.readlines()[-1]
                 errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
-                fp.close()
-                proc.kill()
                 self.data["error"] = "REDUCTION: %s" % errMsg
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))       
