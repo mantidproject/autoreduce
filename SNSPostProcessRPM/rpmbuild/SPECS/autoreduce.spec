@@ -1,14 +1,14 @@
 Summary: autoreduce
 Name: autoreduce
 Version: 1.3
-Release: 2 
+Release: 3 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
 License: Unknown
 Source: autoreduce.tgz
 Requires: libc.so.6()(64bit) libc.so.6(GLIBC_2.2.5)(64bit)
-Requires: stomp 
+Requires: python-stomp.py
 %define debug_package %{nil}
 
 
