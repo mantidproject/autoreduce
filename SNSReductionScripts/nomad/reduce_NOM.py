@@ -2,9 +2,8 @@ import os
 import sys
 import shutil 
 sys.path.append("/opt/mantidnightly/bin")
-from MantidFramework import mtd
-mtd.initialize()
-from mantidsimple import *
+from mantid.simpleapi import *
+import mantid
 
 cal_dir = "/SNS/NOM/IPTS-8170/shared/"
 cal_file  = os.path.join(cal_dir, "NOM_calibrate_d14526_2013_05_18.cal")
@@ -24,10 +23,10 @@ if len(sys.argv)>3:
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
 runNumber = eventFile.split('_')[1]
-configService = mtd.getSettings()
+configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
 dataSearchPath.append(nexusDir)
-configService.setDataSearchDirs(dataSearchPath)
+configService.setDataSearchDirs(";".join(dataSearchPath))
 
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',

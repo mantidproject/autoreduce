@@ -2,9 +2,8 @@ import os
 import sys
 import shutil 
 sys.path.append("/opt/mantidnightly/bin")
-from MantidFramework import mtd
-mtd.initialize()
-from mantidsimple import *
+from mantid.simpleapi import *
+import mantid
 
 cal_dir = "/SNS/PG3/2013_1_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_PAC_d14810_2013_05_23.cal")
@@ -19,10 +18,10 @@ outputDir=sys.argv[2]
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
 runNumber = eventFile.split('_')[1]
-configService = mtd.getSettings()
+configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
 dataSearchPath.append(nexusDir)
-configService.setDataSearchDirs(dataSearchPath)
+configService.setDataSearchDirs(";".join(dataSearchPath))
 
 SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs",
                    PreserveEvents=True,PushDataPositive="None",
