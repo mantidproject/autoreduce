@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import sys,os
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
@@ -106,17 +107,16 @@ def GetEiT0(ws_name,EiGuess):
         try:
             wm=mtd[ws_name]
             #change frame for adara files monitors
-            if os.path.splitext(wm.getRun()['Filename'].value)[1]=='.h5':
-                so=wm.getInstrument().getSource().getPos()
-                m1=wm.getDetector(0).getPos()
-                m2=wm.getDetector(1).getPos()
-                v=437.4*sqrt(wm.getRun()['EnergyRequest'].getStatistics().mean)
-                t1=m1.distance(so)*1e6/v
-                t2=m2.distance(so)*1e6/v
-                t1f=int(t1*60e-6)
-                t2f=int(t2*60e-6)
-                wm=ChangeBinOffset(wm,t1f*16667,0,0)
-                wm=ChangeBinOffset(wm,t2f*16667,1,1)
+            so=wm.getInstrument().getSource().getPos()
+            m1=wm.getDetector(0).getPos()
+            m2=wm.getDetector(1).getPos()
+            v=437.4*sqrt(wm.getRun()['EnergyRequest'].getStatistics().mean)
+            t1=m1.distance(so)*1e6/v
+            t2=m2.distance(so)*1e6/v
+            t1f=int(t1*60e-6)
+            t2f=int(t2*60e-6)
+            wm=ChangeBinOffset(wm,t1f*16667,0,0)
+            wm=ChangeBinOffset(wm,t2f*16667,1,1)
             wm=Rebin(InputWorkspace=wm,Params="1",PreserveEvents=True)	
             alg=GetEi(InputWorkspace=wm,Monitor1Spec="1",Monitor2Spec="2",EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
             Ei=alg[0]
@@ -247,8 +247,8 @@ if __name__ == "__main__":
     else:
         filename = sys.argv[1]
         outdir = sys.argv[2]
-        if filename.endswith('.nxs.h5'):
-            outdir+='ADARA/'
+        if filename.endswith('.nxs'):
+            outdir+='LEGACY/'
     #----------------------------------------------------------------------------------
     # changes
 
