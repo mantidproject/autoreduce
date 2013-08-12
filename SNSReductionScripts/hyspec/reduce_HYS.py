@@ -61,12 +61,16 @@ class AutoReduction():
       #tib = self.SpurionPromptPulse2()
       #reduction command
       DgsReduction(SampleInputWorkspace=autows, IncidentEnergyGuess=Ei, EnergyTransferRange=energy_bins,
-		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml', IncidentBeamNormalisation='ByCurrent', HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
+		SampleInputMonitorWorkspace=autows,
+		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
+		IncidentBeamNormalisation='ByCurrent', 
+                HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
               TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1")
       
       DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',       
-      IncidentBeamNormalisation='ByCurrent',
+		SampleInputMonitorWorkspace=autows,
+		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
+		IncidentBeamNormalisation='ByCurrent',
                 HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
 

@@ -99,13 +99,30 @@ class ExperimentLog(object):
 
 
 def GetEiT0(ws_name,EiGuess):
-    try:
-        alg=GetEi(InputWorkspace=ws_name,Monitor1Spec="1",Monitor2Spec="2",EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
-        Ei=alg[0]
-        Tzero=-alg[3]					#Extract incident energy and T0
-    except:
+    if mean(mtd[ws_name].getRun()['vChTrans'].value) == 2:
         Ei='N/A'
         Tzero='N/A'
+    else:    
+        try:
+            wm=mtd[ws_name]
+            #change frame for adara files monitors
+            if os.path.splitext(wm.getRun()['Filename'].value)[1]=='.h5':
+                so=wm.getInstrument().getSource().getPos()
+                m1=wm.getDetector(0).getPos()
+                m2=wm.getDetector(1).getPos()
+                v=437.4*sqrt(wm.getRun()['EnergyRequest'].getStatistics().mean)
+                t1=m1.distance(so)*1e6/v
+                t2=m2.distance(so)*1e6/v
+                t1f=int(t1*60e-6)
+                t2f=int(t2*60e-6)
+                wm=ChangeBinOffset(wm,t1f*16667,0,0)
+                wm=ChangeBinOffset(wm,t2f*16667,1,1)
+            wm=Rebin(InputWorkspace=wm,Params="1",PreserveEvents=True)	
+            alg=GetEi(InputWorkspace=wm,Monitor1Spec="1",Monitor2Spec="2",EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
+            Ei=alg[0]
+            Tzero=-alg[3]					#Extract incident energy and T0
+        except:
+            raise RuntimeError("Could not get Ei, and this is not a white beam run")
     return [Ei,Tzero]
 
 
@@ -230,6 +247,8 @@ if __name__ == "__main__":
     else:
         filename = sys.argv[1]
         outdir = sys.argv[2]
+        if filename.endswith('.nxs.h5'):
+            outdir+='ADARA/'
     #----------------------------------------------------------------------------------
     # changes
 
@@ -238,7 +257,7 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="SEQ"
     #Vanadium and masking    
-    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_37464_event.nxs"
+    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_38995_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.3,0.9,1.2",outdir,maskfile=maskfile,ld_saved_fl=True)
     Norm.MaskBTP(Bank="70,99,100,101,102,110")
@@ -255,20 +274,20 @@ if __name__ == "__main__":
     if al!=None:
         [runnum,Efixed,T0,Erange,angle]=al   
         quick_process('__IWS',Erange,Efixed,T0)
-	outfile=outpre+'_'+runnum+'_autoreduced'
-	# save nexus file for combining data later before V normalization
-	AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
-	SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
-    #FilterBadPulses(InputWorkspace="__OWS",OutputWorkspace = "__OWS",LowerCutoff = 50)
-    NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
-    ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
-    ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
-    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-    Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
-    if NXSPE_flag:            
-        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
-    if clean:
-        WS_clean()
+        outfile=outpre+'_'+runnum+'_autoreduced'
+        # save nexus file for combining data later before V normalization
+        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
+        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
+        #FilterBadPulses(InputWorkspace="__OWS",OutputWorkspace = "__OWS",LowerCutoff = 50)
+        NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
+        ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+        ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+        ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
+        Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
+        if NXSPE_flag:            
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
+        if clean:
+            WS_clean()
 
     
 

@@ -110,7 +110,7 @@ def autoloader(filename,outdir):
     angle=elog.save_line(outdir+'experiment_summary.csv','__MonWS',Efixed,T0)
 
     runnum=str(__MonWS.getRun()['run_number'].value)     
-    Estep=Eguess*0.005
+    Estep=Eguess*0.01
     Elow=-Eguess*0.5
     Ehigh=Eguess*0.9
     Erange='%g,%g,%g'%(Elow,Estep,Ehigh)   
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="ARCS"
     #Vanadium and masking    
-    Vanadium="/SNS/ARCS/2013_1_18_CAL/data/ARCS_31795_event.nxs"
+    Vanadium="/SNS/ARCS/2013_2_18_CAL/data/ARCS_37348_event.nxs"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.35,0.4,0.75",outdir,maskfile=maskfile,ld_saved_fl=True)
     # Standard end of tube masking

@@ -9,6 +9,7 @@ output_directory=sys.argv[2]
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
+tib=SuggestTibCNCS(Ei)
 erange=str(-Ei)+','+str(0.01*Ei)+','+str(0.95*Ei)
 
 DgsReduction(
@@ -19,8 +20,8 @@ DgsReduction(
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
-             TibTofRangeStart=20000.0,
-             TibTofRangeEnd=23000.0,
+             TibTofRangeStart=tib[0],
+             TibTofRangeEnd=tib[1],
              DetectorVanadiumInputFile="/SNS/CNCS/shared/Va_from_IPTS-7477/CNCS_57794_event.nxs",
              UseBoundsForDetVan=True,
              DetVanIntRangeLow=52000.0,

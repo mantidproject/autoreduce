@@ -7,8 +7,8 @@ mtd.initialize()
 from mantidsimple import *
 
 cal_dir = "/SNS/PG3/2013_1_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d12358_2013_01_23.cal")
-char_file = os.path.join(cal_dir, "PG3_characterization_2012_11_29-HR-PAC-BGSub.txt")
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d14810_2013_05_23.cal")
+char_file = os.path.join(cal_dir, "PG3_characterization_2012_11_29-HR.txt")
 #MODE = 0664
 
 #from mantidsimple import *
@@ -25,7 +25,7 @@ dataSearchPath.append(nexusDir)
 configService.setDataSearchDirs(dataSearchPath)
 
 SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs",
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   PreserveEvents=True,PushDataPositive="None",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=15000, RemovePromptPulseWidth=50,
                    Binning=-0.0008, BinInDspace=True, FilterBadPulses=True,

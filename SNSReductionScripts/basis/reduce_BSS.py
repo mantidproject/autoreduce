@@ -2,7 +2,7 @@ import os
 import sys
 import shutil
 
-mantid_root = "/opt/mantidnightly"
+mantid_root = "/opt/Mantid"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 
 from mantid.simpleapi import *

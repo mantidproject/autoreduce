@@ -6,17 +6,20 @@ from MantidFramework import mtd
 mtd.initialize()
 from mantidsimple import *
 
-cal_dir = "/SNS/NOM/IPTS-8459/shared/"
-cal_file  = os.path.join(cal_dir, "NOM_calibrate_d13012_2013_04_12.cal")
+cal_dir = "/SNS/NOM/IPTS-8170/shared/"
+cal_file  = os.path.join(cal_dir, "NOM_calibrate_d14526_2013_05_18.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     13396
-van      =     13015
-van_back =     13014
+sam_back =     15072
+van      =     14728
+van_back =     14727
 
 #from mantidsimple import *
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
+maxChunkSize=0.
+if len(sys.argv)>3:
+    maxChunkSize=float(sys.argv[3])
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
@@ -27,7 +30,7 @@ dataSearchPath.append(nexusDir)
 configService.setDataSearchDirs(dataSearchPath)
 
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
-                   PreserveEvents=True,PushDataPositive='AddMinimum',
+                   MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    BackgroundNumber=sam_back, VanadiumNumber=van,
                    VanadiumBackgroundNumber=van_back, RemovePromptPulseWidth=50,
