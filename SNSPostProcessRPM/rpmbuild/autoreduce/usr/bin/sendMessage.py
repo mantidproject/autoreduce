@@ -1,8 +1,14 @@
-import sys
+import sys, os, logging
 import stomp
 import json
 import time
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+    filename="/var/log/SNS_applications/post_process.log",
+    filemode='a'
+)
 
 def send(destination, message, persistent='true'):
     """
@@ -18,32 +24,34 @@ def send(destination, message, persistent='true'):
         try:
             config = json.loads(json_encoded)
 
-            if type(config)==dict:
-
             if config.has_key('amq_user'):
-                icat_user = config['amq_user']
+                user = config['amq_user']
 
             if config.has_key('amq_pwd'):
-                icat_passcode = config['amq_pwd']
+                passcode = config['amq_pwd']
 
             if config.has_key('brokers'):
-                 brokers = config['brokers']
+                brokers = config['brokers']
+                print brokers
+                brokersFormated = []
+                for b in brokers:
+                    brokersFormated.append( (b[0], b[1]) )
 
         except:
-            logging.error("Could not read configuration file:\n %s" % str(sys.exc_value))
+            logging.error("Could not read configuration file: " + str(sys.exc_value))
     elif config_file is not None:
-        logging.error("Could not find configuration: %s" % config_file)
+        logging.error("Could not find configuration: " + config_file)
 
-    conn = stomp.Connection(host_and_ports=brokers,
-                    user=icat_user, passcode=icat_passcode,
+    conn = stomp.Connection(host_and_ports=brokersFormated,
+                    user=user, passcode=passcode,
                     wait_on_receipt=True)
     conn.start()
     conn.connect()
     conn.send(destination=destination, message=message, persistent=persistent)
-    print "%s: %s" % ("destination", destination)
-    print "%s: %s" % ("message", message)
+    logging.info("destination: " + destination)
+    logging.info("message: " + message)
 
     conn.disconnect()
 
-destination = "/queue/POSTPROCESS.DATA_READY"
+destination = "POSTPROCESS.DATA_READY"
 send(destination, sys.argv[1])
