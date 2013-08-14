@@ -54,4 +54,21 @@ def send(destination, message, persistent='true'):
     conn.disconnect()
 
 destination = "POSTPROCESS.DATA_READY"
-send(destination, sys.argv[1])
+#sys.argv[1] is passed in by TS as "/facil/instr/ipts/coll_number/run_number/"
+file = sys.argv[1]
+token = file.rstrip("/").split("/")
+
+if len(token) == 6:
+    facility = token[1]
+    instrument = token[2]
+    ipts = token[3] 
+    run_number = token[5]  #skip token[4] which is collection number 
+    data_file = file + "NeXus/" + instrument + "_" + run_number + "_event.nxs" 
+    data = {"facility": facility, "instrument": instrument, "ipts": ipts, "run_number": run_number, "data_file":  data_file}
+
+    message = json.dumps(data)
+    logging.info("Sending message: " + message + " to " + destination)
+    send(destination, message)
+else:
+    logging.error("legacy data input error: expecting a file path as /SNS/NOM/IPTS-8951/0/17172")
+    sys.exit() 

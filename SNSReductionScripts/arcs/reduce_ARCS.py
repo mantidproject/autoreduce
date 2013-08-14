@@ -6,6 +6,7 @@ from mantid.simpleapi import *
 from numpy import *
 from string import *
 from MaskBTP import *
+from MaskAngle import *
 
 class ExperimentLog(object):
     def __init__(self):
@@ -158,25 +159,33 @@ class V_norm_obj(object):
         self.maskpars.append(kwargs)
 
     def CreateMasksAndVanadiumNormalization(self):
-        if (os.path.isfile(self.outdir+"van.nx5") and (self.ld_saved_fl)):
-            LoadNexus(Filename=outdir+"van.nx5",OutputWorkspace="__VAN")
+        if (os.path.isfile(self.outdir+"van.nxs") and (self.ld_saved_fl)):
+            LoadNexus(Filename=outdir+"van.nxs",OutputWorkspace="__VAN")
         else:   
             LoadEventNexus(Filename=self.vanfile,OutputWorkspace="__VAN")
             ConvertUnits(InputWorkspace="__VAN",OutputWorkspace="__VAN",Target="Wavelength",EMode="Elastic")
-            Rebin(InputWorkspace="__VAN",OutputWorkspace="__VAN",Params=self.wlstr,PreserveEvents=False)			#integrate all events in the range given by wlstr
+            Rebin(InputWorkspace="__VAN",OutputWorkspace="__VAN",Params=self.wlstr,PreserveEvents=False)	       #integrate all events in the range given by wlstr
+            FindDetectorsOutsideLimits(InputWorkspace='__VAN',OutputWorkspace='__MaskZeroes',LowThreshold='0.01')      # Get rid of zero count pixels
+            MaskDetectors(Workspace='__VAN',MaskedWorkspace='__MaskZeroes')
+            DeleteWorkspace(Workspace="__MaskZeroes")		
+            MaskAngle(Workspace='__VAN',twothetamax=2.5)                                # mask lowest angles 
             ConvertToDistribution("__VAN")
-            NormaliseByCurrent(InputWorkspace="__VAN",OutputWorkspace="__VAN")									#normalize by proton charge
+            NormaliseByCurrent(InputWorkspace="__VAN",OutputWorkspace="__VAN")		#normalize by proton charge
             for d in self.maskpars:
                 MaskBTP(Workspace="__VAN",**d)
-            MedianDetectorTest(InputWorkspace="__VAN",OutputWorkspace="__MASK")			#determine which detectors to mask, and store them in the "MASK" workspace
+            			                                                        #determine which detectors to mask, and store them in the "MASK" workspace
+            MedianDetectorTest(InputWorkspace="__VAN",OutputWorkspace="__MASK",LevelsUp=1,CorrectForSolidAngle=True,LowThreshold=0.5,HighThreshold=1.5,ExcludeZeroesFromMedian=True)
 	  
             if len(self.maskfile)>0:
                 LoadNexus(Filename=self.maskfile,OutputWorkspace="__temp_mask")
-                MaskDetectors(Workspace="__MASK",MaskedWorkspace="__temp_mask")		    #add detectors masked in "temp_mask" to "MASK"
+                MaskDetectors(Workspace="__MASK",MaskedWorkspace="__temp_mask")		#add detectors masked in "temp_mask" to "MASK"
                 DeleteWorkspace(Workspace="__temp_mask")
-            MaskDetectors(Workspace="__VAN",MaskedWorkspace="__MASK")												#Mask "VAN". This prevents dividing by 0		
-            DeleteWorkspace(Workspace="__MASK")																	#Mask is carried by VAN workspace
-            SaveNexus(InputWorkspace="__VAN",Filename=self.outdir+"van.nx5")
+            MaskDetectors(Workspace="__VAN",MaskedWorkspace="__MASK")			#Mask "VAN". This prevents dividing by 0
+            datay = mtd['__VAN'].extractY()
+            meanval = 1.0/float(datay[datay>0].mean())
+            Scale(InputWorkspace='__VAN',Factor=meanval,OutputWorkspace='__VAN')        # normalize to mean value
+            DeleteWorkspace(Workspace="__MASK")						#Mask is carried by VAN workspace
+            SaveNexus(InputWorkspace="__VAN",Filename=self.outdir+"van.nxs")
 
 
 

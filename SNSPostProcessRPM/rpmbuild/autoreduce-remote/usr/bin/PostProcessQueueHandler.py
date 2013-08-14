@@ -12,48 +12,8 @@ class PostProcessQueueHandler(Listener):
     """
     ## Connection used for sending messages
 
-    def __init__(self, data, conf):
-
-        logging.info("json data: " + str(data))
-        data["information"] = socket.gethostname()
-        self.data = data
-        self.conf = conf
-
-        try:
-            if data.has_key('data_file'):
-                self.data_file = str(data['data_file'])
-                logging.info("data_file: " + self.data_file)
-            else:
-                raise ValueError("data_file is missing")
-
-            if data.has_key('facility'):
-                self.facility = str(data['facility']).upper()
-                logging.info("facility: " + self.facility)
-            else: 
-                raise ValueError("facility is missing")
-
-            if data.has_key('instrument'):
-                self.instrument = str(data['instrument']).upper()
-                logging.info("instrument: " + self.instrument)
-            else:
-                raise ValueError("instrument is missing")
-
-            if data.has_key('ipts'):
-                self.proposal = str(data['ipts']).upper()
-                logging.info("proposal: " + self.proposal)
-            else:
-                raise ValueError("ipts is missing")
-                
-            if data.has_key('run_number'):
-                self.run_number = str(data['run_number'])
-                logging.info("run_number: " + self.run_number)
-            else:
-                raise ValueError("run_number is missing")
-            
-        except ValueError as e:
-            logging.error("JSON data is incomplete: " + str(e))
-            raise
-
+    def __init__(self):
+        self._proc_list = []
    
     
     def on_message(self, headers, message):
@@ -61,9 +21,21 @@ class PostProcessQueueHandler(Listener):
         Process a message.
         @param headers: message headers
         @param message: JSON-encoded message content
-        """  
-        
+        """
+
         destination = headers["destination"]
-        cmd = "/sw/fermi/autoreduction/scripts/startJob.sh " + message
-        logging.info("cmd: " + cmd)
-        subprocess.call(cmd, shell=False)
+        logging.info("message: " + message)
+        proc = subprocess.Popen(["python", "/usr/bin/PostProcessAdmin.py", destination, message])
+        self._proc_list.append(proc)
+                          
+        while len(self._proc_list) > 4:
+            logging.info("There are " + str(len(self._proc_list)) + " processors running at the moment, wait for a second")
+            time.sleep(1.0)
+            self.updateChildProcessList()
+                          
+        self.updateChildProcessList()
+            
+    def updateChildProcessList(self):
+        for i in self._proc_list:
+            if i.poll() is not None:
+                self._proc_list.remove(i)

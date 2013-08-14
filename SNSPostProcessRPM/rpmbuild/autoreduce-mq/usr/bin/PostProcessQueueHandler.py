@@ -24,6 +24,7 @@ class PostProcessQueueHandler(Listener):
         """
 
         destination = headers["destination"]
+        logging.info("message: " + message)
         proc = subprocess.Popen(["python", "/usr/bin/PostProcessAdmin.py", destination, message])
         self._proc_list.append(proc)
                           
