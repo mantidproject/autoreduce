@@ -22,7 +22,7 @@ DgsReduction(
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/shared/Va_from_IPTS-7477/CNCS_57794_event.nxs",
+             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4654/16/67155/NeXus/CNCS_67155_event.nxs",
              UseBoundsForDetVan=True,
              DetVanIntRangeLow=52000.0,
              DetVanIntRangeHigh=53000.0,
@@ -35,7 +35,7 @@ run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
 processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_spe.nxs")
 nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + ".nxspe")
 # Get Angle
-s1=mtd["reduce"].getRun()['huber'].value[0]
+s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 # Save a file
 SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
