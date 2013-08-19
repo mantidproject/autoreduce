@@ -78,9 +78,9 @@ function processRuns()
         do
           echo $nexusFile
           if [ -e $nexusFile ] && ! [ -h $nexusFile ] && [[ $nexusFile != *_histo.nxs ]]; then
-            ingestNexus=/usr/bin/ingestNexus
-            echo $ingestNexus $nexusFile | sed "s/^/$(date)  /" >> $logfile
-            $ingestNexus $nexusFile $plugin $hostAndPort $password | sed "s/^/$(date)  /" >> $logfile
+            ingestNexus=/usr/bin/ingestNexus_mq.py
+            echo python $ingestNexus $nexusFile | sed "s/^/$(date)  /" >> $logfile
+            python $ingestNexus $nexusFile | sed "s/^/$(date)  /" >> $logfile
           fi
         done
       fi
@@ -119,7 +119,8 @@ proposal=$(echo $path | awk -F"/" '{print $4}')
 xmlTokens=()
 dbRunList=()
 
-urlBase=http://icat-testing.sns.gov:2080/icat-rest-ws/experiment
+#urlBase=http://orion.sns.gov:2080/icat-rest-ws/experiment
+urlBase=http://icat.sns.gov:2080/icat-rest-ws/experiment
 url=$urlBase"/"$facility"/"$instrument"/"$proposal
 echo "--Calling ICAT4 web service-- "$url | sed "s/^/$(date)  /" >> $logfile
 
@@ -127,21 +128,6 @@ xmlParse $url
 getDBRunList
 echo "Runs in ICAT:"
 echo ${dbRunList[@]} | sed "s/^/$(date)  /" >> $logfile
-
-icatConfig=/etc/autoreduce/icatclient.properties
-icatConfig2=/SNS/users/3qr/etc/autoreduce/icatclient.properties
-if [ -e  $icatConfig ] && [ -r $icatConfig ]; then
-  hostAndPort=`awk -F "=" '/hostAndPort/ { print $2 }' $icatConfig`
-  password=`awk -F "=" '/password/ { print $2 }' $icatConfig`
-elif [ -e  $icatConfig2 ] && [ -r $icatConfig2 ]; then
-  hostAndPort=`awk -F "=" '/hostAndPort/ { print $2 }' $icatConfig2`
-  password=`awk -F "=" '/password/ { print $2 }' $icatConfig2`
-else
-  hostAndPort=icat-testing.sns.gov:8181
-  password=password
-fi
-
-plugin=db
 
 echo "--Catalogging raw data--"
 processRuns $path"/*"

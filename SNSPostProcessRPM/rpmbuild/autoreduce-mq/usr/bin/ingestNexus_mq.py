@@ -354,3 +354,19 @@ class IngestNexus():
         
         logging.info("SAMPLE: ")
         logging.info("  NAME: %s" % str(sample.name))
+
+        
+if __name__ == "__main__":
+    #check number of arguments
+    if (len(sys.argv) != 2):
+        print "ingestNexus_mq requires a filename absolute path"
+        sys.exit()
+    if not(os.path.isfile(sys.argv[1])):
+        print "data file ", sys.argv[1], " not found"
+        sys.exit()
+    else:
+      path = sys.argv[1]
+      ingestN = IngestNexus(path)
+      ingestN.execute()
+      ingestN.logout()
+
