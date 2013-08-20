@@ -106,10 +106,19 @@ def GetEiT0(ws_name,EiGuess):
     else:    
         try:
             wm=mtd[ws_name]
+            #fix more than 2 monitors
+            sp1=0
+            sp2=1
+            nsp=wm.getNumberHistograms()
+            for sp in range(nsp):
+                if wm.getSpectrum(sp).getDetectorIDs()[0]==-1:
+                    sp1=sp
+                if wm.getSpectrum(sp).getDetectorIDs()[0]==-2:
+                    sp2=sp                 
             #change frame for adara files monitors
             so=wm.getInstrument().getSource().getPos()
-            m1=wm.getDetector(0).getPos()
-            m2=wm.getDetector(1).getPos()
+            m1=wm.getDetector(sp1).getPos()
+            m2=wm.getDetector(sp2).getPos()
             v=437.4*sqrt(wm.getRun()['EnergyRequest'].getStatistics().mean)
             t1=m1.distance(so)*1e6/v
             t2=m2.distance(so)*1e6/v
@@ -118,7 +127,7 @@ def GetEiT0(ws_name,EiGuess):
             wm=ChangeBinOffset(wm,t1f*16667,0,0)
             wm=ChangeBinOffset(wm,t2f*16667,1,1)
             wm=Rebin(InputWorkspace=wm,Params="1",PreserveEvents=True)	
-            alg=GetEi(InputWorkspace=wm,Monitor1Spec="1",Monitor2Spec="2",EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
+            alg=GetEi(InputWorkspace=wm,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
             Ei=alg[0]
             Tzero=-alg[3]					#Extract incident energy and T0
         except:
