@@ -110,6 +110,8 @@ def GetEiT0(ws_name,EiGuess):
             sp1=0
             sp2=1
             nsp=wm.getNumberHistograms()
+            if nsp < 2:
+                raise ValueError("There are less than 2 monitors")
             for sp in range(nsp):
                 if wm.getSpectrum(sp).getDetectorIDs()[0]==-1:
                     sp1=sp
@@ -130,8 +132,9 @@ def GetEiT0(ws_name,EiGuess):
             alg=GetEi(InputWorkspace=wm,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
             Ei=alg[0]
             Tzero=-alg[3]					#Extract incident energy and T0
-        except:
-            raise RuntimeError("Could not get Ei, and this is not a white beam run")
+        except Exception, e:
+            msg = str(e) + " -- Could not get Ei, and this is not a white beam run"
+            raise RuntimeError(msg)
     return [Ei,Tzero]
 
 
