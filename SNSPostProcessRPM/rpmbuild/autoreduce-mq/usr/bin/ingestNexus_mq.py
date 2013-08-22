@@ -143,7 +143,7 @@ class IngestNexus():
             parameterType.applicableToDataset = config.getboolean('ParameterType', 'proton_charge_applicable_to_dataset')
             datasetParameter = self._factory.create("datasetParameter")
             datasetParameter.type = parameterType
-            datasetParameter.numericValue = protonCharge 
+            datasetParameter.stringValue = protonCharge 
             parameters.append(datasetParameter)
     
         #2) parameter total_counts 
