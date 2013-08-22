@@ -171,25 +171,27 @@ class IngestNexus():
     
         datafiles = []
     
-        runPath = posixpath.abspath(posixpath.join(self._infilename, '../..'))
-        logging.info("run directory: %s" % runPath) 
-        for dirpath, dirnames, filenames in os.walk(runPath):
-            for filename in [f for f in filenames]:
-                #if dataset.name in filename and os.path.islink(filename) != False:
-                if dataset.name in filename:
-                    datafile = self._factory.create("datafile")
-                    filepath = os.path.join(dirpath,filename)
-                    extension = os.path.splitext(filename)[1][1:]
-                    datafile.name = filename
-                    datafile.location = filepath
-                    dfFormat = self._factory.create("datafileFormat")
-                    dfFormat.id = config.get('DatafileFormat', extension)
-                    datafile.datafileFormat = dfFormat 
-                    modTime = os.path.getmtime(filepath)
-                    datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
-                    datafile.fileSize = os.path.getsize(filepath)
+        token=self._infilename.split("/")
+        proposalDir = "/" + token[1] + "/" + token[2] + "/" + token[3]
+        logging.info("proposal directory: %s" % proposalDir) 
+        for dirpath, dirnames, filenames in os.walk(proposalDir):
+            if dirpath.find("shared") == -1 and dirpath.find("data") == -1:
+                for filename in [f for f in filenames]:
+                    #if dataset.name in filename and os.path.islink(filename) != False:
+                    if dataset.name in filename:
+                        datafile = self._factory.create("datafile")
+                        filepath = os.path.join(dirpath,filename)
+                        extension = os.path.splitext(filename)[1][1:]
+                        datafile.name = filename
+                        datafile.location = filepath
+                        dfFormat = self._factory.create("datafileFormat")
+                        dfFormat.id = config.get('DatafileFormat', extension)
+                        datafile.datafileFormat = dfFormat 
+                        modTime = os.path.getmtime(filepath)
+                        datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
+                        datafile.fileSize = os.path.getsize(filepath)
         
-                    datafiles.append(datafile)
+                        datafiles.append(datafile)
         
         dataset.datafiles = datafiles
         
