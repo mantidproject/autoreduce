@@ -7,6 +7,7 @@ from numpy import *
 mantid_root = "/opt/Mantid"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 from mantid.simpleapi import *
+from ARLibrary import *
 
 class AutoReduction():
   def __init__(self, nexus_file, output_directory):
@@ -40,7 +41,14 @@ class AutoReduction():
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
-
+      elog=ExperimentLog()
+      elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
+      elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
+      elog.setSERotOptions('s1')
+      elog.setSETempOptions('SampleTemp, sampletemp, SensorB')
+      elog.setFilename(self._output_directory+'experiment_log.csv')
+      elog.save_line(autows)  
+      
       run = mtd[autows].getRun()
 
       # Get Ei
