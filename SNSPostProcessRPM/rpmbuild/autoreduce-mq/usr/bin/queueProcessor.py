@@ -77,8 +77,13 @@ class HeartBeat(object):
 
  
 if __name__ == '__main__':
+    
+    try:
+        config = Configuration('/etc/autoreduce/post_process_consumer.conf')
+    except:
+        sys.exit()
+        
     logging.info("Start post process asynchronous listener!")
-    config = Configuration('/etc/autoreduce/post_process_consumer.conf')
     reactor.callWhenRunning(Consumer(config).run)
     reactor.callWhenRunning(HeartBeat(config).count)
     reactor.run()

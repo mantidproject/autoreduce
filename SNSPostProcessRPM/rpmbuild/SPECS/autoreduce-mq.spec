@@ -35,7 +35,6 @@ install -m 755	 ../autoreduce-mq/usr/bin/ingestNexus_mq.py	 %{buildroot}%{_bindi
 install -m 755	 ../autoreduce-mq/usr/bin/ingestReduced_mq.py	 %{buildroot}%{_bindir}/ingestReduced_mq.py
 install -m 755	 ../autoreduce-mq/usr/bin/queueProcessor.py	 %{buildroot}%{_bindir}/queueProcessor.py
 install -m 755	 ../autoreduce-mq/usr/bin/Configuration.py	 %{buildroot}%{_bindir}/Configuration.py
-install -m 755	 ../autoreduce-mq/usr/bin/asynProducer.py	 %{buildroot}%{_bindir}/asynProducer.py
 install -m 755	 ../autoreduce-mq/usr/bin/PostProcessAdmin.py	 %{buildroot}%{_bindir}/PostProcessAdmin.py
 
 %post
@@ -47,5 +46,4 @@ chgrp snswheel %{_sysconfdir}/autoreduce/icat4.cfg
 %attr(755, -, -) %{_bindir}/ingestReduced_mq.py
 %attr(755, -, -) %{_bindir}/queueProcessor.py
 %attr(755, -, -) %{_bindir}/Configuration.py
-%attr(755, -, -) %{_bindir}/asynProducer.py
 %attr(755, -, -) %{_bindir}/PostProcessAdmin.py

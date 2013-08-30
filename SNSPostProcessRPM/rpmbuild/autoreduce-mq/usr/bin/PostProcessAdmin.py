@@ -25,6 +25,8 @@ class PostProcessAdmin:
             if data.has_key('data_file'):
                 self.data_file = str(data['data_file'])
                 logging.info("data_file: " + self.data_file)
+                if os.access(self.data_file, os.R_OK) == False:
+                    raise ValueError("data_file path doesn't exist or file not readable")
             else:
                 raise ValueError("data_file is missing")
 
@@ -51,9 +53,9 @@ class PostProcessAdmin:
                 logging.info("run_number: " + self.run_number)
             else:
                 raise ValueError("run_number is missing")
-            
-        except ValueError as e:
-            logging.error("JSON data is incomplete: " + str(e))
+                 
+        except ValueError:
+            logging.info('JSON data error', exc_info=True)
             raise
 
 
@@ -95,8 +97,8 @@ class PostProcessAdmin:
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            proposal_shared_dir = "/tmp/shelly2/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
@@ -144,34 +146,37 @@ class PostProcessAdmin:
     
     
 if __name__ == "__main__":
+
     try:
+        conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         destination, message = sys.argv[1:3]
         logging.info("destination: " + destination)
         logging.info("message: " + message)
         data = json.loads(message)
-        logging.info("data: " + str(data))
-    except ValueError as e:
-        data["error"] = str(e)
-        logging.error("JSON data is incomplete: " + json.dumps(data))
-        producer = Producer()
-        producer.run("/queue/POSTPROCESS.ERROR", json.dumps(data))
-        reactor.run()
-        logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
-
-    conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         
-    pp = PostProcessAdmin(data, conf)
-    if destination == '/queue/REDUCTION.DATA_READY':
-        pp.reduce()
+        try:  
+            pp = PostProcessAdmin(data, conf)
+            if destination == '/queue/REDUCTION.DATA_READY':
+                pp.reduce()
+            elif destination == '/queue/CATALOG.DATA_READY':
+                pp.catalogRaw()
+            elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
+                pp.catalogReduced()
 
-    elif destination == '/queue/CATALOG.DATA_READY':
-        pp.catalogRaw()
-
-    elif destination == '/queue/REDUCTION_CATALOG.DATA_READY':
-        pp.catalogReduced()
+        except ValueError as e:
+            data["error"] = str(e)
+            logging.error("JSON data error: " + json.dumps(data))
+            stomp = Stomp(StompConfig(conf.brokers, conf.amq_user, conf.amq_pwd))
+            stomp.connect()
+            stomp.send(conf.postprocess_error, json.dumps(data))
+            stomp.disconnect() 
+            logging.info("Called " + conf.postprocess_error + "----" + json.dumps(data))
+            raise
         
-    sys.exit()
-
-
+        except:
+            raise
+        
+    except:
+        sys.exit()
 
 

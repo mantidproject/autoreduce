@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 """
-Post Process Administrator. It kicks off cataloging and reduction jobs.
+PostProcessAdmin of autoreduce-remote executes reduction jobs on fermi
 """
 import logging, json, socket, os, sys, subprocess
 
-from ingestNexus_mq import IngestNexus
-from ingestReduced_mq import IngestReduced
 from Configuration import Configuration
-from PostProcessQueueConnector import PostProcessQueueConnector
+from stompest.config import StompConfig
+from stompest.sync import Stomp
 
 import mantid.simpleapi as api
 
@@ -153,8 +152,11 @@ if __name__ == "__main__":
     except ValueError as e:
         data["error"] = str(e)
         logging.error("JSON data is incomplete: " + json.dumps(data) )
-        self._send_connection.send("/queue/POSTPROCESS.ERROR", json.dumps(data))
-        logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
+        stomp = sync.Stomp(self.stompConfig)
+        stomp.connect()
+        stomp.send(self.config.heart_beat, json.dumps(data))
+        stomp.disconnect() 
+        logging.info("Called " + self.config.postprocess_error " + json.dumps(data))
 
     conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         
