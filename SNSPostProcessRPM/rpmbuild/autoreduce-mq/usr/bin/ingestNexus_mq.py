@@ -253,7 +253,7 @@ class IngestNexus():
         if len(dbDatasets) == 0:
     
             dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
-        
+
             if len(dbInvestigations) == 0: 
                 logging.info("New IPTS: creating investigation, sample, run...")
                 # create new investigation
@@ -361,10 +361,10 @@ class IngestNexus():
 if __name__ == "__main__":
     #check number of arguments
     if (len(sys.argv) != 2):
-        print "ingestNexus_mq requires a filename absolute path"
+        logging.info("ingestNexus_mq requires a filename absolute path")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        logging.info("data file ", sys.argv[1], " not found")
         sys.exit()
     else:
       path = sys.argv[1]

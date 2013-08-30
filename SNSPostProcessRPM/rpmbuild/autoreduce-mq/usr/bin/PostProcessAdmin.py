@@ -2,13 +2,13 @@
 """
 Post Process Administrator. It kicks off cataloging and reduction jobs.
 """
-import logging, json, socket, os, sys, subprocess
+import logging, json, socket, os, sys, subprocess, time
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
 from Configuration import Configuration
-from PostProcessQueueConnector import PostProcessQueueConnector
- 
+from stompest.config import StompConfig
+from stompest.sync import Stomp
 
 class PostProcessAdmin:
     def __init__(self, data, conf):
@@ -17,6 +17,9 @@ class PostProcessAdmin:
         data["information"] = socket.gethostname()
         self.data = data
         self.conf = conf
+        
+        stompConfig = StompConfig(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd)
+        self.client = Stomp(stompConfig)
 
         try:
             if data.has_key('data_file'):
@@ -92,8 +95,8 @@ class PostProcessAdmin:
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             
-            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/shelly2/"
+            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
@@ -132,10 +135,10 @@ class PostProcessAdmin:
             
 
     def send(self, destination, data):
-        ppQConnector = PostProcessQueueConnector(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd, self.conf.queues, "post_process_consumer")
-        ppQConnector.send(destination, json.dumps(self.data))
+        self.client.connect()
+        self.client.send(destination, data)
+        self.client.disconnect()
         
-    
     def getData(self):
         return self.data
     
@@ -149,8 +152,10 @@ if __name__ == "__main__":
         logging.info("data: " + str(data))
     except ValueError as e:
         data["error"] = str(e)
-        logging.error("JSON data is incomplete: " + json.dumps(data) )
-        self._send_connection.send("/queue/POSTPROCESS.ERROR", json.dumps(data))
+        logging.error("JSON data is incomplete: " + json.dumps(data))
+        producer = Producer()
+        producer.run("/queue/POSTPROCESS.ERROR", json.dumps(data))
+        reactor.run()
         logging.info("Called /queue/POSTPROCESS.ERROR -- JSON data is incomplete: " + json.dumps(data))
 
     conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
