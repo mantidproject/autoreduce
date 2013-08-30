@@ -269,7 +269,7 @@ if __name__ == "__main__":
     NXSPE_flag=True
     outpre="SEQ"
     #Vanadium and masking    
-    Vanadium="/SNS/SEQ/shared/2013_A/V_files/SEQ_38995_event.nxs"
+    Vanadium="/SNS/SEQ/shared/2013_B/V_files/SEQ_40210.nxs.h5"
     maskfile=''
     Norm=V_norm_obj(Vanadium,"0.3,0.9,1.2",outdir,maskfile=maskfile,ld_saved_fl=True)
     Norm.MaskBTP(Bank="70,99,100,101,102,110")
