@@ -45,7 +45,7 @@ class AutoReduction():
       elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       elog.setSERotOptions('s1')
-      elog.setSETempOptions('SampleTemp, sampletemp, SensorB')
+      elog.setSETempOptions('SampleTemp, sampletemp, SensorB,SensorB340')
       elog.setFilename(self._output_directory+'experiment_log.csv')
       elog.save_line(autows)  
       
