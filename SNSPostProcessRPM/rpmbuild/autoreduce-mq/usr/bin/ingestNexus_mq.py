@@ -42,12 +42,6 @@ class IngestNexus():
         #find facility, investigation_type 
         config = ConfigParser.RawConfigParser()
         config.read('/etc/autoreduce/icat4.cfg')
-    
-        #open nexus file
-        file = nxs.open(self._infilename, 'r')
-        file.opengroup('entry')
-    
-        listing = file.getentries()
         
         investigation = self._factory.create("investigation")
         
@@ -59,193 +53,200 @@ class IngestNexus():
         invType = self._factory.create("investigationType")
         invType.id = config.get('InvestigationType', 'experiment')
         investigation.type = invType 
-
-        #investigation name 
-        if listing.has_key('experiment_identifier'):
-            file.opendata('experiment_identifier')
-            investigation.name = file.getdata()
-            file.closedata()
-        else:
-            investigation.name = "IPTS-0000"
     
-        #investigation title
-        if listing.has_key('title'):
-            file.opendata('title')
-            investigation.title = file.getdata()
-            file.closedata()
-        else:
-            investigation.title = "NONE"
-    
-        #create dataset
-        dataset = self._factory.create("dataset")
-    
-        #dataset run number
-        file.opendata('run_number')
-        dataset.name = file.getdata() 
-        file.closedata()
-    
-        #dataset notes 
-        if listing.has_key('notes'):
-            file.opendata('notes')
-            dataset.description = file.getdata()
-            file.closedata()
-    
-        dsType = self._factory.create("datasetType")
-        dsType.id = config.get('DatasetType', 'experiment_raw')
-        dataset.type = dsType
-    
-        #set dataset start time
-        if listing.has_key('start_time'):
-            file.opendata('start_time')
-            dataset.startDate = file.getdata()
-            file.closedata()
-
-        #set dataset end time
-        if listing.has_key('end_time'): 
-            file.opendata('end_time')
-            dataset.endDate = file.getdata()
-            file.closedata()
-    
-        #dataset proton_charge 
-        file.opendata('proton_charge')
-        protonCharge = file.getdata()
-        file.closedata()
-    
-        #dataset total_counts 
-        file.opendata('total_counts')
-        totalCounts = file.getdata()
-        file.closedata()
-    
-        #dataset duration 
-        file.opendata('duration')
-        duration = file.getdata()
-        file.closedata()
-    
-        #investigation instrument 
-        file.opengroup('instrument')
-        file.opendata('name')
-        for attr,value in file.attrs():
-            if attr == 'short_name':
-                instrument = self._factory.create("instrument")
-                instrument.name = value 
-                instrument.id = config.get('Instrument', value.lower())
-                investigation.instrument = instrument 
-        file.closedata()
-        file.closegroup()
-    
-        #set dataset parameters
-        parameters = []
-    
-        #1) parameter proton_charge 
-        if protonCharge:
-            parameterType = self._factory.create("parameterType")
-            parameterType.id = config.get('ParameterType', 'proton_charge')
-            parameterType.applicableToDataset = config.getboolean('ParameterType', 'proton_charge_applicable_to_dataset')
-            datasetParameter = self._factory.create("datasetParameter")
-            datasetParameter.type = parameterType
-            datasetParameter.stringValue = protonCharge 
-            parameters.append(datasetParameter)
-    
-        #2) parameter total_counts 
-        if totalCounts:
-            parameterType = self._factory.create("parameterType")
-            parameterType.id = config.get('ParameterType', 'total_counts')
-            parameterType.applicableToDataset = config.getboolean('ParameterType', 'total_counts_applicable_to_dataset')
-            datasetParameter = self._factory.create("datasetParameter")
-            datasetParameter.type = parameterType 
-            datasetParameter.numericValue = totalCounts
-            parameters.append(datasetParameter)
-    
-        #3) parameter duration 
-        if duration:
-            parameterType = self._factory.create("parameterType")
-            parameterType.id = config.get('ParameterType', 'duration')
-            parameterType.applicableToDataset = config.getboolean('ParameterType', 'duration_applicable_to_dataset')
-            datasetParameter = self._factory.create("datasetParameter")
-            datasetParameter.type = parameterType 
-            datasetParameter.numericValue = duration 
-            parameters.append(datasetParameter)
-                
-        dataset.parameters = parameters
-        dataset.location = self._infilename 
-    
-        datafiles = []
-    
-        token=self._infilename.split("/")
-        proposalDir = "/" + token[1] + "/" + token[2] + "/" + token[3]
-        logging.info("proposal directory: %s" % proposalDir) 
-        for dirpath, dirnames, filenames in os.walk(proposalDir):
-            if dirpath.find("shared") == -1 and dirpath.find("data") == -1:
-                for filename in [f for f in filenames]:
-                    #if dataset.name in filename and os.path.islink(filename) != False:
-                    if dataset.name in filename:
-                        datafile = self._factory.create("datafile")
-                        filepath = os.path.join(dirpath,filename)
-                        extension = os.path.splitext(filename)[1][1:]
-                        datafile.name = filename
-                        datafile.location = filepath
-                        dfFormat = self._factory.create("datafileFormat")
-                        dfFormat.id = config.get('DatafileFormat', extension)
-                        datafile.datafileFormat = dfFormat 
-                        modTime = os.path.getmtime(filepath)
-                        datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
-                        datafile.fileSize = os.path.getsize(filepath)
+        #open nexus file
+        file = nxs.open(self._infilename, 'r')
+        for name, nxclass in file.entries():
+            if nxclass == "NXentry" and name != "entry-VETO":
+                listing = file.getentries()
         
-                        datafiles.append(datafile)
+                #investigation name 
+                if listing.has_key('experiment_identifier'):
+                    file.opendata('experiment_identifier')
+                    investigation.name = file.getdata()
+                    file.closedata()
+                else:
+                    investigation.name = "IPTS-0000"
+            
+                #investigation title
+                if listing.has_key('title'):
+                    file.opendata('title')
+                    investigation.title = file.getdata()
+                    file.closedata()
+                else:
+                    investigation.title = "NONE"
+            
+                #create dataset
+                dataset = self._factory.create("dataset")
+            
+                #dataset run number
+                file.opendata('run_number')
+                dataset.name = file.getdata() 
+                file.closedata()
+            
+                #dataset notes 
+                if listing.has_key('notes'):
+                    file.opendata('notes')
+                    dataset.description = file.getdata()
+                    file.closedata()
+            
+                dsType = self._factory.create("datasetType")
+                dsType.id = config.get('DatasetType', 'experiment_raw')
+                dataset.type = dsType
+            
+                #set dataset start time
+                if listing.has_key('start_time'):
+                    file.opendata('start_time')
+                    dataset.startDate = file.getdata()
+                    file.closedata()
         
-        dataset.datafiles = datafiles
-        
-        samples = []
-        
-        sample = self._factory.create("sample")
-        sample.name = 'NONE'
-        
-        if listing.has_key('sample'):
-            file.opengroup('sample')
-            listSample = file.getentries()
-            if listSample.has_key('name'):
+                #set dataset end time
+                if listing.has_key('end_time'): 
+                    file.opendata('end_time')
+                    dataset.endDate = file.getdata()
+                    file.closedata()
+            
+                #dataset proton_charge 
+                file.opendata('proton_charge')
+                protonCharge = file.getdata()
+                file.closedata()
+            
+                #dataset total_counts 
+                file.opendata('total_counts')
+                totalCounts = file.getdata()
+                file.closedata()
+            
+                #dataset duration 
+                file.opendata('duration')
+                duration = file.getdata()
+                file.closedata()
+            
+                #investigation instrument 
+                file.opengroup('instrument')
                 file.opendata('name')
-                sample.name = file.getdata()
+                for attr,value in file.attrs():
+                    if attr == 'short_name':
+                        instrument = self._factory.create("instrument")
+                        instrument.name = value 
+                        instrument.id = config.get('Instrument', value.lower())
+                        investigation.instrument = instrument 
                 file.closedata()
-            else:
-                sample.name = "NONE"
-        
-            sampleParameters = []
-        
-            #set sample nature
-            if listSample.has_key('nature'):
-                file.opendata('nature')
-                nature = file.getdata()
-                file.closedata()
-                if nature:       
+                file.closegroup()
+            
+                #set dataset parameters
+                parameters = []
+            
+                #1) parameter proton_charge 
+                if protonCharge:
                     parameterType = self._factory.create("parameterType")
-                    parameterType.id = config.get('ParameterType', 'nature')
-                    parameterType.applicableToSample = config.getboolean('ParameterType', 'nature_applicable_to_sample')
-                    sampleParameter = self._factory.create("sampleParameter")
-                    sampleParameter.type = parameterType
-                    sampleParameter.stringValue = nature 
-                    sampleParameters.append(sampleParameter)
+                    parameterType.id = config.get('ParameterType', 'proton_charge')
+                    parameterType.applicableToDataset = config.getboolean('ParameterType', 'proton_charge_applicable_to_dataset')
+                    datasetParameter = self._factory.create("datasetParameter")
+                    datasetParameter.type = parameterType
+                    datasetParameter.stringValue = protonCharge 
+                    parameters.append(datasetParameter)
+            
+                #2) parameter total_counts 
+                if totalCounts:
+                    parameterType = self._factory.create("parameterType")
+                    parameterType.id = config.get('ParameterType', 'total_counts')
+                    parameterType.applicableToDataset = config.getboolean('ParameterType', 'total_counts_applicable_to_dataset')
+                    datasetParameter = self._factory.create("datasetParameter")
+                    datasetParameter.type = parameterType 
+                    datasetParameter.numericValue = totalCounts
+                    parameters.append(datasetParameter)
+            
+                #3) parameter duration 
+                if duration:
+                    parameterType = self._factory.create("parameterType")
+                    parameterType.id = config.get('ParameterType', 'duration')
+                    parameterType.applicableToDataset = config.getboolean('ParameterType', 'duration_applicable_to_dataset')
+                    datasetParameter = self._factory.create("datasetParameter")
+                    datasetParameter.type = parameterType 
+                    datasetParameter.numericValue = duration 
+                    parameters.append(datasetParameter)
+                        
+                dataset.parameters = parameters
+                dataset.location = self._infilename 
+            
+                datafiles = []
+            
+                token=self._infilename.split("/")
+                proposalDir = "/" + token[1] + "/" + token[2] + "/" + token[3]
+                logging.info("proposal directory: %s" % proposalDir) 
+                for dirpath, dirnames, filenames in os.walk(proposalDir):
+                    if dirpath.find("shared") == -1 and dirpath.find("data") == -1:
+                        for filename in [f for f in filenames]:
+                            #if dataset.name in filename and os.path.islink(filename) != False:
+                            if dataset.name in filename:
+                                datafile = self._factory.create("datafile")
+                                filepath = os.path.join(dirpath,filename)
+                                extension = os.path.splitext(filename)[1][1:]
+                                datafile.name = filename
+                                datafile.location = filepath
+                                dfFormat = self._factory.create("datafileFormat")
+                                dfFormat.id = config.get('DatafileFormat', extension)
+                                datafile.datafileFormat = dfFormat 
+                                modTime = os.path.getmtime(filepath)
+                                datafile.datafileCreateTime = xml.utils.iso8601.tostring(modTime)
+                                datafile.fileSize = os.path.getsize(filepath)
                 
-            if listSample.has_key('identifier'):
-                file.opendata('identifier')
-                identifier = file.getdata()
-                file.closedata()
-          
-                if identifier:
-                    parameterType = self._factory.create("parameterType")
-                    parameterType.id = config.get('ParameterType', 'identifier')
-                    parameterType.applicableToSample = config.getboolean('ParameterType', 'identifier_applicable_to_sample')
-                    sampleParameter = self._factory.create("sampleParameter")
-                    sampleParameter.type = parameterType
-                    sampleParameter.stringValue = identifier
-                    sampleParameters.append(sampleParameter)
-               
-            if len(sampleParameters): 
-                sample.parameters = sampleParameters
+                                datafiles.append(datafile)
+                
+                dataset.datafiles = datafiles
+                
+                samples = []
+                
+                sample = self._factory.create("sample")
+                sample.name = 'NONE'
+                
+                if listing.has_key('sample'):
+                    file.opengroup('sample')
+                    listSample = file.getentries()
+                    if listSample.has_key('name'):
+                        file.opendata('name')
+                        sample.name = file.getdata()
+                        file.closedata()
+                    else:
+                        sample.name = "NONE"
+                
+                    sampleParameters = []
+                
+                    #set sample nature
+                    if listSample.has_key('nature'):
+                        file.opendata('nature')
+                        nature = file.getdata()
+                        file.closedata()
+                        if nature:       
+                            parameterType = self._factory.create("parameterType")
+                            parameterType.id = config.get('ParameterType', 'nature')
+                            parameterType.applicableToSample = config.getboolean('ParameterType', 'nature_applicable_to_sample')
+                            sampleParameter = self._factory.create("sampleParameter")
+                            sampleParameter.type = parameterType
+                            sampleParameter.stringValue = nature 
+                            sampleParameters.append(sampleParameter)
+                        
+                    if listSample.has_key('identifier'):
+                        file.opendata('identifier')
+                        identifier = file.getdata()
+                        file.closedata()
+                  
+                        if identifier:
+                            parameterType = self._factory.create("parameterType")
+                            parameterType.id = config.get('ParameterType', 'identifier')
+                            parameterType.applicableToSample = config.getboolean('ParameterType', 'identifier_applicable_to_sample')
+                            sampleParameter = self._factory.create("sampleParameter")
+                            sampleParameter.type = parameterType
+                            sampleParameter.stringValue = identifier
+                            sampleParameters.append(sampleParameter)
+                       
+                    if len(sampleParameters): 
+                        sample.parameters = sampleParameters
+                
+                    file.closegroup()
+                samples.append(sample)
+                break 
         
-        samples.append(sample)
-        
-        file.closegroup()
         file.close()
         
         dbDatasets = self._service.search(self._sessionId, "Dataset INCLUDE Datafile [name = '" + str(dataset.name) + "'] <-> Investigation <-> Instrument [name = '" + str(instrument.name) + "'] <-> DatasetType [name = 'experiment_raw']")

@@ -53,6 +53,7 @@ class Configuration(object):
             self.reduction_started = config['reduction_started']
             self.reduction_complete = config['reduction_complete']
             self.reduction_error = config['reduction_error']
+            self.reduction_disabled = config['reduction_disabled']
             self.reduction_catalog_started = config['reduction_catalog_started']
             self.reduction_catalog_complete = config['reduction_catalog_complete']
             self.reduction_catalog_error = config['reduction_catalog_error']
