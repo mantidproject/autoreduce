@@ -7,8 +7,6 @@ from string import *
 
 import mantid
 
-
-
 def MaskAngle(**kwargs):
     """
     Routine to mask angles in a given interval (in degrees)
