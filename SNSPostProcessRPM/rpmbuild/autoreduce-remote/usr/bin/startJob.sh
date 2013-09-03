@@ -1,5 +1,5 @@
 #!/bin/bash
 
-module load mantid-mpi/nightly
+module load mantid-mpi
 
-python /sw/fermi/autoreduction/scripts/PostProcessAdmin.py $1
+python /sw/fermi/autoreduce/scripts/PostProcessAdmin.py $1

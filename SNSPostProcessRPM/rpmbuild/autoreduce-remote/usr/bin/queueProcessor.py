@@ -3,6 +3,8 @@ import json, logging, time, subprocess, sys, socket
 from twisted.internet import reactor, defer
 from stompest import async, sync
 from stompest.config import StompConfig
+from stompest.async.listener import SubscriptionListener
+from stompest.protocol import StompSpec, StompFailoverUri
 from Configuration import Configuration
 
 
@@ -75,9 +77,14 @@ class HeartBeat(object):
 
  
 if __name__ == '__main__':
+    
+    try:
+        config = Configuration('/etc/autoreduce/post_process_consumer.conf')
+    except:
+        sys.exit()
+        
     logging.info("Start post process asynchronous listener!")
-    config = Configuration('/etc/autoreduce/post_process_consumer.conf')
     reactor.callWhenRunning(Consumer(config).run)
-    #reactor.callWhenRunning(HeartBeat(config).count)
+    reactor.callWhenRunning(HeartBeat(config).count)
     reactor.run()
     logging.info("Stop post process asynchronous listener!")

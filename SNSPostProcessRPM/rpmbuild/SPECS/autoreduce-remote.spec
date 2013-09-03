@@ -1,7 +1,7 @@
 Summary: autoreduce-remote
 Name: autoreduce-remote
 Version: 1.0 
-Release: 1 
+Release: 2 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}

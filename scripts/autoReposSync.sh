@@ -48,6 +48,10 @@ for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductio
   fi
 done
 
+swRepoARLib = "/SNS/software/autoreduce/ARLibrary.py"
+gitARLib = "/SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductionScripts/shared/ARLibrary.py"
+diffScript $gitARLib $swRepoARLib
+
 echo
 echo "Number of files to be updated in git: "${#updateList[*]}
 if [[ ${#updateList[*]} -ne 0 ]]; then

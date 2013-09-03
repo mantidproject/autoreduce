@@ -5,8 +5,8 @@ PostProcessAdmin of autoreduce-remote executes reduction jobs on fermi
 import logging, json, socket, os, sys, subprocess
 
 from Configuration import Configuration
-from stompest.config import StompConfig
-from stompest.sync import Stomp
+#from stompest.config import StompConfig
+#from stompest.sync import Stomp
 
 import mantid.simpleapi as api
 
@@ -24,7 +24,8 @@ class StreamToLogger(object):
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    filename="/var/log/SNS_applications/post_process.log",
+    #filename="/var/log/SNS_applications/post_process.log",
+    filename="/tmp/3qr/post_process.log",
     filemode='a'
 )
                             
@@ -44,10 +45,15 @@ class PostProcessAdmin:
         self.data = data
         self.conf = conf
 
+        #stompConfig = StompConfig(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd)
+        #self.client = Stomp(stompConfig)
+        
         try:
             if data.has_key('data_file'):
                 self.data_file = str(data['data_file'])
                 logging.info("data_file: " + self.data_file)
+                if os.access(self.data_file, os.R_OK) == False:
+                    raise ValueError("data_file path doesn't exist or file not readable")
             else:
                 raise ValueError("data_file is missing")
 
@@ -76,7 +82,7 @@ class PostProcessAdmin:
                 raise ValueError("run_number is missing")
             
         except ValueError as e:
-            logging.error("JSON data is incomplete: " + str(e))
+            logging.info('JSON data error', exc_info=True)
             raise
 
     def reduce(self):
@@ -135,32 +141,40 @@ class PostProcessAdmin:
             
 
     def send(self, destination, data):
-        ppQConnector = PostProcessQueueConnector(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd, self.conf.queues, "post_process_consumer")
-        ppQConnector.send(destination, json.dumps(self.data))
-        
+        return
+        #self.client.connect()
+        #self.client.send(destination, data)
+        #self.client.disconnect()
     
-    def getData(self):
-        return self.data
+    #def getData(self):
+        #return self.data
     
     
 if __name__ == "__main__":
     try:
+        conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         message = sys.argv[1]
         logging.info("message: " + message)
         data = json.loads(message)
-        logging.info("data: " + str(data))
-    except ValueError as e:
-        data["error"] = str(e)
-        logging.error("JSON data is incomplete: " + json.dumps(data) )
-        stomp = sync.Stomp(self.stompConfig)
-        stomp.connect()
-        stomp.send(self.config.heart_beat, json.dumps(data))
-        stomp.disconnect() 
-        logging.info("Called " + self.config.postprocess_error " + json.dumps(data))
+        
+        try:  
+            pp = PostProcessAdmin(data, conf)
+            pp.reduce()
+            sys.exit()
 
-    conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
+        except ValueError as e:
+            data["error"] = str(e)
+            logging.error("JSON data error: " + json.dumps(data))
+            '''stomp = Stomp(StompConfig(conf.brokers, conf.amq_user, conf.amq_pwd))
+            stomp.connect()
+            stomp.send(conf.postprocess_error, json.dumps(data))
+            stomp.disconnect() '''
+            logging.info("Called " + conf.postprocess_error + "----" + json.dumps(data))
+            raise
         
-    pp = PostProcessAdmin(data, conf)
-    pp.reduce()
+        except:
+            raise
         
-    sys.exit()
+    except:
+        sys.exit()
+    
