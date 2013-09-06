@@ -18,7 +18,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s %(process)d/%(threadName)s: %(message)s",
     #filename='/var/log/SNS_applications/post_process.log',
-    filename="/tmp/3qr/post_process.log",
+    filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
                      
@@ -48,16 +48,10 @@ class Configuration(object):
             self.brokers = config['brokers']
             self.queues = config['amq_queues']
             self.postprocess_error = config['postprocess_error']
-            self.catalog_started = config['catalog_started']
-            self.catalog_complete = config['catalog_complete']
-            self.catalog_error = config['catalog_error']
             self.reduction_started = config['reduction_started']
             self.reduction_complete = config['reduction_complete']
             self.reduction_error = config['reduction_error']
             self.reduction_disabled = config['reduction_disabled']
-            self.reduction_catalog_started = config['reduction_catalog_started']
-            self.reduction_catalog_complete = config['reduction_catalog_complete']
-            self.reduction_catalog_error = config['reduction_catalog_error']
             self.heart_beat = config['heart_beat']
             
         except Exception:

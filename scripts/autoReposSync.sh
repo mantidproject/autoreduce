@@ -48,8 +48,8 @@ for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductio
   fi
 done
 
-swRepoARLib = "/SNS/software/autoreduce/ARLibrary.py"
-gitARLib = "/SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductionScripts/shared/ARLibrary.py"
+swRepoARLib="/SNS/software/autoreduce/ARLibrary.py"
+gitARLib="/SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductionScripts/shared/ARLibrary.py"
 diffScript $gitARLib $swRepoARLib
 
 echo
