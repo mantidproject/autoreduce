@@ -46,17 +46,26 @@ for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductio
       diffScript $file1 $file2
     fi
   fi
-done
+  ARLibScript="ARLibrary.py"
+  file3=$file/$ARLibScript
+  file4="/SNS/"$instrument"/shared/autoreduce/$ARLibScript"
+  if [ ! -f $file3 ]; then echo "$file3 does not exist, nothing to do."
+  else
+    if [ ! -f $file4 ]; then
+      echo "$file4 does not exist, nothing to do."
+    else
+      diffScript $file3 $file4
+    fi
+  fi
 
-swRepoARLib="/SNS/software/autoreduce/ARLibrary.py"
-gitARLib="/SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductionScripts/shared/ARLibrary.py"
-diffScript $gitARLib $swRepoARLib
+done
 
 echo
 echo "Number of files to be updated in git: "${#updateList[*]}
 if [[ ${#updateList[*]} -ne 0 ]]; then
   for file in ${updateList[@]}; do
     echo $file
+    echo $file | mail -s "Auto reduce script has been modified" "3y9@ornl.gov 3qr@ornl.gov"
     git add $file
   done
   git commit -m 'Updated reduction script by cron job'
