@@ -24,8 +24,8 @@ class StreamToLogger(object):
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    #filename="/var/log/SNS_applications/post_process.log",
-    filename="/tmp/work/3qr/post_process.log",
+    filename="/var/log/SNS_applications/post_process.log",
+    #filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
                             
@@ -44,9 +44,10 @@ class PostProcessAdmin:
         data["information"] = socket.gethostname()
         self.data = data
         self.conf = conf
+        self.sw_dir = conf.sw_dir
 
-        #stompConfig = StompConfig(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd)
-        #self.client = Stomp(stompConfig)
+        stompConfig = StompConfig(self.conf.brokers, self.conf.amq_user, self.conf.amq_pwd)
+        self.client = Stomp(stompConfig)
         
         try:
             if data.has_key('data_file'):
@@ -99,8 +100,6 @@ class PostProcessAdmin:
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
             out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
 
-            sw_dir = '/sw/fermi/autoreduce/scripts' 
-            
             #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
             #We would like to get MaxChunkSize from an env variable in the future
             
@@ -116,7 +115,7 @@ class PostProcessAdmin:
             cmd_out = " -o " + out_log + " -e " + out_err
             cmd_l = " -l nodes=" + str(nodesDesired) + ":ppn=1"
             cmd_v = " -v data_file='" + self.data_file + "',facility='" + self.facility + "',instrument='" + self.instrument + "',proposal_shared_dir='" + proposal_shared_dir + "'"
-            cmd_job = " " + sw_dir + "/remoteJob.sh"
+            cmd_job = " " + self.sw_dir + "/remoteJob.sh"
      
             cmd = "qsub" + cmd_out + cmd_l + cmd_v + cmd_job
 
@@ -141,14 +140,6 @@ class PostProcessAdmin:
               else:
                 time.sleep(30)
 
-            '''logFile=open(out_log, "w")
-            errFile=open(out_err, "w")
-            proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
-            proc.communicate()
-            logging.info("proc id: " + str(proc.pid))
-            logFile.close()
-            errFile.close()'''
-
             if os.stat(out_err).st_size == 0:
                 os.remove(out_err)
                 self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))  
@@ -170,28 +161,15 @@ class PostProcessAdmin:
             
 
     def send(self, destination, data):
-        return
-        #self.client.connect()
-        #self.client.send(destination, data)
-        #self.client.disconnect()
-    
-    #def getData(self):
-        #return self.data
+        self.client.connect()
+        self.client.send(destination, data)
+        self.client.disconnect()
     
     
 if __name__ == "__main__":
     try:
         conf = Configuration('/etc/autoreduce/post_process_consumer.conf')
         message = sys.argv[1]
-        facility = "SNS"
-        instrument = "NOM"
-        ipts = "IPTS-7169"
-        run_number = 8571 
-        #ipts = "IPTS-9511"
-        #run_number = 17945
-        data_file = "/SNS/"+instrument+"/"+ipts+"/0/"+str(run_number)+"/NeXus/"+instrument+"_"+str(run_number)+"_event.nxs"
-        data={"facility": facility, "instrument": instrument, "ipts": ipts, "run_number": run_number, "data_file":  data_file}
-        message = json.dumps(data)
         logging.info("message: " + message)
         data = json.loads(message)
         
@@ -203,10 +181,10 @@ if __name__ == "__main__":
         except ValueError as e:
             data["error"] = str(e)
             logging.error("JSON data error: " + json.dumps(data))
-            '''stomp = Stomp(StompConfig(conf.brokers, conf.amq_user, conf.amq_pwd))
+            stomp = Stomp(StompConfig(conf.brokers, conf.amq_user, conf.amq_pwd))
             stomp.connect()
             stomp.send(conf.postprocess_error, json.dumps(data))
-            stomp.disconnect() '''
+            stomp.disconnect()
             logging.info("Called " + conf.postprocess_error + "----" + json.dumps(data))
             raise
         

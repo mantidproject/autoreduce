@@ -47,6 +47,7 @@ class Configuration(object):
             self.amq_pwd = config['amq_pwd']
             self.brokers = config['brokers']
             self.queues = config['amq_queues']
+            self.sw_dir = config['sw_dir']
             self.postprocess_error = config['postprocess_error']
             self.reduction_started = config['reduction_started']
             self.reduction_complete = config['reduction_complete']
