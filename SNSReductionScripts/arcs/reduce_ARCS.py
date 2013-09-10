@@ -230,20 +230,20 @@ if __name__ == "__main__":
     if al!=None:
         [runnum,Efixed,T0,Erange,angle]=al   
         quick_process('__IWS',Erange,Efixed,T0)
-	outfile=outpre+'_'+runnum+'_autoreduced'
-	# save nexus file for combining data later before V normalization
-	AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
-	SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
-    #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
-    NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
-    ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
-    ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
-    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-    Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
-    if NXSPE_flag:            
-        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
-    if clean:
-        WS_clean()
+        outfile=outpre+'_'+runnum+'_autoreduced'
+        # save nexus file for combining data later before V normalization
+        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
+        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
+        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+        NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
+        ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+        ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+        ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
+        Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
+        if NXSPE_flag:            
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
+        if clean:
+            WS_clean()
 
     
 
