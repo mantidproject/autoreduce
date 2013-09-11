@@ -2,6 +2,7 @@
 #PBS -l walltime=1:00:00
 #PBS -N AUTO_REDUCTION
 #PBS -V
+#PBS -W umask=022
 
 #pushd /tmp/work/3qr
 

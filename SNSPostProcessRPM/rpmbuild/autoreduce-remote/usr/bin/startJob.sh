@@ -2,4 +2,9 @@
 
 module load mantid-mpi
 
-python /sw/fermi/autoreduce/scripts/PostProcessAdmin.py $1
+#remove leading and ending single quote
+inStr=$1
+outStr=${inStr#"'"}
+outStr=${outStr%"'"}
+
+python /sw/fermi/autoreduce/scripts/PostProcessAdmin.py $outStr

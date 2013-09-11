@@ -17,8 +17,8 @@ class StreamToLogger(object):
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s %(process)d/%(threadName)s: %(message)s",
-    #filename='/var/log/SNS_applications/post_process.log',
-    filename="/tmp/work/3qr/post_process.log",
+    filename='/var/log/SNS_applications/post_process.log',
+    #filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
                      

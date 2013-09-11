@@ -5,8 +5,8 @@ PostProcessAdmin of autoreduce-remote executes reduction jobs on fermi
 import logging, json, socket, os, sys, subprocess, time
 
 from Configuration import Configuration
-#from stompest.config import StompConfig
-#from stompest.sync import Stomp
+from stompest.config import StompConfig
+from stompest.sync import Stomp
 
 import mantid.simpleapi as api
 
@@ -96,14 +96,14 @@ class PostProcessAdmin:
 
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
-                
+        
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
             out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
 
             #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
             #We would like to get MaxChunkSize from an env variable in the future
             
-            Chunks = api.DetermineChunking(Filename=data_file,MaxChunkSize=32.0)
+            Chunks = api.DetermineChunking(Filename=self.data_file,MaxChunkSize=32.0)
             nodesDesired = Chunks.rowCount()
             
             logging.info("Chunks: " + str(Chunks))

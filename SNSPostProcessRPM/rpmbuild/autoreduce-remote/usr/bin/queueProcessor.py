@@ -38,8 +38,11 @@ class Consumer(object):
         data = frame.body
 
         logging.info("Received frame destination: " + destination)
-        logging.info("Received frame body (data)" + data) 
-        proc = subprocess.Popen(["python", "/usr/bin/PostProcessAdmin.py", destination, data])
+        logging.info("Received frame body (data): " + data) 
+        cmd = self.config.sw_dir + "/startJob.sh"
+        logging.info("Command: " + cmd) 
+        data = "'" + data.replace(" ", "") + "'"
+        proc = subprocess.Popen([cmd, data])
         self.procList.append(proc)
 
         while len(self.procList) > 4:
