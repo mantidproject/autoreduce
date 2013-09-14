@@ -21,6 +21,11 @@ def preprocessVanadium(Raw,Processed,Parameters):
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
+    ###########################
+    #Temporary workaround for IPTS-9145  GEG
+    if Eguess<5:
+      Eguess=50.
+    ###################  
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
 
     if Efixed!='N/A':
