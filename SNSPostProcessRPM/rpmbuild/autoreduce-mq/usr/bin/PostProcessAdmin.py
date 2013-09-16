@@ -76,7 +76,7 @@ class PostProcessAdmin:
     def catalogReduced(self):
         try:
             logging.info("called /queue/" + self.conf.reduction_catalog_started + " --- " + json.dumps(self.data))  
-            self.send('/queue/'+self.conf.reduction_catalog_started, self.data)
+            self.send('/queue/'+self.conf.reduction_catalog_started, json.dumps(self.data))
             ingestReduced = IngestReduced(self.facility, self.instrument, self.proposal, self.run_number)
             ingestReduced.execute()
             ingestReduced.logout()
@@ -90,8 +90,8 @@ class PostProcessAdmin:
         
     def reduce(self):
         try:         
-            self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
+            self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
             #instrument_shared_dir = "/tmp/shelly2/"
             reduce_script = "reduce_" + self.instrument
