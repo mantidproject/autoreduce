@@ -28,15 +28,15 @@ def preprocessData(filename):
     ###################  
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
 
-    if Efixed!='N/A':
-        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
-        #Fix that all time series log values start at the same time as the proton_charge
-        CorrectLogs('__IWS')
+    #if Efixed!='N/A':
+    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
+    #Fix that all time series log values start at the same time as the proton_charge
+    CorrectLogs('__IWS')
 
-        #Filter chopper 3 bad events
-        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
-        FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
-        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+    #Filter chopper 3 bad events
+    valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+    FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
+    #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
     return [Eguess,Efixed,T0]
   
     
@@ -82,6 +82,9 @@ if __name__ == "__main__":
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    
+    outpre='SEQ'
+    runnum=str(mtd['__IWS'].getRunNumber()) 
+    outfile=outpre+'_'+runnum+'_autoreduced'
     if Ei!='N/A':
         DGSdict['SampleInputWorkspace']='__IWS'
         DGSdict['SampleInputMonitorWorkspace']='__MonWS'
@@ -100,9 +103,6 @@ if __name__ == "__main__":
         DGSdict['OutputWorkspace']='__OWS'
         DgsReduction(**DGSdict)
         AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
-        outpre='SEQ'
-        runnum=str(mtd['__OWS'].getRunNumber()) 
-        outfile=outpre+'_'+runnum+'_autoreduced'
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
@@ -112,5 +112,9 @@ if __name__ == "__main__":
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
         if clean:
             WS_clean()
+    else:
+       ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
+       Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.5,0.005,10',PreserveEvents='0')
+       SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
                                                     
 
