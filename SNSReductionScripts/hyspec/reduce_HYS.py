@@ -8,8 +8,8 @@ mantid_root = "/opt/Mantid"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 from mantid.simpleapi import *
 from ARLibrary import *
-from matplotlib import *
-from matplotlib.pyplot import *
+#from matplotlib import *
+#from matplotlib.pyplot import *
 
 class AutoReduction():
   def __init__(self, nexus_file, output_directory):
@@ -88,26 +88,26 @@ class AutoReduction():
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
       SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
 
-      minvals,maxvals=ConvertToMDHelper('out1','|Q|','Direct')
-      xmin=minvals[0]
-      xmax=maxvals[0]
-      xstep=(xmax-xmin)*0.01
-      ymin=minvals[1]
-      ymax=maxvals[1]
-      ystep=(ymax-ymin)*0.01
-      x=arange(xmin,xmax,xstep)
-      y=arange(ymin,ymax,ystep)
-      X,Y=meshgrid(x,y)
+      #minvals,maxvals=ConvertToMDHelper('out1','|Q|','Direct')
+      #xmin=minvals[0]
+      #xmax=maxvals[0]
+      #xstep=(xmax-xmin)*0.01
+      #ymin=minvals[1]
+      #ymax=maxvals[1]
+      #ystep=(ymax-ymin)*0.01
+      #x=arange(xmin,xmax,xstep)
+      #y=arange(ymin,ymax,ystep)
+      #X,Y=meshgrid(x,y)
 
-      MD=ConvertToMD(w,QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
-      ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
-      ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
-      MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
-      d=MDH.getSignalArray()
-      ne=MDH.getNumEventsArray()
-      dne=d/ne
+      #MD=ConvertToMD(w,QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
+      #ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
+      #ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
+      #MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
+      #d=MDH.getSignalArray()
+      #ne=MDH.getNumEventsArray()
+      #dne=d/ne
 
-      Zm=ma.masked_where(ne==0,dne)
+      #Zm=ma.masked_where(ne==0,dne)
       #pcolormesh(X,Y,log(Zm),shading='gouraud')
       #xlabel('|Q| ($\AA^{-1}$)')
       #ylabel('E (meV)')
