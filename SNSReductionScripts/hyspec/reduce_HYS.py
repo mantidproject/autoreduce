@@ -108,13 +108,13 @@ class AutoReduction():
       dne=d/ne
 
       Zm=ma.masked_where(ne==0,dne)
-      pcolormesh(X,Y,log(Zm),shading='gouraud')
-      xlabel('|Q| ($\AA^{-1}$)')
-      ylabel('E (meV)')
+      #pcolormesh(X,Y,log(Zm),shading='gouraud')
+      #xlabel('|Q| ($\AA^{-1}$)')
+      #ylabel('E (meV)')
       #imshow(log(dne[::-1]))
       #axis('off')
 
-      savefig(processed_filename1+'.png',bbox_inches='tight')
+      #savefig(processed_filename1+'.png',bbox_inches='tight')
       
       SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
       SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
