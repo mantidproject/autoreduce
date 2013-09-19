@@ -1,15 +1,15 @@
 Summary: autoreduce-remote
 Name: autoreduce-remote
-Version: 1.1 
-Release: 2 
+Version: 1.2 
+Release: 1 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
 License: Unknown
 Source: autoreduce-remote.tgz
 Requires: libc.so.6()(64bit) libc.so.6(GLIBC_2.2.5)(64bit)
-Requires: stompest
-Requires: stompest.async
+Requires: python-stompest
+Requires: python-stompest.async
 %define debug_package %{nil}
 
 
