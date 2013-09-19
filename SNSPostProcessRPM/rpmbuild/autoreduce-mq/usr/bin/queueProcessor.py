@@ -1,6 +1,6 @@
 import json, logging, time, subprocess, sys, socket
 
-from twisted.internet import reactor, defer
+from twisted.internet import reactor, defer, task
 from stompest import async, sync
 from stompest.config import StompConfig
 from stompest.async.listener import SubscriptionListener
@@ -59,23 +59,18 @@ class HeartBeat(object):
     def __init__(self, config):
         self.stompConfig = StompConfig(config.brokers, config.amq_user, config.amq_pwd)
         self.config = config
-        self.last_heart_beat = time.time()
- 
+
+
     def count(self):
-        heart_beat = time.time()
+        logging.info("In HeartBeat.count")
+        stomp = sync.Stomp(self.stompConfig)
+        stomp.connect()
+        data_dict = {"src_name": socket.gethostname(), "status": "0"}
+        stomp.send(self.config.heart_beat, json.dumps(data_dict))
+        logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
+        stomp.disconnect() 
+    
 
-        if (heart_beat-self.last_heart_beat > 5):
-            stomp = sync.Stomp(self.stompConfig)
-            stomp.connect()
-            data_dict = {"src_name": socket.gethostname(), "status": "0"}
-            stomp.send(self.config.heart_beat, json.dumps(data_dict))
-            logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
-            stomp.disconnect() 
-            self.last_heart_beat = heart_beat
-            
-        reactor.callLater(1, self.count)
-
- 
 if __name__ == '__main__':
     
     try:
@@ -84,7 +79,10 @@ if __name__ == '__main__':
         sys.exit()
         
     logging.info("Start post process asynchronous listener!")
+    
+    l = task.LoopingCall(HeartBeat(config).count)
+    l.start(5.0) # call every second
+
     reactor.callWhenRunning(Consumer(config).run)
-    reactor.callWhenRunning(HeartBeat(config).count)
     reactor.run()
     logging.info("Stop post process asynchronous listener!")
