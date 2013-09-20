@@ -99,6 +99,7 @@ class AutoReduction():
       #y=arange(ymin,ymax,ystep)
       #X,Y=meshgrid(x,y)
 
+      #use("gdk")
       #MD=ConvertToMD(w,QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
       #ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
       #ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
@@ -114,7 +115,7 @@ class AutoReduction():
       #imshow(log(dne[::-1]))
       #axis('off')
 
-      #savefig(processed_filename1+'.png',bbox_inches='tight')
+      #savefig(processed_filename1+'.jpg',format='jpg',dpi=100,quality=50,bbox_inches='tight')
       
       SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
       SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
