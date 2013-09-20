@@ -81,7 +81,7 @@ if __name__ == '__main__':
     logging.info("Start post process asynchronous listener!")
     
     l = task.LoopingCall(HeartBeat(config).count)
-    l.start(5.0) # call every second
+    l.start(60.0) # call every minute
 
     reactor.callWhenRunning(Consumer(config).run)
     reactor.run()
