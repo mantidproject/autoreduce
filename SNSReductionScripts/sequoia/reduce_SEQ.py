@@ -50,8 +50,8 @@ def WS_clean():
 if __name__ == "__main__":
 
     #processing parameters
-    RawVanadium="/SNS/SEQ/shared/2013_B/V_files/SEQ_40210.nxs.h5"
-    ProcessedVanadium='van_2.nxs'
+    RawVanadium="/SNS/SEQ/shared/2013_B/V_files/SEQ_41939.nxs.h5"
+    ProcessedVanadium='van.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128"}]
