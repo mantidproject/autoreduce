@@ -31,6 +31,7 @@ SumSpectra(InputWorkspace = ows,OutputWorkspace = 'high_d',StartWorkspaceIndex =
 ConjoinWorkspaces(InputWorkspace1='low_d',InputWorkspace2='high_d')
 RenameWorkspace(InputWorkspace='low_d', OutputWorkspace='ows')
 ows=Divide(LHSWorkspace='ows',RHSWorkspace = 'van_2')
+ReplaceSpecialValues(InputWorkspace='ows',OutputWorkspace='ows',NaNValue='0',NaNError='0')
 SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
 SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'.nxs')
 
