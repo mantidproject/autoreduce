@@ -11,27 +11,23 @@ out_prefix = instrument + "_" + run_number
 
 folder = '/SNS/SNAP/IPTS-9084/shared/'
 
-LoadMask(InputFile=folder+'mask_edges.xml',Instrument='SNAP',OutputWorkspace='mask_edges' )
+#LoadMask(InputFile=folder+'mask_edges.xml',Instrument='SNAP',OutputWorkspace='mask_edges' )
 CreateGroupingWorkspace(InstrumentName='SNAP',GroupDetectorsBy='Column',OutputWorkspace='column')
 
-van_2 = LoadNexusProcessed(Filename=r'/SNS/SNAP/IPTS-9084/shared/backgrounds/SNAP_12959_Van_2.nxs')
-van_64 = LoadNexusProcessed(Filename=r'/SNS/SNAP/IPTS-9084/shared/backgrounds/SNAP_12960_Van_64.nxs')
-
+van_2 = LoadNexusProcessed(Filename=r'/SNS/SNAP/IPTS-8966/shared/backgrounds/SNAP_13030_van.nxs')
 
 binning='0.4,-0.002,10'
 
 iws=LoadEventNexus(Filename=nexus_file)
 ows=NormaliseByCurrent(iws)
-MaskDetectors(Workspace=ows, MaskedWorkspace= 'mask_edges' )
+#MaskDetectors(Workspace=ows, MaskedWorkspace= 'mask_edges' )
 ows=ConvertUnits(InputWorkspace='ows',Target='dSpacing',AlignBins='1')
-ows=DiffractionFocussing(InputWorkspace='ows',GroupingWorkspace='column',PreserveEvents='1')
-ows=Rebin(InputWorkspace='ows',Params=binning,PreserveEvents='0')
+ows=Rebin(InputWorkspace='ows',Params=binning,PreserveEvents='1')
+ows=DiffractionFocussing(InputWorkspace='ows',GroupingWorkspace='column',PreserveEvents='0')
 SumSpectra(InputWorkspace = ows,OutputWorkspace = 'low_d', StartWorkspaceIndex = '0',EndWorkspaceIndex='3') 
 SumSpectra(InputWorkspace = ows,OutputWorkspace = 'high_d',StartWorkspaceIndex = '4',EndWorkspaceIndex='5') 
 ConjoinWorkspaces(InputWorkspace1='low_d',InputWorkspace2='high_d')
 RenameWorkspace(InputWorkspace='low_d', OutputWorkspace='ows')
 ows=Divide(LHSWorkspace='ows',RHSWorkspace = 'van_2')
-ReplaceSpecialValues(InputWorkspace='ows',OutputWorkspace='ows',NaNValue='0',NaNError='0')
 SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
 SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'.nxs')
-
