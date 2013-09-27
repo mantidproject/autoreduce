@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os, sys, traceback
+sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from string import *
 from numpy import *
 
