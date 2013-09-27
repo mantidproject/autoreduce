@@ -88,7 +88,7 @@ def main(argv):
   dsName = args[0]
 
   config = ConfigParser.RawConfigParser()
-  config.read('icatclient.properties')
+  config.read('/etc/autoreduce/icatclient.properties')
   hostAndPort = config.get('icat41', 'hostAndPort')
   password = config.get('icat41', 'password')
   plugin = "db"

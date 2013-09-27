@@ -2,7 +2,7 @@
 """
 Post Process Administrator. It kicks off cataloging and reduction jobs.
 """
-import logging, json, socket, os, sys, subprocess, time
+import logging, json, socket, os, sys, subprocess, time, glob, requests
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
@@ -104,7 +104,7 @@ class PostProcessAdmin:
             proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
             #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
-
+            monitor_user = {'username': self.conf.amq_user, 'password': self.conf.amq_pwd}
 
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
@@ -124,7 +124,24 @@ class PostProcessAdmin:
             if os.stat(out_err).st_size == 0:
                 os.remove(out_err)
                 self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))  
-                logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))     
+                logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))
+                
+                url="https://monitor.sns.gov/files/"+self.instrument+"/"+self.run_number+"/submit_reduced/"
+
+                pattern=self.instrument+"_"+self.run_number+"*"
+                for dirpath, dirnames, filenames in os.walk(proposal_shared_dir):
+                    listing = glob.glob(os.path.join(dirpath, pattern))
+                    for filepath in listing:
+                        f, e = os.path.splitext(filepath)
+                        if e.startswith(os.extsep):
+                            e = e[len(os.extsep):]
+                            if e == "png" or e == "jpg":
+                                logging.info("filepath=" + filepath)
+                                files={'file': open(filepath, 'rb')}
+                                if len(files) != 0 and os.path.getsize(filepath) < 500000:
+                                    request=requests.post(url, data=monitor_user, files=files, verify=False)
+                                    logging.info("Submitted reduced image file, https post status:" + str(request.status_code))
+
             else:
                 maxLineLength=80
                 fp=file(out_err, "r")
@@ -133,7 +150,7 @@ class PostProcessAdmin:
                 errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
                 self.data["error"] = "REDUCTION: %s" % errMsg
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
-                logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))       
+                logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
 
         except Exception, e:
             self.data["error"] = "REDUCTION Error: %s " % e
