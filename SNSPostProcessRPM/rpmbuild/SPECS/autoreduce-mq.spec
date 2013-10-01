@@ -1,7 +1,7 @@
 Summary: autoreduce-mq
 Name: autoreduce-mq
 Version: 1.3
-Release: 8 
+Release: 9 
 Group: Applications/Engineering
 prefix: /usr
 BuildRoot: %{_tmppath}/%{name}
@@ -14,6 +14,7 @@ Requires: mantidnightly
 Requires: python-suds 
 Requires: python-stompest 
 Requires: python-stompest.async
+Requires: python-requests
 %define debug_package %{nil}
 
 
