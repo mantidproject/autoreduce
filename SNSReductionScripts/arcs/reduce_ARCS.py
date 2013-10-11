@@ -1,196 +1,66 @@
 #!/usr/bin/env python
-
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
+from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
-from numpy import *
-from string import *
-from MaskBTP import *
-from MaskAngle import *
+from matplotlib import *
+use("agg")
+from matplotlib.pyplot import *
 
-class ExperimentLog(object):
-    def __init__(self):
-        self.log_list=['vChTrans','proton_charge','Speed1','Phase1','Speed2','Phase2','Speed3','Phase3','EnergyRequest','s1l','s1r','s1b','s1t','s2l','s2r','s2b','s2t']
-        self.cols=[1,1,4,4,4,4,4,4,1,1,1,1,1,1,1,1,1]
-        self.SERotOptions=['CCR12Rot','SEHOT11','CCR16Rot']
+# Logs at: /var/log/SNS_applications/autoreduce.log
 
-    def log_line_gen(self,IWSName):
-        """
-        IWSName is a string of the workspace name
-        """
-        h=mtd[IWSName]
-        outstr=str(h.getRunNumber())+','+str(h.getTitle())+','+ h.getRun()['start_time'].value+','+ h.getRun()['end_time'].value+','+str(h.getRun()['duration'].value)+','
-        for cn,idx in zip(self.cols,self.log_list):
-            try:
-                jk=h.getRun()[idx].getStatistics()
-                valave=jk.mean                
-                valmax=jk.maximum
-                valmin=jk.minimum
-                valstdev=jk.standard_deviation
-                if cn==1:
-                    outstr=outstr+'%s,'%(valave)
-                else:
-                    outstr=outstr+'%s,%s,%s,%s,'%(valave,valmax,valmin,valstdev)
-            except:
-                if cn==1:
-                    outstr=outstr+'N/A,'
-                else:
-                    outstr=outstr+'N/A, N/A, N/A, N/A,'
-  
-        #check sample environment rotation stage
-        angle=0.
-        for SE in self.SERotOptions:
-            if self.log_list.count(SE)==1:
-                jk=h.getRun()[SE].getStatistics()
-                angle=jk.mean 
-            else:
-                if h.getRun().hasProperty(SE):
-                    SEVals=h.getRun().getProperty(SE).getStatistics()
-                    outstr=outstr+"%s,%s,%s,%s,"%(SEVals.mean,SEVals.maximum,SEVals.minimum,SEVals.standard_deviation)
-                    self.log_list.append(SE)
-                    self.cols.append(4)
-                    angle=SEVals.mean
-        return [outstr,angle]
-
-    def save_line(self,fname,IWSName,Ei,T0):
-        """
-        fname is a file name
-        IWSName is a string of the workspace name
-        Ei,T0 are outputs from GetEiT0
-        """
-        # if the file does not exist, set a flga to add a header line
-        create_h_flag=False
-        try:
-            h_ft=open(fname,'r')
-        except IOError:
-            create_h_flag=True
-            pass
-        else:   
-            h_ft.close()   
+def preprocessVanadium(Raw,Processed,Parameters):
+    if os.path.isfile(Processed):
+        LoadNexus(Filename=Processed,OutputWorkspace="__VAN")
+        dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
+    else:
+        LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN")
+        for d in Parameters:
+            MaskBTP(Workspace="__VAN",**d)
+        dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
+    return dictvan
         
-        [str_data,angle]=self.log_line_gen(IWSName)
-        str_data=str_data+'%s, %s,\n'%(Ei,T0)  
-
-        h_f=open(fname,'a')  # append to the file unless it does not exist 
-        if create_h_flag:
-            strtmp='run_number,title,start_time,end_time,duration,'
-            for idx,nc in zip(self.log_list,self.cols):
-                if nc==1:
-	                strtmp=strtmp+idx+','
-                else:
-                    strtmp=strtmp+'%s mean,%s maximum,%s minimum,%s stddev,'%(idx,idx,idx,idx)
-            strtmp=strtmp+'Ei, T0,\n'
-            h_f.write(strtmp)	   
-           
-        h_f.write(str_data)
-        h_f.close()
-        return angle
-
-
-
-def GetEiT0(ws_name,EiGuess):
-    try:
-        alg=GetEi(InputWorkspace=ws_name,Monitor1Spec="1",Monitor2Spec="2",EnergyEstimate=float(EiGuess))				#Run GetEi algorithm
-        Ei=alg[0]
-        Tzero=-alg[3]					#Extract incident energy and T0
-    except:
-        Ei='N/A'
-        Tzero='N/A'
-    return [Ei,Tzero]
-
-
-def autoloader(filename,outdir):
-    """
-    function for autoloader
-    """
-
+def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
-    Eguess=array(__MonWS.getRun()['EnergyRequest'].value).mean()
+    Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
-    elog=ExperimentLog()
-    angle=elog.save_line(outdir+'experiment_summary.csv','__MonWS',Efixed,T0)
 
-    runnum=str(__MonWS.getRun()['run_number'].value)     
-    Estep=Eguess*0.01
-    Elow=-Eguess*0.5
-    Ehigh=Eguess*0.9
-    Erange='%g,%g,%g'%(Elow,Estep,Ehigh)   
-    DeleteWorkspace('__MonWS')
- 
+
     if Efixed!='N/A':
         LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
-        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
-        return [runnum,Efixed,T0,Erange,angle]
-    else:
-        #do not load data if we cannot process it
-        return None 
+        #Fix that all time series log values start at the same time as the proton_charge
+        CorrectLogs('__IWS')
 
-def quick_process(IWS,Erange,Efixed,T0):
-    """
-    normalize by current, correct for Tube efficiency, compensate for ki/kf, divide by bin width
-    """
-    #ChangeBinOffset(InputWorkspace=IWS,OutputWorkspace="__OWS",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
-    #ChangeBinOffset(InputWorkspace="__OWS",OutputWorkspace="__OWS",Offset=T0)
-    ChangeBinOffset(InputWorkspace=IWS,OutputWorkspace="__OWS",Offset=T0)
-    ConvertUnits(InputWorkspace="__OWS",OutputWorkspace="__OWS",Target="Wavelength",EMode="Direct",EFixed=Efixed)	#The algorithm for He3 tube efficiency requires wavelength units
-    He3TubeEfficiency(InputWorkspace="__OWS",OutputWorkspace="__OWS")							#Apply correction due to absorption in He3
-    ConvertUnits(InputWorkspace="__OWS",OutputWorkspace="__OWS",Target="DeltaE",EMode="Direct",EFixed=Efixed)		#Switch  to energy transfer
-    CorrectKiKf(InputWorkspace="__OWS",OutputWorkspace="__OWS")								#Apply k_i/k_f factor
-    Rebin(InputWorkspace="__OWS",OutputWorkspace="__OWS",Params=Erange,PreserveEvents=True)				#Make sure the bins are correct
-#    ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
+        #Add other Filters here
+        #Filter chopper 3 bad events
+        #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+        #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
+        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+    return [Eguess,Efixed,T0]
+  
     
 def WS_clean():
     DeleteWorkspace('__IWS')
     DeleteWorkspace('__OWS')
     DeleteWorkspace('__VAN')
-
-
-
-class V_norm_obj(object):
-    def __init__(self,vanfile,wlstr,outdir,maskfile='',ld_saved_fl=True):
-        self.outdir=outdir
-        self.vanfile=vanfile
-        self.wlstr=wlstr
-        self.ld_saved_fl=ld_saved_fl
-        self.maskpars=[]
-        self.maskfile=maskfile
-
-    def MaskBTP(self,**kwargs):
-        self.maskpars.append(kwargs)
-
-    def CreateMasksAndVanadiumNormalization(self):
-        if (os.path.isfile(self.outdir+"van.nxs") and (self.ld_saved_fl)):
-            LoadNexus(Filename=outdir+"van.nxs",OutputWorkspace="__VAN")
-        else:   
-            LoadEventNexus(Filename=self.vanfile,OutputWorkspace="__VAN")
-            ConvertUnits(InputWorkspace="__VAN",OutputWorkspace="__VAN",Target="Wavelength",EMode="Elastic")
-            Rebin(InputWorkspace="__VAN",OutputWorkspace="__VAN",Params=self.wlstr,PreserveEvents=False)	       #integrate all events in the range given by wlstr
-            FindDetectorsOutsideLimits(InputWorkspace='__VAN',OutputWorkspace='__MaskZeroes',LowThreshold='0.01')      # Get rid of zero count pixels
-            MaskDetectors(Workspace='__VAN',MaskedWorkspace='__MaskZeroes')
-            DeleteWorkspace(Workspace="__MaskZeroes")		
-            MaskAngle(Workspace='__VAN',twothetamax=2.5)                                # mask lowest angles 
-            ConvertToDistribution("__VAN")
-            NormaliseByCurrent(InputWorkspace="__VAN",OutputWorkspace="__VAN")		#normalize by proton charge
-            for d in self.maskpars:
-                MaskBTP(Workspace="__VAN",**d)
-            			                                                        #determine which detectors to mask, and store them in the "MASK" workspace
-            MedianDetectorTest(InputWorkspace="__VAN",OutputWorkspace="__MASK",LevelsUp=1,CorrectForSolidAngle=True,LowThreshold=0.5,HighThreshold=1.5,ExcludeZeroesFromMedian=True)
-	  
-            if len(self.maskfile)>0:
-                LoadNexus(Filename=self.maskfile,OutputWorkspace="__temp_mask")
-                MaskDetectors(Workspace="__MASK",MaskedWorkspace="__temp_mask")		#add detectors masked in "temp_mask" to "MASK"
-                DeleteWorkspace(Workspace="__temp_mask")
-            MaskDetectors(Workspace="__VAN",MaskedWorkspace="__MASK")			#Mask "VAN". This prevents dividing by 0
-            datay = mtd['__VAN'].extractY()
-            meanval = 1.0/float(datay[datay>0].mean())
-            Scale(InputWorkspace='__VAN',Factor=meanval,OutputWorkspace='__VAN')        # normalize to mean value
-            DeleteWorkspace(Workspace="__MASK")						#Mask is carried by VAN workspace
-            SaveNexus(InputWorkspace="__VAN",Filename=self.outdir+"van.nxs")
-
-
-
-
+    DeleteWorkspace('__MonWS')
+    
+          
 if __name__ == "__main__":
+
+    #processing parameters
+    RawVanadium="/SNS/ARCS/2013_2_18_CAL/0/39251/NeXus/ARCS_39251_event.nxs"
+    ProcessedVanadium='van39251.nxs'
+    HardMaskFile=''
+    IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
+    MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
+    MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
+    MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
+    groupingFile=''  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
+    clean=True
+    NXSPE_flag=True
+    NormalizedVanadiumEqualToOne = True
+
     #check number of arguments
     if (len(sys.argv) != 3): 
         print "autoreduction code requires a filename and an output directory"
@@ -201,49 +71,93 @@ if __name__ == "__main__":
     else:
         filename = sys.argv[1]
         outdir = sys.argv[2]
-    #----------------------------------------------------------------------------------
-    # changes
 
 
-    clean=True
-    NXSPE_flag=True
-    outpre="ARCS"
-    #Vanadium and masking    
-    Vanadium="/SNS/ARCS/2013_2_18_CAL/data/ARCS_37348_event.nxs"
-    maskfile=''
-    Norm=V_norm_obj(Vanadium,"0.35,0.4,0.75",outdir,maskfile=maskfile,ld_saved_fl=True)
-    # Standard end of tube masking
-    Norm.MaskBTP(Pixel="1,2,3,4,5,6,7,122,123,124,125,126,127,128")
-    Norm.MaskBTP(Bank="70",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,117,118,119,120,121,122,123,124,125,126,127,128")
-    Norm.MaskBTP(Bank="71",Pixel="1,2,3,4,5,6,7,8,9,10,11,12,13,14,115,116,117,118,119,120,121,122,123,124,125,126,127,128")
-    # Special masking as needed
-    #Norm.MaskBTP(Bank="18")
+    elog=ExperimentLog()
+    elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
+    elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
+    elog.setSERotOptions('CCR12Rot, SEOCRot, CCR16Rot, SEHOT11')
+    elog.setSETempOptions('SampleTemp, sampletemp, SensorA')
+    elog.setFilename(outdir+'experiment_log.csv')
 
-    Norm.CreateMasksAndVanadiumNormalization()
-
-    #end changes
-    #-----------------------------------------------------------------------------------
-
-    
-    al=autoloader(filename,outdir) #this line also records the information in outdir+'experiment_summary.csv'
-
-    if al!=None:
-        [runnum,Efixed,T0,Erange,angle]=al   
-        quick_process('__IWS',Erange,Efixed,T0)
-        outfile=outpre+'_'+runnum+'_autoreduced'
-        # save nexus file for combining data later before V normalization
-        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
+    DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
+    [EGuess,Ei,T0]=preprocessData(filename)
+    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
+    outpre='ARCS'
+    runnum=str(mtd['__IWS'].getRunNumber()) 
+    outfile=outpre+'_'+runnum+'_autoreduced'  
+    if Ei!='N/A':
+        DGSdict['SampleInputWorkspace']='__IWS'
+        DGSdict['SampleInputMonitorWorkspace']='__MonWS'
+        DGSdict['IncidentEnergyGuess']=Ei
+        DGSdict['UseIncidentEnergyGuess']='1'
+        DGSdict['TimeZeroGuess']=T0
+        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
+        DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
+        DGSdict['HardMaskFile']=HardMaskFile
+        DGSdict['GroupingFile']=groupingFile #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['IncidentBeamNormalisation']='ByCurrent'
+        DGSdict['UseBoundsForDetVan']='1'
+        DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
+        DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
+        DGSdict['DetVanIntRangeUnits']='Wavelength'
+        DGSdict['MedianTestLevelsUp']='1'
+        DGSdict['OutputWorkspace']='__OWS'
+        DgsReduction(**DGSdict)
+        #Do normalization of vanadum to 1
+        # This step only runs ONCE if the processed vanadium file is not already present.
+        if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+              filename=DGSdict['SaveProcDetVanFilename']
+              LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+              datay = mtd['__VAN'].extractY()
+              meanval = float(datay[datay>0].mean())
+              CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+              Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN')  #Divide the vanadium by the mean
+              Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+              SaveNexus(InputWorkspace="__VAN", Filename= filename)
+        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")  
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
-        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
-        NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
-        ConvertToPointData(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
-        ConvertToHistogram(InputWorkspace="__OWS",OutputWorkspace="__OWS") 
+        RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-        Divide(LHSWorkspace="__OWS", RHSWorkspace="__VAN",OutputWorkspace="__OWS")
+        
+        #plots
+        minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
+        xmin=minvals[0]
+        xmax=maxvals[0]
+        xstep=(xmax-xmin)*0.01
+        ymin=minvals[1]
+        ymax=maxvals[1]
+        ystep=(ymax-ymin)*0.01
+        x=arange(xmin,xmax,xstep)
+        y=arange(ymin,ymax,ystep)
+        X,Y=meshgrid(x,y)
+
+
+        MD=ConvertToMD('__OWS',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
+        ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
+        ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
+        MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
+        d=MDH.getSignalArray()
+        ne=MDH.getNumEventsArray()
+        dne=d/ne
+
+        Zm=ma.masked_where(ne==0,dne)
+        pcolormesh(X,Y,log(Zm),shading='gouraud')
+        xlabel('|Q| ($\AA^{-1}$)')
+        ylabel('E (meV)')
+        title("Run "+outfile)
+
+
+        savefig(outdir+outfile+".nxs.png",bbox_inches='tight')
+
+
         if NXSPE_flag:            
-            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Efixed,Psi=angle,KiOverKfScaling=True) 
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
         if clean:
             WS_clean()
-
-    
+   
+    else:  #Do this if it is whitebeam
+       ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
+       Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.5,0.005,10',PreserveEvents='0')
+       SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
 
