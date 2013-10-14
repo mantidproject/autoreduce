@@ -147,7 +147,8 @@ if __name__ == "__main__":
         ylabel('E (meV)')
         title("Run "+outfile)
 
-
+        print "Shelly"
+        print outdir+outfile+".nxs.png" 
         savefig(outdir+outfile+".nxs.png",bbox_inches='tight')
 
 
