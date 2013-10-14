@@ -147,7 +147,10 @@ if __name__ == "__main__":
         ylabel('E (meV)')
         title("Run "+outfile)
 
-        savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
+        dir="/SNS/ARCS/IPTS-9168/shared/autoreduce/ARCS_39798_autoreduced.nxs.png"
+
+        savefig(dir,bbox_inches='tight')
+        #savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
 
         if NXSPE_flag:            
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
