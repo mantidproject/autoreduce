@@ -78,6 +78,14 @@ class IngestNexus():
             
                 #create dataset
                 dataset = self._factory.create("dataset")
+                
+                #investigation run number
+                if listing.has_key('collection_identifier'):
+                    file.opendata('collection_identifier')
+                    investigation.visitId = str(file.getdata())
+                    file.closedata()
+                else:
+                    investigation.visitId = "0"
             
                 #dataset run number
                 file.opendata('run_number')
@@ -253,8 +261,9 @@ class IngestNexus():
 
         if len(dbDatasets) == 0:
     
-            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
-
+            #dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(investigation.name) + "'] <-> Instrument [name = '" + instrument.name + "']")
+            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + investigation.name + "' AND visitId = '" + investigation.visitId + "'] <-> Instrument [name = '" + instrument.name + "']")
+        
             if len(dbInvestigations) == 0: 
                 logging.info("New IPTS: creating investigation, sample, run...")
                 # create new investigation

@@ -76,9 +76,9 @@ function processRuns()
       searchDBRunList $run
       return="$?"
       if [[ $return -eq 0 ]]; then
-        echo "python /usr/bin/sendMessage.py "$file | sed "s/^/$(date)  /" >> $logfile
-        /usr/bin/python /usr/bin/sendMessage.py $file
-        sleep 20 
+        echo "python sendMessage.py "$file | sed "s/^/$(date)  /"
+        python sendMessage.py $file
+        sleep 20
       fi
     fi
   done
