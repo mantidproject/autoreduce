@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 import sys,os
 sys.path.append("/opt/Mantid/bin")
+sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
+from matplotlib import *
 
+use("agg")
+from matplotlib.pyplot import *
 # Logs at: /var/log/SNS_applications/autoreduce.log
 
 def preprocessVanadium(Raw,Processed,Parameters):
@@ -108,7 +112,16 @@ if __name__ == "__main__":
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
         ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-
+        
+        s=SumSpectra("__OWS")
+        x=s.readX(0)
+        y=s.readY(0)
+        plot(x,y)
+        xlabel('Energy transfer (meV)')
+        ylabel('Intensity')
+        show()
+        savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
+        
         if NXSPE_flag:            
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
         if clean:
