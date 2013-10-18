@@ -65,7 +65,8 @@ class IngestReduced():
         for dirpath, dirnames, filenames in os.walk(directory):    
             listing = glob.glob(os.path.join(dirpath, pattern))
             for filepath in listing:
-                filename =os.path.basename(filepath )
+                filename =os.path.basename(filepath)
+                logging.info("filename: %s" % filename)
                 datafile = self._factory.create("datafile")
                 datafile.location = filepath 
                 datafile.name = filename
@@ -86,7 +87,7 @@ class IngestReduced():
 
         if len(dbDatasets) == 0:
     
-            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(self._investigationName) + "'] <-> Instrument [name = '" + self._instrumentName + "']")
+            dbInvestigations = self._service.search(self._sessionId, "Investigation INCLUDE Sample [name = '" + str(self._investigationName) + "'] <-> Instrument [name = '" + self._instrumentName + "'] <-> Dataset [name = '" + str(dataset.name) + "']")
         
             if len(dbInvestigations) == 1:
                 investigation = dbInvestigations[0]
