@@ -116,9 +116,10 @@ if __name__ == "__main__":
         s=SumSpectra("__OWS")
         x=s.readX(0)
         y=s.readY(0)
-        plot(x,y)
+        plot(x[1:],y)
         xlabel('Energy transfer (meV)')
         ylabel('Intensity')
+        yscale('log')
         show()
         savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
         
