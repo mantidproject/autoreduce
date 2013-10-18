@@ -28,16 +28,16 @@ def preprocessData(filename):
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
 
 
-    if Efixed!='N/A':
-        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
-        #Fix that all time series log values start at the same time as the proton_charge
-        CorrectLogs('__IWS')
+    #if Efixed!='N/A':
+    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
+    #Fix that all time series log values start at the same time as the proton_charge
+    CorrectLogs('__IWS')
 
-        #Add other Filters here
-        #Filter chopper 3 bad events
-        #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
-        #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
-        #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+    #Add other Filters here
+    #Filter chopper 3 bad events
+    #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+    #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
+    #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
     return [Eguess,Efixed,T0]
   
     
