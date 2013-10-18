@@ -55,7 +55,7 @@ if __name__ == "__main__":
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128"}]
-    MaskBTPParameters.append({'Bank':"99,100,101,102"})
+    MaskBTPParameters.append({'Bank':"99,100,101,102,118"})
     clean=True
     NXSPE_flag=True
 
