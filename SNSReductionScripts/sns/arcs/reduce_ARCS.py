@@ -133,8 +133,8 @@ if __name__ == "__main__":
         ymin=minvals[1]
         ymax=maxvals[1]
         ystep=(ymax-ymin)*0.01
-        x=arange(xmin,xmax,xstep)
-        y=arange(ymin,ymax,ystep)
+        x=arange(xmin,xmax,xstep)[0:100]
+        y=arange(ymin,ymax,ystep)[0:100]
         X,Y=meshgrid(x,y)
 
 
