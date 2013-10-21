@@ -121,7 +121,10 @@ if __name__ == "__main__":
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-        
+
+        if NXSPE_flag:            
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+                    
         #plots
         minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
         xmin=minvals[0]
@@ -151,8 +154,7 @@ if __name__ == "__main__":
 
         savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
 
-        if NXSPE_flag:            
-            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+
         if clean:
             WS_clean()
    
