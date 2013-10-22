@@ -1,6 +1,6 @@
 import json, logging, time, subprocess, sys, socket
 
-from twisted.internet import reactor, defer, task
+from twisted.internet import reactor, defer
 from stompest import async, sync
 from stompest.config import StompConfig
 from stompest.async.listener import SubscriptionListener
@@ -11,12 +11,13 @@ from Configuration import Configuration
 class Consumer(object):
         
     def __init__(self, config):
-        self.stompConfig = StompConfig(config.brokers, config.amq_user, config.amq_pwd)
+        self.stompConfig = StompConfig(config.uri, config.amq_user, config.amq_pwd)
         self.config = config
         self.procList = []
         
     @defer.inlineCallbacks
     def run(self):
+        self.heartbeat()
         client = yield async.Stomp(self.stompConfig).connect()
         headers = {
             # client-individual mode is necessary for concurrent processing
@@ -28,6 +29,13 @@ class Consumer(object):
 
         for q in self.config.queues:
             client.subscribe(q, headers, listener=SubscriptionListener(self.consume, errorDestination=self.config.postprocess_error))
+            
+        try:
+            client = yield client.disconnected
+        except:
+            reactor.callLater(5, self.run)
+            logging.info("callLater in 5 seconds")
+
             
     def consume(self, client, frame):
         """
@@ -53,22 +61,16 @@ class Consumer(object):
         for i in self.procList:
             if i.poll() is not None:
                 self.procList.remove(i)
-
-class HeartBeat(object):
-
-    def __init__(self, config):
-        self.stompConfig = StompConfig(config.brokers, config.amq_user, config.amq_pwd)
-        self.config = config
-
-
-    def count(self):
-        logging.info("In HeartBeat.count")
+                
+    def heartbeat(self):
+        logging.info("In heartbeat...")
         stomp = sync.Stomp(self.stompConfig)
         stomp.connect()
         data_dict = {"src_name": socket.gethostname(), "status": "0"}
         stomp.send(self.config.heart_beat, json.dumps(data_dict))
         logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
-        stomp.disconnect() 
+        stomp.disconnect()
+        reactor.callLater(30.0, self.heartbeat)
     
 
 if __name__ == '__main__':
@@ -79,10 +81,6 @@ if __name__ == '__main__':
         sys.exit()
         
     logging.info("Start post process asynchronous listener!")
-    
-    l = task.LoopingCall(HeartBeat(config).count)
-    l.start(60.0) # call every minute
-
-    reactor.callWhenRunning(Consumer(config).run)
+    Consumer(config).run()
     reactor.run()
     logging.info("Stop post process asynchronous listener!")
