@@ -46,6 +46,7 @@ class Configuration(object):
             self.amq_user = config['amq_user']
             self.amq_pwd = config['amq_pwd']
             self.brokers = config['brokers']
+            self.uri = config['uri']
             self.queues = config['amq_queues']
             self.sw_dir = config['sw_dir']
             self.postprocess_error = config['postprocess_error']
