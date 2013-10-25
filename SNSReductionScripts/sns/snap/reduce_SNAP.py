@@ -25,11 +25,11 @@ CreateGroupingWorkspace(InstrumentName ='SNAP', GroupDetectorsBy=real_name, Outp
 binning='0.4,-0.002,3'
 
 iws=LoadEventNexus(Filename=nexus_file)
-CompressEvents(InputWorkspace='SNAP_%s'%run,OutputWorkspace='SNAP_%s'%run)
+iws=CompressEvents(InputWorkspace='iws')
 ows=NormaliseByCurrent(iws)
 ows=CompressEvents(ows)
-ows=ConvertUnits(InputWorkspace='ows_d',Target='dSpacing',AlignBins='0')
-ows=Rebin(InputWorkspace='ows_d',Params=binning,PreserveEvents='0')
+ows_d=ConvertUnits(InputWorkspace='ows',Target='dSpacing',AlignBins='0')
+ows_d=Rebin(InputWorkspace='ows_d',Params=binning,PreserveEvents='0')
 ows_grp=DiffractionFocussing(InputWorkspace='ows_d',GroupingWorkspace=grp,PreserveEvents='0')
 ows_16 = SumNeighbours(InputWorkspace='ows_d',SumX='16',SumY='16')
 ows_sum=SumSpectra(InputWorkspace='ows_d',IncludeMonitors='0')
