@@ -39,7 +39,7 @@ SaveNexusProcessed(InputWorkspace='ows_16', Title=out_prefix, Filename = outputD
 SaveNexusProcessed(InputWorkspace='ows_sum', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_sum.nxs')
 
 iws = LoadEventPreNexus(EventFilename=r'/SNS/SNAP/IPTS-%s/0/%s/preNeXus/SNAP_%s_neutron1_event.dat'%(IPTS,run_number, run_number),SpectrumList='0')
-LoadNexusLogs(Workspace='iws',Filename=r'/SNS/SNAP/IPTS-%s/data/SNAP_%s_event.nxs'%(IPTS,run),OverwriteLogs='1')
+LoadNexusLogs(Workspace='iws',Filename=r'/SNS/SNAP/IPTS-%s/data/SNAP_%s_event.nxs'%(IPTS,run_number),OverwriteLogs='1')
 ows = NormaliseByCurrent(InputWorkspace='iws')
 ows = Rebin(InputWorkspace='ows',Params='40,20.0,17000 ')
 
