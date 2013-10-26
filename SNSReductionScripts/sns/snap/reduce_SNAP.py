@@ -9,37 +9,32 @@ instrument = filename.split('_')[0]
 run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
 out_prefix = instrument + "_" + run_number
 
-IPTS = '9109'
+folder = '/SNS/SNAP/IPTS-9109/shared/'
 
-folder = '/SNS/SNAP/IPTS-%s/shared/'%IPTS
+mask_dac = LoadMask(InputFile=folder+'mask_dac.xml',Instrument='SNAP' )
+van = LoadNexusProcessed(Filename=folder+'nor_nexus.nxs')
 
-#LoadMask(InputFile=folder+'mask_edges.xml',Instrument='SNAP',OutputWorkspace='mask_edges' )
+binning='0.4,-0.003,3'
 
-grp = 'banks'
-if  grp == 'all': real_name = 'All'
-if  grp == 'column': real_name = 'Column'
-if  grp == 'banks': real_name = 'Group'
-if  grp == 'modules': real_name = 'bank'
-CreateGroupingWorkspace(InstrumentName ='SNAP', GroupDetectorsBy=real_name, OutputWorkspace=grp)
+#######################################33
 
-binning='0.4,-0.002,3'
 
 iws=LoadEventNexus(Filename=nexus_file)
-iws=CompressEvents(InputWorkspace='iws')
-ows=NormaliseByCurrent(iws)
-ows=CompressEvents(ows)
-ows_d=ConvertUnits(InputWorkspace='ows',Target='dSpacing',AlignBins='0')
-ows_d=Rebin(InputWorkspace='ows_d',Params=binning,PreserveEvents='0')
-ows_grp=DiffractionFocussing(InputWorkspace='ows_d',GroupingWorkspace=grp,PreserveEvents='0')
-ows_16 = SumNeighbours(InputWorkspace='ows_d',SumX='16',SumY='16')
-ows_sum=SumSpectra(InputWorkspace='ows_d',IncludeMonitors='0')
+iws = NormaliseByCurrent(InputWorkspace='iws')
+iws = CompressEvents(InputWorkspace='iws')
+ows = ConvertUnits(InputWorkspace='iws',Target='dSpacing')
+ows = Rebin(InputWorkspace='ows',Params=binning,PreserveEvents='0')
+ows = MaskDetectors(Workspace='ows',MaskedWorkspace='mask_dac')
+ows_4 = SumNeighbours(InputWorkspace='ows',SumX='4',SumY='4')
+RemoveLogs(Workspace='ows_4')
 
-SaveNexusProcessed(InputWorkspace='ows_grp', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_grp.nxs')
-SaveNexusProcessed(InputWorkspace='ows_16', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_16.nxs')
-SaveNexusProcessed(InputWorkspace='ows_sum', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_sum.nxs')
+ows = SumSpectra(InputWorkspace='ows')
+ows = Divide(LHSWorkspace = 'ows', RHSWorkspace = 'van')
+ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
 
-iws = LoadEventPreNexus(EventFilename=r'/SNS/SNAP/IPTS-%s/0/%s/preNeXus/SNAP_%s_neutron1_event.dat'%(IPTS,run_number, run_number),SpectrumList='0')
-LoadNexusLogs(Workspace='iws',Filename=r'/SNS/SNAP/IPTS-%s/data/SNAP_%s_event.nxs'%(IPTS,run_number),OverwriteLogs='1')
-ows = NormaliseByCurrent(InputWorkspace='iws')
-ows = Rebin(InputWorkspace='ows',Params='40,20.0,17000 ')
+##############################################################3
 
+SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_inst.nxs')
+SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_nor.nxs')
+SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
+SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/'+out_prefix+'.gsa',Format='SLOG', SplitFiles = '0', AppendFiles='0')
