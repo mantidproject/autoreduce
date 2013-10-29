@@ -75,7 +75,7 @@ class Consumer(object):
         reactor.callLater(30.0, self.heartbeat)
  
 if __name__ == '__main__':
-    
+
     try:
         config = Configuration('/etc/autoreduce/post_process_consumer.conf')
     except:
