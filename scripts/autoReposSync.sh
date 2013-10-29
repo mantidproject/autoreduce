@@ -32,7 +32,7 @@ fi
 declare -A iList 
 createInstrumentHash
 
-for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/SNSReductionScripts/sns/*; do
+for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/ReductionScripts/sns/*; do
   #echo $file
   inst=`echo ${file##*/} |tr 'a-z' 'A-Z'`
   instrument=${iList[$inst]}
