@@ -24,7 +24,7 @@ class StreamToLogger(object):
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    filename="/var/log/SNS_applications/post_process.log",
+    filename="/lustre/snsfs/logs/SNS_applications/post_process.log",
     #filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
@@ -90,8 +90,8 @@ class PostProcessAdmin:
         try:         
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
-            #proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            proposal_shared_dir = "/tmp/work/3qr/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            #proposal_shared_dir = "/tmp/work/3qr/"
             log_dir = proposal_shared_dir + "reduction_log/"
 
             if not os.path.exists(log_dir):
