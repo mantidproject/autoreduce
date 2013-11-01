@@ -39,7 +39,9 @@ class AutoReduction():
       
       # Load the data
       LoadEventNexus(Filename=self._nexus_file, OutputWorkspace=autows)
-    
+      if len(CheckForSampleLogs(Workspace=autows, LogNames='pause'))==0:
+        FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
+
       # Check for sample logs
       checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
       #print "checkResult: %s" % checkResult 
