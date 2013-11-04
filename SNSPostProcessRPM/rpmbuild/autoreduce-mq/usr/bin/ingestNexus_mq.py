@@ -92,9 +92,9 @@ class IngestNexus():
                 dataset.name = file.getdata() 
                 file.closedata()
             
-                #dataset notes 
-                if listing.has_key('notes'):
-                    file.opendata('notes')
+                #dataset title
+                if listing.has_key('title'): 
+                    file.opendata('title')
                     dataset.description = file.getdata()
                     file.closedata()
             
