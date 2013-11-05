@@ -79,18 +79,18 @@ class AutoReduction():
 		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
 		IncidentBeamNormalisation='ByCurrent', 
                 HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
-              TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1")
+              TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1", SofPhiEIsDistribution=0) 
       
       DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
 		SampleInputMonitorWorkspace=autows,
 		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
 		IncidentBeamNormalisation='ByCurrent',
                 HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
-		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
+		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3", SofPhiEIsDistribution=0)
 
       # Save files
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
-      SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
+      #SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
 
       minvals,maxvals=ConvertToMDHelper('out1','|Q|','Direct')
       xmin=minvals[0]
@@ -122,7 +122,7 @@ class AutoReduction():
       savefig(processed_filename1+'.png',bbox_inches='tight')
       
       SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
-      SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
+      #SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
       
     except Exception, e:
       raise e
