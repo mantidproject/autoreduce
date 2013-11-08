@@ -28,38 +28,40 @@ else
 fi
 }
 
+function process() {
+  file=$1
+  inst=$2
+  scripts=(reduce sumRun sumRun) 
+  exts=(py py cfg)
+  for index in ${!scripts[*]}
+  do
+    script=${scripts[$index]}_$inst.${exts[$index]}
+    echo $script
+    file1="$file/$script"
+    file2="/SNS/"$inst"/shared/autoreduce/$script"
+    if [ ! -f $file1 ]; 
+    then 
+      echo "$file1 does not exist, nothing to do."
+    else
+      if [ ! -f $file2 ]; then
+        echo "$file2 does not exist, nothing to do."
+      else
+        diffScript $file1 $file2
+      fi
+    fi
+  done
+}
 
 declare -A iList 
 createInstrumentHash
 
 for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/ReductionScripts/sns/*; do
-  #echo $file
-  inst=`echo ${file##*/} |tr 'a-z' 'A-Z'`
-  instrument=${iList[$inst]}
-  reduceScript="reduce_$instrument.py"
-  echo $reduceScript
-  file1="$file/$reduceScript"
-  file2="/SNS/"$instrument"/shared/autoreduce/$reduceScript"
-  if [ ! -f $file1 ]; then echo "$file1 does not exist, nothing to do."
-  else
-    if [ ! -f $file2 ]; then
-      echo "$file2 does not exist, nothing to do."
-    else
-      diffScript $file1 $file2
-    fi
+  if [[ $file != *saved ]];
+  then
+    inst=`echo ${file##*/} |tr 'a-z' 'A-Z'`
+    instrument=${iList[$inst]}
+    process $file $instrument
   fi
-  ARLibScript="ARLibrary.py"
-  file3=$file/$ARLibScript
-  file4="/SNS/"$instrument"/shared/autoreduce/$ARLibScript"
-  if [ ! -f $file3 ]; then echo "$file3 does not exist, nothing to do."
-  else
-    if [ ! -f $file4 ]; then
-      echo "$file4 does not exist, nothing to do."
-    else
-      diffScript $file3 $file4
-    fi
-  fi
-
 done
 
 echo
