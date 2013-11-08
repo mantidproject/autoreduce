@@ -1,14 +1,14 @@
 #!/bin/bash
 
-echo "Usage: sumBatchRuns_PG3.sh instrument proposalDirectory outputDirectory"
-echo "Usage example: sumBatchRuns_PG3.sh PG3 /SNS/PG3/IPTS-9284/0 /tmp/shelly.csv"
-script=/SNS/$1/shared/autoreduce/sumRun_$1.py
+echo "Usage: sumBatchRuns_PG3.sh proposalDirectory outputDirectory"
+echo "Usage example: sumBatchRuns_PG3.sh /SNS/PG3/IPTS-9284/0 /tmp/shelly.csv"
+instrument=PG3
+script=/SNS/$instrument/shared/autoreduce/sumRun_$instrument.py
 echo $script
-echo $1
-echo $3
-for file in `find $2 -name "*_event.nxs" -print` 
+output=$2
+for file in `find $1 -name "*_event.nxs" -print` 
 do
   echo $file 
-  python $script $1 $file $3
+  python $script $instrument $file $output
 done
 
