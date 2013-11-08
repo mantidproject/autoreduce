@@ -94,15 +94,27 @@ class PostProcessAdmin:
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
             #instrument_shared_dir = "/tmp/shelly2/"
+            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
+            #proposal_shared_dir = "/tmp/shelly2/"
+            
+            summary_script = instrument_shared_dir + "sumRun_" + self.instrument + ".py"
+            logging.info("summary_script: " + summary_script)
+            if os.path.exists(summary_script) == True:
+                summary_output = proposal_shared_dir + self.instrument + "_runsummary.csv"
+                cmd = "python " + summary_script + " " + self.instrument + " " + self.data_file + " " + summary_output
+                logging.info("sumRun subprocess started: " + cmd)
+                subprocess.call(cmd, shell=True)
+                logging.info("sumRun subprocess completed, see results at " + summary_output)
+            else:
+                logging.info("sumRun is not enabled")
+                
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
             if os.path.exists(reduce_script_path) == False:
-                self.send('/queue/'+self.conf.reduction_disabled , json.dumps(self.data))  
-                logging.info("called /queue/"+self.conf.reduction_disabled + " --- " + json.dumps(self.data))  
+                self.send('/queue/' + self.conf.reduction_disabled, json.dumps(self.data))
+                logging.info("called /queue/" + self.conf.reduction_disabled + " --- " + json.dumps(self.data))
                 return
             
-            proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/shelly2/"
             log_dir = proposal_shared_dir + "reduction_log/"
             monitor_user = {'username': self.conf.amq_user, 'password': self.conf.amq_pwd}
 
