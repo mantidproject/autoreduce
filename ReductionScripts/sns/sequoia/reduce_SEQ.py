@@ -36,7 +36,7 @@ def preprocessData(filename):
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogs('__IWS')
-    FilterByTime("__IWS",OutputWorkspace="__IWS",StartTime=300)
+    #FilterByTime("__IWS",OutputWorkspace="__IWS",StartTime=300)
     #Filter chopper 3 bad events
     valC3=__MonWS.getRun()['Phase3'].getStatistics().median
     FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
