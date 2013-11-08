@@ -24,7 +24,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
-    FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
+    #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     ###########################
     #Temporary workaround for IPTS-9145  GEG
@@ -37,7 +37,7 @@ def preprocessData(filename):
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogs('__IWS')
-    FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
+    #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
     valC3=__MonWS.getRun()['Phase3'].getStatistics().median
     FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
