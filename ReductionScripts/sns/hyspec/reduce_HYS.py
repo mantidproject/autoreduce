@@ -85,7 +85,7 @@ class AutoReduction():
 		SampleInputMonitorWorkspace=autows,
 		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
 		IncidentBeamNormalisation='ByCurrent',
-                HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
+                #HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
 
       # Save files
