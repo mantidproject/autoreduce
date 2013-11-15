@@ -62,6 +62,7 @@ if __name__ == "__main__":
     MaskBTPParameters=[{'Pixel':"1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128"}]
     MaskBTPParameters.append({'Bank':"99,100,101,102,118"})
     MaskBTPParameters.append({'Bank':"74",'Tube':"8"})
+    MaskBTPParameters.append({'Bank':"127",'Tube':"8"})
     clean=True
     NXSPE_flag=True
 
