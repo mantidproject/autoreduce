@@ -56,11 +56,14 @@ if __name__ == "__main__":
 
     # create the output file or stdout as appropriate
     if os.path.exists(outfile):
-        writer = csv.writer(open(outfile, 'a'))
+        f = open(outfile, 'a')
+        writer = csv.writer(f)
     else:
-        writer = csv.writer(open(outfile, 'w'))
+        f = open(outfile, 'w')
+        writer = csv.writer(f)
         handle = open(outfile, "w")
         # get header information for the csv file 
         writer.writerow(runInfo.getNames())
 
     writer.writerow(runInfo.getValues())
+    f.close()
