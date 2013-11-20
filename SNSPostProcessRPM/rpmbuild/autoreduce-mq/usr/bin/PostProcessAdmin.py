@@ -100,7 +100,7 @@ class PostProcessAdmin:
             summary_script = instrument_shared_dir + "sumRun_" + self.instrument + ".py"
             logging.info("summary_script: " + summary_script)
             if os.path.exists(summary_script) == True:
-                summary_output = proposal_shared_dir + self.instrument + "_runsummary.csv"
+                summary_output = proposal_shared_dir + self.instrument + "_" + self.proposal + "_runsummary.csv"
                 cmd = "python " + summary_script + " " + self.instrument + " " + self.data_file + " " + summary_output
                 logging.info("sumRun subprocess started: " + cmd)
                 subprocess.call(cmd, shell=True)
