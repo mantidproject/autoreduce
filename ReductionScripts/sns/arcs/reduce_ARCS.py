@@ -51,8 +51,8 @@ def WS_clean():
 if __name__ == "__main__":
 
     #processing parameters
-    RawVanadium="/SNS/ARCS/2013_2_18_CAL/data/ARCS_40986_event.nxs"
-    ProcessedVanadium='van40986.nxs'
+    RawVanadium="/SNS/ARCS/2013_2_18_CAL/data/ARCS_41391_event.nxs"
+    ProcessedVanadium='van41391.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
