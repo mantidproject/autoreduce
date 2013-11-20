@@ -65,10 +65,10 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"127",'Tube':"8"})
     
     #Added these masked pixels for HOT spots on detector
-    #maskBTPParameters.append({'bank':"127" tube='8' pixel='99-110'/>
-    MaskBTPParameters.append({'Bank':"88",'Tube':"3",'Pixel':"32-36"})/>
-    MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})/>
-    MaskBTPParameters.append({'Bank':"46",'Tube':"7",'Pixel':"107-109"})/>
+    #MaskBTPParameters.append({'Bank':"127" 'Tube'='8' 'Pixel'='99-110'})
+    MaskBTPParameters.append({'Bank':"88",'Tube':"3",'Pixel':"32-36"})
+    MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})
+    MaskBTPParameters.append({'Bank':"46",'Tube':"7",'Pixel':"107-109"})
     
     
     clean=True
