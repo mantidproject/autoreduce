@@ -6,7 +6,7 @@ from mantid.simpleapi import *
 import mantid
 
 cal_dir = "/SNS/NOM/IPTS-10929/shared"
-cal_file  = os.path.join(cal_dir, "autoreduce", "NOM_calibrate_d.cal")
+cal_file  = os.path.join(cal_dir, "autoreduce", "NOM_calibrate_d21858_2013_11_20.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
 sam_back =     21862
 van      =     21860
