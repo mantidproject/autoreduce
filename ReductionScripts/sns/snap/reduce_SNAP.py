@@ -29,12 +29,12 @@ ows_4 = SumNeighbours(InputWorkspace='ows',SumX='4',SumY='4')
 RemoveLogs(Workspace='ows_4')
 
 ows = SumSpectra(InputWorkspace='ows')
-ows = Divide(LHSWorkspace = 'ows', RHSWorkspace = 'van')
-ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
+#ows = Divide(LHSWorkspace = 'ows', RHSWorkspace = 'van')
+#ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
 
 ##############################################################3
 
-SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_inst.nxs')
-SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_nor.nxs')
-SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
-SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/'+out_prefix+'.gsa',Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
+#SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_inst.nxs')
+#SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_nor.nxs')
+#SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
+#SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/'+out_prefix+'.gsa',Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
