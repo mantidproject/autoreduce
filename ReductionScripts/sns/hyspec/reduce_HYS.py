@@ -69,7 +69,10 @@ class AutoReduction():
       emax = Ei * 0.9
       estep = 0.1
       energy_bins = "%f,%f,%f" % (emin, estep, emax)
-    
+   
+      # Overwrite the parameters
+      LoadParameterFile(Workspace=autows, Filename='/SNS/HYS/shared/autoreduce/HYSPEC_TIBasHist_Parameters.xml')
+ 
       #TIB limits
       tib = SuggestTibHYSPEC(Ei)
       #tib = self.SpurionPromptPulse2()
