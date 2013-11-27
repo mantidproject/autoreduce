@@ -160,6 +160,6 @@ if __name__ == "__main__":
    
     else:  #Do this if it is whitebeam
        ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
-       Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.5,0.005,10',PreserveEvents='0')
+       Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.1,0.005,5',PreserveEvents='0')
        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
 
