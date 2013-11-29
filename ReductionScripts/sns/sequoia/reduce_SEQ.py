@@ -29,7 +29,7 @@ def preprocessData(filename):
     ###########################
     #Temporary workaround for IPTS-9145  GEG
     if Eguess<5:
-      Eguess=50.
+      Eguess=120.
     ###################  
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
 
