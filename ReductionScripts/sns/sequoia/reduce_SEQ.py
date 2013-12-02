@@ -34,7 +34,7 @@ def preprocessData(filename):
     [Efixed,T0]=GetEiT0("__MonWS",Eguess)
 
     #if Efixed!='N/A':
-    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
+    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogs('__IWS')
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
