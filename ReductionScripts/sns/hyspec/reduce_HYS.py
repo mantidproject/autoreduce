@@ -74,8 +74,8 @@ class AutoReduction():
       msd = run['msd'].getStatistics().mean
       #get tofmin and tofmax, and filter out anything else
       tel=(39000+msd+4500)*1000/sqrt(Ei/5.227e-6)
-      tofmin=tel-1e6/120
-      tofmax=tel+1e6/120
+      tofmin=tel-1e6/120-470
+      tofmax=tel+1e6/120+470
       CropWorkspace(InputWorkspace=autows,OutputWorkspace=autows,XMin=tofmin,XMax=tofmax)
       
       # Overwrite the parameters - will cause TIB to be calculated as histogram, so the output from DgsReduction is histogram
