@@ -93,10 +93,12 @@ class PostProcessAdmin:
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            #instrument_shared_dir = "/tmp/shelly2/"
             proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
             #proposal_shared_dir = "/tmp/shelly2/"
             
+            if not os.path.exists(proposal_shared_dir):
+              os.makedirs(proposal_shared_dir)
+                
             summary_script = instrument_shared_dir + "sumRun_" + self.instrument + ".py"
             logging.info("summary_script: " + summary_script)
             if os.path.exists(summary_script) == True:

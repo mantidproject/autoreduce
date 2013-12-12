@@ -74,7 +74,7 @@ function processRuns()
       searchDBRunList $run
       return="$?"
       if [[ $return -eq 0 ]]; then
-        for nexusFile in `find $file -name "*.nxs" -print`
+        for nexusFile in `find $file -name "*_event.nxs" -print`
         do
           echo $nexusFile
           if [ -e $nexusFile ] && ! [ -h $nexusFile ] && [[ $nexusFile != *_histo.nxs ]]; then
