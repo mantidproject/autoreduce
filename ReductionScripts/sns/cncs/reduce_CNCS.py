@@ -32,9 +32,11 @@ filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
 # Get Angle
 s1=mtd["reduce"].getRun()['SEHOT09'].value[0]
+roundedvalue = "%.2f" % s1
+valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
 run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
-processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" + str(s1) + "_spe.nxs")
+processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + "_spe.nxs")
 nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + ".nxspe")
 
 # Save a file
