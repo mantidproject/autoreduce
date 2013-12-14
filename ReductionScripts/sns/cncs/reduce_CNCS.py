@@ -30,11 +30,13 @@ DgsReduction(
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
-run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
-processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_spe.nxs")
-nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + ".nxspe")
 # Get Angle
 s1=mtd["reduce"].getRun()['SEHOT09'].value[0]
+
+run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
+processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" + str(s1) + "_spe.nxs")
+nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + ".nxspe")
+
 # Save a file
 SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
