@@ -7,8 +7,8 @@ from mantid.simpleapi import *
 import mantid
 
 cal_dir = "/SNS/PG3/2013_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_ILL_d16411_2013_12_04.cal")
-char_file = os.path.join(cal_dir, "PG3_characterization_2013_08_22-HR.txt")
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d15024_2013_08_22.cal")
+char_file = os.path.join(cal_dir, "PG3_characterization_2013_08_22-HR-PAC-BGsub.txt")
 #MODE = 0664
 
 #from mantidsimple import *
