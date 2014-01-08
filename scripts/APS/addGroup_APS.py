@@ -96,7 +96,7 @@ def main(argv):
     #searchUser(sessionId, service)
 
     print 'creating group...'
-    #createGroup(sessionId, factory, service, groupName)
+    createGroup(sessionId, factory, service, groupName)
 
     print 'creating rules...'
     createBaseRule(sessionId, factory, service, groupName)
