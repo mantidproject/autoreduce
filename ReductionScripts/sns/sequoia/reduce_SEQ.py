@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import sys,os
-sys.path.append("/opt/Mantid/bin")
+import sys,os,math
+sys.path.append("/opt/mantidnightly/bin")
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
@@ -31,12 +31,12 @@ def preprocessData(filename):
     if Eguess<5:
       Eguess=120.
     ###################  
-    [Efixed,T0]=GetEiT0("__MonWS",Eguess)
+    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
     #Fix that all time series log values start at the same time as the proton_charge
-    CorrectLogs('__IWS')
+    CorrectLogTimes('__IWS')
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
     valC3=__MonWS.getRun()['Phase3'].getStatistics().median
@@ -59,8 +59,8 @@ if __name__ == "__main__":
     ProcessedVanadium='van.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
-    MaskBTPParameters=[{'Pixel':"1,2,3,4,5,6,7,8,121,122,123,124,125,126,127,128"}]
-    MaskBTPParameters.append({'Bank':"99,100,101,102,118"})
+    MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+    MaskBTPParameters.append({'Bank':"99-102,118"})
     MaskBTPParameters.append({'Bank':"74",'Tube':"8"})
     MaskBTPParameters.append({'Bank':"127",'Tube':"8"})
     
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
-    if Ei!='N/A':
+    if not math.isnan(Ei):
         DGSdict['SampleInputWorkspace']='__IWS'
         DGSdict['SampleInputMonitorWorkspace']='__MonWS'
         DGSdict['IncidentEnergyGuess']=Ei
