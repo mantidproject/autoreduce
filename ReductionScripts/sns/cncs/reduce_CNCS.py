@@ -6,7 +6,7 @@ from string import *
 from numpy import *
 
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
