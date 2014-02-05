@@ -28,7 +28,7 @@ SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs"
                    PreserveEvents=True,PushDataPositive="None",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0008, BinInDspace=True, FilterBadPulses=False,
+                   Binning=-0.0008, BinInDspace=True, FilterBadPulses=True,
                    SaveAs="gsas and fullprof", OutputDirectory=outputDir,
                    NormalizeByCurrent=True, FinalDataUnits="dSpacing")
 
