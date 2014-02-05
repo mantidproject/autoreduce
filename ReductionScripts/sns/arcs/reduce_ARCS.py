@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys,os
+import sys,os,math
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 
 sys.path.append("/opt/mantidnightly/bin")
@@ -25,13 +25,13 @@ def preprocessVanadium(Raw,Processed,Parameters):
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
-    [Efixed,T0]=GetEiT0("__MonWS",Eguess)
+    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
     #Fix that all time series log values start at the same time as the proton_charge
-    CorrectLogs('__IWS')
+    CorrectLogTimes('__IWS')
 
     #Add other Filters here
     #Filter chopper 3 bad events
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     outpre='ARCS'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'  
-    if Ei!='N/A':
+    if not math.isnan(Ei):
         DGSdict['SampleInputWorkspace']='__IWS'
         DGSdict['SampleInputMonitorWorkspace']='__MonWS'
         DGSdict['IncidentEnergyGuess']=Ei
