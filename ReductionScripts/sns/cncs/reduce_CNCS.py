@@ -42,7 +42,7 @@ DgsReduction(
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
 # Get Angle
-s1=mtd["reduce"].getRun()['SEHOT09'].value[0]
+s1=mtd["reduce"].getRun()['huber'].value[0]
 roundedvalue = "%.2f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
