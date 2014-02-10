@@ -4,6 +4,7 @@ import os, sys, traceback
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from string import *
 from numpy import *
+from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
 sys.path.append("/opt/mantidnightly/bin")
@@ -41,8 +42,19 @@ DgsReduction(
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
+
+#added Feb 10, 2014 AS GE
+elog=ExperimentLog()
+elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
+elog.setSimpleLogList("EnergyRequest")
+elog.setSERotOptions('SERotator2,CCR13VRot,FatSamVRot,SEOCRot,huber')
+elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorA')
+elog.setFilename(outdir+'experiment_log.csv')
+
+s1=elog.save_line('reduce')
+
 # Get Angle
-s1=mtd["reduce"].getRun()['huber'].value[0]
+#s1=mtd["reduce"].getRun()['huber'].value[0]
 roundedvalue = "%.2f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
