@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil 
-sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 import mantid
 
