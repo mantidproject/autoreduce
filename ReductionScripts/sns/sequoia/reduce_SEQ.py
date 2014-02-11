@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     #processing parameters
     RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_46230.nxs.h5"
-    ProcessedVanadium='van.nxs'
+    ProcessedVanadium='van46230.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']='' #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
-        DGSdict['IncidentBeamNormalisation']='ByCurrent'                           #'None'
+        DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
         DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
@@ -120,10 +120,18 @@ if __name__ == "__main__":
         DGSdict['OutputWorkspace']='__OWS'
         DgsReduction(**DGSdict)
         
-        #Do the normalization of vanadium to fluctuate about 1.0
+
+        #Do normalization of vanadum to 1
         # This step only runs ONCE if the processed vanadium file is not already present.
-        #if DGSdict.has_key('SaveProcessedDetVan'
-        
+        if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+              filename=DGSdict['SaveProcDetVanFilename']
+              LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+              datay = mtd['__VAN'].extractY()
+              meanval = float(datay[datay>0].mean())
+              CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+              Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
+              Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+              SaveNexus(InputWorkspace="__VAN", Filename= filename)        
         
         
         AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
