@@ -74,6 +74,8 @@ if __name__ == "__main__":
     clean=True
     NXSPE_flag=True
 
+    NormalizedVanadiumEqualToOne = True
+
     #check number of arguments
     if (len(sys.argv) != 3): 
         print "autoreduction code requires a filename and an output directory"
@@ -110,13 +112,20 @@ if __name__ == "__main__":
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']='' #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
-        DGSdict['IncidentBeamNormalisation']='None'
+        DGSdict['IncidentBeamNormalisation']='ByCurrent'                           #'None'
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
         DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
         DGSdict['DetVanIntRangeUnits']='Wavelength'
         DGSdict['OutputWorkspace']='__OWS'
         DgsReduction(**DGSdict)
+        
+        #Do the normalization of vanadium to fluctuate about 1.0
+        # This step only runs ONCE if the processed vanadium file is not already present.
+        #if DGSdict.has_key('SaveProcessedDetVan'
+        
+        
+        
         AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
