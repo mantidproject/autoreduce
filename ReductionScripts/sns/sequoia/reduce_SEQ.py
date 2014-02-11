@@ -60,7 +60,7 @@ if __name__ == "__main__":
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-    MaskBTPParameters.append({'Bank':"99-102,114,115,141,75,76,38,39"})
+    MaskBTPParameters.append({'Bank':"99-102,114,115,141,75,76,38,39,62,65"})
     
     MaskBTPParameters.append({'Bank':"122",'Tube':"3"})
     MaskBTPParameters.append({'Bank':"127",'Tube':"4"})
@@ -75,13 +75,21 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"112",'Tube':"7"})
     MaskBTPParameters.append({'Bank':"113",'Tube':"7"})
 
+
+
+    MaskBTPParameters.append({'Bank':"51",'Tube':"6"})
+    MaskBTPParameters.append({'Bank':"55",'Tube':"8"})
+    MaskBTPParameters.append({'Bank':"63",'Tube':"3"})
+    MaskBTPParameters.append({'Bank':"63",'Tube':"8"})
+    MaskBTPParameters.append({'Bank':"71",'Tube':"8"})
+    MaskBTPParameters.append({'Bank':"74",'Tube':"2"})
     
     
     #Added these masked pixels for HOT spots on detector
     #MaskBTPParameters.append({'Bank':"127" 'Tube'='8' 'Pixel'='99-110'})
-    MaskBTPParameters.append({'Bank':"88",'Tube':"3",'Pixel':"32-36"})
-    MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})
-    MaskBTPParameters.append({'Bank':"46",'Tube':"7",'Pixel':"107-109"})
+    #MaskBTPParameters.append({'Bank':"88",'Tube':"3",'Pixel':"32-36"})
+    #MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})
+    #MaskBTPParameters.append({'Bank':"46",'Tube':"7",'Pixel':"107-109"})
     
     
     clean=True
