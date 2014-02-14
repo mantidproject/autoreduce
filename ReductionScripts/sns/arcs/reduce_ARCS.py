@@ -42,10 +42,14 @@ def preprocessData(filename):
 
 def CheckPacks(inputWorkspace,outdir) :
     #check here for bad packs - added 2014-2-14 by JLN
+    #load pack group file where detectors are grouped 128 pixels along the tube, and 8 pixels across tubes
     packgroupfile = '/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml'
     GroupDetectors(inputWorkspace,OutputWorkspace='__IWSBanks',MapFile="/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml")
     runnum=str(inputWorkspace.getRunNumber())   
+    #create a list object to hold zero sum packs
     zero_packs=[]
+
+    #loop through histograms in the grouped, summed workspace and look for zeros
     for j in range(mtd['__IWSBanks'].getNumberHistograms()) :		
         #get the value of summed counts from the pack
         packvals = mtd['__IWSBanks'].extractY()[j]		
@@ -53,7 +57,7 @@ def CheckPacks(inputWorkspace,outdir) :
             zero_packs.append(str(j))
     DeleteWorkspace('__IWSBanks')
 
-    #output to the file only if there are zero packs
+    #output to the file only if there are packs with zero counts
     if len(zero_packs) > 0:
         pack_file=open(outdir+'pack_report','a')
         pack_string = str.join(' ',zero_packs)
@@ -111,7 +115,10 @@ if __name__ == "__main__":
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
 
+    #added to check the file for zero-summed packs in the event of a detector failure.
+    # JLN 2014-2-14
     CheckPacks(mtd['__IWS'],outdir)
+
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
     outpre='ARCS'
     runnum=str(mtd['__IWS'].getRunNumber()) 
