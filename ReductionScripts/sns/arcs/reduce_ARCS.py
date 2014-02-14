@@ -39,13 +39,35 @@ def preprocessData(filename):
     #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
     #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
     return [Eguess,Efixed,T0]
+
+def CheckPacks(inputWorkspace,outdir) :
+    #check here for bad packs - added 2014-2-14 by JLN
+    packgroupfile = '/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml'
+    GroupDetectors(inputWorkspace,OutputWorkspace='__IWSBanks',MapFile="/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml")
+    runnum=str(inputWorkspace.getRunNumber())   
+    zero_packs=[]
+    for j in range(mtd['__IWSBanks'].getNumberHistograms()) :		
+        #get the value of summed counts from the pack
+        packvals = mtd['__IWSBanks'].extractY()[j]		
+        if packvals[0] == 0:
+            zero_packs.append(str(j))
+    DeleteWorkspace('__IWSBanks')
+
+    #output to the file only if there are zero packs
+    if len(zero_packs) > 0:
+        pack_file=open(outdir+'pack_report','a')
+        pack_string = str.join(' ',zero_packs)
+        pack_file.write("run {1} zero counts in packs: {0}\n".format(pack_string,runnum))
+        pack_file.close()
+ 
   
-    
+
 def WS_clean():
     DeleteWorkspace('__IWS')
     DeleteWorkspace('__OWS')
     DeleteWorkspace('__VAN')
     DeleteWorkspace('__MonWS')
+    
     
           
 if __name__ == "__main__":
@@ -62,6 +84,8 @@ if __name__ == "__main__":
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
+
+
 
     #check number of arguments
     if (len(sys.argv) != 3): 
@@ -82,8 +106,12 @@ if __name__ == "__main__":
     elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorB, SensorC, SensorD')
     elog.setFilename(outdir+'experiment_log.csv')
 
+   
+
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
+
+    CheckPacks(mtd['__IWS'],outdir)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
     outpre='ARCS'
     runnum=str(mtd['__IWS'].getRunNumber()) 
