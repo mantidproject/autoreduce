@@ -61,7 +61,8 @@ def CheckPacks(inputWorkspace,outdir) :
     if len(zero_packs) > 0:
         pack_file=open(outdir+'pack_report','a')
         pack_string = str.join(' ',zero_packs)
-        pack_file.write("run {1} zero counts in packs: {0}\n".format(pack_string,runnum))
+        pack_file.write("run {1} zero counts in packs: {0}".format(pack_string,runnum))
+        pack_file.write("\n")
         pack_file.close()
  
   
