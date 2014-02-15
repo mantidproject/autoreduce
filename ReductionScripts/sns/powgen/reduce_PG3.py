@@ -1,14 +1,14 @@
 import os
 import sys
 import shutil 
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 #sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
-cal_dir = "/SNS/PG3/2013_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d15024_2013_08_22.cal")
-char_file = os.path.join(cal_dir, "PG3_characterization_2013_08_22-HR-PAC-BGsub.txt")
+cal_dir = "/SNS/PG3/2014_1_11A_CAL/"
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d17532_2014_04_14.cal")
+char_file = os.path.join(cal_dir, "PG3_characterization_2014_02_11-HR-PAC-BGsub.txt")
 #MODE = 0664
 
 #from mantidsimple import *
