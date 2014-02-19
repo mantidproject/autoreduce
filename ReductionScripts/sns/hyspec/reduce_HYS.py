@@ -5,7 +5,7 @@ sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py
 from string import *
 from numpy import *
 
-mantid_root = "/opt/mantidnightly"
+mantid_root = "/opt/Mantid"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 from mantid.simpleapi import *
 from ARLibrary import *
