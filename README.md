@@ -7,6 +7,6 @@ The scripts directory also contains processBatchRuns.sh script which takes a nex
 
 The SNSPostProcessRPM directory contains 3 rpm packages as autoreduce, autoreduce-adara, and autoreduce-mq.
 
-The SNSReductionScripts directory contains auto reduction scripts for SNS beamlines including arcs, basis, cncs, hyspec, nomad, powgen, ref_l, ref_m, and seequoia.
+The ReductionScripts directory contains auto reduction scripts for beamlines including the SNS beamlines arcs, basis, cncs, hyspec, nomad, powgen, ref_l, ref_m, and seequoia.
 
 
