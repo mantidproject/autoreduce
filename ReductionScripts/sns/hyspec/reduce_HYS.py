@@ -60,7 +60,10 @@ class AutoReduction():
       # Get Ei
       Ei = run['EnergyRequest'].getStatistics().mean
       self._Ei = Ei
-      
+
+      if int(run_number)>38844 and int(run_number)<38904:
+        Ei=24.142
+  
       # Get Angle
       s1 = run['s1'].getStatistics().mean
 
@@ -99,6 +102,10 @@ class AutoReduction():
                 #HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
 		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
 
+
+      if run_number>38844 and run_number<38904:
+         AddSampleLog('out1','Ei',24.,'Number')
+         AddSampleLog('out3','Ei',24.,'Number')
       # Save files
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
       SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 

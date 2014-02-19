@@ -7,7 +7,7 @@ from numpy import *
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
-sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
