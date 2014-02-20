@@ -23,6 +23,8 @@ def preprocessVanadium(Raw,Processed,Parameters):
     return dictvan
         
 def preprocessData(filename):
+    f1 = os.path.split(filename)[-1]
+    runnum = int(f1.strip('SEQ_').strip('.nxs.h5'))
     __MonWS=LoadNexusMonitors(Filename=filename)
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
@@ -31,6 +33,24 @@ def preprocessData(filename):
     if Eguess<5:
       Eguess=120.
     ###################  
+    
+    if (runnum >= 46951 and runnum <= 46994):
+
+        Efixed = 119.37
+        T0 = 25.84
+
+        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
+        #Fix that all time series log values start at the same time as the proton_charge
+        CorrectLogTimes('__IWS')
+
+        #Filter chopper 3 bad events
+        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+
+        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
+
+        return [Eguess,Efixed,T0]
+    
+    
     [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
     #if Efixed!='N/A':
