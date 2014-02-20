@@ -55,7 +55,7 @@ function process() {
 declare -A iList 
 createInstrumentHash
 
-for file in /SNS/users/3qr/workspace/projects/autoreduce2/autoreduce/ReductionScripts/sns/*; do
+for file in /SNS/users/3qr/workspace/projects/autoreduce/autoreduce/ReductionScripts/sns/*; do
   if [[ $file != *saved ]];
   then
     inst=`echo ${file##*/} |tr 'a-z' 'A-Z'`
