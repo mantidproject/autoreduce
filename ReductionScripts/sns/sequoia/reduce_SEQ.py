@@ -24,7 +24,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         
 def preprocessData(filename):
     f1 = os.path.split(filename)[-1]
-    runnum = int(f1.strip('SEQ_').strip('.nxs.h5'))
+    runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
