@@ -61,8 +61,6 @@ class AutoReduction():
       Ei = run['EnergyRequest'].getStatistics().mean
       self._Ei = Ei
 
-      if int(run_number)>38844 and int(run_number)<38904:
-        Ei=24.142
   
       # Get Angle
       s1 = run['s1'].getStatistics().mean
@@ -71,6 +69,11 @@ class AutoReduction():
       emin = -(2.0 * Ei)
       emax = Ei * 0.9
       estep = 0.1
+      if int(run_number)>38844 and int(run_number)<38904:
+        Ei=24.142
+        emin=-48.
+        emax=0.9*24.
+
       energy_bins = "%f,%f,%f" % (emin, estep, emax)
       
       #get msd
