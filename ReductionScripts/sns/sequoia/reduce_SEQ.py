@@ -75,7 +75,7 @@ def WS_clean():
 if __name__ == "__main__":
 
     #processing parameters
-    RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_46230.nxs.h5"
+    RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_47123.nxs.h5"
     ProcessedVanadium='van46230.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
