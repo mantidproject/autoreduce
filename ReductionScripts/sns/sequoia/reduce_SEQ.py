@@ -50,8 +50,39 @@ def preprocessData(filename):
 
         return [Eguess,Efixed,T0]
     
-    
-    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+     try:   
+            #fix more than 2 monitors
+             sp1=-1
+             sp2=-1
+             nsp=__MonWS.getNumberHistograms()                
+             if nsp < 2:
+                 raise ValueError("There are less than 2 monitors")
+             for sp in range(nsp):
+                 if __MonWS.getSpectrum(sp).getDetectorIDs()[0]==-1:
+                     sp1=sp
+                 if __MonWS.getSpectrum(sp).getDetectorIDs()[0]==-2:
+                     sp2=sp
+             if sp1==-1:
+                 raise RuntimeError("Could not find spectrum for the first monitor")
+             if sp2==-1:
+                 raise RuntimeError("Could not find spectrum for the second monitor")       
+             so=__MonWS.getInstrument().getSource().getPos()
+             m1=__MonWS.getDetector(sp1).getPos()
+             m2=__MonWS.getDetector(sp2).getPos()
+             v=437.4*numpy.sqrt(__MonWS.getRun()['EnergyRequest'].getStatistics().mean)
+             t1=m1.distance(so)*1e6/v
+             t2=m2.distance(so)*1e6/v
+             t1f=int(t1*60e-6) #frame number for monitor 1
+             t2f=int(t2*60e-6) #frame number for monitor 2
+             wtemp=ChangeBinOffset(__MonWS,t1f*16667,sp1,sp1)
+             wtemp=ChangeBinOffset(wtemp,t2f*16667,sp2,sp2)
+             wtemp=Rebin(InputWorkspace=wtemp,Params="1",PreserveEvents=True)        
+             alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=EGuess)   #Run GetEi algorithm
+             Efixed=alg[0]
+             T0=alg[3]                                        #Extract incident energy and T0
+             DeleteWorkspace(wtemp)
+    except:    
+            [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
