@@ -76,12 +76,12 @@ def preprocessData(filename):
              wtemp=ChangeBinOffset(__MonWS,t1f*16667,sp1,sp1)
              wtemp=ChangeBinOffset(wtemp,t2f*16667,sp2,sp2)
              wtemp=Rebin(InputWorkspace=wtemp,Params="1",PreserveEvents=True)        
-             alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=EGuess)   #Run GetEi algorithm
+             alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=Eguess)   #Run GetEi algorithm
              Efixed=alg[0]
              T0=alg[3]                                        #Extract incident energy and T0
              DeleteWorkspace(wtemp)
-    except:    
-            pass#[Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    except e:    
+            [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
