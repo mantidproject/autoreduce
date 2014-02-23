@@ -50,8 +50,7 @@ def preprocessData(filename):
 
         return [Eguess,Efixed,T0]
     
-     try:   
-            #fix more than 2 monitors
+    try:   
              sp1=-1
              sp2=-1
              nsp=__MonWS.getNumberHistograms()                
@@ -82,7 +81,7 @@ def preprocessData(filename):
              T0=alg[3]                                        #Extract incident energy and T0
              DeleteWorkspace(wtemp)
     except:    
-            [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+            pass#[Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
