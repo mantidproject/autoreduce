@@ -25,7 +25,7 @@ dataSearchPath.append(nexusDir)
 configService.setDataSearchDirs(";".join(dataSearchPath))
 
 SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs",
-                   PreserveEvents=True,PushDataPositive="None",
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=-0.0008, BinInDspace=True, FilterBadPulses=True,
