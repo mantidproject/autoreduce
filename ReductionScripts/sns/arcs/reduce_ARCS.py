@@ -85,6 +85,7 @@ if __name__ == "__main__":
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
+    MaskBTPParameters.append({'Bank':"105",'Tube':"6"}) #added 2014-2-27 to mask out bad tube JLN
     groupingFile=''  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
