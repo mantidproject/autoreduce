@@ -12,8 +12,7 @@ ISOSX = 1
 endif
 endif
 
-all:
-	@echo "Installing post-processing service"
+all: rpm
 	
 clean: 
 	rm -f /usr/bin/Configuration.py
@@ -21,6 +20,15 @@ clean:
 	rm -r /usr/bin/ingestReduced_mq.py
 	rm -f /usr/bin/PostProcessAdmin.py
 	rm -f /usr/bin/queueProcessor.py
+	
+rpm:
+	@echo "Creating RPMs"
+	cd rpmbuild; tar -czf ~/rpmbuild/SOURCES/autoreduce.tgz ./autoreduce
+	rpmbuild -ba ./rpmbuild/SPECS/autoreduce.spec
+	cd rpmbuild; tar -czf ~/rpmbuild/SOURCES/autoreduce-mq.tgz ./autoreduce-mq
+	rpmbuild -ba ./rpmbuild/SPECS/autoreduce-mq.spec
+	cd rpmbuild; tar -czf ~/rpmbuild/SOURCES/autoreduce-remote.tgz ./autoreduce-remote
+	rpmbuild -ba ./rpmbuild/SPECS/autoreduce-remote.spec
 	
 check:
 	# Check dependencies
@@ -34,12 +42,12 @@ check:
 install: autoreducemq
        
 autoreducemq: check
+	@echo "Installing post-processing service"
 	# Make sure the directories exist
 	test -d /etc/autoreduce || mkdir -m 0755 -p /etc/autoreduce
 	test -d /var/log/SNS_applications || mkdir -m 0755 /var/log/SNS_applications
 	
 	# Install application code
-
 	install -m 664	rpmbuild/autoreduce-mq/etc/autoreduce/icat4.cfg	 /etc/autoreduce/icat4.cfg
 	install -m 755	rpmbuild/autoreduce-mq/usr/bin/ingestNexus_mq.py	 /usr/bin/ingestNexus_mq.py
 	install -m 755	rpmbuild/autoreduce-mq/usr/bin/ingestReduced_mq.py	 /usr/bin/ingestReduced_mq.py
