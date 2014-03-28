@@ -3,6 +3,7 @@
 Post Process Administrator. It kicks off cataloging and reduction jobs.
 """
 import logging, json, socket, os, sys, subprocess, time, glob, requests
+import re
 
 from ingestNexus_mq import IngestNexus
 from ingestReduced_mq import IngestReduced
@@ -157,11 +158,20 @@ class PostProcessAdmin:
                                     logging.info("Submitted reduced image file, https post status:" + str(request.status_code))
 
             else:
-                maxLineLength=80
+                # Go through each line and report the error message.
+                # If we can't fine the actual error, report the last line
+                last_line = None
+                error_line = None
                 fp=file(out_err, "r")
-                fp.seek(-maxLineLength-1, 2) # 2 means "from the end of the file"
-                lastLine = fp.readlines()[-1]
-                errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
+                for l in fp.readlines():
+                    last_line = l.strip()
+                    result = re.search('Error: ([\w ]+)$',l)
+                    if result is not None:
+                        error_line = result.group(1)
+                if error_line is None:
+                    error_line = last_line
+                    
+                errMsg = error_line + " - See reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
                 self.data["error"] = "REDUCTION: %s" % errMsg
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
