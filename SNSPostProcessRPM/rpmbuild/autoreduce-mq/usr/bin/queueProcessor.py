@@ -1,4 +1,5 @@
 import json, logging, time, subprocess, sys, socket
+import os
 
 from twisted.internet import reactor, defer
 from stompest import async, sync
@@ -70,7 +71,7 @@ class Consumer(object):
         try:
             stomp = sync.Stomp(self.stompConfig)
             stomp.connect()
-            data_dict = {"src_name": socket.gethostname(), "status": "0"}
+            data_dict = {"src_name": socket.gethostname(), "status": "0", "pid": str(os.getpid())}
             stomp.send(self.config.heart_beat, json.dumps(data_dict))
             logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
             stomp.disconnect()

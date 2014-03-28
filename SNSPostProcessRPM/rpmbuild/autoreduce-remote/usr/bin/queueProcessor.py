@@ -1,4 +1,5 @@
 import json, logging, time, subprocess, sys, socket
+import os
 
 from twisted.internet import reactor, defer
 from stompest import async, sync
@@ -65,13 +66,19 @@ class Consumer(object):
                 self.procList.remove(i)
                 
     def heartbeat(self):
+        """
+            Send heartbeats at a regular time interval
+        """
         logging.info("In heartbeat...")
-        stomp = sync.Stomp(self.stompConfig)
-        stomp.connect()
-        data_dict = {"src_name": socket.gethostname(), "status": "0"}
-        stomp.send(self.config.heart_beat, json.dumps(data_dict))
-        logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
-        stomp.disconnect()
+        try:
+            stomp = sync.Stomp(self.stompConfig)
+            stomp.connect()
+            data_dict = {"src_name": socket.gethostname(), "status": "0", "pid": str(os.getpid())}
+            stomp.send(self.config.heart_beat, json.dumps(data_dict))
+            logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
+            stomp.disconnect()
+        except:
+            logging.error("Could not send heartbeat: %s" % sys.exc_value)
         reactor.callLater(30.0, self.heartbeat)
  
 if __name__ == '__main__':
