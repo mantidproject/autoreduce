@@ -3,6 +3,7 @@
 PostProcessAdmin of autoreduce-remote executes reduction jobs on fermi
 """
 import logging, json, socket, os, sys, subprocess, time, glob, requests
+import re
 
 from Configuration import Configuration
 from stompest.config import StompConfig
