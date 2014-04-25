@@ -20,8 +20,8 @@ van_back =     26145
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 maxChunkSize=0.
-#if len(sys.argv)>3:
-#    maxChunkSize=float(sys.argv[3])
+if len(sys.argv)>3:
+    maxChunkSize=float(sys.argv[3])
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
