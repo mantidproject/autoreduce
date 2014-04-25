@@ -9,7 +9,7 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
 
-# Logs at: /var/log/SNS_applications/autoreduce.log
+## Logs at: /var/log/SNS_applications/autoreduce.log
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
