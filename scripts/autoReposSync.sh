@@ -23,8 +23,6 @@ elif [ "$ret" -eq 1 ]; then
   echo "$file1 and $file2 differ"
   cp $file2 $file1
   updateList[${#updateList[*]}]=$file1 
-else
-  echo "$file1 and $file2 are the same file"
 fi
 }
 
@@ -39,23 +37,28 @@ function process() {
     echo $script
     file1="$file/$script"
     file2="/SNS/"$inst"/shared/autoreduce/$script"
-    if [ ! -f $file1 ]; 
-    then 
-      echo "$file1 does not exist, nothing to do."
-    else
-      if [ ! -f $file2 ]; then
-        echo "$file2 does not exist, nothing to do."
-      else
+    if [ -f $file1 ]; then 
+      if [ -f $file2 ]; then
         diffScript $file1 $file2
       fi
     fi
   done
 }
 
+# Update the local copy of the code
+test -d /tmp/autoreduction || mkdir -m 0755 -p /tmp/autoreduction
+cd /tmp/autoreduction
+test -d /tmp/autoreduction/autoreduce || ssh-agent bash -c 'ssh-add ~/.ssh/autoreduce.rsa; git clone git@github.com:mantidproject/autoreduce.git'
+cd /tmp/autoreduction/autoreduce
+git pull
+git config user.name "mantid-publisher"
+git config user.email "mantid-developers@mantidproject.org"
+
 declare -A iList 
 createInstrumentHash
 
-for file in /SNS/users/3qr/workspace/projects/autoreduce/autoreduce/ReductionScripts/sns/*; do
+# Identify files to be pushed to git
+for file in /tmp/autoreduction/autoreduce/ReductionScripts/sns/*; do
   if [[ $file != *saved ]];
   then
     inst=`echo ${file##*/} |tr 'a-z' 'A-Z'`
@@ -66,10 +69,11 @@ done
 
 echo
 echo "Number of files to be updated in git: "${#updateList[*]}
+
+# Push the files to git
 if [[ ${#updateList[*]} -ne 0 ]]; then
   for file in ${updateList[@]}; do
     echo $file
-    echo $file | mail -s "Auto reduce script has been modified" "3y9@ornl.gov 3qr@ornl.gov"
     git add $file
   done
   git commit -m 'Updated reduction script by cron job'
