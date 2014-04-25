@@ -54,7 +54,9 @@ def CheckPacks(inputWorkspace,outdir) :
         #get the value of summed counts from the pack
         packvals = mtd['__IWSBanks'].extractY()[j]		
         if packvals[0] == 0:
-            zero_packs.append(str(j))
+            #looping over histograms from zero, but pack id's start at 1
+            #output j+1 to correct for this offset.
+            zero_packs.append(str(j+1))
     DeleteWorkspace('__IWSBanks')
 
     #output to the file only if there are packs with zero counts
@@ -78,15 +80,20 @@ def WS_clean():
 if __name__ == "__main__":
 
     #processing parameters
-    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_44789_event.nxs"
-    ProcessedVanadium='van44789.nxs'
+     # Updated vanadium run 2014-3-11 - JLN
+    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_48627_event.nxs"
+    ProcessedVanadium='van48627.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
     MaskBTPParameters.append({'Bank':"105",'Tube':"6"}) #added 2014-2-27 to mask out bad tube JLN
-    groupingFile=''  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
+    MaskBTPParameters.append({'Bank':"40",'Tube':"4"}) #added 2014-3-22 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"40",'Tube':"6"}) #added 2014-3-22 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"39",'Tube':"7"}) #added 2014-3-22 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"3",'Tube':"5"}) #added 2014-3-22 to mask out bad tube DLA
+    groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True

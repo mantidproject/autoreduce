@@ -75,11 +75,21 @@ def preprocessData(filename):
              t2f=int(t2*60e-6) #frame number for monitor 2
              wtemp=ChangeBinOffset(__MonWS,t1f*16667,sp1,sp1)
              wtemp=ChangeBinOffset(wtemp,t2f*16667,sp2,sp2)
-             wtemp=Rebin(InputWorkspace=wtemp,Params="1",PreserveEvents=True)        
-             alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=Eguess)   #Run GetEi algorithm
-             Efixed=alg[0]
-             T0=alg[3]                                        #Extract incident energy and T0
-             DeleteWorkspace(wtemp)
+             wtemp=Rebin(InputWorkspace=wtemp,Params="1",PreserveEvents=True)
+             
+             #check whether the fermi chopper is in the beam
+             fermi=__MonWS.run().getProperty('vChTrans').value[0]
+
+             if fermi == 2 :
+                 Efixed = nan
+                 T0 = nan
+                 DeleteWorkspace(wtemp)
+
+             if fermi != 2:
+                 alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=Eguess)   #Run GetEi algorithm
+                 Efixed=alg[0]
+                 T0=alg[3]                                        #Extract incident energy and T0
+                 DeleteWorkspace(wtemp)
     except e:    
             [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
@@ -106,7 +116,7 @@ if __name__ == "__main__":
 
     #processing parameters
     RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_47123.nxs.h5"
-    ProcessedVanadium='van46230.nxs'
+    ProcessedVanadium='van47123.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
@@ -136,10 +146,10 @@ if __name__ == "__main__":
     
     
     #Added these masked pixels for HOT spots on detector
-    #MaskBTPParameters.append({'Bank':"127" 'Tube'='8' 'Pixel'='99-110'})
-    #MaskBTPParameters.append({'Bank':"88",'Tube':"3",'Pixel':"32-36"})
+    MaskBTPParameters.append({'Bank':"127", 'Tube':'7,8', 'Pixel':'101-114'})
+    MaskBTPParameters.append({'Bank':"88",'Tube':"3-4",'Pixel':"32-36"})
     #MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})
-    #MaskBTPParameters.append({'Bank':"46",'Tube':"7",'Pixel':"107-109"})
+    MaskBTPParameters.append({'Bank':"46",'Tube':"7-8",'Pixel':"102-111"})
     
     
     clean=True
@@ -179,10 +189,10 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]
+        DGSdict['EnergyTransferRange']=[-0.25*EGuess,0.01*EGuess,0.90*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']='' #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']='/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
