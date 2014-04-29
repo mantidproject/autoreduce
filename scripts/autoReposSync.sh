@@ -10,6 +10,7 @@ function createInstrumentHash() {
   iList["POWGEN"]="PG3"
   iList["SEQUOIA"]="SEQ"
   iList["SNAP"]="SNAP"
+  iList["VISION"]="VIS"
 }
 
 function diffScript() {
