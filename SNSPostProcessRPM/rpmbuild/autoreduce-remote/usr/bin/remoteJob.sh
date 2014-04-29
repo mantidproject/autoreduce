@@ -4,14 +4,9 @@
 #PBS -V
 #PBS -W umask=022
 
-#pushd /tmp/work/3qr
-
 module load mantid-mpi
 export OMP_NUM_THREADS=16
 
 reduce_script="/"$facility"/"$instrument"/shared/autoreduce/reduce_"$instrument".py"
 
-mpirun python $reduce_script $data_file $proposal_shared_dir
-
-#popd
-#echo "Working directory is $PWD"
+mpirun python -n 16 -npernode 4 $reduce_script $data_file $proposal_shared_dir
