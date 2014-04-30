@@ -35,7 +35,6 @@ class Consumer(object):
             client = yield client.disconnected
         except:
             reactor.callLater(5, self.run)
-            logging.info("callLater in 5 seconds")
             
     def consume(self, client, frame):
         """
@@ -48,7 +47,7 @@ class Consumer(object):
         logging.info("Received frame destination: " + destination)
         logging.info("Received frame body (data): " + data) 
         cmd = self.config.sw_dir + "/startJob.sh"
-        logging.info("Command: " + cmd) 
+        logging.debug("Command: " + cmd) 
         data = "'" + data.replace(" ", "") + "'"
         proc = subprocess.Popen([cmd, data])
         self.procList.append(proc)
@@ -69,13 +68,11 @@ class Consumer(object):
         """
             Send heartbeats at a regular time interval
         """
-        logging.info("In heartbeat...")
         try:
             stomp = sync.Stomp(self.stompConfig)
             stomp.connect()
             data_dict = {"src_name": socket.gethostname(), "status": "0", "pid": str(os.getpid())}
             stomp.send(self.config.heart_beat, json.dumps(data_dict))
-            logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
             stomp.disconnect()
         except:
             logging.error("Could not send heartbeat: %s" % sys.exc_value)

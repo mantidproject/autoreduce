@@ -26,7 +26,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
     filename="/lustre/snsfs/logs/SNS_applications/post_process.log",
-    #filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
                             
@@ -92,9 +91,7 @@ class PostProcessAdmin:
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
-            #instrument_shared_dir = "/tmp/work/3qr/"
             proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/work/3qr/"
             
             reduce_script = "reduce_" + self.instrument
             reduce_script_path = instrument_shared_dir + reduce_script  + ".py"
@@ -130,8 +127,6 @@ class PostProcessAdmin:
             cmd_job = " " + self.sw_dir + "/remoteJob.sh"
      
             cmd = "qsub" + cmd_out + cmd_l + cmd_v + cmd_job
-
-            #cmd = "qsub -v data_file='" + self.data_file + "',facility='" + self.facility + "',instrument='" + self.instrument + "',proposal_shared_dir='" + proposal_shared_dir + "' -l nodes=" + str(nodesDesired) + ":ppn=1 " + sw_dir + "/remoteJob.sh"
             logging.info("reduction subprocess started: " + cmd)
 
             proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).stdout.read()
@@ -147,7 +142,6 @@ class PostProcessAdmin:
               ret = subprocess.Popen(qstat_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout.read().rstrip()
               logging.info("Popen return code: " + ret)
               if ret.startswith(qstat_pid):
-                #logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))     
                 break
               else:
                 time.sleep(30)
