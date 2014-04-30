@@ -9,4 +9,4 @@ export OMP_NUM_THREADS=16
 
 reduce_script="/"$facility"/"$instrument"/shared/autoreduce/reduce_"$instrument".py"
 
-mpirun python $reduce_script $data_file $proposal_shared_dir
+mpirun -n $n_nodes python $reduce_script $data_file $proposal_shared_dir

@@ -123,7 +123,7 @@ class PostProcessAdmin:
             
             cmd_out = " -o " + out_log + " -e " + out_err
             cmd_l = " -l nodes=" + str(nodesDesired) + ":ppn=1"
-            cmd_v = " -v data_file='" + self.data_file + "',facility='" + self.facility + "',instrument='" + self.instrument + "',proposal_shared_dir='" + proposal_shared_dir + "'"
+            cmd_v = " -v data_file='" + self.data_file + "',n_nodes="+nodesDesired+",facility='" + self.facility + "',instrument='" + self.instrument + "',proposal_shared_dir='" + proposal_shared_dir + "'"
             cmd_job = " " + self.sw_dir + "/remoteJob.sh"
      
             cmd = "qsub" + cmd_out + cmd_l + cmd_v + cmd_job
