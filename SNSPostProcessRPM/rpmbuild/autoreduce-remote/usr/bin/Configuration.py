@@ -13,12 +13,14 @@ class StreamToLogger(object):
     def write(self, buf):
         for line in buf.rstrip().splitlines():
             self.logger.log(self.log_level, line.rstrip())
+
+stomp_logger = logging.getLogger('stompest.sync.client')
+stomp_logger.setLevel(logging.ERROR)
         
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s %(process)d/%(threadName)s: %(message)s",
     filename='/lustre/snsfs/logs/SNS_applications/post_process.log',
-    #filename="/tmp/work/3qr/post_process.log",
     filemode='a'
 )
                      

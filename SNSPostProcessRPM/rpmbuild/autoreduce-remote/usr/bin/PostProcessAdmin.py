@@ -112,7 +112,7 @@ class PostProcessAdmin:
             #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
             #We would like to get MaxChunkSize from an env variable in the future
             
-            Chunks = api.DetermineChunking(Filename=self.data_file,MaxChunkSize=32.0)
+            Chunks = api.DetermineChunking(Filename=self.data_file,MaxChunkSize=8.0)
             nodesDesired = Chunks.rowCount()
             
             logging.info("Chunks: " + str(Chunks))
@@ -135,12 +135,12 @@ class PostProcessAdmin:
                 pid = list[0].rstrip()
 
             qstat_pid = "qstat: Unknown Job Id " + pid
-            logging.info("qstat_pid: " + qstat_pid)
+            logging.debug("qstat_pid: " + qstat_pid)
             
             while True:
               qstat_cmd = "qstat " + pid
               ret = subprocess.Popen(qstat_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout.read().rstrip()
-              logging.info("Popen return code: " + ret)
+              logging.debug("Popen return code: " + ret)
               if ret.startswith(qstat_pid):
                 break
               else:
