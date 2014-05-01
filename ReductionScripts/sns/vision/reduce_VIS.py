@@ -17,21 +17,10 @@ run_number = int(filename.strip('VIS_').replace('.nxs.h5',''))
 
 # Please check and change the following parameters
 #=====================================================================
-global IPTS
-
-
-IPTS='2014_1_16B_CAL'
-#ListRN=[4015]; Note='H2O_2.8gm_0.5mmAlFlatCell-275K'
 
 ListRN=[int(run_number)]
-Note='test1'
-
-
-# Save reduced data in nxs files? 0: no save. 1: save merged. 2: save banks.
-SaveTag=1
 
 # Output files to be saved in
-#SaveDirectory='/SNS/VIS/shared/YQ/2014-A'
 SaveDirectory=output_directory
 
 # 1 for 7-bank setup (2013-2 and before), 2 for 12-bank setup (since 2014-1 cycle)
@@ -42,9 +31,9 @@ global MonitorID
 # For 2013_2_16B_CAL and run muber after 3009 in 2014-1, use 1
 MonitorID=1
 
-
+# Align elastic lines
 global ShiftTag
-ShiftTag=0
+ShiftTag=1
 
 global ScaleTag
 ScaleTag=0
@@ -59,8 +48,6 @@ binE=0.001
 #=====================================================================
 
 
-global Root 
-Root='/SNS/VIS/'+IPTS+'/nexus'  
 global Instrument 
 Instrument='VIS_'
 global Extension
@@ -79,7 +66,6 @@ else:
 global Banks 
 Banks=BanksForward+BanksBackward
 
-config.setDataSearchDirs(Root) 
 config['defaultsave.directory'] = SaveDirectory
 CalFile='/SNS/VIS/shared/VIS_Reduction/VIS_CalTab-03-03-2014.csv'
 
@@ -388,51 +374,27 @@ MonitorT,MonitorE,Prefactor,SampleE=LoadMonitor(ListRN,binE)
 BanksT=LoadInelasticBanks(ListRN)    
 Backward,Forward,Merged=ReduceINS(ListRN,BanksT,ListPX,CalTab,binE)
 
+Title = mtd['Merged'].getTitle()
+Note = Title.split('>')[0]
+Note.replace(' ','-')
+
 INS=str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note
 Divide(LHSWorkspace=Merged,RHSWorkspace=SampleE,OutputWorkspace=INS)
 Scale(InputWorkspace=INS,OutputWorkspace=INS,Factor='500',Operation='Multiply')
 mtd[INS].setYUnitLabel('Normalized intensity')
 
-#for ws in BanksT:
-#    DeleteWorkspace(ws)
-
-if SaveTag==0:
-    print "Warning: Reduced data NOT saved."
-    sys.exit()
+for ws in BanksT:
+    DeleteWorkspace(ws)
 
 RemoveLogs(INS)
-OutFile='VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_'+Note
+OutFile='VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note
 SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
 
-if not os.path.exists(SaveDirectory+'/Wavenumber'):
-    os.makedirs(SaveDirectory+'/Wavenumber')
-    print "Info: Subfolder ./Wavenumber does not exist and is created."
+#if not os.path.exists(SaveDirectory+'/Wavenumber'):
+#    os.makedirs(SaveDirectory+'/Wavenumber')
+#    print "Info: Subfolder ./Wavenumber does not exist and is created."
 
-ConvertUnits(InputWorkspace=INS,OutputWorkspace=INS+'-inWavenumber',Target='DeltaE_inWavenumber',EMode='Indirect',EFixed='3.5')
-RemoveLogs(INS+'-inWavenumber')
-OutFile='Wavenumber/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_'+Note+'_inWavenumber'
-SaveNexusProcessed(InputWorkspace=INS+'-inWavenumber',Filename=OutFile+".nxs")
-
-if SaveTag==1:
-    print "Warning: Unnormalized data NOT saved."
-    sys.exit()
-
-if not os.path.exists(SaveDirectory+'/More'):
-    os.makedirs(SaveDirectory+'/More')
-    print "Info: Subfolder ./More does not exist and is created."
-
-RemoveLogs(Merged)
-OutFile='More/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_Merged_'+Note
-SaveNexusProcessed(InputWorkspace=Merged,Filename=OutFile+".nxs")
-RemoveLogs(Backward)
-OutFile='More/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_BBanks_'+Note
-SaveNexusProcessed(InputWorkspace=Backward,Filename=OutFile+".nxs")
-RemoveLogs(Forward)
-OutFile='More/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_FBanks_'+Note
-SaveNexusProcessed(InputWorkspace=Forward,Filename=OutFile+".nxs")
-RemoveLogs(MonitorE)
-OutFile='More/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_Monitor_'+Note
-SaveNexusProcessed(InputWorkspace=MonitorE,Filename=OutFile+".nxs")
-RemoveLogs(SampleE)
-OutFile='More/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+IPTS+'_Monitor-scaled_'+Note
-SaveNexusProcessed(InputWorkspace=SampleE,Filename=OutFile+".nxs")
+#ConvertUnits(InputWorkspace=INS,OutputWorkspace=INS+'-inWavenumber',Target='DeltaE_inWavenumber',EMode='Indirect',EFixed='3.5')
+#RemoveLogs(INS+'-inWavenumber')
+#OutFile='Wavenumber/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note+'_inWavenumber'
+#SaveNexusProcessed(InputWorkspace=INS+'-inWavenumber',Filename=OutFile+".nxs")
