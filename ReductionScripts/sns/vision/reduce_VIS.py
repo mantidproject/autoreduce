@@ -48,10 +48,6 @@ binE=0.001
 #=====================================================================
 
 
-global Instrument 
-Instrument='VIS_'
-global Extension
-Extension='.nxs.h5'
 global BanksForward 
 global BanksBackward 
 if BankVersion==1:
@@ -85,14 +81,6 @@ for i in range(0,len(tab)):
         tab[i][j]=float(tab[i][j])
     CalTab[tab[i][0]-1][tab[i][1]][0]=tab[i][2]
     CalTab[tab[i][0]-1][tab[i][1]][1]=tab[i][3]
-
-
-######################################################################
-# Generate File Names from Run Numbers
-######################################################################
-
-def GenerateFileName(RunNum):
-    return Instrument+str(RunNum)+Extension
 
 
 ######################################################################
