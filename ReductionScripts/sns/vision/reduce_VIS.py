@@ -12,13 +12,13 @@ from mantid.simpleapi import *
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
+global filename
+global run_number
 filename = os.path.split(nexus_file)[-1]
-run_number = int(filename.strip('VIS_').replace('.nxs.h5',''))
+run_number = filename.strip('VIS_').replace('.nxs.h5','')
 
 # Please check and change the following parameters
 #=====================================================================
-
-ListRN=[int(run_number)]
 
 # Output files to be saved in
 SaveDirectory=output_directory
@@ -33,7 +33,7 @@ MonitorID=1
 
 # Align elastic lines
 global ShiftTag
-ShiftTag=1
+ShiftTag=0
 
 global ScaleTag
 ScaleTag=0
@@ -148,7 +148,7 @@ def RemovePromptToF(WS,TPrompt,Delta):
 # Find Monitor Spectrum
 ######################################################################
 
-def FindMonSpec(RunNum,yvalues):
+def FindMonSpec(yvalues):
 
     mlst = []  
     for i in range(len(yvalues)):
@@ -164,24 +164,12 @@ def FindMonSpec(RunNum,yvalues):
 # Load Monitors 
 ######################################################################
 
-def LoadMonitor(ListRN,binE):
+def LoadMonitor(binE):
     
-    for RunNum in ListRN:
-        FileName=GenerateFileName(RunNum)
-        print 'Loading monitor data from', FileName
-        if RunNum==ListRN[0]:
-            LoadNexusMonitors(Filename=FileName,OutputWorkspace='__monitor')
-            yvalues = mtd['__monitor'].extractY()
-            iSpec = FindMonSpec(RunNum,yvalues)
-            ExtractSingleSpectrum(InputWorkspace='__monitor',OutputWorkspace='MonitorT',WorkspaceIndex=str(iSpec))
-        else:
-            LoadNexusMonitors(Filename=FileName,OutputWorkspace='__monitor')
-            yvalues = mtd['__monitor'].extractY()
-            iSpec = FindMonSpec(RunNum,yvalues)
-            ExtractSingleSpectrum(InputWorkspace='__monitor',OutputWorkspace='__add',WorkspaceIndex=str(iSpec))
-            Plus(LHSWorkspace='MonitorT',RHSWorkspace='__add',OutputWorkspace='MonitorT')
-    
-    print 'Processing monitor data'
+    LoadNexusMonitors(Filename=filename,OutputWorkspace='__monitor')
+    yvalues = mtd['__monitor'].extractY()
+    iSpec = FindMonSpec(yvalues)
+    ExtractSingleSpectrum(InputWorkspace='__monitor',OutputWorkspace='MonitorT',WorkspaceIndex=str(iSpec))
     RemovePromptToF('MonitorT',16600,1400)        
     NormaliseByCurrent(InputWorkspace='MonitorT',OutputWorkspace='MonitorT')
     ConvertUnits(InputWorkspace='MonitorT',OutputWorkspace='MonitorE',Target='Energy')
@@ -218,28 +206,14 @@ def LoadMonitor(ListRN,binE):
 # Load Inelastic Banks
 ######################################################################
 
-def LoadInelasticBanks(ListRN):
+def LoadInelasticBanks():
     
     BanksT = []
     BanksTsum = []
-    for BankNum in Banks:
-        BanksT.append('BankT_'+str(BankNum))
-    for RunNum in ListRN:
-        FileName=GenerateFileName(RunNum)
-        print 'Loading inelastic banks from', FileName
-        if RunNum==ListRN[0]:
-            for i,BankNum in enumerate(Banks):
-                BankLoad='bank'+str(BankNum)
-                LoadEventNexus(Filename=FileName,OutputWorkspace=BanksT[i],SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
-                #ModeratorTzero(InputWorkspace=BanksT[i],OutputWorkspace=BanksT[i])
-        else:
-            for i,BankNum in enumerate(Banks):
-                BankLoad='bank'+str(BankNum)
-                LoadEventNexus(Filename=FileName,OutputWorkspace='__add',SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
-                #ModeratorTzero(InputWorkspace='__add',OutputWorkspace='__add')
-                Plus(LHSWorkspace=BanksT[i],RHSWorkspace='__add',OutputWorkspace=BanksT[i])
     for i,BankNum in enumerate(Banks):
-        print 'Processing data in Bank #', Banks[i]
+        BanksT.append('BankT_'+str(BankNum))
+        BankLoad='bank'+str(BankNum)
+        LoadEventNexus(Filename=filename,OutputWorkspace=BanksT[i],SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
         RemovePromptToF(BanksT[i],16605,320)
         NormaliseByCurrent(InputWorkspace=BanksT[i],OutputWorkspace=BanksT[i])
         #Rebin(InputWorkspace=BanksT[i],OutputWorkspace='__extra',Params='5000,1,23000',PreserveEvents='0')
@@ -254,7 +228,7 @@ def LoadInelasticBanks(ListRN):
 # Inelastic Data Reduction
 ######################################################################
 
-def ReduceINS(ListRN,BanksT,ListPX,CalTab,binE):
+def ReduceINS(BanksT,ListPX,CalTab,binE):
     BanksE=[]
     BanksEsum=[]
     for i, Bank in enumerate(BanksT):    
@@ -370,15 +344,15 @@ def ReduceINS(ListRN,BanksT,ListPX,CalTab,binE):
 
 ######################################################################
 
-MonitorT,MonitorE,Prefactor,SampleE=LoadMonitor(ListRN,binE)
-BanksT=LoadInelasticBanks(ListRN)    
-Backward,Forward,Merged=ReduceINS(ListRN,BanksT,ListPX,CalTab,binE)
+MonitorT,MonitorE,Prefactor,SampleE=LoadMonitor(binE)
+BanksT=LoadInelasticBanks()    
+Backward,Forward,Merged=ReduceINS(BanksT,ListPX,CalTab,binE)
 
 Title = mtd['Merged'].getTitle()
 Note = Title.split('>')[0]
-Note.replace(' ','-')
+Note = Note.replace(' ','-')
 
-INS=str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note
+INS='VIS_'+run_number+'_'+Note
 Divide(LHSWorkspace=Merged,RHSWorkspace=SampleE,OutputWorkspace=INS)
 Scale(InputWorkspace=INS,OutputWorkspace=INS,Factor='500',Operation='Multiply')
 mtd[INS].setYUnitLabel('Normalized intensity')
@@ -387,8 +361,7 @@ for ws in BanksT:
     DeleteWorkspace(ws)
 
 RemoveLogs(INS)
-OutFile='VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note
-SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
+SaveNexusProcessed(InputWorkspace=INS,Filename=INS+".nxs")
 
 #if not os.path.exists(SaveDirectory+'/Wavenumber'):
 #    os.makedirs(SaveDirectory+'/Wavenumber')
@@ -396,5 +369,5 @@ SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
 
 #ConvertUnits(InputWorkspace=INS,OutputWorkspace=INS+'-inWavenumber',Target='DeltaE_inWavenumber',EMode='Indirect',EFixed='3.5')
 #RemoveLogs(INS+'-inWavenumber')
-#OutFile='Wavenumber/VIS_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])+'_'+Note+'_inWavenumber'
+#OutFile='Wavenumber/VIS_'+run_number+'_'+Note+'_inWavenumber'
 #SaveNexusProcessed(InputWorkspace=INS+'-inWavenumber',Filename=OutFile+".nxs")
