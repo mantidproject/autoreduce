@@ -107,7 +107,7 @@ class PostProcessAdmin:
                 os.makedirs(log_dir)
         
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
-            out_err = os.path.join(log_dir, os.path.basename(self.data_file) + ".err")
+            out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
 
             #MaxChunkSize is set to 8G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
             #We would like to get MaxChunkSize from an env variable in the future
