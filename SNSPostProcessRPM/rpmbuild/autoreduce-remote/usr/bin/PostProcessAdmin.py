@@ -146,6 +146,10 @@ class PostProcessAdmin:
               else:
                 time.sleep(30)
 
+            # If we can't find an error log, everything completed and we can just return
+            if not os.path.isfile(out_err):
+                return
+            
             if os.stat(out_err).st_size == 0:
                 os.remove(out_err)
                 self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))  
