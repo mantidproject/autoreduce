@@ -147,7 +147,6 @@ class PostProcessAdmin:
                 time.sleep(30)
 
             if not os.path.isfile(out_err) or os.stat(out_err).st_size == 0:
-                os.remove(out_err)
                 self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))
                 logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))
                 
