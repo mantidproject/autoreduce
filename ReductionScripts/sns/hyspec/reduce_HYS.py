@@ -68,7 +68,7 @@ class AutoReduction():
       # Work out some energy bins
       emin = -(2.0 * Ei)
       emax = Ei * 0.9
-      estep = 0.1
+      estep = 0.05
       if int(run_number)>38844 and int(run_number)<38904:
         Ei=24.142
         emin=-48.
