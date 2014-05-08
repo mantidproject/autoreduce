@@ -87,9 +87,9 @@ class PostProcessAdmin:
             raise
 
     def reduce(self):
-        try:         
-            self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
-            logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))  
+        try:
+            self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))
+            logging.info("called /queue/" + self.conf.reduction_started + " --- " + json.dumps(self.data))
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
             proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
             
@@ -107,9 +107,9 @@ class PostProcessAdmin:
                 os.makedirs(log_dir)
         
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
-            out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
+            out_err = os.path.join(log_dir, os.path.basename(self.data_file) + ".err")
 
-            #MaxChunkSize is set to 32G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
+            #MaxChunkSize is set to 8G specifically for the jobs run on fermi, which has 32 nodes and 64GB/node
             #We would like to get MaxChunkSize from an env variable in the future
             
             Chunks = api.DetermineChunking(Filename=self.data_file,MaxChunkSize=8.0)
@@ -146,15 +146,11 @@ class PostProcessAdmin:
               else:
                 time.sleep(30)
 
-            # If we can't find an error log, everything completed and we can just return
-            if not os.path.isfile(out_err):
-                return
-            
-            if os.stat(out_err).st_size == 0:
+            if not os.path.isfile(out_err) or os.stat(out_err).st_size == 0:
                 os.remove(out_err)
-                self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))  
-                logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))   
-                  
+                self.send('/queue/'+self.conf.reduction_complete , json.dumps(self.data))
+                logging.info("called /queue/"+self.conf.reduction_complete + " --- " + json.dumps(self.data))
+                
                 url="https://monitor.sns.gov/files/"+self.instrument+"/"+self.run_number+"/submit_reduced/"
 
                 pattern=self.instrument+"_"+self.run_number+"*"
@@ -185,7 +181,7 @@ class PostProcessAdmin:
                 if error_line is None:
                     error_line = last_line
                     
-                errMsg = error_line + " - See reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
+                errMsg = error_line + " - See %s for details." % log_dir
                 self.data["error"] = "REDUCTION: %s" % errMsg
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
@@ -194,7 +190,6 @@ class PostProcessAdmin:
             self.data["error"] = "REDUCTION Error: %s " % e
             logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
             self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
-            
 
     def send(self, destination, data):
         self.client.connect()
