@@ -38,7 +38,7 @@ class Configuration(object):
                     
         if os.access(config_file, os.R_OK) == False:
             logging.error("Configuration file doesn't exist or is not readable.")
-            raise ValueError
+            raise RuntimeError, "Configuration file doesn't exist or is not readable."
         
         try:
             logging.info("Found configuration file at: %s" % config_file)
@@ -60,5 +60,4 @@ class Configuration(object):
             
         except Exception:
             logging.info('Failed to read configuration file', exc_info=True)
-            raise ValueError
-            
+            raise
