@@ -155,6 +155,9 @@ def FindMonSpec(yvalues):
 def LoadMonitor(binE):
     
     LoadNexusMonitors(Filename=filename,OutputWorkspace='__monitor')
+    if mtd['__monitor'].getRun().getProtonCharge() < 1.0e-5:
+        print "Error: Proton charge is zero"
+        sys.exit()
     yvalues = mtd['__monitor'].extractY()
     iSpec = FindMonSpec(yvalues)
     ExtractSingleSpectrum(InputWorkspace='__monitor',OutputWorkspace='MonitorT',WorkspaceIndex=str(iSpec))
@@ -202,6 +205,9 @@ def LoadInelasticBanks():
         BanksT.append('BankT_'+str(BankNum))
         BankLoad='bank'+str(BankNum)
         LoadEventNexus(Filename=filename,OutputWorkspace=BanksT[i],SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
+        if mtd[BanksT[i]].getRun().getProtonCharge() < 1.0e-5:
+            print "Error: Proton charge is zero"
+            sys.exit()
         RemovePromptToF(BanksT[i],16605,320)
         NormaliseByCurrent(InputWorkspace=BanksT[i],OutputWorkspace=BanksT[i])
         #Rebin(InputWorkspace=BanksT[i],OutputWorkspace='__extra',Params='5000,1,23000',PreserveEvents='0')
@@ -332,8 +338,8 @@ def ReduceINS(BanksT,ListPX,CalTab,binE):
 
 ######################################################################
 
-MonitorT,MonitorE,Prefactor,SampleE=LoadMonitor(binE)
 BanksT=LoadInelasticBanks()    
+MonitorT,MonitorE,Prefactor,SampleE=LoadMonitor(binE)
 Backward,Forward,Merged=ReduceINS(BanksT,ListPX,CalTab,binE)
 
 Title = mtd['Merged'].getTitle()
