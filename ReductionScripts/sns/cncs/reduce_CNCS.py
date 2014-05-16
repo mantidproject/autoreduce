@@ -20,7 +20,7 @@ output_directory=sys.argv[2]
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei)+','+str(0.01*Ei)+','+str(0.95*Ei)
+erange=str(-Ei*0.3)+','+str(0.01*Ei)+','+str(0.95*Ei)
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
