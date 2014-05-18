@@ -10,8 +10,8 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
 cal_dir = "/SNS/PG3/2014_1_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_AGES_d19167_2014_05_08.cal")
-char_file = os.path.join(cal_dir, "PG3_characterization_2014_05_08-HR-AGES.txt")
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d17532_2014_02_14.cal")
+char_file = os.path.join(cal_dir, "PG3_characterization_2014_02_11-HR-PAC-BGsub.txt")
 #MODE = 0664
 
 #from mantidsimple import *
@@ -28,7 +28,7 @@ dataSearchPath.append(nexusDir)
 configService.setDataSearchDirs(";".join(dataSearchPath))
 
 SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs",
-                   PreserveEvents=True,PushDataPositive="None",
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=-0.0008, BinInDspace=True, FilterBadPulses=True,
