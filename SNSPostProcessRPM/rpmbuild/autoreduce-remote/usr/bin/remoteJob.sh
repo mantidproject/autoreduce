@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=1:00:00
+#PBS -l walltime=5:00:00
 #PBS -N AUTO_REDUCTION
 #PBS -V
 #PBS -W umask=022

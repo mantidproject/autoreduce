@@ -20,7 +20,7 @@ output_directory=sys.argv[2]
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei)+','+str(0.01*Ei)+','+str(0.95*Ei)
+erange=str(-Ei*3.0)+','+str(0.01*Ei)+','+str(0.95*Ei)
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
@@ -33,10 +33,10 @@ DgsReduction(
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4654/18/71909/NeXus/CNCS_71909_event.nxs",
+             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
              UseBoundsForDetVan=True,
-             DetVanIntRangeLow=52000.0,
-             DetVanIntRangeHigh=53000.0,
+             DetVanIntRangeLow=49500.0,
+             DetVanIntRangeHigh=50500.0,
              DetVanIntRangeUnits="TOF",
             )
 
@@ -47,7 +47,8 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
-elog.setSERotOptions('OxDilRot,SERotator2,CCR13VRot,FatSamVRot,SEOCRot,huber')
+elog.setSERotOptions('SERotator2')
+#elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber')
 elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorA')
 elog.setFilename(output_directory+'experiment_log.csv')
 
@@ -67,29 +68,29 @@ SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
 
 # make a pretty image
-minvals,maxvals=ConvertToMDHelper('reduce','|Q|','Direct')
-xmin=minvals[0]
-xmax=maxvals[0]
-xstep=(xmax-xmin)*0.01
-ymin=minvals[1]
-ymax=maxvals[1]
-ystep=(ymax-ymin)*0.01
-x=arange(xmin,xmax,xstep)
-y=arange(ymin,ymax,ystep)
-X,Y=meshgrid(x,y)
+#minvals,maxvals=ConvertToMDHelper('reduce','|Q|','Direct')
+#xmin=minvals[0]
+#xmax=maxvals[0]
+#xstep=(xmax-xmin)*0.01
+#ymin=minvals[1]
+#ymax=maxvals[1]
+#ystep=(ymax-ymin)*0.01
+#x=arange(xmin,xmax,xstep)
+#y=arange(ymin,ymax,ystep)
+#X,Y=meshgrid(x,y)
 
 
-MD=ConvertToMD('reduce',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
-ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
-ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
-MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
-d=MDH.getSignalArray()
-ne=MDH.getNumEventsArray()
-dne=d/ne
+#MD=ConvertToMD('reduce',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
+#ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
+#ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
+#MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
+#d=MDH.getSignalArray()
+#ne=MDH.getNumEventsArray()
+#dne=d/ne
 
-Zm=ma.masked_where(ne==0,dne)
-pcolormesh(X,Y,log(Zm),shading='gouraud')
-xlabel('|Q| ($\AA^{-1}$)')
-ylabel('E (meV)')
-savefig(processed_filename+'.png',bbox_inches='tight')
+#Zm=ma.masked_where(ne==0,dne)
+#pcolormesh(X,Y,log(Zm),shading='gouraud')
+#xlabel('|Q| ($\AA^{-1}$)')
+#ylabel('E (meV)')
+#savefig(processed_filename+'.png',bbox_inches='tight')
 

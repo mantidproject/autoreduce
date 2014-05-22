@@ -1,16 +1,16 @@
 import os
 import sys
 import shutil 
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
-cal_dir = "/SNS/NOM/IPTS-11176/shared"
-cal_file  = os.path.join(cal_dir, "NOM_calibrate_d26142_2014_04_22.cal")
+cal_dir = "/SNS/NOM/IPTS-10278/shared"
+cal_file  = os.path.join(cal_dir, "NOM_calibrate_d27745_2014_05_22.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     26143
-van      =     26144
-van_back =     26145
+sam_back =     27746
+van      =     27747
+van_back =     27748
 
 #from mantidsimple import *
 
@@ -35,4 +35,5 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    VanadiumBackgroundNumber=van_back, RemovePromptPulseWidth=50,
                    ResampleX=-3000, BinInDspace=True, FilterBadPulses=True,
                    SaveAs="gsas and fullprof and pdfgetn", OutputDirectory=outputDir,
-                   StripVanadiumPeaks=True, FinalDataUnits="MomentumTransfer")
+                   StripVanadiumPeaks=True,
+                   NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")

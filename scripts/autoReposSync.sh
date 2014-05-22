@@ -52,7 +52,6 @@ test -d /tmp/autoreduction || mkdir -m 0755 -p /tmp/autoreduction
 cd /tmp/autoreduction
 test -d /tmp/autoreduction/autoreduce || ssh-agent bash -c 'ssh-add ~/.ssh/autoreduce.rsa; git clone git@github.com:mantidproject/autoreduce.git'
 cd /tmp/autoreduction/autoreduce
-#git pull
 git config user.name "mantid-publisher"
 git config user.email "mantid-developers@mantidproject.org"
 
