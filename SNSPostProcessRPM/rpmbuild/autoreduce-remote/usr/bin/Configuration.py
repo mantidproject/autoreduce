@@ -43,7 +43,7 @@ class Configuration(object):
         try:
             logging.info("Found configuration file at: %s" % config_file)
             cfg = open(config_file, 'r')
-            json_encoded = cfg.read()           
+            json_encoded = cfg.read()
             config = json.loads(json_encoded)
             self.amq_user = config['amq_user']
             self.amq_pwd = config['amq_pwd']
@@ -57,7 +57,7 @@ class Configuration(object):
             self.reduction_error = config['reduction_error']
             self.reduction_disabled = config['reduction_disabled']
             self.heart_beat = config['heart_beat']
-            
+            self.max_procs = config ['max_procs'] if 'max_procs' in config else 6
         except Exception:
             logging.info('Failed to read configuration file', exc_info=True)
             raise

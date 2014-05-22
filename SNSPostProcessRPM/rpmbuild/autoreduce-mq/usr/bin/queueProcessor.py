@@ -67,7 +67,6 @@ class Consumer(object):
         """
             Send heartbeats at a regular time interval
         """
-        logging.info("In heartbeat...")
         try:
             stomp = sync.Stomp(self.stompConfig)
             stomp.connect()

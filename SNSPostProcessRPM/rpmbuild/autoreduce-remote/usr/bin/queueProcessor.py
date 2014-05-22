@@ -52,7 +52,7 @@ class Consumer(object):
         proc = subprocess.Popen([cmd, data])
         self.procList.append(proc)
 
-        while len(self.procList) > 4:
+        while len(self.procList) > self.config.max_procs:
             logging.info("There are " + str(len(self.procList)) + " processors running at the moment, wait for a second")
             time.sleep(1.0)
             self.updateChildProcessList()
