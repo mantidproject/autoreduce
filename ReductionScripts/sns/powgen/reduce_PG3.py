@@ -32,8 +32,7 @@ SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs"
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
 
-SavePlot1D(InputWorkspace="PG3_"+runNumber, OutputFilename=outputDir+"PG3_"+runNumber+'.png',
-	XLabel='d($\AA$)', YLabel='Intensity')
+SavePlot1D(InputWorkspace="PG3_"+runNumber, OutputFilename=outputDir+"PG3_"+runNumber+'.png',  YLabel='Intensity')
 
 #dirList=os.listdir(outputDir)
 #for fname in dirList:
