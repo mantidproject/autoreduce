@@ -3,6 +3,7 @@ import sys,os,math
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 
 sys.path.append("/opt/Mantid/bin")
+import numpy
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
 from matplotlib import *
@@ -78,7 +79,7 @@ def WS_clean():
     
           
 if __name__ == "__main__":
-
+    numpy.seterr("print")
     #processing parameters
      # Updated vanadium run 2014-5-13 - JLN
     RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50152_event.nxs"
