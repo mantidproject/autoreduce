@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil 
+import numpy
 #sys.path.append("/opt/Mantid/bin")
 sys.path.append("/opt/mantidnightly/bin")
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
@@ -15,6 +16,8 @@ char_file = os.path.join(cal_dir, "PG3_characterization_2014_02_11-HR-PAC-BGsub.
 #MODE = 0664
 
 #from mantidsimple import *
+
+numpy.seterr("ignore") #ignore division by 0 warning in plots
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
