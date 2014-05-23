@@ -79,7 +79,7 @@ def WS_clean():
     
           
 if __name__ == "__main__":
-    numpy.seterr("ignore")
+    numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-5-13 - JLN
     RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50152_event.nxs"
