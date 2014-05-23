@@ -9,6 +9,7 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
 # Logs at: /var/log/SNS_applications/autoreduce.log
+import numpy
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
@@ -113,7 +114,7 @@ def WS_clean():
     
           
 if __name__ == "__main__":
-
+    numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
     RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_47123.nxs.h5"
     ProcessedVanadium='van47123.nxs'
