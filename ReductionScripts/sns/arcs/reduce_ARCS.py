@@ -81,18 +81,17 @@ if __name__ == "__main__":
 
     #processing parameters
      # Updated vanadium run 2014-5-13 - JLN
-    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_49964_event.nxs"
-    ProcessedVanadium='van49964.nxs'
+    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50152_event.nxs"
+    ProcessedVanadium='van50152.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
     MaskBTPParameters.append({'Bank':"105",'Tube':"6"}) #added 2014-2-27 to mask out bad tube JLN
-    MaskBTPParameters.append({'Bank':"40",'Tube':"4"}) #added 2014-3-22 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"40",'Tube':"6"}) #added 2014-3-22 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"39",'Tube':"7"}) #added 2014-3-22 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"3",'Tube':"5"}) #added 2014-3-22 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"1",'Tube':"1"}) #added 2014-5-23 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"44",'Tube':"5"}) #added 2014-5-23 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"83",'Tube':"2"}) #added 2014-5-23 to mask out bad tube DLA
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
