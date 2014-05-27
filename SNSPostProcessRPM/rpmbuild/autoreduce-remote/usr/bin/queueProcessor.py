@@ -53,7 +53,7 @@ class Consumer(object):
         self.procList.append(proc)
 
         while len(self.procList) > self.config.max_procs:
-            logging.info("There are " + str(len(self.procList)) + " processors running at the moment, wait for a second")
+            logging.debug("There are " + str(len(self.procList)) + " processors running at the moment, wait for a second")
             time.sleep(1.0)
             self.updateChildProcessList()
 

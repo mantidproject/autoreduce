@@ -7,6 +7,7 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
 from numpy import *
+numpy.seterr('ignore')
 
 nexus_file=sys.argv[1]
 outputDir=sys.argv[2]

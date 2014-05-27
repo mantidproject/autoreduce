@@ -18,6 +18,8 @@ config['default.facility']="SNS"
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
+seterr("ignore") #ignore division by 0 warning in plots
+
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
 erange=str(-Ei*3.0)+','+str(0.01*Ei)+','+str(0.95*Ei)

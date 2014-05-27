@@ -159,6 +159,7 @@ if __name__ == "__main__":
     else:
       path = sys.argv[1]
       out_dir = sys.argv[2]
+      seterr("ignore") #ignore division by 0 warning in plots
       a = AutoReduction(path, out_dir)
       a.execute()
 
