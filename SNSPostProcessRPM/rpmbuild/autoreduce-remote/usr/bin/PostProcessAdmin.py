@@ -175,15 +175,15 @@ class PostProcessAdmin:
                 error_line = None
                 fp=file(out_err, "r")
                 for l in fp.readlines():
-                    last_line = l.strip()
+                    if len(l.replace('-','').strip())>0:
+                        last_line = l.strip()
                     result = re.search('Error: ([\w ]+)$',l)
                     if result is not None:
                         error_line = result.group(1)
                 if error_line is None:
                     error_line = last_line
                     
-                errMsg = error_line + " - See %s for details." % log_dir
-                self.data["error"] = "REDUCTION: %s" % errMsg
+                self.data["error"] = "REDUCTION: %s" % error_line
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
 
