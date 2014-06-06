@@ -18,7 +18,6 @@ class Consumer(object):
         
     @defer.inlineCallbacks
     def run(self):
-        self.heartbeat()
         client = yield async.Stomp(self.stompConfig).connect()
         headers = {
             # client-individual mode is necessary for concurrent processing
@@ -86,6 +85,8 @@ if __name__ == '__main__':
         sys.exit()
         
     logging.info("Start post process asynchronous listener!")
-    Consumer(config).run()
+    consumer = Consumer(config)
+    consumer.heartbeat()
+    consumer.run()
     reactor.run()
     logging.info("Stop post process asynchronous listener!")
