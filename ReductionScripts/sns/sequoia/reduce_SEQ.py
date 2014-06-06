@@ -175,7 +175,7 @@ if __name__ == "__main__":
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
     elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot')
-    elog.setSETempOptions('SampleTemp, sampletemp, SensorA')
+    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340')
     elog.setFilename(outdir+'experiment_log.csv')
 
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
