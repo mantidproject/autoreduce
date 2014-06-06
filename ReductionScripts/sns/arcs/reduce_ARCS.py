@@ -81,9 +81,9 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-     # Updated vanadium run 2014-5-13 - JLN
-    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50152_event.nxs"
-    ProcessedVanadium='van50152.nxs'
+     # Updated vanadium run 2014-5-28 - JLN
+    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50293_event.nxs"
+    ProcessedVanadium='van50293.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
@@ -93,6 +93,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"1",'Tube':"1"}) #added 2014-5-23 to mask out bad tube DLA
     MaskBTPParameters.append({'Bank':"44",'Tube':"5"}) #added 2014-5-23 to mask out bad tube DLA
     MaskBTPParameters.append({'Bank':"83",'Tube':"2"}) #added 2014-5-23 to mask out bad tube DLA
+    MaskBTPParameters.append({'Bank':"10"}) #added 2014-5-28 to mask out bad pack JLN
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True

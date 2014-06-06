@@ -95,7 +95,6 @@ class PostProcessAdmin:
             self.send('/queue/'+self.conf.reduction_started, json.dumps(self.data))  
             instrument_shared_dir = "/" + self.facility + "/" + self.instrument + "/shared/autoreduce/"
             proposal_shared_dir = "/" + self.facility + "/" + self.instrument + "/" + self.proposal + "/shared/autoreduce/"
-            #proposal_shared_dir = "/tmp/shelly2/"
             
             if not os.path.exists(proposal_shared_dir):
               os.makedirs(proposal_shared_dir)
@@ -127,7 +126,7 @@ class PostProcessAdmin:
             cmd = "python " + reduce_script_path + " " + self.data_file + " " + proposal_shared_dir
             logging.info("reduction subprocess started: " + cmd)
             out_log = os.path.join(log_dir, os.path.basename(self.data_file) + ".log")
-            out_err = os.path.join(proposal_shared_dir, os.path.basename(self.data_file) + ".err")
+            out_err = os.path.join(log_dir, os.path.basename(self.data_file) + ".err")
             logFile=open(out_log, "w")
             errFile=open(out_err, "w")
             proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=logFile, stderr=errFile, universal_newlines = True)
@@ -164,15 +163,15 @@ class PostProcessAdmin:
                 error_line = None
                 fp=file(out_err, "r")
                 for l in fp.readlines():
-                    last_line = l.strip()
+                    if len(l.replace('-','').strip())>0:
+                        last_line = l.strip()
                     result = re.search('Error: ([\w ]+)$',l)
                     if result is not None:
                         error_line = result.group(1)
                 if error_line is None:
                     error_line = last_line
                     
-                errMsg = error_line + " - See reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
-                self.data["error"] = "REDUCTION: %s" % errMsg
+                self.data["error"] = "REDUCTION: %s" % error_line
                 self.send('/queue/'+self.conf.reduction_error , json.dumps(self.data))
                 logging.error("called /queue/"+self.conf.reduction_error  + " --- " + json.dumps(self.data))
 
