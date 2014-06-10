@@ -5,6 +5,7 @@ import sys
 import os
 import numpy
 import csv
+import string
 
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
@@ -84,6 +85,16 @@ for i in range(0,len(tab)):
 
 
 ######################################################################
+# Format file name from a string
+######################################################################
+
+def format_filename(s):
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    outfilename = ''.join(c for c in s if c in valid_chars)
+    outfilename = outfilename.replace(' ','_') 
+    return outfilename
+
+######################################################################
 # Rebinning Intervals
 ######################################################################
 
@@ -155,8 +166,8 @@ def FindMonSpec(yvalues):
 def LoadMonitor(binE):
     
     LoadNexusMonitors(Filename=filename,OutputWorkspace='__monitor')
-    if mtd['__monitor'].getRun().getProtonCharge() < 1.0e-5:
-        print "Error: Proton charge is zero"
+    if mtd['__monitor'].getRun().getProtonCharge() < 1.0e1:
+        print "Error: Proton charge is too low"
         sys.exit()
     yvalues = mtd['__monitor'].extractY()
     iSpec = FindMonSpec(yvalues)
@@ -205,8 +216,8 @@ def LoadInelasticBanks():
         BanksT.append('BankT_'+str(BankNum))
         BankLoad='bank'+str(BankNum)
         LoadEventNexus(Filename=filename,OutputWorkspace=BanksT[i],SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
-        if mtd[BanksT[i]].getRun().getProtonCharge() < 1.0e-5:
-            print "Error: Proton charge is zero"
+        if mtd[BanksT[i]].getRun().getProtonCharge() < 1.0e1:
+            print "Error: Proton charge is too low"
             sys.exit()
         RemovePromptToF(BanksT[i],16605,320)
         NormaliseByCurrent(InputWorkspace=BanksT[i],OutputWorkspace=BanksT[i])
@@ -344,7 +355,7 @@ Backward,Forward,Merged=ReduceINS(BanksT,ListPX,CalTab,binE)
 
 Title = mtd['Merged'].getTitle()
 Note = Title.split('>')[0]
-Note = Note.replace(' ','-')
+Note = format_filename(Note)
 
 INS='VIS_'+run_number+'_'+Note
 Divide(LHSWorkspace=Merged,RHSWorkspace=SampleE,OutputWorkspace=INS)
