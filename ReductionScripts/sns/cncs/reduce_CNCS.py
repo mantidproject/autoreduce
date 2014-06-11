@@ -24,9 +24,7 @@ w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
 erange=str(-Ei*0.2)+','+str(0.01*Ei)+','+str(0.9*Ei)
 
-#tib=SuggestTibCNCS(Ei)
-tib[0]=43000.0
-tib[1]=44000.0
+tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
              SampleInputFile=nexus_file,
