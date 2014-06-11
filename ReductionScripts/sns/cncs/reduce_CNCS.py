@@ -34,14 +34,31 @@ DgsReduction(
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
-             TibTofRangeStart=tib[0],
-             TibTofRangeEnd=tib[1],
+             TibTofRangeStart=43000.0,
+             TibTofRangeEnd=44000.0,
              DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
              UseBoundsForDetVan=True,
              DetVanIntRangeLow=49500.0,
              DetVanIntRangeHigh=50500.0,
              DetVanIntRangeUnits="TOF",
             )
+
+#DgsReduction(
+#             SampleInputFile=nexus_file,
+#             OutputWorkspace="reduce",
+#             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
+#             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
+#             EnergyTransferRange=erange,
+#             IncidentBeamNormalisation="ByCurrent",
+#            TimeIndepBackgroundSub=True,
+#             TibTofRangeStart=tib[0],
+#             TibTofRangeEnd=tib[1],
+#             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
+#             UseBoundsForDetVan=True,
+#             DetVanIntRangeLow=49500.0,
+#             DetVanIntRangeHigh=50500.0,
+#             DetVanIntRangeUnits="TOF",
+#            )
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
