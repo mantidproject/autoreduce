@@ -28,7 +28,7 @@ tib=SuggestTibCNCS(Ei)
 DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
+             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
              GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
