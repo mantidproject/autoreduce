@@ -6,6 +6,7 @@ from suds.client import Client
 import nxs, os, numpy, sys, posixpath, logging
 import xml.utils.iso8601, ConfigParser
 from datetime import datetime
+from xml.sax import saxutils
 
 class IngestNexus():
     def __init__(self, infilename):
@@ -213,7 +214,11 @@ class IngestNexus():
                     listSample = file.getentries()
                     if listSample.has_key('name'):
                         file.opendata('name')
-                        sample.name = file.getdata()
+                        # Text stored in the Nexus file is XML escaped
+                        # ICAT unescapes it automatically, so we need to
+                        # do it here if we want to determine whether
+                        # the sample is already in the DB.
+                        sample.name = saxutils.unescape(file.getdata())
                         file.closedata()
                     else:
                         sample.name = "NONE"
