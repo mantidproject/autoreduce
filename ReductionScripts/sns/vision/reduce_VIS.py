@@ -55,7 +55,8 @@ if BankVersion==1:
     BanksForward=[2]
     BanksBackward=[9,10,11,12,13,14]
 elif BankVersion==2:
-    BanksForward=[2,3,4,5,6]
+    #BanksForward=[2,3,4,5,6]
+    BanksForward=[3,4,5,6]
     BanksBackward=[8,9,10,11,12,13,14]
 else:
     print "Error: BankVersion should be 1 or 2"
