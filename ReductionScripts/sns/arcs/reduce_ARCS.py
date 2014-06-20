@@ -192,7 +192,8 @@ if __name__ == "__main__":
         dne=d/ne
 
         Zm=ma.masked_where(ne==0,dne)
-        pcolormesh(X,Y,log(Zm),shading='gouraud')
+        pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
+        colorbar(pcm)
         xlabel('|Q| ($\AA^{-1}$)')
         ylabel('E (meV)')
         title("Run "+outfile)

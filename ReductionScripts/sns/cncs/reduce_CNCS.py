@@ -22,7 +22,8 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.3)+','+str(0.01*Ei)+','+str(0.95*Ei)
+erange=str(-Ei*0.9)+','+str(0.01*Ei)+','+str(0.9*Ei)
+
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
@@ -32,7 +33,7 @@ DgsReduction(
              GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
-             TimeIndepBackgroundSub=True,
+            TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
              DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
@@ -58,15 +59,15 @@ s1=elog.save_line('reduce')
 
 # Get Angle
 #s1=mtd["reduce"].getRun()['huber'].value[0]
-roundedvalue = "%.2f" % s1
+roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
 run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
 processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + "_spe.nxs")
-nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + ".nxspe")
+nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
 
 # Save a file
-SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
+#SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
 
 # make a pretty image

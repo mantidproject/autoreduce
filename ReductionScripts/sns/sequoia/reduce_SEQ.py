@@ -27,6 +27,10 @@ def preprocessData(filename):
     f1 = os.path.split(filename)[-1]
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
+    #PV streamer not running. Copying logs from some other run
+    if (runnum >= 55959 and runnum <= 55960):
+        LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     ###########################
@@ -96,6 +100,8 @@ def preprocessData(filename):
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
+    if (runnum >= 55959 and runnum <= 55960):
+        LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
@@ -175,7 +181,7 @@ if __name__ == "__main__":
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
     elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot')
-    elog.setSETempOptions('SampleTemp, sampletemp, SensorA')
+    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340 ')
     elog.setFilename(outdir+'experiment_log.csv')
 
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
@@ -190,7 +196,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.25*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-1.0*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']=''#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
