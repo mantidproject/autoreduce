@@ -5,6 +5,8 @@ function createInstrumentHash() {
   iList["BASIS"]="BSS"
   iList["CNCS"]="CNCS"
   iList["EQSANS"]="EQSANS"
+  iList["USANS"]="USANS"
+  iList["CORELLI"]="CORELLI"
   iList["HYSPEC"]="HYS"
   iList["NOMAD"]="NOM"
   iList["POWGEN"]="PG3"
