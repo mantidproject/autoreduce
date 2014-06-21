@@ -94,6 +94,8 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"44",'Tube':"5"}) #added 2014-5-23 to mask out bad tube DLA
     MaskBTPParameters.append({'Bank':"83",'Tube':"2"}) #added 2014-5-23 to mask out bad tube DLA
     MaskBTPParameters.append({'Bank':"10"}) #added 2014-5-28 to mask out bad pack JLN
+    MaskBTPParameters.append({'Bank':"19"}) #added 2014-6-21 did not recover DLA
+    MaskBTPParameters.append({'Bank':"21"}) #added 2014-6-21 did not recover DLA
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
