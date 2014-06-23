@@ -33,13 +33,13 @@ DgsReduction(
              GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
-            TimeIndepBackgroundSub=True,
+             TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
+             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
              UseBoundsForDetVan=True,
-             DetVanIntRangeLow=49500.0,
-             DetVanIntRangeHigh=50500.0,
+             DetVanIntRangeLow=51000.0,
+             DetVanIntRangeHigh=55000.0,
              DetVanIntRangeUnits="TOF",
             )
 
