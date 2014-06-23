@@ -52,7 +52,7 @@ elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,
 elog.setSimpleLogList("EnergyRequest")
 elog.setSERotOptions('SERotator2,huber')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
-elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorA')
+elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
