@@ -50,8 +50,8 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
-elog.setSERotOptions('CCR10G2Rot')
-#elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber')
+elog.setSERotOptions('SERotator,huber')
+#elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorA')
 elog.setFilename(output_directory+'experiment_log.csv')
 
