@@ -21,9 +21,9 @@ def preprocessVanadium(Raw,Processed,Parameters):
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)    
         MaskDetectors(Workspace='__VAN',WorkspaceIndexList='24064-37886')
-	    MaskDetectors(Workspace="__VAN",WorkspaceIndexList='61448-77823')
-	    MaskDetectors(Workspace="__VAN",WorkspaceIndexList='102144-115710')
-	    MaskDetectors(Workspace="__VAN",WorkspaceIndexList='83968-84991')
+        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='61448-77823')
+        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='102144-115710')
+        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='83968-84991')
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
         
