@@ -19,11 +19,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
         #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
         for d in Parameters:
-            MaskBTP(Workspace="__VAN",**d)    
-        MaskDetectors(Workspace='__VAN',WorkspaceIndexList='24064-37886')
-        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='61448-77823')
-        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='102144-115710')
-        MaskDetectors(Workspace="__VAN",WorkspaceIndexList='83968-84991')
+            MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
         
@@ -126,8 +122,8 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-7363/data/SEQ_33693_event.nxs"
-    ProcessedVanadium='van33693.nxs'
+    RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_47123.nxs.h5"
+    ProcessedVanadium='van47123.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
@@ -203,7 +199,7 @@ if __name__ == "__main__":
         DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']=''#/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']='/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
