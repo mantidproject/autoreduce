@@ -1,16 +1,22 @@
 autoreduce
 ==========
 
-The scripts directory contains autoReposSync.sh script which auto compares the beamline reduction python scripts to the scripts in repos, and auto checks into the git repository if they are different.
+This repository contains the automated reduction and cataloging service code for legacy instruments.
+The legacy translation service expects a script in /usr/bin/process_run.sh to perform the post-processing.
+Since the post-processing is now handled by the Workflow Manager, this script now simply sends an ActiveMQ message
+announcing a new data file.
 
-The scripts directory also contains processBatchRuns.sh script which takes a nexus directory and a range of run. If the run is not already cataloged, it will send the run file path to the queue where the workflow manager will kick off the process.
+The post-processing service code can be found here: https://github.com/neutrons/post_processing_agent
 
-The SNSPostProcessRPM directory contains the following packages:
- - autoreduce-adara: used on the legacy beam lines to bridge the legacy translation with the automated post-processing.
- - autoreduce-mq: service running on the AR nodes to perform post-processing.
- - autoreduce-remote: Fermi version of the post-processing service.
 
-To generate the RPMs, run 'make rpm' in the SNSPostProcessRPM directory.
+This repository also holds the automated reduction scripts for each instrument.
+The scripts directory contains the autoReposSync.sh script, which compares the beamline 
+reduction scripts to the scripts in the repository. 
+It checks them into the git repository if they are different.
+
+
+
+To generate the RPM to be used with the legacy translation service, run 'make rpm' in the SNSPostProcessRPM directory.
 
 
 
