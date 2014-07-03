@@ -1,4 +1,4 @@
-autoreduce
+Legacy automated reduction and cataloging service
 ==========
 
 This repository contains the automated reduction and cataloging service code for legacy instruments.
