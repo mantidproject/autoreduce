@@ -19,8 +19,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
         #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
         for d in Parameters:
-            MaskBTP(Workspace="__VAN",**d)
-            
+            MaskBTP(Workspace="__VAN",**d)    
         MaskDetectors(Workspace='__VAN',WorkspaceIndexList='24064-37886')
 	    MaskDetectors(Workspace="__VAN",WorkspaceIndexList='61448-77823')
 	    MaskDetectors(Workspace="__VAN",WorkspaceIndexList='102144-115710')
