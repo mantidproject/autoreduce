@@ -22,9 +22,9 @@ out_prefix = instrument + "_" + run_number
 
 
 #in the final version folder should be obtained from the outputdir
-#folder = outputDir.replace('autoreduce/','')
+folder = outputDir.replace('autoreduce/','')
 
-folder = '/SNS/SNAP/IPTS-9109/shared/'
+#folder = '/SNS/SNAP/IPTS-9109/shared/'
 
 #Masking should be one of the following strings :
 # 'None' ## 'Horizontal' 
