@@ -57,7 +57,7 @@ binning='0.4,-0.003,3'
 #Output should be one of the following strings :
 # 'None' # 'Fullprof' # 'GSAS' 
 
-Output = 'None'
+Output = 'GSAS'
 
 
 #######################################33
@@ -138,18 +138,29 @@ if Normalization == "Extract from Data" :
 
 
 
-
-
-
-
-#ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
-
-
-
 SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_inst.nxs')
 SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_nor.nxs')
+
+if output!= 'None':
+
+    ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
+
+    if output == 'Fullprof':
+        SaveFocusedXYE(InputWorkspace = 'ows_tof', 
+                        Filename = '%s/shared/data/fulprof/%s_%s_%s.dat' %(self.get_IPTS_Local(r),new_Tag, r, group),
+                        SplitFiles = True, 
+                        Append=False)
+
+    if output == 'GSAS'
+        SaveGSS (InputWorkspace='ows_tof', 
+                    Filename = outputDir+'/'+out_prefix+'.gsa',
+                    Format='SLOG', 
+                    SplitFiles = False, 
+                    Append=False, 
+                    MultiplyByBinWidth='1')
+
 #SaveAscii(InputWorkspace='ows',Filename = outputDir+'/'+out_prefix+'.dat')
-#SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/'+out_prefix+'.gsa',Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
+#
 ##############################################################3
 
 
