@@ -52,7 +52,7 @@ plotfile='NOM_'+runNumber+'_autoreduced.png'
 plotexist=False
 
 waitcount=0
-while not plotexist and waitcount < 360:
+while not plotexist and waitcount < 720:
       a=listdir(tempplotdir)
       plotexist= (tempplotfile in a)
       sleep(10)
