@@ -45,8 +45,9 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    StripVanadiumPeaks=True,
                    NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
 
-tempplotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoNOM/figs'
+tempplotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoNOM/figs/'
 tempplotfile='NOM_'+runNumber+'_autoreduced_temp.png'
+plotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoreduce/'
 plotfile='NOM_'+runNumber+'_autoreduced.png'
 plotexist=False
 
@@ -57,7 +58,6 @@ while not plotexist and waitcount < 360:
       sleep(10)
       waitcount+=1
 
-lline='cp '+tempplotfile+' '+plotfile
-Popen(shlex.split(lline))
-lline='rm -f '+tempplotfile
-Popen(shlex.split(lline))
+if plotexist:
+    lline='cp '+ tempplotdir + tempplotfile +' '+ plotdir + plotfile
+    Popen(shlex.split(lline))
