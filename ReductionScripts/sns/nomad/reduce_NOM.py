@@ -1,16 +1,23 @@
 import os
 import sys
 import shutil 
+import shlex
+from os import listdir
+from time import sleep
+from subprocess import Popen
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
+
 cal_dir = "/SNS/NOM/IPTS-10957/shared"
+
 cal_file  = os.path.join(cal_dir, "NOM_calibrate_d23234_2014_07_30.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
 sam_back =     23252
 van      =     23236
 van_back =     23237
+ipts     =    '10957'
 
 #from mantidsimple import *
 
@@ -37,3 +44,20 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    SaveAs="gsas and fullprof and pdfgetn", OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
+
+tempplotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoNOM/figs'
+tempplotfile='NOM_'+runNumber+'_autoreduced_temp.png'
+plotfile='NOM_'+runNumber+'_autoreduced.png'
+plotexist=False
+
+waitcount=0
+while not plotexist and waitcount < 360:
+      a=listdir(tempplotdir)
+      plotexist= (tempplotfile in a)
+      sleep(10)
+      waitcount+=1
+
+lline='cp '+tempplotfile+' '+plotfile
+Popen(shlex.split(lline))
+lline='rm -f '+tempplotfile
+Popen(shlex.split(lline))
