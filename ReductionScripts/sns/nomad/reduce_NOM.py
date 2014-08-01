@@ -10,13 +10,13 @@ from mantid.simpleapi import *
 import mantid
 
 
-cal_dir = "/SNS/NOM/IPTS-10957/shared"
+cal_dir = "/SNS/NOM/IPTS-4480/shared"
 
-cal_file  = os.path.join(cal_dir, "NOM_calibrate_d23234_2014_07_30.cal")
+cal_file  = os.path.join(cal_dir, "NOM_calibrate_d10271_2014_08_01.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     23252
-van      =     23236
-van_back =     23237
+sam_back =     10318
+van      =     10316
+van_back =     10315
 ipts     =    '10957'
 
 #from mantidsimple import *
