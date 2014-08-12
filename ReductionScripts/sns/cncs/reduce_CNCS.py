@@ -22,24 +22,24 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.9)+','+str(0.01*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.1)+','+str(0.002*Ei)+','+str(0.9*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
+             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
              GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
-            TimeIndepBackgroundSub=True,
+             TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-10716/0/84425/NeXus/CNCS_84425_event.nxs",
+             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
              UseBoundsForDetVan=True,
-             DetVanIntRangeLow=49500.0,
-             DetVanIntRangeHigh=50500.0,
+             DetVanIntRangeLow=51000.0,
+             DetVanIntRangeHigh=55000.0,
              DetVanIntRangeUnits="TOF",
             )
 
@@ -51,14 +51,14 @@ elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
 elog.setSERotOptions('SERotator2')
-#elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber')
-elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorA')
+#elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
+elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
 
 # Get Angle
-#s1=mtd["reduce"].getRun()['huber'].value[0]
+#s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 

@@ -9,6 +9,9 @@ from matplotlib.pyplot import *
 from numpy import *
 numpy.seterr(all='ignore')
 
+import warnings
+warnings.filterwarnings('ignore',module='numpy')
+
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 

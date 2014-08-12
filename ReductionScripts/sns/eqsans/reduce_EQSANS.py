@@ -8,6 +8,8 @@ use("agg")
 from matplotlib.pyplot import *
 from numpy import *
 numpy.seterr(all='ignore')
+import warnings
+warnings.filterwarnings('ignore',module='numpy')
 
 if __name__ == "__main__":    
     #check number of arguments
@@ -33,5 +35,5 @@ if __name__ == "__main__":
     xlim([0,192])
     xlabel('Tube')
     ylabel('Pixel')
-    savefig(str(outdir+'EQSANS_'+str(w.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
+    savefig(str(outdir+'/EQSANS_'+str(w.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
     
