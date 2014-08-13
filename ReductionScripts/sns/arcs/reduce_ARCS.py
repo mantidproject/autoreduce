@@ -82,6 +82,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-5-28 - JLN
+     # uncomment first line with new vanadium run number once collected, and delete second line
+    #RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_50293_event.nxs"
     RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50293_event.nxs"
     ProcessedVanadium='van50293_new.nxs'
     HardMaskFile=''
@@ -89,13 +91,7 @@ if __name__ == "__main__":
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
-    MaskBTPParameters.append({'Bank':"105",'Tube':"6"}) #added 2014-2-27 to mask out bad tube JLN
-    MaskBTPParameters.append({'Bank':"1",'Tube':"1"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"44",'Tube':"5"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"83",'Tube':"2"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"10"}) #added 2014-5-28 to mask out bad pack JLN
-    MaskBTPParameters.append({'Bank':"19"}) #added 2014-6-21 did not recover DLA
-    MaskBTPParameters.append({'Bank':"21"}) #added 2014-6-21 did not recover DLA
+
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
