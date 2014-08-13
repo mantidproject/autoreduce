@@ -168,8 +168,9 @@ if __name__ == "__main__":
         if NXSPE_flag:            
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
                     
-        #plots  ConvertToMDMinMaxGlobal
-        #minvals,maxvals=ConvertToMDHelper2('__OWS','|Q|','Direct')
+        #plots  
+        #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
+        #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
         minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
         xmin=minvals[0]
         xmax=maxvals[0]
