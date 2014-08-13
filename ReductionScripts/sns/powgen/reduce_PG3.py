@@ -13,7 +13,7 @@ char_file = os.path.join(cal_dir, "PG3_characterization_2014_02_11-HR-PAC-BGsub.
 #from mantidsimple import *
 
 eventFileAbs=sys.argv[1]
-outputDir=sys.argv[2]
+outputDir=sys.argv[2]+'/'
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
