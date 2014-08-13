@@ -108,7 +108,7 @@ if __name__ == "__main__":
         sys.exit()
     else:
         filename = sys.argv[1]
-        outdir = os.path.normpath(sys.argv[2]+'/')
+        outdir = sys.argv[2]+'/'
 
 
     elog=ExperimentLog()
