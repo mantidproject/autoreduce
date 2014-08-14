@@ -12,6 +12,8 @@ from ARLibrary import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
+import warnings
+warnings.filterwarnings('ignore',module='numpy')
 
 class AutoReduction():
   def __init__(self, nexus_file, output_directory):
