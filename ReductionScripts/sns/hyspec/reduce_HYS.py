@@ -12,6 +12,7 @@ from ARLibrary import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
+numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
 
