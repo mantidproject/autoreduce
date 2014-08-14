@@ -71,7 +71,7 @@ nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + value
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
 
 # make a pretty image
-#minvals,maxvals=ConvertToMDHelper('reduce','|Q|','Direct')
+#minvals,maxvals=ConvertToMDMinMaxGlobal('reduce','|Q|','Direct')
 #xmin=minvals[0]
 #xmax=maxvals[0]
 #xstep=(xmax-xmin)*0.01
