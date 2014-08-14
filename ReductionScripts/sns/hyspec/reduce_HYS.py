@@ -113,7 +113,7 @@ class AutoReduction():
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
       SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
 
-      minvals,maxvals=ConvertToMDHelper('out1','|Q|','Direct')
+      minvals,maxvals=ConvertToMDMinMaxLocal('out1','|Q|','Direct')
       xmin=minvals[0]
       xmax=maxvals[0]
       xstep=(xmax-xmin)*0.01
