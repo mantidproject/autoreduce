@@ -5,7 +5,7 @@ sys.path.append("/opt/mantid/bin")
 from mantid.simpleapi import *
 import mantid
 from matplotlib import *
-cal_dir = "/SNS/PG3/IPTS-2767/shared/2014_1_11A_CAL/"
+cal_dir = "/SNS/PG3/IPTS-2767/shared/2014_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_PAC_d20353_2014_08_15.cal")
 char_file = os.path.join(cal_dir, "PG3_characterization_2014_08_15-HR.txt")
 #MODE = 0664
