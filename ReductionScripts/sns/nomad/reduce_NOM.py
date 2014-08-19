@@ -49,14 +49,8 @@ tempplotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoNOM/figs/'
 tempplotfile='NOM_'+runNumber+'_autoreduced_temp.png'
 plotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoreduce/'
 plotfile='NOM_'+runNumber+'_autoreduced.png'
-plotexist=False
 
-waitcount=0
-while not plotexist and waitcount < 720:
-      a=listdir(tempplotdir)
-      plotexist= (tempplotfile in a)
-      sleep(10)
-      waitcount+=1
+plotexist= (tempplotfile in a)
 
 if plotexist:
     lline='cp '+ tempplotdir + tempplotfile +' '+ plotdir + plotfile
