@@ -164,8 +164,7 @@ if __name__ == "__main__":
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
-    #if ( runnum <= 58091):
-    #angle=141.004
+    #angle= 99.99 #This is where you can manually set the rotation angle
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
