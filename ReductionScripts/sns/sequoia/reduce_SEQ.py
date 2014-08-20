@@ -165,7 +165,7 @@ if __name__ == "__main__":
     [EGuess,Ei,T0]=preprocessData(filename)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
     #if ( runnum <= 58091):
-    angle=150.226
+    #angle=146.213
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
