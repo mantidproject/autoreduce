@@ -22,7 +22,7 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.1)+','+str(0.002*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.1)+','+str(0.004*Ei)+','+str(0.9*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
@@ -30,7 +30,7 @@ DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
              HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_4x2.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
