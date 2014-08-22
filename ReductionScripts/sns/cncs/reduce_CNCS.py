@@ -30,7 +30,7 @@ DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
              HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_4x2.xml',
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
