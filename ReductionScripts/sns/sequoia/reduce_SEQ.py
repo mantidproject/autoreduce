@@ -130,7 +130,7 @@ if __name__ == "__main__":
     #short packs around beam stop, and uninstalled packs at far left
     MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
-     MaskBTPParameters.append({'Bank':"62"})
+     MaskBTPParameters.append({'Bank':"62,92"})
 
     
     MaskBTPParameters.append({'Bank':"118,141,92,97,57,62,74"})
