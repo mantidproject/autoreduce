@@ -134,7 +134,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"86",'Tube':"8"})
     MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
  # only for the runs in IPTS-11831
-    MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
+ #   MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
     
     clean=True
     NXSPE_flag=True
