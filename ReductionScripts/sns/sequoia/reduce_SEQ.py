@@ -27,6 +27,7 @@ def preprocessData(filename):
     f1 = os.path.split(filename)[-1]
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
+
     #PV streamer not running. Copying logs from some other run
     if (runnum >= 55959 and runnum <= 55960):
         LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
