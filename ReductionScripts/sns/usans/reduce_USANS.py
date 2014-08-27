@@ -24,7 +24,15 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    w=Load(filename)
+    w=LoadEventNexus(filename, LoadMonitors=True)
+
+    # Produce ASCII data
+    w=Rebin(InputWorkspace=w, Params="0,10,17000")
+    summed = SumSpectra(InputWorkspace=w)
+    file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
+    SaveAscii(InputWorkspace=summed,Filename=file_path, WriteSpectrumID=False)
+
+
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
     data2=data[[4,0,5,1,6,2,7,3, 12,8,13,9,14,10,15,11]]
