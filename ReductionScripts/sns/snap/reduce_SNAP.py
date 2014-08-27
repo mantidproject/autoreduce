@@ -68,8 +68,8 @@ iws=LoadEventNexus(Filename=nexus_file)
 ## Making Detector Image for Diagnostic
 ##############################################################3
 
-MaskBTP(iws,Bank="2,3,14,13")
-iws=Integration(iws,10000,12000)
+#MaskBTP(iws,Bank="2,3,14,13")
+#iws=Integration(iws,10000,12000)
 
 dets=iws.extractY()
 banks=[11,14,17,2,5,8,10,13,16,1,4,7,9,12,15,0,3,6]
