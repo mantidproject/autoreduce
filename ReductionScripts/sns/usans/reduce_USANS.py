@@ -24,11 +24,11 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    w=LoadEventNexus(filename, LoadMonitors=True)
+    w=LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
 
     # Produce ASCII data
-    w=Rebin(InputWorkspace=w, Params="0,10,17000")
-    summed = SumSpectra(InputWorkspace=w)
+    w=Rebin(InputWorkspace="USANS", Params="0,10,17000")
+    summed = SumSpectra(InputWorkspace="USANS")
     file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
     SaveAscii(InputWorkspace=summed,Filename=file_path, WriteSpectrumID=False)
 
