@@ -27,6 +27,7 @@ def preprocessData(filename):
     f1 = os.path.split(filename)[-1]
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
+
     #PV streamer not running. Copying logs from some other run
     if (runnum >= 55959 and runnum <= 55960):
         LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
@@ -122,19 +123,22 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-11831/nexus/SEQ_58383.nxs.h5"
-    ProcessedVanadium='van58383.nxs'
+    RawVanadium="/SNS/SEQ/IPTS-12246/nexus/SEQ_58384.nxs.h5"
+    ProcessedVanadium='van58384.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
     MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
-    
-    MaskBTPParameters.append({'Bank':"118,141,92,97,57,62,74"})
-    MaskBTPParameters.append({'Bank':"86",'Tube':"8"})
+ 
+    MaskBTPParameters.append({'Bank':"62,92"})
     MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
+    MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
+    MaskBTPParameters.append({'Bank':"141"})
+
+
  # only for the runs in IPTS-11831
-    MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
+ #   MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
     
     clean=True
     NXSPE_flag=True
