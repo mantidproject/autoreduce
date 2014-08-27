@@ -55,9 +55,9 @@ norm_file = 'nor_nexus.nxs'
 binning='0.4,-0.003,4'
 
 #Output should be one of the following strings :
-# 'None' # 'Fullprof' # 'GSAS' 
+# 'None' # 'All' outputs both Fullprof and GSAS 
 
-Output = 'GSAS'
+Output = 'All'
 
 
 #######################################33
@@ -119,7 +119,7 @@ if Normalization == "Processed Nexus" :
 if Normalization == "Extract from Data" : 
 		
 	window = 8 
-	smooth_range = 10
+	smooth_range = 4
 				
 	peak_clip_WS = CloneWorkspace('ows')
 	n_histo = peak_clip_WS.getNumberHistograms()
@@ -145,19 +145,18 @@ if Output!= 'None':
 
     ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
 
-    if Output == 'Fullprof':
-        SaveFocusedXYE(InputWorkspace = 'ows_tof', 
-                        Filename = '%s/shared/data/fulprof/%s_%s_%s.dat' %(self.get_IPTS_Local(r),new_Tag, r, group),
-                        SplitFiles = True, 
-                        Append=False)
 
-    if Output == 'GSAS' :
-        SaveGSS (InputWorkspace='ows_tof', 
-                    Filename = outputDir+'/'+out_prefix+'.gsa',
-                    Format='SLOG', 
-                    SplitFiles = False, 
-                    Append=False, 
-                    MultiplyByBinWidth='1')
+    SaveFocusedXYE(InputWorkspace = 'ows_tof', 
+                   Filename = '%s/shared/data/fulprof/%s_%s_%s.dat' %(self.get_IPTS_Local(r),new_Tag, r, group),
+                   SplitFiles = True, 
+                   Append=False)
+
+    SaveGSS (InputWorkspace='ows_tof', 
+                 Filename = outputDir+'/'+out_prefix+'.gsa',
+                 Format='SLOG', 
+                 SplitFiles = False, 
+                 Append=False, 
+                 MultiplyByBinWidth='1')
 
 
 ##############################################################3
