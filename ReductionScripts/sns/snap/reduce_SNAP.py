@@ -147,12 +147,12 @@ if Output!= 'None':
 
 
     SaveFocusedXYE(InputWorkspace = 'ows_tof', 
-                   Filename = '%s/shared/data/fulprof/%s_%s_%s.dat' %(self.get_IPTS_Local(r),new_Tag, r, group),
+                   Filename = outputDir+'/fullprof/'+out_prefix+'.dat',
                    SplitFiles = True, 
                    Append=False)
 
     SaveGSS (InputWorkspace='ows_tof', 
-                 Filename = outputDir+'/'+out_prefix+'.gsa',
+                 Filename = outputDir+'/gsas/'+out_prefix+'.gsa',
                  Format='SLOG', 
                  SplitFiles = False, 
                  Append=False, 
