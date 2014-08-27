@@ -28,7 +28,7 @@ if __name__ == "__main__":
     w=mtd["USANS"]
     run_number = w.getRunNumber()
     # Produce ASCII data
-    Rebin(InputWorkspace="USANS", Params="0,10,17000")
+    Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
     file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
