@@ -27,10 +27,10 @@ if __name__ == "__main__":
     w=LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
 
     # Produce ASCII data
-    w=Rebin(InputWorkspace="USANS", Params="0,10,17000")
-    summed = SumSpectra(InputWorkspace="USANS")
+    Rebin(InputWorkspace="USANS", Params="0,10,17000")
+    SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
     file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
-    SaveAscii(InputWorkspace=summed,Filename=file_path, WriteSpectrumID=False)
+    SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
 
     wi=Integration(w)
