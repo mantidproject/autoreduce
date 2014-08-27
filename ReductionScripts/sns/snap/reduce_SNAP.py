@@ -37,7 +37,7 @@ Masking = "Horizontal"
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Calibration File'
-calib_File = 'SNAP_calibrate_d17963_2014_06_24.cal'
+calib_File = 'SNAP_calibrate_d18579_2014_08_27.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -52,7 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.003,3'
+binning='0.4,-0.003,4'
 
 #Output should be one of the following strings :
 # 'None' # 'Fullprof' # 'GSAS' 
@@ -68,17 +68,17 @@ iws=LoadEventNexus(Filename=nexus_file)
 ## Making Detector Image for Diagnostic
 ##############################################################3
 
-##MaskBTP(iws,Bank="2,3,14,13")
-##iws=Integration(iws,10000,12000)
+MaskBTP(iws,Bank="2,3,14,13")
+iws=Integration(iws,10000,12000)
 
-#dets=iws.extractY()
-#banks=[11,14,17,2,5,8,10,13,16,1,4,7,9,12,15,0,3,6]
-#pix=256
-#d=dets.reshape(18,-1)[banks,:].reshape(3,-1,pix).swapaxes(1,2)[::-1,:,:].reshape(3*pix,-1)[::-1,:]
-#d[d<0.1]=0.1
-#imshow(log(d))
-#axis('off')
-#savefig(str(outputDir+'SNAP_'+str(iws.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
+dets=iws.extractY()
+banks=[11,14,17,2,5,8,10,13,16,1,4,7,9,12,15,0,3,6]
+pix=256
+d=dets.reshape(18,-1)[banks,:].reshape(3,-1,pix).swapaxes(1,2)[::-1,:,:].reshape(3*pix,-1)[::-1,:]
+d[d<0.1]=0.1
+imshow(log(d))
+axis('off')
+savefig(str(outputDir+'SNAP_'+str(iws.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
 ##############################################################3
 
 
