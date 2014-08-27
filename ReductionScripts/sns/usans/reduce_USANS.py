@@ -24,8 +24,9 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    w=LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
-
+    LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+    w=mtd["USANS"]
+    run_number = w.getRunNumber()
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     xlabel('Tube')
     ylabel('Pixel')
     
-    run_number = w.getRunNumber()
+    
     if run_number==0:
         image_file = os.path.split(filename)[1].split('.')[0]
         image_file += "_autoreduced.png"
