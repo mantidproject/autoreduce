@@ -34,7 +34,7 @@ if __name__ == "__main__":
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
     Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
-    file_path = os.path.join(outdir, "USANS_%s_monitors.txt" % run_number)
+    file_path = os.path.join(outdir, "USANS_%s_monitor.txt" % run_number)
     SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
  
 
