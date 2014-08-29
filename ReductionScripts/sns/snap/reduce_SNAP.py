@@ -37,7 +37,7 @@ Masking = "Horizontal"
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Calibration File'
-calib_File = 'SNAP_calibrate_d18579_2014_08_27.cal'
+calib_File = 'SNAP_calibrate_d18584_2014_08_29.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -52,7 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.002,4'
+binning='0.4,-0.0015,4'
 
 #Output should be one of the following strings :
 # 'None' # 'All' outputs both Fullprof and GSAS 
