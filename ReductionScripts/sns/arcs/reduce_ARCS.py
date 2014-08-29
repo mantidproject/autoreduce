@@ -81,11 +81,9 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-     # Updated vanadium run 2014-5-28 - JLN
-     # uncomment first line with new vanadium run number once collected, and delete second line
-    #RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_50293_event.nxs"
-    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50293_event.nxs"
-    ProcessedVanadium='van50293_new.nxs'
+     # Updated vanadium run 2014-8-29 using new calibration data scheme - DLA
+    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52141_event.nxs"
+    ProcessedVanadium='van52141.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
