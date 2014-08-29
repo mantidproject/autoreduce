@@ -30,7 +30,7 @@ DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
              HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_4x2.xml',
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
@@ -50,9 +50,10 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
-elog.setSERotOptions('SERotator2')
+elog.setSERotOptions('CCR10G2Rot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
-elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
+#elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
+elog.setSETempOptions('SensorD')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
