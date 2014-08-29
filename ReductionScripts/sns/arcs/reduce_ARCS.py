@@ -15,8 +15,6 @@ from matplotlib.pyplot import *
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
         LoadNexus(Filename=Processed,OutputWorkspace="__VAN")
-        #added to fix 500 microsecond offset on pack 35 for run 2014-B
-        ChangeBinOffset(InputWorksapce="__VAN",OutputWorkspace="__VAN", Offset=500, IndexMin=34816, IndexMax=35839)
         dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN")
