@@ -31,6 +31,8 @@ def preprocessData(filename):
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
+    #added to fix 500 microsecond offset on pack 35 for run 2014-B
+    ChangeBinOffset(InputWorksapce="__IWS",OutputWorkspace="__IWS", Offset=500, IndexMin=34816, IndexMax=35839)
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
 
