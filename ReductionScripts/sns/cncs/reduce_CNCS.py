@@ -22,7 +22,7 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.1)+','+str(0.004*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.9)+','+str(0.004*Ei)+','+str(0.9*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
