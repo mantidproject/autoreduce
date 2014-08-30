@@ -26,6 +26,8 @@ if Interface == 0:
     ListRN = [int(RunNumber)]
     SaveDir = sys.argv[2]
     config['defaultsave.directory'] = SaveDir
+    Root='/SNS/VIS/'+IPTS+'/nexus'  
+    config.setDataSearchDirs(Root) 
 elif Interface == 1:
     IPTS='IPTS-11661'
     ListRN=[4979,4980,4981]
@@ -252,7 +254,6 @@ def LoadInelasticBanks(ListRN,Banks):
         if RunNum==ListRN[0]:
             for i,BankNum in enumerate(Banks):
                 BankLoad='bank'+str(BankNum)
-                print FileName
                 LoadEventNexus(Filename=FileName,OutputWorkspace=BanksT[i],SingleBankPixelsOnly=True,BankName=BankLoad,CompressTolerance='-1',FilterByTofMin=100,FilterByTofMax=33333,LoadLogs='1')
                 #ModeratorTzero(InputWorkspace=BanksT[i],OutputWorkspace=BanksT[i])
                 print "Title:", mtd[BanksT[i]].getTitle()
