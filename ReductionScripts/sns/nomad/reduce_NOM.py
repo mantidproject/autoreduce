@@ -1,23 +1,16 @@
 import os
 import sys
 import shutil 
-import shlex
-from os import listdir
-from time import sleep
-from subprocess import Popen
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
-
-cal_dir = "/SNS/NOM/IPTS-12255/shared"
-
-cal_file  = os.path.join(cal_dir, "NOM_calibrate_d32221_2014_08_20.cal")
+cal_dir = "/SNS/NOM/IPTS-5986/shared"
+cal_file  = os.path.join(cal_dir, "NOM_calibrate_d7287_2014_09_04.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     32222
-van      =     32223
-van_back =     32224
-ipts     =    '10957'
+sam_back =     7306
+van      =     7294
+van_back =     7291
 
 #from mantidsimple import *
 
@@ -44,14 +37,3 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    SaveAs="gsas and fullprof and pdfgetn", OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
-
-tempplotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoNOM/figs/'
-tempplotfile='NOM_'+runNumber+'_autoreduced_temp.png'
-plotdir='/SNS/NOM/IPTS-'+ipts+'/shared/autoreduce/'
-plotfile='NOM_'+runNumber+'_autoreduced.png'
-
-plotexist= (tempplotfile in a)
-
-if plotexist:
-    lline='cp '+ tempplotdir + tempplotfile +' '+ plotdir + plotfile
-    Popen(shlex.split(lline))
