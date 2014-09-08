@@ -22,7 +22,7 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.9)+','+str(0.004*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.1)+','+str(0.005*Ei)+','+str(0.9*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
@@ -50,10 +50,10 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
-elog.setSERotOptions('CCR10G2Rot')
+elog.setSERotOptions('SERotator2')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
-elog.setSETempOptions('SensorD')
+elog.setSETempOptions('SensorB')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
