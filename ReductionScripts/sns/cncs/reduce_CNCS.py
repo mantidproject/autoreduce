@@ -36,11 +36,11 @@ DgsReduction(
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
-             UseBoundsForDetVan=True,
-             DetVanIntRangeLow=51000.0,
-             DetVanIntRangeHigh=55000.0,
-             DetVanIntRangeUnits="TOF",
+             #DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
+             #UseBoundsForDetVan=True,
+             #DetVanIntRangeLow=51000.0,
+             #DetVanIntRangeHigh=55000.0,
+             #DetVanIntRangeUnits="TOF",
             )
 
 filename = os.path.split(nexus_file)[-1]
