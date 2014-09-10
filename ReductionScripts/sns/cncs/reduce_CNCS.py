@@ -22,25 +22,25 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.1)+','+str(0.005*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.95)+','+str(0.005*Ei)+','+str(0.95*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
+             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
-             UseBoundsForDetVan=True,
-             DetVanIntRangeLow=51000.0,
-             DetVanIntRangeHigh=55000.0,
-             DetVanIntRangeUnits="TOF",
+             #DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
+             #UseBoundsForDetVan=True,
+             #DetVanIntRangeLow=51000.0,
+             #DetVanIntRangeHigh=55000.0,
+             #DetVanIntRangeUnits="TOF",
             )
 
 filename = os.path.split(nexus_file)[-1]
