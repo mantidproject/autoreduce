@@ -42,6 +42,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
+TEMPLATE_DIRS = (
+    TEMPLATE_PATH,
+)
+
 ROOT_URLCONF = 'autoreduce_webapp.urls'
 
 WSGI_APPLICATION = 'autoreduce_webapp.wsgi.application'
@@ -75,7 +80,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_PATH = os.path.join(BASE_DIR,'static')
+STATICFILES_DIRS = (
+    STATIC_PATH,
+)
 
 # Logging
 # https://docs.python.org/2/howto/logging.html
@@ -118,3 +126,4 @@ ICAT = {
 # UserOffice WebService
 
 UOWS_URL = ''
+UOWS_LOGIN_URL = 'https://devusers.facilities.rl.ac.uk/auth/?service='
