@@ -28,8 +28,8 @@ autows_monitor = autows + "_monitor"
 dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
 processed_filename = os.path.join(output_directory, "bss" + run_number + "_silicon111_sqw.nxs")
 
-ws=Load(Filename=nexus_file, OutputWorkspace=autows)
-data=ws.extractY()[0:2520*4]
+Load(Filename=nexus_file, OutputWorkspace=autows)
+data=mtd[autows].extractY()[0:2520*4]
 LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile='/SNS/BSS/shared/autoreduce/BASIS_Mask.xml')
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
@@ -59,7 +59,7 @@ logname = os.path.join(output_directory, 'experiment_log.csv')
 filemode = 'new'
 if os.path.exists(logname):
     filemode = 'fastappend'
-comment = ws.getComment()
+comment = mtd[autows].getComment()
 AddSampleLog(autows, LogName='Comment', LogText=comment, LogType='String')
 ExportExperimentLog(InputWorkspace=autows, OutputFilename=logname, FileMode=filemode,
                     SampleLogTitles = 'Run number,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,Mean Sensor A, Min Sensor A, Max Sensor A,  Mean Sensor B, Min Sensor B, Max Sensor B, Wavelength, Chopper 1, Chopper 2, Chopper 3, Slit S1t, Slit S1b, Slit S1l, Slit S1r',
