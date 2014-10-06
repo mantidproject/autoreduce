@@ -28,8 +28,8 @@ autows_monitor = autows + "_monitor"
 dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
 processed_filename = os.path.join(output_directory, "bss" + run_number + "_silicon111_sqw.nxs")
 
-autows=Load(Filename=nexus_file)
-data=autows.extractY()[0:2520*4]
+ws=Load(Filename=nexus_file, OutputWorkspace=autows)
+data=ws.extractY()[0:2520*4]
 LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile='/SNS/BSS/shared/autoreduce/BASIS_Mask.xml')
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
