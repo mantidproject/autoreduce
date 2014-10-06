@@ -2,7 +2,7 @@ import os
 import sys
 import shutil
 import numpy
-from pdb import set_trace as tr
+
 mantid_root = "/opt/Mantid"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 
