@@ -59,7 +59,7 @@ logname = os.path.join(output_directory, 'experiment_log.csv')
 filemode = 'new'
 if os.path.exists(logname):
     filemode = 'fastappend'
-comment = autows.getComment()
+comment = ws.getComment()
 AddSampleLog(autows, LogName='Comment', LogText=comment, LogType='String')
 ExportExperimentLog(InputWorkspace=autows, OutputFilename=logname, FileMode=filemode,
                     SampleLogTitles = 'Run number,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,Mean Sensor A, Min Sensor A, Max Sensor A,  Mean Sensor B, Min Sensor B, Max Sensor B, Wavelength, Chopper 1, Chopper 2, Chopper 3, Slit S1t, Slit S1b, Slit S1l, Slit S1r',
