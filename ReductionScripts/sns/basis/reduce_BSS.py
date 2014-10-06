@@ -26,7 +26,7 @@ autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
 
 dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
-processed_filename = os.path.join(output_directory, "bss_" + run_number + "_silicon111_sqw.nxs")
+processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_silicon111_sqw.nxs")
 
 Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
