@@ -45,3 +45,8 @@ Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params='-0.12,0.0004,0.12')
 SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning='0.2,0.2,2.0', EMode='Indirect', EFixed='2.082')
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw') 
+
+# Test the modified reduce_BSS
+testdir = os.path.join( '/SNS/users/jbq/tmp/', os.path.basename(output_directory) )
+cmd='/SNS/BSS/shared/autoreduce/reduce_BSS.v2.py {0} {1}'.format(nexus_file, testdir)
+os.system(cmd)
