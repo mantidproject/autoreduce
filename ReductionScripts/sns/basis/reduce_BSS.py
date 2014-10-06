@@ -47,6 +47,6 @@ SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw') 
 
 # Test the modified reduce_BSS
-testdir = os.path.join( '/SNS/users/jbq/tmp/', os.path.basename(output_directory) )
+testdir = os.path.join( '/SNS/users/jbq/tmp/test_reduce_BSS/', os.path.basename(output_directory) )
 cmd='/SNS/BSS/shared/autoreduce/reduce_BSS.v2.py {0} {1}'.format(nexus_file, testdir)
 os.system(cmd)
