@@ -79,9 +79,9 @@ try:
     b1=data[0:2520].reshape(56,45).transpose()[::-1,::-1]
     bss[0:45,0:56]=b1
     b2=data[2520:5040].reshape(56,45).transpose()[::-1,::-1]
-    bss[0:45,57:113]=b3
+    bss[0:45,57:113]=b2
     b3=data[5040:7560].reshape(56,45).transpose()[::-1,::-1]
-    bss[46:91,0:56]=b2
+    bss[46:91,0:56]=b3
     b4=data[7560:10080].reshape(56,45).transpose()[::-1,::-1]
     bss[46:91,57:113]=b4
 except:
