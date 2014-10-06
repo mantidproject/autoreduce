@@ -84,7 +84,7 @@ try:
     bss[46:91,0:56]=b2
     b4=data[7560:10080].reshape(56,45).transpose()[::-1,::-1]
     bss[46:91,57:113]=b4
-except, e:
+except e:
     print e
 plt.imshow(numpy.log(bss))
 plt.axis('off')
