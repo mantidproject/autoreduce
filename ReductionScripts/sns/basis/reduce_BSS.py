@@ -35,6 +35,9 @@ MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
 LoadParameterFile(Workspace=autows, Filename=os.path.join(mantid_root, 'instrument', 'BASIS_silicon_111_Parameters.xml'))
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
+mon = mtd[autows_monitor]
+x = mon.readX(0)
+y = mon.readY(0)
 ModeratorTzeroLinear(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor)
 Rebin(InputWorkspace=autows_monitor,OutputWorkspace=autows_monitor,Params='10')
 ConvertUnits(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor, Target='Wavelength')
@@ -92,9 +95,9 @@ plt.axis('off')
 # Monitor Figure
 ax1 = plt.subplot2grid((7,2), (2,0))
 ax1.ticklabel_format(style = 'sci', axis='x',scilimits=(0,0))
-mon = mtd[autows_monitor]
-x = mon.readX(0)
-y = mon.readY(0)                                                                                          
+#mon = mtd[autows_monitor]
+#x = mon.readX(0)
+#y = mon.readY(0)                                                                                          
 plt.plot(x[1:],y)
 plt.xlabel('TOF ($\mu$s)')
 plt.ylabel('Intensity')
