@@ -112,7 +112,7 @@ for i in range(nQ):
     x = autows_sqw.readX(i)
     y = autows_sqw.readY(i)                                                                                          
     plt.plot(x[1:],y)
-    plt.xlabel('Energy ($\mu$eV)')
+    plt.xlabel('Energy (meV)')
     plt.ylabel('Intensity')
     plt.yscale('log')
     plt.title('Q={0} '.format(Qm + dQ/2 + i*dQ)+"$\AA^{-1}$")
