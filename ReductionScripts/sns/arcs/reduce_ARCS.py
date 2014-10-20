@@ -87,17 +87,16 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-     # Updated vanadium run 2014-9-2 using new calibration data scheme - DLA
-    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52407_event.nxs"
-    ProcessedVanadium='van52407.nxs'
+     # Updated vanadium run 2014-10-20 using new calibration data scheme - DLA
+    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52899_event.nxs"
+    ProcessedVanadium='van52899.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
-    MaskBTPParameters.append({'Bank':"3",'Tube':"3"}) #Added mask for bad tube 2014-08-29 - JLN
-    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) #Added mask for bad tube 2014-09-02 - DLA
-    MaskBTPParameters.append({'Bank':"35"}) #Added mask for bad pack (tof trigger problem) 2014-09-02 - DLA
+    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) #Added mask for bad tube 2014-10-20 - DLA
+    MaskBTPParameters.append({'Bank':"27"}) #Added mask for bad pack (HV problem) 2014-10-20 - DLA
 
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
