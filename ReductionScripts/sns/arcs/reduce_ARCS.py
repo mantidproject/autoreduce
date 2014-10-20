@@ -88,8 +88,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-10-20 using new calibration data scheme - DLA
-    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52899_event.nxs"
-    ProcessedVanadium='van52899.nxs'
+    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52903_event.nxs"
+    ProcessedVanadium='van52903.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
