@@ -95,8 +95,8 @@ if __name__ == "__main__":
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
-    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) #Added mask for bad tube 2014-10-20 - DLA
-    MaskBTPParameters.append({'Bank':"27"}) #Added mask for bad pack (HV problem) 2014-10-20 - DLA
+    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
+    MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
 
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
