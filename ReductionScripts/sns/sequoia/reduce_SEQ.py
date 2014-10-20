@@ -123,25 +123,19 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-12246/nexus/SEQ_60992.nxs.h5"
-    ProcessedVanadium="van60992.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-12246/nexus/SEQ_58384.nxs.h5"
+    ProcessedVanadium='van58384.nxs'
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
     MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
-    #MaskBTPParameters.append({'Bank':"62,92"})
-    #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
-    #MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
-    #MaskBTPParameters.append({'Bank':"141"})
-    #MaskBTPParameters.append({'Bank':"70"})
-    MaskBTPParameters.append({'Bank': '62,92'})
-    MaskBTPParameters.append({'Tube': '6-8', 'Bank': '98'})
-    MaskBTPParameters.append({'Tube': '4', 'Bank': '108'})
-    MaskBTPParameters.append({'Bank': '141'})
-    MaskBTPParameters.append({'Bank': '70'})
-
+    MaskBTPParameters.append({'Bank':"62,92"})
+    MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
+    MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
+    MaskBTPParameters.append({'Bank':"141"})
+    MaskBTPParameters.append({'Bank':"70"})
 
  # only for the runs in IPTS-11831
  #   MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
