@@ -19,8 +19,8 @@ def preprocessVanadium(Raw,Processed,Parameters):
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN")
 
-        #added to fix 500 microsecond offset on pack 35 for run 2014-B
-        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN", Offset=500, IndexMin=34816, IndexMax=35839)
+        #added to fix 500 microsecond offset on pack 35 for run 2014-B - not needed now
+        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN", Offset=500, IndexMin=34816, IndexMax=35839)
 
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
