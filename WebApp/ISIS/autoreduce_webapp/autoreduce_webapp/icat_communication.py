@@ -1,8 +1,9 @@
-from settings import LOG_FILE, LOG_LEVEL, ICAT
-import logging
+from settings import LOG_FILE, LOG_LEVEL, ICAT, BASE_DIR
+import logging, os, sys, datetime
 logging.basicConfig(filename=LOG_FILE,level=LOG_LEVEL)
 from sets import Set
 import icat
+sys.path.insert(0, BASE_DIR)
 
 class ICATCommunication(object):
     def __init__(self, **kwargs):
@@ -34,10 +35,21 @@ class ICATCommunication(object):
         [my_set.add(each) for each in my_list]
         return my_set
 
+    def _build_in_clause(self, field, values):
+        clause = field + " IN ("
+        for item in values:
+            if isinstance(item, (int, long)):
+                clause += "" + str(item) + ","
+            else:
+                clause += "'" + str(item) + "',"
+        clause = clause[:-1] + ")"
+        return clause
+
     '''
         Returns experiment details for the given reference number
     '''
     def get_experiment_details(self, reference_number):
+        logging.debug("Calling ICATCommunication.get_experiment_details")
         if not isinstance(reference_number, (int, long)):
             raise TypeError("Reference number must be a number")
 
@@ -63,29 +75,41 @@ class ICATCommunication(object):
         This includes instruments they own and are an experimenter on.
     '''
     def get_valid_instruments(self, user_number):
+        logging.debug("Calling ICATCommunication.get_valid_instruments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
         instruments = Set()
         self._add_list_to_set(self.get_owned_instruments(user_number), instruments)
         self._add_list_to_set(self.client.search("SELECT inst.name FROM Instrument inst JOIN inst.investigationInstruments ii WHERE ii.investigation.id IN (SELECT i.id from Investigation i JOIN i.investigationUsers iu WHERE iu.user.name = 'uows/" + str(user_number) + "')"), instruments)
-        return instruments
+        return sorted(instruments)
 
     '''
         Returns all instruments for which the given user is an instrument scientist
     '''
     def get_owned_instruments(self, user_number):
+        logging.debug("Calling ICATCommunication.get_owned_instruments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
         instruments = Set()
         self._add_list_to_set(self.client.search("SELECT ins.instrument.name from InstrumentScientist ins WHERE ins.user.name = 'uows/" + str(user_number) + "'"), instruments)
-        return instruments
+        return sorted(instruments)
+
+    '''
+        Checks if a user has any owned instruments and thus an instrument scientist
+    '''
+    def is_instrument_scientist(self, user_number):
+        logging.debug("Calling ICATCommunication.is_instrument_scientist")
+        if self.get_owned_instruments(user_number):
+            return True
+        return False
 
     '''
         Returns True is the given user is part of the experiment team for the given reference number.
     '''
     def is_on_experiment_team(self, reference_number, user_number):
+        logging.debug("Calling ICATCommunication.is_on_experiment_team")
         if not isinstance(user_number, (int, long)) or not isinstance(reference_number, (int, long)):
             raise TypeError("User number and reference number must be a number")
 
@@ -98,16 +122,55 @@ class ICATCommunication(object):
         Returns a set of experiment reference numbers for which the given user is on the experiment team.
     '''
     def get_associated_experiments(self, user_number):
+        logging.debug("Calling ICATCommunication.get_associated_experiments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
         experiments = Set()
         self._add_list_to_set(self.client.search("SELECT i.name from Investigation i JOIN i.investigationUsers iu where iu.user.name = 'uows/" + str(user_number) + "'"), experiments)
-        return experiments
+        return sorted(experiments, reverse=True)
+
+    '''
+        Returns all experiments allowed for a given list of instruments
+    '''
+    def get_valid_experiments_for_instruments(self, user_number, instruments):
+        logging.debug("Calling ICATCommunication.get_valid_experiments_for_instruments")
+        from reduction_viewer.models import Setting
+        if not isinstance(user_number, (int, long)):
+            raise TypeError("User number must be a number")
+        if not instruments:
+            raise Exception("At least one instrument must be supplied")
+
+        instruments_dict = {}
+
+        try:
+            number_of_years = int(Setting.objects.get(name='ICAT_YEARS_TO_SHOW').value)
+        except:
+            number_of_years = 3
+        years_back = datetime.datetime.now() - datetime.timedelta(days=(number_of_years*365.24))
+
+        for instrument in instruments:
+            experiments = Set()
+            self._add_list_to_set(self.client.search("SELECT i.name FROM Investigation i JOIN i.investigationInstruments inst WHERE i.endDate > '"+str(years_back)+"' and inst.instrument.name = '"+instrument+"' INCLUDE i.investigationInstruments.instrument"), experiments)
+            instruments_dict[instrument] = sorted(experiments, reverse=True)
+
+        return instruments_dict
+
+    '''
+        Check if the user is in the relevant admin group within ICAT for the autoreduction webapp
+    '''
+    def is_admin(self, user_number):
+        logging.debug("Calling ICATCommunication.is_admin")
+        admin_group = 'Autoreduce Admins'
+        if self.client.search("SELECT g FROM Grouping g JOIN g.userGroups ug WHERE g.name = '"+ admin_group +"' and ug.user.name = 'uows/"+ str(user_number) +"'"):
+            return True
+        return False
 
     '''
         Performs any post-processing actions required once reduction is complete.
         Currenty a placeholder. Not sure yet what this may contain.
     '''
     def post_process(self, reduction_run):
+        logging.debug("Calling ICATCommunication.post_process")
+        # TODO: ICAT post-processing
         pass

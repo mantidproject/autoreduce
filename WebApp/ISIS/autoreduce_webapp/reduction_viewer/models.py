@@ -69,7 +69,7 @@ class Status(models.Model):
 class ReductionRun(models.Model):
     instrument = models.ForeignKey(Instrument, related_name='reduction_runs', null=True)
     run_number = models.IntegerField(blank=False)
-    run_name = models.CharField(max_length=50)
+    run_name = models.CharField(max_length=50,blank=True)
     run_version = models.IntegerField(blank=False)
     experiment = models.ForeignKey(Experiment,blank=False, related_name='reduction_runs')
     created = models.DateTimeField(auto_now_add=True,blank=False)
@@ -78,7 +78,7 @@ class ReductionRun(models.Model):
     status = models.ForeignKey(Status, blank=False, related_name='+', default=1)
     started = models.DateTimeField(null=True, blank=True)
     finished = models.DateTimeField(null=True, blank=True)
-    message = models.CharField(max_length=255)
+    message = models.CharField(max_length=255,blank=True)
     graph = SeparatedValuesField(null=True, blank=True)
 
     def __unicode__(self):
@@ -110,15 +110,18 @@ class Setting(models.Model):
 
 class Notification(models.Model):
     SEVERITY_CHOICES = (
-        (1, 'info'),
-        (2, 'warning'),
-        (3, 'error')
+        ('i', 'info'),
+        ('w', 'warning'),
+        ('e', 'error')
     );
 
     message = models.CharField(max_length=50, blank=False)
     is_active = models.BooleanField(default=True)
-    severity = models.CharField(max_length=1,choices=SEVERITY_CHOICES,default=1)
+    severity = models.CharField(max_length=1,choices=SEVERITY_CHOICES,default='i')
     is_staff_only = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'%s' % self.message
+
+    def severity_verbose(self):
+        return dict(Notification.SEVERITY_CHOICES)[self.severity]

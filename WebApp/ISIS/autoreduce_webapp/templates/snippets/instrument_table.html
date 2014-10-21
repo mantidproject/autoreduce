@@ -1,0 +1,57 @@
+<div class="instrument col-md-12">
+    <div class="row instrument-heading bg-info">
+        <div class="col-md-1 col-xs-1">
+            <a href="#" class="js-toggle-instrument-children" title="Expand/Collapse"><i class="fa fa-lg fa-chevron-right"></i></a>
+        </div>
+        <div class="col-md-7 col-xs-8">
+            <a href="{% url 'instrument_summary' instrument.name %}">{{ instrument.name }}</a>
+            <div class="progress-summary">
+                {% if instrument.progress_summary.queued %}
+                    <span class="text-info">({{ instrument.progress_summary.queued }}) Queued</span> 
+                {% endif %}
+                {% if instrument.progress_summary.processing %}
+                    <span class="text-warning">({{ instrument.progress_summary.processing }}) Processing</span> 
+                {% endif %}
+                {% if instrument.progress_summary.error %}
+                    <span class="text-danger">({{ instrument.progress_summary.error }}) Error</span> 
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-2">
+            {% if reduction_variables_on and instrument.is_instrument_scientist %}
+                <a href="{% url 'instrument_variables' instrument.name %}" class="pull-right edit-instrument-variables">Edit<span class="hidden-xs"> Reduction Variables</span></a>
+            {% endif %}
+        </div>
+    </div>
+    {% if by == "experiment" %}
+        {% if instrument.experiments %}
+                {% for experiment in instrument.experiments %}
+                    <div class="experiment hide">
+                        {% include "snippets/experiment_table.html" with experiment=experiment only %}
+                    </div>
+                {% endfor %}
+        {% else %}
+            <div class="experiment hide">
+                <div class="row">
+                    <div class="col-md-12 text-center no-results">
+                        No experiments found.
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% elif by == "run" %}
+        <div class="run hide">
+            {% if instrument.runs %}
+                {% for run in instrument.runs %}
+                    {% include "snippets/run_table.html" with run=run only %}
+                {% endfor %}
+            {% else %}
+                <div class="row">
+                    <div class="col-md-12 text-center no-results">
+                        No runs found.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

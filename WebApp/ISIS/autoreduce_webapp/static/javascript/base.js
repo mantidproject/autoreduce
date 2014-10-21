@@ -1,0 +1,41 @@
+(function(){
+    var getIgnoredNotification = function getIgnoredNotification(){
+        var ignoredNotifications = [];
+        if(docCookies.getItem('ignoredNotifications')){
+            ignoredNotifications = docCookies.getItem('ignoredNotifications').split(',');
+        }
+        return ignoredNotifications;
+    };
+
+    var notificationDismissed = function notificationDismissed(){
+        var ignoredNotifications = getIgnoredNotification();
+        ignoredNotifications.push($(this).data('notification-id'));
+        docCookies.setItem('ignoredNotifications', ignoredNotifications.join(','), undefined, '/');
+    };
+
+    var showNotifications = function showNotifications(){
+        var ignoredNotifications = getIgnoredNotification();
+        $('.alert.hide').each(function(){
+            var notificationId = $(this).data('notification-id').toString();
+            if(ignoredNotifications.indexOf(notificationId) < 0){
+                $(this).removeClass('hide');
+            }
+        });
+    };
+
+    var toggleIconOnCollapse = function toggleIconOnCollapse(){
+        $('a[data-toggle="collapse"]').on('click.bs.collapse.data-api', function () {
+            $(this).find('i').toggleClass('fa-chevron-down fa-chevron-right');
+        });
+    };
+
+    var init = function init(){
+        $('.alert').on('closed.bs.alert', notificationDismissed);
+        $('[data-toggle="popover"]').on('click', function(e){e.preventDefault(); return true;}).popover();
+        
+        showNotifications();
+        toggleIconOnCollapse();
+    };
+
+    init();
+}())

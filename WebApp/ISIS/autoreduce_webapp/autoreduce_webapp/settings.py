@@ -25,12 +25,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'autoreduce_webapp',
     'reduction_viewer',
     'reduction_variables',
 )
-
-AUTH_PROFILE_MODULE = 'reduction_variables.UserProfile'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -41,6 +40,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'autoreduce_webapp.backends.UOWSAuthenticationBackend',
+)
+LOGIN_URL = '/autoreduce_webapp/'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 TEMPLATE_DIRS = (
@@ -69,8 +73,8 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en-gb'
+TIME_ZONE = 'Europe/London'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -117,13 +121,13 @@ ARCHIVE_BASE = ''
 # ICAT 
 
 ICAT = {
-    'AUTH' : 'uows',
+    'AUTH' : 'simple',
     'URL' : 'https://icatdev.isis.cclrc.ac.uk/ICATService/ICAT?wsdl',
-    'USER' : 'icat',
+    'USER' : 'autoreduce',
     'PASSWORD' : 'icat'
 }
 
 # UserOffice WebService
 
-UOWS_URL = ''
-UOWS_LOGIN_URL = 'https://devusers.facilities.rl.ac.uk/auth/?service='
+UOWS_URL = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
+UOWS_LOGIN_URL = 'https://devusers.facilities.rl.ac.uk/auth/?service=http://datareducedev.isis.cclrc.ac.uk&redirecturl='

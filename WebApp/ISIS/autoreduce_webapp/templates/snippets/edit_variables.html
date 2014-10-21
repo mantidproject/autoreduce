@@ -1,0 +1,32 @@
+{% for name,variable in standard_variables.items %}
+    <div class="form-group">
+        <label for="var-{{variable.name}}" class="control-label col-md-2">{{variable.name}}</label>
+        <div class="col-md-10">
+            <input id="var-{{variable.name}}" name="var-{{variable.name}}" type="{{variable.type}}" value="{{variable.value}}" class="form-control" />
+        </div>
+    </div>
+{% endfor %}
+{% if advanced_variables %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="panel-title"><a data-toggle="collapse" href="#collapseGraphs" data-target="#advanced_variables"><i class="fa fa-chevron-right"></i> Advanced Variables</a></div>
+        </div>
+        <div class="panel-body collapse" id="advanced_variables">
+            {% for name,variable in advanced_variables.items %}
+                <div class="form-group">
+                    <label for="var-{{variable.name}}" class="control-label col-md-2">{{variable.name}}</label>
+                    <div class="col-md-10">
+                        <input id="var-{{variable.name}}" name="var-{{variable.name}}" type="{{variable.type}}" value="{{variable.value}}" class="form-control" />
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>    
+{% endif %}
+<div class="form-group variables-buttons">
+    <div class="col-md-12 text-right">
+        <a href="#previewScript" class="btn btn-default ">Preview reduction script</a> 
+        <a href="#resetValues" class="btn btn-default">Reset to default values</a> 
+        <input type="submit" value="{{button_text}}" class="btn btn-success" />
+    </div>
+</div>

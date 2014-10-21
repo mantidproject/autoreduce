@@ -11,6 +11,12 @@ class UOWSClient(object):
             url = kwargs['URL']
         self.client = Client(url)
 
+    # Add the ability to use 'with'
+    def __enter__(self):
+        return self
+    def __exit__(self, type, value, traceback):
+        pass
+
     def check_session(self, session_id):
         try:
             return self.client.service.checkSession(session_id)
@@ -22,9 +28,9 @@ class UOWSClient(object):
         try:
             person = self.client.service.getPersonDetailsFromSessionId(session_id)
             if person:
-                first_name = person.firstNameKnownAs
+                first_name = person.givenName
                 if not first_name:
-                    first_name = person.givenName
+                    first_name = person.firstNameKnownAs
                 trimmed_person = {
                     'first_name' : first_name,
                     'last_name' : person.familyName,

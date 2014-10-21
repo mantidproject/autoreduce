@@ -3,7 +3,7 @@ from django.utils import timezone
 from settings import LOG_FILE, LOG_LEVEL, ACTIVEMQ, BASE_DIR, REDUCTION_SCRIPT_BASE, ICAT
 import sys, time, logging, os, datetime, json, shutil, getpass
 from sets import Set
-logging.basicConfig(filename=LOG_FILE.replace('.log', '.test.log'),level=LOG_LEVEL)
+logging.basicConfig(filename=LOG_FILE.replace('.log', '.test.log'),level=LOG_LEVEL, format=u'%(message)s',)
 from daemon import Daemon
 from queue_processor_daemon import QueueProcessorDaemon
 from queue_processor import Client
@@ -16,7 +16,7 @@ from icat_communication import ICATCommunication
 from icat.exception import ICATSessionError
 from urllib2 import URLError
 from uows_client import UOWSClient
-from suds.client import Client
+from suds.client import Client as suds_client
 
 class QueueProcessorTestCase(TestCase):
     '''
@@ -36,26 +36,6 @@ class QueueProcessorTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._username = raw_input('\nICAT Username: ')
-        cls._password = getpass.getpass('ICAT Password: ')
-        f = open(os.path.join(os.getcwd(), 'autoreduce_webapp/settings.py'), 'r+')
-        settings = f.read()
-        settings = settings.replace("'USER' : 'icat',", "'USER' : '%s'," % cls._username)
-        settings = settings.replace("'PASSWORD' : 'icat'", "'PASSWORD' : '%s'" % cls._password)
-        f.seek(0)
-        f.write(settings)
-        f.truncate()
-        f.close()
-        # Re-import changed file property
-        import settings
-        reload(settings)
-        from settings import ICAT
-        import icat_communication
-        reload(icat_communication)
-        from icat_communication import ICATCommunication
-        import queue_processor
-        reload(queue_processor)
-        from queue_processor import Client
         cls._client = Client(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Autoreduction_QueueProcessor_Test')
         cls._client.connect()
         cls._rb_number = 0
@@ -63,14 +43,7 @@ class QueueProcessorTestCase(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        f = open(os.path.join(os.getcwd(), 'autoreduce_webapp/settings.py'), 'r+')
-        settings = f.read()
-        settings = settings.replace("'USER' : '%s'," % cls._username, "'USER' : 'icat',")
-        settings = settings.replace("'PASSWORD' : '%s'" % cls._password, "'PASSWORD' : 'icat'")
-        f.seek(0)
-        f.write(settings)
-        f.truncate()
-        f.close()
+        pass
 
     '''
         Insert a reduction run to ensure the QueueProcessor can find one when recieving a topic message
@@ -818,39 +791,18 @@ class ICATCommunicationTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._username = raw_input('\nICAT Username: ')
-        cls._password = getpass.getpass('ICAT Password: ')
-        f = open(os.path.join(os.getcwd(), 'autoreduce_webapp/settings.py'), 'r+')
-        text = f.read()
-        text = text.replace("'USER' : 'icat',", "'USER' : '%s'," % cls._username)
-        text = text.replace("'PASSWORD' : 'icat'", "'PASSWORD' : '%s'" % cls._password)
-        f.seek(0)
-        f.write(text)
-        f.truncate()
-        f.close()
-        # Re-import changed file property
-        import settings
-        reload(settings)
-        from settings import ICAT
-        import icat_communication
-        reload(icat_communication)
-        from icat_communication import ICATCommunication
+        pass
 
     @classmethod
     def tearDownClass(cls):
-        f = open(os.path.join(os.getcwd(), 'autoreduce_webapp/settings.py'), 'r+')
-        settings = f.read()
-        settings = settings.replace("'USER' : '%s'," % cls._username, "'USER' : 'icat',")
-        settings = settings.replace("'PASSWORD' : '%s'" % cls._password, "'PASSWORD' : 'icat'")
-        f.seek(0)
-        f.write(settings)
-        f.truncate()
-        f.close()
+        pass
 
     def setUp(self):
         self.test_user = 18187
+        self.test_user_not_instrument_scientist = 13562
         self.test_instrument_scientist = 5818
         self.test_experiment = 1190070
+        self.test_instrument = "GEM"
 
     '''
         Check that ICAT can login using the credentials found in settings.py
@@ -949,7 +901,7 @@ class ICATCommunicationTestCase(TestCase):
         with ICATCommunication() as icat:
             instruments = icat.get_valid_instruments(1)
             
-            self.assertEqual(instruments, Set(), "Not expecting some instruments returned")
+            self.assertEqual(instruments, [], "Not expecting some instruments returned")
                     
     '''
         Check that an error is raised when passing in invalid values
@@ -1002,9 +954,9 @@ class ICATCommunicationTestCase(TestCase):
     '''
     def test_get_owned_instruments_not_as_instrument_scientist(self):
         with ICATCommunication() as icat:
-            owned_instruments = icat.get_owned_instruments(self.test_user)
+            owned_instruments = icat.get_owned_instruments(self.test_user_not_instrument_scientist)
             
-            self.assertEqual(owned_instruments, Set(), "Not expecting some owned instruments returned")
+            self.assertEqual(owned_instruments, [], "Not expecting some owned instruments returned")
 
     '''
         Check that and empty set is returned
@@ -1013,7 +965,7 @@ class ICATCommunicationTestCase(TestCase):
         with ICATCommunication() as icat:
             owned_instruments = icat.get_owned_instruments(1)
             
-            self.assertEqual(owned_instruments, Set(), "Not expecting some owned instruments returned")
+            self.assertEqual(owned_instruments, [], "Not expecting some owned instruments returned")
 
     '''
         Check that an error is raised when passing in invalid values
@@ -1135,7 +1087,7 @@ class ICATCommunicationTestCase(TestCase):
         with ICATCommunication() as icat:
             experiments = icat.get_associated_experiments(1)
             
-            self.assertEqual(experiments, Set(), "Not expecting some experiments to be returned")
+            self.assertEqual(experiments, [], "Not expecting some experiments to be returned")
                 
     '''
         Check that an error is raised when passing in invalid values
@@ -1158,6 +1110,64 @@ class ICATCommunicationTestCase(TestCase):
                 self.fail("Expecting a TypeError to be raised")
         except TypeError:
             pass
+    
+    '''
+        Check that experiments can be returned to a list of instruments
+    '''
+    def test_get_valid_experiments_for_instruments_valid_user_valid_instruments(self):
+        with ICATCommunication() as icat:
+            instruments = icat.get_valid_experiments_for_instruments(self.test_user, [self.test_instrument])
+            
+            self.assertNotEqual(instruments, None, "Expecting some experiments to be returned")
+            self.assertTrue(len(instruments) > 0, "Expecting some experiments to be returned")
+
+            found_experiment = False
+            for instrument in instruments:
+                for experiment in instruments[instrument]:
+                    if experiment == str(1290062):
+                        found_experiment = True
+                        break
+            self.assertTrue(found_experiment, "Expecting to find experiment %s" % 1290062)
+              
+    '''
+        Check that an exception is raised when no instruments are passed in
+    '''
+    def test_get_valid_experiments_for_instruments_valid_user_empty_instruments(self):
+        try:
+            with ICATCommunication() as icat:
+                experiments = icat.get_valid_experiments_for_instruments(self.test_user, [])
+                self.fail("Expecting an Exception to be raised")
+        except Exception:
+            pass
+
+    '''
+        Check that an exception is raised when an invalid user is passed in
+    '''
+    def test_get_valid_experiments_for_instruments_invalid_user_empty_instruments(self):
+        try:
+            with ICATCommunication() as icat:
+                experiments = icat.get_valid_experiments_for_instruments('123', [])
+                self.fail("Expecting an TypeError to be raised")
+        except TypeError:
+            pass
+
+    '''
+        Check that a user is an admin
+    '''
+    def test_is_admin(self):
+        with ICATCommunication() as icat:
+            is_admin = icat.is_admin(self.test_user)
+
+            self.assertTrue(is_admin, "Expecting user %s to be an admin." % self.test_user)
+
+    '''
+        Check that a user is not an admin
+    '''
+    def test_is_not_admin(self):
+        with ICATCommunication() as icat:
+            is_admin = icat.is_admin(self.test_instrument_scientist)
+
+            self.assertFalse(is_admin, "Not expecting user %s to be an admin." % self.test_instrument_scientist)
             
 class UOWSClientTestCase(TestCase):
 
@@ -1169,14 +1179,14 @@ class UOWSClientTestCase(TestCase):
         
     def setUp(self):
         url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
-        client = Client(url)
+        client = suds_client(url)
         self._session_id = client.service.login(self._username, self._password)
         url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
         self.uows = UOWSClient(URL=url)
 
     def tearDown(self):
         url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
-        client = Client(url)
+        client = suds_client(url)
         try:
             client.service.logout(self._session_id)
         except:
