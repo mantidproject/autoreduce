@@ -676,3 +676,9 @@ RemoveLogs(INS)
 OutFile='VIS_'+INS
 SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
 
+asciidir=SaveDir+'/ascii'
+if not os.path.exists(asciidir):
+    os.makedirs(asciidir)
+    print "Info: "+asciidir+" does not exist and will be created."
+SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
+
