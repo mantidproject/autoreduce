@@ -37,7 +37,7 @@ Masking = "Horizontal"
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Calibration File'
-calib_File = 'SNAP_calibrate_d18584_2014_08_29.cal'
+calib_File = '/SNS/SNAP/shared/SNAP_calibrate_d18584_2014_08_29.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -89,7 +89,7 @@ iws = CompressEvents(InputWorkspace='iws')
 if Calibration == 'Convert Units':
     ows = ConvertUnits(InputWorkspace='iws',Target='dSpacing')
 if Calibration == 'Calibration File':
-    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = folder + calib_File)
+    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = calib_File)
 
 if Masking != 'None':
 	
