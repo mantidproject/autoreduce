@@ -13,6 +13,11 @@ function createInstrumentHash() {
   iList["SEQUOIA"]="SEQ"
   iList["SNAP"]="SNAP"
   iList["VISION"]="VIS"
+  iList["VULCAN"]="VULCAN"
+  iList["MANDI"]="MANDI"
+  iList["REF_L"]="REF_L"
+  iList["REF_M"]="REF_M"
+  iList["TOPAZ"]="TOPAZ"
 }
 
 function diffScript() {
