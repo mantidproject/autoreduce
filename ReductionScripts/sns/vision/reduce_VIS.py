@@ -680,5 +680,6 @@ asciidir=SaveDir+'/ascii'
 if not os.path.exists(asciidir):
     os.makedirs(asciidir)
     print "Info: "+asciidir+" does not exist and will be created."
+OutFile=asciidir+'/VIS_'+INS
 SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
 
