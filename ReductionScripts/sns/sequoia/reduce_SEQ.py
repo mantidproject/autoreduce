@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys,os,math
 sys.path.append("/opt/Mantid/bin")
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
+#sys.path.insert(0,"/SNS/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
 from matplotlib import *
@@ -27,6 +27,7 @@ def preprocessData(filename):
     f1 = os.path.split(filename)[-1]
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
+
     #PV streamer not running. Copying logs from some other run
     if (runnum >= 55959 and runnum <= 55960):
         LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
@@ -122,42 +123,31 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/2014_1_17_CAL/nexus/SEQ_47123.nxs.h5"
-    ProcessedVanadium='van47123.nxs'
+    RawVanadium="/SNS/SEQ/IPTS-12246/nexus/SEQ_60992.nxs.h5"
+    ProcessedVanadium="van60992.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-    MaskBTPParameters.append({'Bank':"99-102,114,115,141,75,76,38,39,62,65"})
-    
-    MaskBTPParameters.append({'Bank':"122",'Tube':"3"})
-    MaskBTPParameters.append({'Bank':"127",'Tube':"4"})
-    MaskBTPParameters.append({'Bank':"142",'Tube':"1"})
-    MaskBTPParameters.append({'Bank':"144",'Tube':"1"})
-    MaskBTPParameters.append({'Bank':"147",'Tube':"7"})
-    MaskBTPParameters.append({'Bank':"147",'Tube':"4"})
-    
-    MaskBTPParameters.append({'Bank':"83",'Tube':"1"})
-    MaskBTPParameters.append({'Bank':"96",'Tube':"2"})
-    MaskBTPParameters.append({'Bank':"97",'Tube':"4"})
-    MaskBTPParameters.append({'Bank':"112",'Tube':"7"})
-    MaskBTPParameters.append({'Bank':"113",'Tube':"7"})
+    #short packs around beam stop, and uninstalled packs at far left
+    MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
+ 
+    #MaskBTPParameters.append({'Bank':"62,92"})
+    #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
+    #MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
+    #MaskBTPParameters.append({'Bank':"141"})
+    #MaskBTPParameters.append({'Bank':"70"})
+    MaskBTPParameters.append({'Pixel': '1-8,121-128'})
+    MaskBTPParameters.append({'Bank': '99-102,114,115'})
+    MaskBTPParameters.append({'Bank': '75-76,38-39'})
+    MaskBTPParameters.append({'Bank': '70'})
+    MaskBTPParameters.append({'Tube': '8', 'Bank': '74'})
+    MaskBTPParameters.append({'Bank': '141'})
+    MaskBTPParameters.append({'Tube': '8', 'Pixel': '104-114', 'Bank': '127'})
+    MaskBTPParameters.append({'Tube': '3', 'Pixel': '32-36', 'Bank': '88'})
 
 
-
-    MaskBTPParameters.append({'Bank':"51",'Tube':"6"})
-    MaskBTPParameters.append({'Bank':"55",'Tube':"8"})
-    MaskBTPParameters.append({'Bank':"63",'Tube':"3"})
-    MaskBTPParameters.append({'Bank':"63",'Tube':"8"})
-    MaskBTPParameters.append({'Bank':"71",'Tube':"8"})
-    MaskBTPParameters.append({'Bank':"74",'Tube':"2"})
-    
-    
-    #Added these masked pixels for HOT spots on detector
-    MaskBTPParameters.append({'Bank':"127", 'Tube':'7,8', 'Pixel':'101-114'})
-    MaskBTPParameters.append({'Bank':"88",'Tube':"3-4",'Pixel':"32-36"})
-    #MaskBTPParameters.append({'Bank':"105",'Tube':"5",'Pixel':"89-91"})
-    MaskBTPParameters.append({'Bank':"46",'Tube':"7-8",'Pixel':"102-111"})
-    
+ # only for the runs in IPTS-11831 and 11764
+    MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
     
     clean=True
     NXSPE_flag=True
@@ -186,7 +176,8 @@ if __name__ == "__main__":
 
     DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
-    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    
+    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
+    #angle= 99.99 #This is where you can manually set the rotation angle
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
@@ -196,10 +187,10 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']='/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]

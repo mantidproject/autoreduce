@@ -18,6 +18,10 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN")
+
+        #added to fix 500 microsecond offset on pack 35 for run 2014-B - not needed now
+        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN", Offset=500, IndexMin=34816, IndexMax=35839)
+
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
@@ -31,6 +35,8 @@ def preprocessData(filename):
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
+    #added to fix 500 microsecond offset on pack 35 for run 2014-B - not needed now
+    #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS", Offset=500, IndexMin=34816, IndexMax=35839)
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
 
@@ -81,21 +87,17 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-     # Updated vanadium run 2014-5-28 - JLN
-    RawVanadium="/SNS/ARCS/2014_1_18_CAL/data/ARCS_50293_event.nxs"
-    ProcessedVanadium='van50293_new.nxs'
+     # Updated vanadium run 2014-10-20 using new calibration data scheme - DLA
+    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_52903_event.nxs"
+    ProcessedVanadium='van52903.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
     MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
-    MaskBTPParameters.append({'Bank':"105",'Tube':"6"}) #added 2014-2-27 to mask out bad tube JLN
-    MaskBTPParameters.append({'Bank':"1",'Tube':"1"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"44",'Tube':"5"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"83",'Tube':"2"}) #added 2014-5-23 to mask out bad tube DLA
-    MaskBTPParameters.append({'Bank':"10"}) #added 2014-5-28 to mask out bad pack JLN
-    MaskBTPParameters.append({'Bank':"19"}) #added 2014-6-21 did not recover DLA
-    MaskBTPParameters.append({'Bank':"21"}) #added 2014-6-21 did not recover DLA
+    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
+    MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
+
     groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     clean=True
     NXSPE_flag=True
@@ -112,7 +114,7 @@ if __name__ == "__main__":
         sys.exit()
     else:
         filename = sys.argv[1]
-        outdir = sys.argv[2]
+        outdir = sys.argv[2]+'/'
 
 
     elog=ExperimentLog()
@@ -172,8 +174,10 @@ if __name__ == "__main__":
         if NXSPE_flag:            
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
                     
-        #plots
-        minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
+        #plots  
+        #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
+        #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
+        minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
         xmin=minvals[0]
         xmax=maxvals[0]
         xstep=(xmax-xmin)*0.01

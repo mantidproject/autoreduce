@@ -24,7 +24,21 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    w=Load(filename)
+    LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+    w=mtd["USANS"]
+    run_number = w.getRunNumber()
+    # Produce ASCII data
+    Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
+    SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
+    file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
+    SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+
+    Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
+    file_path = os.path.join(outdir, "USANS_%s_monitor.txt" % run_number)
+    SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
+ 
+
+
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
     data2=data[[4,0,5,1,6,2,7,3, 12,8,13,9,14,10,15,11]]
@@ -36,7 +50,7 @@ if __name__ == "__main__":
     xlabel('Tube')
     ylabel('Pixel')
     
-    run_number = w.getRunNumber()
+    
     if run_number==0:
         image_file = os.path.split(filename)[1].split('.')[0]
         image_file += "_autoreduced.png"

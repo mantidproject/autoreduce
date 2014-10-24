@@ -22,25 +22,25 @@ seterr("ignore") #ignore division by 0 warning in plots
 
 w=Load(nexus_file)
 Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.1)+','+str(0.002*Ei)+','+str(0.9*Ei)
+erange=str(-Ei*0.95)+','+str(0.005*Ei)+','+str(0.95*Ei)
 
 tib=SuggestTibCNCS(Ei)
 
 DgsReduction(
              SampleInputFile=nexus_file,
              OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml',
+             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
+             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml',
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
-             UseBoundsForDetVan=True,
-             DetVanIntRangeLow=51000.0,
-             DetVanIntRangeHigh=55000.0,
-             DetVanIntRangeUnits="TOF",
+             #DetectorVanadiumInputFile="/SNS/CNCS/IPTS-9732/0/88756/NeXus/CNCS_88756_event.nxs",
+             #UseBoundsForDetVan=True,
+             #DetVanIntRangeLow=51000.0,
+             #DetVanIntRangeHigh=55000.0,
+             #DetVanIntRangeUnits="TOF",
             )
 
 filename = os.path.split(nexus_file)[-1]
@@ -52,7 +52,8 @@ elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,
 elog.setSimpleLogList("EnergyRequest")
 elog.setSERotOptions('SERotator2')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
-elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
+#elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
+elog.setSETempOptions('SensorB')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
@@ -71,7 +72,7 @@ nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + value
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
 
 # make a pretty image
-#minvals,maxvals=ConvertToMDHelper('reduce','|Q|','Direct')
+#minvals,maxvals=ConvertToMDMinMaxGlobal('reduce','|Q|','Direct')
 #xmin=minvals[0]
 #xmax=maxvals[0]
 #xstep=(xmax-xmin)*0.01

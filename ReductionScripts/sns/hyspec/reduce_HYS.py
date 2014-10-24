@@ -12,6 +12,9 @@ from ARLibrary import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
+numpy.seterr(all='ignore')
+import warnings
+warnings.filterwarnings('ignore',module='numpy')
 
 class AutoReduction():
   def __init__(self, nexus_file, output_directory):
@@ -66,9 +69,23 @@ class AutoReduction():
       s1 = run['s1'].getStatistics().mean
 
       # Work out some energy bins
-      emin = -(2.0 * Ei)
+      emin = -2.0 * Ei
+      if Ei > 10.0:
+        emin = -20.0
       emax = Ei * 0.9
-      estep = 0.05
+      if Ei > 3.0:
+        estep = 0.02
+      if Ei > 4.9:
+        estep = 0.05
+      if Ei > 9.9:
+        estep = 0.1
+      if Ei > 19.9:
+        estep = 0.2
+      if Ei > 29.0:
+        estep = 0.25
+      if Ei > 39.0:
+        estep = 0.5
+      #estep = 0.05
       if int(run_number)>38844 and int(run_number)<38904:
         Ei=24.142
         emin=-48.
@@ -113,7 +130,7 @@ class AutoReduction():
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
       SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
 
-      minvals,maxvals=ConvertToMDHelper('out1','|Q|','Direct')
+      minvals,maxvals=ConvertToMDMinMaxLocal('out1','|Q|','Direct')
       xmin=minvals[0]
       xmax=maxvals[0]
       xstep=(xmax-xmin)*0.01
@@ -159,7 +176,6 @@ if __name__ == "__main__":
     else:
       path = sys.argv[1]
       out_dir = sys.argv[2]
-      seterr("ignore") #ignore division by 0 warning in plots
       a = AutoReduction(path, out_dir)
       a.execute()
 
