@@ -690,5 +690,4 @@ def main(argv):
 
 if __name__ == "__main__":
     import sys
-    main(["blah", "/SNS/VULCAN/IPTS-11415/0/54653/NeXus/VULCAN_54653_event.nxs", "/tmp/autoreduce"])
-    #main(["blah", "/SNS/VULCAN/IPTS-11285/0/54433/NeXus/VULCAN_54433_event.nxs", "/tmp/autoreduce"])
+    main(sys.argv)
