@@ -395,7 +395,6 @@ class PatchRecord:
             
         ipts = id.text
             
-        print "*****", ipts
         return ipts
         
     def _readCvInfoFile(self):
@@ -664,8 +663,7 @@ def main(argv):
    
     # FIXMENOT
     # Write experiment log (Record.txt)
-    #rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord.txt" % (ipts)
-    rfilename = "/tmp/IPTS-%d-AutoRecord.txt" % (ipts)
+    rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord.txt" % (ipts)
     #rfilename = "/home/wzz/Projects/MantidTests/Vulcan_Reduction/AutoRecord.txt"
     #rfilename = "/SNS/VULCAN/IPTS-%d/shared/auto_test/AutoRecord.txt" % (ipts)
     instrument="VULCAN"
