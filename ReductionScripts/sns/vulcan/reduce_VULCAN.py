@@ -189,13 +189,13 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
     
 RecordBase = [ 
         ("RUN",             "run_number", None),
-        ("IPTS",            "IPTS", None),
+        ("IPTS",            "experiment_identifier", None),
         ("Title",           "run_title", None),
-        ("Notes",           "Notes", None),
-        ("Sample",          "Sample", None),
+        ("Notes",           "file_notes", None),
+        ("Sample",          "Sample", None), # stored on sample object
         ("StartTime",       "run_start", "localtime"),
         ("Duration",        "duration", None),
-        ("ProtonCharge",    "protoncharge", "sum"),
+        ("ProtonCharge",    "proton_charge", "sum"),
         ("TotalCounts",     "das.counts", "sum"),
         ("Monitor1",        "das.monitor2counts", "sum"),
         ("Monitor2",        "das.monitor3counts", "sum"),
@@ -395,6 +395,7 @@ class PatchRecord:
             
         ipts = id.text
             
+        print "*****", ipts
         return ipts
         
     def _readCvInfoFile(self):
@@ -663,7 +664,8 @@ def main(argv):
    
     # FIXMENOT
     # Write experiment log (Record.txt)
-    rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord.txt" % (ipts)
+    #rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord.txt" % (ipts)
+    rfilename = "/tmp/IPTS-%d-AutoRecord.txt" % (ipts)
     #rfilename = "/home/wzz/Projects/MantidTests/Vulcan_Reduction/AutoRecord.txt"
     #rfilename = "/SNS/VULCAN/IPTS-%d/shared/auto_test/AutoRecord.txt" % (ipts)
     instrument="VULCAN"
@@ -688,4 +690,5 @@ def main(argv):
 
 if __name__ == "__main__":
     import sys
-    main(sys.argv)
+    main(["blah", "/SNS/VULCAN/IPTS-11415/0/54653/NeXus/VULCAN_54653_event.nxs", "/tmp/autoreduce"])
+    #main(["blah", "/SNS/VULCAN/IPTS-11285/0/54433/NeXus/VULCAN_54433_event.nxs", "/tmp/autoreduce"])
