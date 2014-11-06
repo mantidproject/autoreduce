@@ -6,6 +6,7 @@ import os
 import numpy
 import csv
 import string
+import subprocess
 
 # Please check/change the following parameters
 #=====================================================================
@@ -613,6 +614,9 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 ######################################################################
 # Main program
 ######################################################################
+
+subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
+subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
 
 # Read calibration table
 CalTab = [[[0 for _ in range(2)] for _ in range(1024)] for _ in range(14)]
