@@ -1,9 +1,26 @@
 ################################################################################
 #
 # Auto reduction script for VULCAN
+# Version 3.0 for both auto reduction service and manual 
+#
+# Last version: reduce_VULCAN_141028.py
+# 
 # Input
 # - Event file name with path
 # - Output directory
+# 
+# New Features:
+# 1. Universal version for auto reduction service and manual reduction
+# 2. AutoRecord.txt will be written to 2 directories in auto reduction mode
+# a) .../shared/autoreduce/ to be untouchable and owned by auto reduction service;
+# b) .../shared/ for users to modify and manual reduction
+#
+# Output
+# 1. Furnace log;
+# 2. Generic DAQ log;
+# 3. MTS log;
+# 4. Experiment log record (AutoRecord.txt)
+# 5. Reduce for GSAS 
 #
 # Test example: 
 # 1. reduce_VULCAN.py /SNS/VULCAN/IPTS-11090/0/41703/NeXus/VULCAN_41703_event.nxs 
@@ -14,14 +31,19 @@
 #
 ################################################################################
 
-import os
 import sys
+import getopt
+import os
 import shutil 
 import xml.etree.ElementTree as ET
 
-#sys.path.append('/opt/mantidunstable/bin/')
-sys.path.append("/opt/mantidnightly/bin")
+
+sys.path.append('/opt/mantidunstable/bin/')
+#sys.path.append("/opt/mantidnightly/bin")
 #sys.path.append("/opt/Mantid/bin")
+
+#sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
+sys.path.append('/home/wzz/Projects/MantidProjects/Mantid2/Code/debug/bin/')
 
 from mantid.simpleapi import *
 import mantid
@@ -61,7 +83,26 @@ def changeOutputDir(outputdir, newsubpath=None):
 def exportFurnaceLog(logwsname, outputDir, runNumber):
     """ Export the furnace log
     """
-    logfilename = os.path.join(outputDir, "furnace%d.txt" % (runNumber))
+    # Make a new name
+    isnewfilename = False
+    maxattempts = 10
+    numattempts = 0
+    while isnewfilename is False and numattempts < maxattempts: 
+	if numattempts == 0: 
+	    logfilename = os.path.join(outputDir, "furnace%d.txt" % (runNumber))
+	else:
+	    logfilename = os.path.join(outputDir, "furnace%d_%d.txt" % (runNumber, numattempts))
+	if os.path.isfile(logfilename) is False:
+	    isnewfilename = True
+	else:
+	    numattempts += 1
+    # ENDWHILE
+
+    # Raise exception
+    if isnewfilename is False:
+	raise NotImplementedError("Unable to find an unused log file name for run %d. " % (runNumber))
+    else:
+	print "Log file will be written to %s. " % (logfilename)
     
     try:    
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
@@ -97,9 +138,29 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
     for title in header: 
         headstr += "%s\t" % (title)
    
-    # File name
-    outputfilename = "IPTS-%d-GenericDAQ-%d.txt" % (ipts, runNumber)
-    outputfilename = os.path.join(outputDir, outputfilename)
+    # Make a new name
+    isnewfilename = False
+    maxattempts = 10
+    numattempts = 0
+    while isnewfilename is False and numattempts < maxattempts: 
+	if numattempts == 0: 
+	    outputfilename = "IPTS-%d-GenericDAQ-%d.txt" % (ipts, runNumber)
+	else:
+	    outputfilename = "IPTS-%d-GenericDAQ-%d_%d.txt" % (ipts, runNumber, numattempts)
+	outputfilename = os.path.join(outputDir, outputfilename)
+	if os.path.isfile(outputfilename) is False:
+	    isnewfilename = True
+	else:
+	    numattempts += 1
+    # ENDWHILE
+
+    # Raise exception
+    if isnewfilename is False:
+	raise NotImplementedError("Unable to find an unused log file name for run %d. " % (runNumber))
+    else:
+	print "Log file will be written to %s. " % (outputfilename)
+
+    # Export
     try:    
         ExportSampleLogsToCSVFile(
             InputWorkspace = logwsname,
@@ -167,15 +228,27 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
     for title in header: 
         headstr += "%s\t" % (title)
    
-    """
-    print header 
-    print samplelognames
-    print headstr
-    """
-    
-    outputfilename = "IPTS-%d-MTSLoadFrame-%d.txt" % (ipts, runnumber)
-    outputfilename = os.path.join(outputDir, outputfilename)
-    # print "Loadframe output filename: %s" % (outputfilename)
+    # Make a new name
+    isnewfilename = False
+    maxattempts = 10
+    numattempts = 0
+    while isnewfilename is False and numattempts < maxattempts: 
+	if numattempts == 0: 
+	    outputfilename = "IPTS-%d-MTSLoadFrame-%d.txt" % (ipts, runnumber)
+	else:
+	    outputfilename = "IPTS-%d-MTSLoadFrame-%d_%d.txt" % (ipts, runnumber, numattempts)
+	outputfilename = os.path.join(outputDir, outputfilename)
+	if os.path.isfile(outputfilename) is False:
+	    isnewfilename = True
+	else:
+	    numattempts += 1
+    # ENDWHILE
+
+    # Raise exception
+    if isnewfilename is False:
+	raise NotImplementedError("Unable to find an unused log file name for run %d. " % (runNumber))
+    else:
+	print "Log file will be written to %s. " % (outputfilename)
   
     ExportSampleLogsToCSVFile(
         InputWorkspace = logwsname,
@@ -263,10 +336,33 @@ class PatchRecord:
                 self._cvinfofname, self._runinfofname))
 
         return
+
+
+    def exportPatch(self):
+        """ Export patch as a list of strings
+        """
+        cvdict = self._readCvInfoFile()
+        rundict = self._readRunInfoFile()
+        
+        patchdict = {}
+        for title in cvdict.keys():
+            patchdict[title] = cvdict[title]
+        
+        for title in rundict.keys():
+            patchdict[title] = rundict[title]
+
+        patchlist = []
+        for key in patchdict:
+            patchlist.append(str(key))
+            patchlist.append(str(patchdict[key]))
+
+        return patchlist
+
         
     def patchRecord(self, recordfilename):
-        """ Patch record
+        """ Patch record, including ITPS, ... 
         """
+        raise NotImplementedError("Invalid!")
         # Get last line
         titleline, lastline = self._getLastLine(recordfilename)
 
@@ -500,45 +596,57 @@ def generateRecordFormat():
     return (sampletitles, samplenames, sampleoperations)
     
 
-def write_record(wsname, instrument, ipts, run, rfilename):
+def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
     """ Write the run info to a record file
     """
     # Convert the record base to input arrays
     sampletitles, samplenames, sampleoperations = generateRecordFormat()
     
-    # Load NeXus file
-    # eventnexus = "/SNS/%s/IPTS-%d/0/%d/NeXus/%s_%d_event.nxs" % (instrument, ipts, run, instrument, run)
+    # Patch for logs that do not exist in event NeXus yet
+    testclass = PatchRecord(instrument, ipts, run)
+    patchlist = testclass.exportPatch()
 
-
-    """
-    try:
-        Load(Filename = eventnexus, OutputWorkspace = wsname, 
-                LoadLogs = True, MetaDataOnly = True)
-    except RuntimeError as err:
-        print "Unable to load NeXus file %s. Error message: %s. " % (eventnexus, str(err))
-        return False
-    """
-
+    # Auto reduction and manual reduction
     # Determine mode
-    if os.path.exists(rfilename) is True:
+    if os.path.exists(rfilename2) is True:
         filemode = "fastappend"
     else:
         filemode = "new"
 
-    print "Output record file will be written to %s. " % (rfilename)
-
-    # Write log
+    # Export
     ExportExperimentLog(InputWorkspace = wsname, 
-            OutputFilename     = rfilename, 
+        OutputFilename     = rfilename2, 
+        FileMode           = filemode, 
+        SampleLogNames     = samplenames, 
+        SampleLogTitles    = sampletitles, 
+        SampleLogOperation = sampleoperations, 
+        TimeZone           = "America/New_York", 
+        OverrideLogValue   = patchlist, 
+        OrderByTitle       = 'RUN',
+        RemoveDuplicateRecord = True)
+
+    # Set up the mode 
+    os.chmod(rfilename2, 0666)
+    
+    # Auto reduction only 
+    if mode == "auto": 
+        # Check if it is necessary to copy AutoRecord.txt from rfilename2 to rfilename1
+        if os.path.exists(rfilename1) is False and filemode == "fastappend":
+            # File do not exist
+	    shutil.copy(rfilename2, rfilename1)
+
+        # Export
+        ExportExperimentLog(InputWorkspace = wsname, 
+            OutputFilename     = rfilename1, 
             FileMode           = filemode, 
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = "America/New_York")
-    
-    # Patch for logs that do not exist in event NeXus yet
-    testclass = PatchRecord(instrument, ipts, run)
-    testclass.patchRecord(rfilename)
+            TimeZone           = "America/New_York",
+            OverrideLogValue   = patchlist, 
+            OrderByTitle       = 'RUN', 
+            RemoveDuplicateRecord = True)
+
     
     return True
 
@@ -546,6 +654,11 @@ def saveGSASFile(ipts, runnumber, outputdir):
     """ Save for Nexus file
     """
     import os
+    
+    outfilename = os.path.join(outputdir, "%s.gda" % (str(runnumber)))
+    if os.path.isfile(outfilename) is True:
+	print "GSAS file (%s) has been reduced for run %s already. " % (outfilename, str(runnumber))
+	return outfilename
     
     SNSPowderReduction( 
             Instrument  = "VULCAN",
@@ -566,10 +679,10 @@ def saveGSASFile(ipts, runnumber, outputdir):
     vulcanws = ConvertUnits(InputWorkspace="VULCAN_%d"%(runnumber), OutputWorkspace="VULCAN_%d_SNSReduc"%(runnumber), 
             Target="TOF", EMode="Elastic", AlignBins=False)
 
-    outfilename = os.path.join(outputdir, "%s.gda" % (str(runnumber)))
     SaveVulcanGSS(InputWorkspace=vulcanws, BinFilename=refLogTofFilename, 
-            OutputWorkspace="Proto2Bank", GSSFilename=outfilename, 
-            IPTS = ipts, GSSParmFilename="Vulcan.prm")
+    	        OutputWorkspace="Proto2Bank", GSSFilename=outfilename, 
+    	        IPTS = ipts, GSSParmFilename="Vulcan.prm")
+		
 
     return outfilename
 
@@ -577,9 +690,6 @@ def saveGSASFile(ipts, runnumber, outputdir):
 def copyFile(sourcefilename, destdir):
     """ Copy one file to another directory
     """
-    import os
-    import shutil
-   
     # Verify input  
     if os.path.exists(sourcefilename) is False:
 	print "Warning.  Input file wrong"
@@ -596,23 +706,117 @@ def copyFile(sourcefilename, destdir):
 	os.makedirs(destdir)
    
     # Copy
-    shutil.copy(sourcefilename, destdir)
     newfilename = os.path.join(destdir, os.path.basename(sourcefilename))
-    os.chmod(newfilename, 0676)
+    if os.path.isfile(newfilename) is True:
+	print "Destination GSAS file exists. "
+	return
+    else: 
+	shutil.copy(sourcefilename, destdir)
+	os.chmod(newfilename, 0664)
 
     return
 
 
 def main(argv):
     """ Main
+    1. Furnace log;
+    2. Generic DAQ log;
+    3. MTS log;
+    4. Experiment log record (AutoRecord.txt)
+    5. Reduce for GSAS 
     """
-    if len(argv) < 3:
-        print "Inputs: [1. File name with full length] [2. Output directory]"
-        return
+    try: 
+        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2="]) 
+    except getopt.GetoptError: 
+        print 'test.py -i <inputfile> -o <outputfile>' 
+        sys.exit(2)
+
+    # Initialize 
+    eventFileAbs = None
+    outputDir = None
+    recordFileName = None
+    record2FileName = None
+    gsasDir = None
+    gsas2Dir = None
+    logDir = None
+
+    # 2 modes: auto-reduction and manual reduction (options)
+    if len(opts) == 0:
+        # Default/auto reduction mode
+        mode = "auto"
+
+        if len(argv) < 2:
+            print "Inputs: [1. File name with full length] [2. Output directory]"
+            return
+        eventFileAbs = argv[0]
+        outputDir = argv[1]
+
+        logDir = changeOutputDir(outputDir)
+
+        recordFileName = os.path.join(outputDir, "AutoRecord.txt")
+        m1Dir = changeOutputDir(outputDir, "")
+        record2FileName = os.path.join(m1Dir, "AutoRecord.txt")
     
-    eventFileAbs = argv[1]
-    outputDir = argv[2]
-   
+        gsasDir = changeOutputDir(outputDir, "autoreduce/binned")
+        gsas2Dir = changeOutputDir(outputDir, "binned_data")
+
+    else:
+        # Manual reduction mode
+        mode = "manual"
+
+        for opt, arg in opts:
+            if opt in ("-h", "--help"):
+                # Help
+                print "%s -i <inputfile> -o <outputdirectory> -a <autorecrddir> -l <0/logdir> -g <0/gsasdir> " % (sys.argv[0])
+                print "-l: generate sample log files."
+                print "-g: generate GSAS file."
+                print "-G: copy GSAS file to another directory with file mode 664."
+                return
+            elif opt in ("-i", "--ifile"):
+                # Input NeXus file
+                eventFileAbs = arg
+            elif opt in ("-o", "--ofile"):
+                # Output directory
+                outputDir = arg
+            elif opt in ("-l", "--log"):
+                # Log file 
+                if arg == '0':
+                    logDir = None
+                else:
+                    logDir = arg
+            elif opt in ("-g", "--gsas"):
+                # GSAS file
+                if arg == '0':
+                    gsasDir = None
+                else:
+                    gsasDir = arg
+            elif opt in ("-G", "--gsas2"):
+                # GSAS file
+                if arg == '0':
+                    gsas2Dir = None
+                else:
+                    gsas2Dir = arg
+            elif opt in ("-r", "--record"):
+                # GSAS file
+                if arg == '0':
+                    recordFileName = None
+                else:
+                    recordFileName = arg
+            elif opt in ("-R", "--record2"):
+                # GSAS file
+                if arg == '0':
+                    record2FileName = None
+                else:
+                    record2FileName = arg
+            # ENDIFELSE
+        # ENDFOR
+    # ENDIFELSE
+
+    # Check
+    if eventFileAbs is None or outputDir is None:
+        print "Input event Nexus file and output directory must be given!"
+        return
+
     # Obtain information from input file name and path
     eventFile = os.path.split(eventFileAbs)[-1]
     nexusDir = eventFileAbs.replace(eventFile, '')
@@ -638,54 +842,102 @@ def main(argv):
     else:
         ipts = 0
 
-    # Change the input 'OutputDir' to .../logs/ as instrument scientist requests
-    origOutputDir = outputDir
-    # FIXMENOT
-    outputDir = changeOutputDir(origOutputDir)
-    
-    # Load file to generate the matrix workspace with some logs
-    logwsname = "VULCAN_%d_MetaDataOnly" % (runNumber)
+    # 1D plot file name 
+    pngfilename = os.path.join(outputDir, 'VULCAN_'+str(runNumber)+'.png')
 
-    try:
-        Load(Filename=eventFileAbs, OutputWorkspace=logwsname, MetaDataOnly = True, LoadLogs = True)
-    except RuntimeError as err:
-        print "Unable to load NeXus file %s. Error message: %s. " % (eventFileAbs, str(err))
-        return 
+    print "Input NeXus file    : %s" % (eventFileAbs)
+    print "Output directory    : %s" % (outputDir)
+    print "Log directory       : %s" % (str(logDir))
+    print "GSAS  directory     : %s" % (str(gsasDir))
+    print "GSAS2 directory     : %s" % (str(gsas2Dir))
+    print "Record file name    : %s" % (str(recordFileName))
+    print "Record(2) file name : %s" % (str(record2FileName))
+    print "1D plot file name   : %s" % (pngfilename)
+
+
+    #------------------------------------------------------
+    # Generate logs and/or AutoRecord
+    #------------------------------------------------------
+    if logDir is not None or recordFileName is not None or record2FileName is not None:
+        # Load file to generate the matrix workspace with some logs 
+        logwsname = "VULCAN_%d_MetaDataOnly" % (runNumber)
+        try:
+            Load(Filename=eventFileAbs, OutputWorkspace=logwsname, MetaDataOnly = True, LoadLogs = True)
+        except RuntimeError as err:
+            print "Unable to load NeXus file %s. Error message: %s. " % (eventFileAbs, str(err))
+            return 
             
-    # Convert Furnace"/tmp/furnace41703.txt"
-    exportFurnaceLog(logwsname, outputDir, runNumber)
+        if logDir is not None:
+            # Export furance log
+            exportFurnaceLog(logwsname, logDir, runNumber)
     
-    # Convert Generic DAQ log
-    exportGenericDAQLog(logwsname, outputDir, ipts, runNumber)
+            # Export Generic DAQ log
+            exportGenericDAQLog(logwsname, logDir, ipts, runNumber)
 
-    # Write out loadframe /MTS log
-    exportMTSLog(logwsname, outputDir, ipts, runNumber)
-   
-    # FIXMENOT
-    # Write experiment log (Record.txt)
-    rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord.txt" % (ipts)
-    #rfilename = "/home/wzz/Projects/MantidTests/Vulcan_Reduction/AutoRecord.txt"
-    #rfilename = "/SNS/VULCAN/IPTS-%d/shared/auto_test/AutoRecord.txt" % (ipts)
-    instrument="VULCAN"
-    exportgood = write_record(logwsname, instrument, ipts, runNumber, rfilename)
-   
-    # Reduce GSAS file
-    # FIXMENOT
-    outputDir = changeOutputDir(origOutputDir, "autoreduce/binned")
-    #outputDir = changeOutputDir(origOutputDir, "auto_test/binned")
-    gsasfilename = saveGSASFile(ipts, runNumber, outputDir)
-    saveDir2 = changeOutputDir(origOutputDir, "binned_data")
-    copyFile(gsasfilename, saveDir2)
-    
+            # Export loadframe /MTS log
+            exportMTSLog(logwsname, logDir, ipts, runNumber)
+        # ENDIF
 
-    # FIXMENOT
-    outputDir = origOutputDir
-    #outputDir = changeOutputDir(origOutputDir, "auto_test")
-    SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=outputDir+"VULCAN_"+str(runNumber)+'.png',  
-        YLabel='Intensity')
-    
+        if recordFileName is not None or record2FileName is not None:
+            # Append auto record file
+            instrument="VULCAN"
+            exportgood = writeRecord(logwsname, instrument, ipts, runNumber, recordFileName, record2FileName, mode)
+        # ENDIF
+    # ENDIF
+
+    #------------------------------------------------------
+    # Reduce to GSAS file
+    #------------------------------------------------------
+    if gsasDir is not None:
+        # SNSPowderReduction
+        gsasfilename = saveGSASFile(ipts, runNumber, gsasDir)
+
+        # 2nd copy for Ke
+        copyFile(gsasfilename, gsas2Dir)
+
+        try: 
+            SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=pngfilename,  YLabel='Intensity')
+        except ValueError as err: 
+            print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
+        except RuntimeError as err: 
+            print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
+    # ENDIF
+   
     return
 
 if __name__ == "__main__":
     import sys
-    main(sys.argv)
+    main(sys.argv[1:])
+
+#    # FIXMENOT
+#    # Write experiment log (Record.txt)
+#    if len(argv) >= 4:
+#	rfilenamebase = argv[3]
+#	rfilename = "/SNS/VULCAN/IPTS-%d/shared/%s" % (ipts, rfilenamebase)
+#    else:
+#	rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord_Manual.txt" % (ipts)
+#	#rfilename = "/SNS/VULCAN/IPTS-%d/shared/auto_test/AutoRecord.txt" % (ipts)
+
+#        try: 
+#            pngfilename = os.path.join(outputDir, 'VULCAN_'+str(runNumber)+'.png')
+#            SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=outputDir+"VULCAN_"+str(runNumber)+'.png',  YLabel='Intensity')
+#        except ValueError as err:
+#    	print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
+
+#    # Reduce GSAS file
+#    # FIXMENOT
+#    outputDir = changeOutputDir(origOutputDir, "autoreduce/binned")
+#    #outputDir = changeOutputDir(origOutputDir, "auto_test/binned")
+#    gsasfilename = saveGSASFile(ipts, runNumber, outputDir)
+#    saveDir2 = changeOutputDir(origOutputDir, "binned_data")
+#    copyFile(gsasfilename, saveDir2)
+    
+
+#    # FIXMENOT
+#    outputDir = origOutputDir
+#    #outputDir = changeOutputDir(origOutputDir, "auto_test")
+#    try: 
+#	SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=outputDir+"VULCAN_"+str(runNumber)+'.png',  
+#	    YLabel='Intensity')
+#    except ValueError as err:
+#	print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
