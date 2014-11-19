@@ -801,13 +801,13 @@ def main(argv):
                 else:
                     gsas2Dir = arg
             elif opt in ("-r", "--record"):
-                # GSAS file
+                # AutoReduce.txt
                 if arg == '0':
                     recordFileName = None
                 else:
                     recordFileName = arg
             elif opt in ("-R", "--record2"):
-                # GSAS file
+                # AutoReduce.txt
                 if arg == '0':
                     record2FileName = None
                 else:
