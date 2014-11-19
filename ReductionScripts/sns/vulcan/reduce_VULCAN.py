@@ -772,6 +772,8 @@ def main(argv):
                 print "-l: generate sample log files."
                 print "-g: generate GSAS file."
                 print "-G: copy GSAS file to another directory with file mode 664."
+                print "-r: copy GSAS file to another directory with file mode 664."
+                print "-G: copy GSAS file to another directory with file mode 664."
                 return
             elif opt in ("-i", "--ifile"):
                 # Input NeXus file
