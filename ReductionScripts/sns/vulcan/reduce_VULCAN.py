@@ -812,6 +812,9 @@ def main(argv):
                     record2FileName = None
                 else:
                     record2FileName = arg
+            elif opt in ("-d", "--dryrun"):
+                # Dry run 
+                dryRun = True
             # ENDIFELSE
         # ENDFOR
     # ENDIFELSE
