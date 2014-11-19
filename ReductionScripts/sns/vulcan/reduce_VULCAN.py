@@ -726,7 +726,7 @@ def main(argv):
     5. Reduce for GSAS 
     """
     try: 
-        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2="]) 
+        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:d",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2="]) 
     except getopt.GetoptError: 
         print 'test.py -i <inputfile> -o <outputfile>' 
         sys.exit(2)
