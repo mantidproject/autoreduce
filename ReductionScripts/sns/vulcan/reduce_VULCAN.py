@@ -726,7 +726,7 @@ def main(argv):
     5. Reduce for GSAS 
     """
     try: 
-        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:d",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2="]) 
+        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:d",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2=", "dryrun"]) 
     except getopt.GetoptError: 
         print 'test.py -i <inputfile> -o <outputfile>' 
         sys.exit(2)
@@ -814,10 +814,7 @@ def main(argv):
                     record2FileName = arg
             elif opt in ("-d", "--dryrun"):
                 # Dry run 
-                if arg == '0':
-                    dryRun = False 
-                else:
-                    dryRun = True
+                dryRun = False 
             # ENDIFELSE
         # ENDFOR
     # ENDIFELSE
