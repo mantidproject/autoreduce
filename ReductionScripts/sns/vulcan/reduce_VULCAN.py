@@ -814,7 +814,10 @@ def main(argv):
                     record2FileName = arg
             elif opt in ("-d", "--dryrun"):
                 # Dry run 
-                dryRun = True
+                if arg == '0':
+                    dryRun = False 
+                else:
+                    dryRun = True
             # ENDIFELSE
         # ENDFOR
     # ENDIFELSE
@@ -861,6 +864,8 @@ def main(argv):
     print "Record(2) file name : %s" % (str(record2FileName))
     print "1D plot file name   : %s" % (pngfilename)
 
+    if dryRun is True:
+        return
 
     #------------------------------------------------------
     # Generate logs and/or AutoRecord
