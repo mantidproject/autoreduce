@@ -774,7 +774,6 @@ def main(argv):
                 print "-G: copy GSAS file to another directory with file mode 664."
                 print "-r: experiment record file (writable only to auot reduction service)." 
                 print "-R: experiment record file (can be modified by manual reduction)." 
-                print "-G: copy GSAS file to another directory with file mode 664."
                 return
             elif opt in ("-i", "--ifile"):
                 # Input NeXus file
