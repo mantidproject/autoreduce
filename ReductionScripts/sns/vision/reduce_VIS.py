@@ -262,7 +262,7 @@ def LoadInelasticBanks(ListRN,Banks):
                 if "Temperature Adjustment" in mtd[BanksT[i]].getTitle():
                     print "Error: Non-equilibrium runs will not be reduced"
                     sys.exit()
-                if mtd[BanksT[i]].getRun().getProtonCharge() < 1.0:
+                if mtd[BanksT[i]].getRun().getProtonCharge() < 50.0:
                     print "Error: Proton charge is too low"
                     sys.exit()
         else:
@@ -615,8 +615,8 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 # Main program
 ######################################################################
 
-subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
-subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
+#subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
+#subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
 
 # Read calibration table
 CalTab = [[[0 for _ in range(2)] for _ in range(1024)] for _ in range(14)]
