@@ -616,7 +616,7 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 ######################################################################
 
 #subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
-#subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
+subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
 
 # Read calibration table
 CalTab = [[[0 for _ in range(2)] for _ in range(1024)] for _ in range(14)]
