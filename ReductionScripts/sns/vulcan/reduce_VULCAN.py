@@ -739,6 +739,7 @@ def main(argv):
     gsasDir = None
     gsas2Dir = None
     logDir = None
+    dryRun = False
 
     # 2 modes: auto-reduction and manual reduction (options)
     if len(opts) == 0:
