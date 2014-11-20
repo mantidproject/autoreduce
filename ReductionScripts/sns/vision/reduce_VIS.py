@@ -685,5 +685,5 @@ OutFile=asciidir+'/VIS_'+INS
 SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
 
 #subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
-subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
+#subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
 
