@@ -36,7 +36,7 @@ DgsReduction(
              TimeIndepBackgroundSub=True,
              TibTofRangeStart=tib[0],
              TibTofRangeEnd=tib[1],
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4655/22/101708/NeXus/CNCS_101708_event.nxs",
+             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs",
              UseBoundsForDetVan=True,
              DetVanIntRangeLow=51000.0,
              DetVanIntRangeHigh=55000.0,
