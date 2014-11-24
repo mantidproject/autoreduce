@@ -684,6 +684,6 @@ if not os.path.exists(asciidir):
 OutFile=asciidir+'/VIS_'+INS
 SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
 
-#subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
-#subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
 
