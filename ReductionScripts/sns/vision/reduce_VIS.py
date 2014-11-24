@@ -679,6 +679,7 @@ SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
 
 asciidir=SaveDir+'/ascii'
 if not os.path.exists(asciidir):
+    os.umask(0002)
     os.makedirs(asciidir,0775)
     print "Info: "+asciidir+" does not exist and will be created."
 OutFile=asciidir+'/VIS_'+INS
