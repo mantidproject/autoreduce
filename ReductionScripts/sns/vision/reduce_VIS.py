@@ -615,8 +615,6 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 # Main program
 ######################################################################
 
-subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
-
 # Read calibration table
 CalTab = [[[0 for _ in range(2)] for _ in range(1024)] for _ in range(14)]
 tab = list(csv.reader(open(CalFile,'r')))
@@ -686,5 +684,6 @@ if not os.path.exists(asciidir):
 OutFile=asciidir+'/VIS_'+INS
 SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
 
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
 subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
 
