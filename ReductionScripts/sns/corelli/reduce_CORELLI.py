@@ -8,7 +8,6 @@ from mantid.simpleapi import *
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
-nexus_file="CORELLI_2605"
 w=Load(nexus_file)
 LoadInstrument(w, MonitorList='-1,-2,-3', InstrumentName='CORELLI')
 cc=CorelliCrossCorrelate(w,56000)
