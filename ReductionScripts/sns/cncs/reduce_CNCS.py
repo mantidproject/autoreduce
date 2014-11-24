@@ -25,6 +25,8 @@ Ei=w.getRun()['EnergyRequest'].firstValue()
 erange=str(-Ei*0.95)+','+str(0.005*Ei)+','+str(0.95*Ei)
 
 tib=SuggestTibCNCS(Ei)
+tib[0]=63500
+tib[1]=65500
 
 DgsReduction(
              SampleInputFile=nexus_file,
