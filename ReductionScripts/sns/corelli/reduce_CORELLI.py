@@ -4,7 +4,8 @@ import sys,os
 sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
-from numpy import *
+import numpy as np
+np.seterr("ignore")
 
 from matplotlib import *
 use("agg")
@@ -33,16 +34,16 @@ bin=BinMD(md, AlignedDim0='Q_sample_x,-20,20,800', AlignedDim1='Q_sample_y,-0.2,
 ss=bin.getSignalArray()
 
 #Trim array for non-zero values.
-ss_where = argwhere(ss)
+ss_where = np.argwhere(ss)
 (ystart, xstart), (ystop,xstop) = ss_where.min(0), ss_where.max(0)+1
 ss_trim = ss[ystart:ystop, xstart:xstop]
 
 #Plot
-x=arange(-20,20,0.05)
-y=arange(-20,20,0.05)
-X,Y=meshgrid(x[xstart:xstop],y[ystart:ystop])
-Zm=ma.masked_where(ss_trim==0,ss_trim)
-pcolormesh(X,Y,log(Zm),shading='gouraud')
+x=np.arange(-20,20,0.05)
+y=np.arange(-20,20,0.05)
+X,Y=np.meshgrid(x[xstart:xstop],y[ystart:ystop])
+Zm=np.ma.masked_where(ss_trim==0,ss_trim)
+pcolormesh(X,Y,np.log(Zm),shading='gouraud')
 xlabel('Qsample_x')
 ylabel('Qsample_z')
 savefig(output_directory+output_file+'.png',bbox_inches='tight')
@@ -61,8 +62,8 @@ bin2=BinMD(md2, AlignedDim0='Q_sample_x,-20,20,800', AlignedDim1='Q_sample_y,-0.
 cc=bin2.getSignalArray()
 cc_trim = cc[ystart:ystop, xstart:xstop]
 
-Zm2=ma.masked_where(cc_trim<=0,cc_trim)
-pcolormesh(X,Y,log(Zm2),shading='gouraud')
+Zm2=np.ma.masked_where(cc_trim<=0,cc_trim)
+pcolormesh(X,Y,np.log(Zm2),shading='gouraud')
 xlabel('Qsample_x')
 ylabel('Qsample_z')
 savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
