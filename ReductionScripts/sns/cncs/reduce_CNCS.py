@@ -78,6 +78,7 @@ if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
     Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
     SaveNexus(InputWorkspace="__VAN", Filename= filename) 
 
+filename=DGSdict['SaveProcDetVanFilename']
 os.chmod(filename,0444)
 
 filename = os.path.split(nexus_file)[-1]
