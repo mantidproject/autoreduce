@@ -34,8 +34,6 @@ DgsReduction(
              EnergyTransferRange=erange,
              IncidentBeamNormalisation="ByCurrent",
              TimeIndepBackgroundSub=True,
-             TibTofRangeStart=tib[0],
-             TibTofRangeEnd=tib[1],
              TibTofRangeStart=20500.0,
              TibTofRangeEnd=21500.0,
              DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs",
@@ -44,6 +42,9 @@ DgsReduction(
              DetVanIntRangeHigh=55000.0,
              DetVanIntRangeUnits="TOF",
             )
+
+#             TibTofRangeStart=tib[0],
+#             TibTofRangeEnd=tib[1],
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
