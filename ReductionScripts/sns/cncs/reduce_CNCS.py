@@ -43,7 +43,7 @@ IntegrationRange=[51000.0,55000.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-MaskBTPParameters.append({'Bank': '37-50'})
+# MaskBTPParameters.append({'Bank': '37-50'})
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
