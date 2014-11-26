@@ -51,7 +51,8 @@ CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params='-0.12,0.0004,0.12')
 #GroupDetectors(InputWorkspace=autows, OutputWorkspace=autows, MapFile='/SNS/BSS/shared/autoreduce/BASIS_Grouping.xml', Behaviour='Sum')
 QAxisBinning='0.2,0.2,2.0'
-autows_sqw = SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed='2.082')
+SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed='2.082')
+ClearMaskFlag(Workspace=autows+'_sqw')
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
 
@@ -103,6 +104,7 @@ plt.title('Monitor')
 plt.axis('on')
 
 # Spectra Figures
+autows_sqw=mtd[autows+'_sqw']
 Qm,dQ,QM = [float(x) for x in QAxisBinning.split(',')]
 nQ = int( (QM-Qm)/dQ )
 for i in range(nQ):
