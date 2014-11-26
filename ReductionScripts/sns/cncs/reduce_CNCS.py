@@ -50,6 +50,7 @@ tib=SuggestTibCNCS(EGuess)
 tib=[20500.0,21500.0]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
+DGSDict={}
 DGSdict['SampleInputFile']=nexus_file
 DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
@@ -65,16 +66,16 @@ DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
 
 DgsReduction(**DGSdict)
-NormalizedVanadiumEqualToOne = True
-if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
-    filename=DGSdict['SaveProcDetVanFilename']
-    LoadNexus(Filename=filename,OutputWorkspace="__VAN")
-    datay = mtd['__VAN'].extractY()
-    meanval = float(datay[datay>0].mean())
-    CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
-    Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
-    Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
-    SaveNexus(InputWorkspace="__VAN", Filename= filename) 
+#NormalizedVanadiumEqualToOne = True
+#if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+#    filename=DGSdict['SaveProcDetVanFilename']
+#    LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+#    datay = mtd['__VAN'].extractY()
+#    meanval = float(datay[datay>0].mean())
+#    CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+#    Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
+#    Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+#    SaveNexus(InputWorkspace="__VAN", Filename= filename) 
 
 
 filename = os.path.split(nexus_file)[-1]
