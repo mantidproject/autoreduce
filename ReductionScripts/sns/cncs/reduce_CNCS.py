@@ -50,7 +50,6 @@ tib=SuggestTibCNCS(EGuess)
 tib=[20500.0,21500.0]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
-DGSDict={}
 DGSdict['SampleInputFile']=nexus_file
 DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
