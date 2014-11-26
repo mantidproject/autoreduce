@@ -46,7 +46,7 @@ MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
-tib=SuggestTibCNCS(Ei)
+tib=SuggestTibCNCS(EGuess)
 tib=[20500.0,21500.0]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
@@ -65,6 +65,17 @@ DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
 
 DgsReduction(**DGSdict)
+NormalizedVanadiumEqualToOne = True
+if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+    filename=DGSdict['SaveProcDetVanFilename']
+    LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+    datay = mtd['__VAN'].extractY()
+    meanval = float(datay[datay>0].mean())
+    CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+    Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
+    Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+    SaveNexus(InputWorkspace="__VAN", Filename= filename) 
+
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
