@@ -66,7 +66,7 @@ elif GetMon == 1:
 elif GetMon == 2:
     # If NormLevel=0, a monitor spectrum in energy transfer is needed
     # If NormLevel=1, a monitor spectrum in wavelength is needed
-    MonFile = '/SNS/VIS/shared/VIS_team/VIS_reduction/VIS_5447-5450_MonitorL-corrected.nxs'
+    MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorL-corrected.nxs'
 
 #*********************************************************************
 # How many monitors in nxs file?
@@ -127,7 +127,7 @@ else:
 
 #*********************************************************************
 # Calibration table
-CalFile='/SNS/VIS/shared/VIS_team/VIS_reduction/VIS_CalTab-03-03-2014.csv'
+CalFile='/SNS/VIS/shared/autoreduce/VIS_CalTab-03-03-2014.csv'
 #*********************************************************************
 
 #=====================================================================
