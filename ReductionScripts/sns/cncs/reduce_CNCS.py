@@ -13,6 +13,8 @@ from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
+ 
+os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
 
 def preprocessVanadium(Raw,Processed,Parameters):
@@ -65,17 +67,18 @@ DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
 
 DgsReduction(**DGSdict)
-#NormalizedVanadiumEqualToOne = True
-#if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
-#    filename=DGSdict['SaveProcDetVanFilename']
-#    LoadNexus(Filename=filename,OutputWorkspace="__VAN")
-#    datay = mtd['__VAN'].extractY()
-#    meanval = float(datay[datay>0].mean())
-#    CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
-#    Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
-#    Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
-#    SaveNexus(InputWorkspace="__VAN", Filename= filename) 
+NormalizedVanadiumEqualToOne = True
+if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+    filename=DGSdict['SaveProcDetVanFilename']
+    LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+    datay = mtd['__VAN'].extractY()
+    meanval = float(datay[datay>0].mean())
+    CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+    Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
+    Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+    SaveNexus(InputWorkspace="__VAN", Filename= filename) 
 
+os.chmod(filename,0444)
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
@@ -104,7 +107,7 @@ nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + value
 # Save a file
 #SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
-
+os.chmod(nxspe_filename,0444)
 # make a pretty image
 #minvals,maxvals=ConvertToMDMinMaxGlobal('reduce','|Q|','Direct')
 #xmin=minvals[0]
