@@ -37,7 +37,7 @@ Masking = "Horizontal"
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Calibration File'
-calib_File = '/SNS/SNAP/shared/SNAP_calibrate_d18584_2014_08_29.cal'
+calib_File = '/SNS/SNAP/IPTS-11885/shared/SNAP_calibrate_d19241_2014_11_26.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
