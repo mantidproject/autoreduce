@@ -14,37 +14,57 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
 
+
+def preprocessVanadium(Raw,Processed,Parameters):
+    if os.path.isfile(Processed):
+        LoadNexus(Filename=Processed,OutputWorkspace="__VAN")
+        dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
+    else:
+        LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
+        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
+        for d in Parameters:
+            MaskBTP(Workspace="__VAN",**d)
+        dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
+    return dictvan
+
+
 config['default.facility']="SNS"
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
+RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
+ProcessedVanadium="van101708.nxs"
+HardMaskFile=''
+IntegrationRange=[51000.0,55000.0]#integration range for Vanadium in TOF
+
+MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
+#MaskBTPParameters.append({'Bank': '37-50'})
+
 w=Load(nexus_file)
-Ei=w.getRun()['EnergyRequest'].firstValue()
-erange=str(-Ei*0.95)+','+str(0.005*Ei)+','+str(0.95*Ei)
+EGuess=w.getRun()['EnergyRequest'].firstValue()
 
 tib=SuggestTibCNCS(Ei)
+tib=[20500.0,21500.0]
 
-DgsReduction(
-             SampleInputFile=nexus_file,
-             OutputWorkspace="reduce",
-             HardMaskFile="/SNS/CNCS/shared/autoreduce/mask8bothsides.xml",
-             GroupingFile='/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml',
-             EnergyTransferRange=erange,
-             IncidentBeamNormalisation="ByCurrent",
-             TimeIndepBackgroundSub=True,
-             TibTofRangeStart=20500.0,
-             TibTofRangeEnd=21500.0,
-             DetectorVanadiumInputFile="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs",
-             UseBoundsForDetVan=True,
-             DetVanIntRangeLow=51000.0,
-             DetVanIntRangeHigh=55000.0,
-             DetVanIntRangeUnits="TOF",
-            )
+DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
+DGSdict['SampleInputFile']=nexus_file
+DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+DGSdict['HardMaskFile']=HardMaskFile
+DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
+DGSdict['IncidentBeamNormalisation']='ByCurrent'  
+DGSdict['UseBoundsForDetVan']='1'
+DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
+DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
+DGSdict['DetVanIntRangeUnits']='TOF'
+DGSdict['OutputWorkspace']='reduce'
+DGSdict['TibTofRangeStart']=tib[0]
+DGSdict['TibTofRangeEnd']=tib[1]
+DGSdict['TimeIndepBackgroundSub']=True
 
-#             TibTofRangeStart=tib[0],
-#             TibTofRangeEnd=tib[1],
+DgsReduction(**DGSdict)
 
 filename = os.path.split(nexus_file)[-1]
 #run_number = filename.split('_')[1]
