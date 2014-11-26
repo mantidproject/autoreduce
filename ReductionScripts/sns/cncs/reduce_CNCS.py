@@ -14,7 +14,7 @@ from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
  
-os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
+#os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
 
 def preprocessVanadium(Raw,Processed,Parameters):
