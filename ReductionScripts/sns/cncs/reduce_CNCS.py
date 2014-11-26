@@ -37,7 +37,7 @@ output_directory=sys.argv[2]
 seterr("ignore") #ignore division by 0 warning in plots
 
 RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
-ProcessedVanadium="van101708.nxs"
+ProcessedVanadium="van101708both.nxs"
 HardMaskFile=''
 IntegrationRange=[51000.0,55000.0]#integration range for Vanadium in TOF
 
