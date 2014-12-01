@@ -66,7 +66,7 @@ elif GetMon == 1:
 elif GetMon == 2:
     # If NormLevel=0, a monitor spectrum in energy transfer is needed
     # If NormLevel=1, a monitor spectrum in wavelength is needed
-    MonFile = '/SNS/VIS/shared/VIS_team/VIS_reduction/VIS_5447-5450_MonitorL-corrected.nxs'
+    MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorL-corrected.nxs'
 
 #*********************************************************************
 # How many monitors in nxs file?
@@ -127,7 +127,7 @@ else:
 
 #*********************************************************************
 # Calibration table
-CalFile='/SNS/VIS/shared/VIS_team/VIS_reduction/VIS_CalTab-03-03-2014.csv'
+CalFile='/SNS/VIS/shared/autoreduce/VIS_CalTab-03-03-2014.csv'
 #*********************************************************************
 
 #=====================================================================
@@ -262,7 +262,7 @@ def LoadInelasticBanks(ListRN,Banks):
                 if "Temperature Adjustment" in mtd[BanksT[i]].getTitle():
                     print "Error: Non-equilibrium runs will not be reduced"
                     sys.exit()
-                if mtd[BanksT[i]].getRun().getProtonCharge() < 1.0:
+                if mtd[BanksT[i]].getRun().getProtonCharge() < 5.0:
                     print "Error: Proton charge is too low"
                     sys.exit()
         else:
@@ -615,9 +615,6 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 # Main program
 ######################################################################
 
-subprocess.call(["/SNS/VIS/shared/VIS_users/lsruns.sh", IPTS])
-subprocess.call(["/SNS/VIS/shared/VIS_team/VIS_update.sh"])
-
 # Read calibration table
 CalTab = [[[0 for _ in range(2)] for _ in range(1024)] for _ in range(14)]
 tab = list(csv.reader(open(CalFile,'r')))
@@ -682,8 +679,12 @@ SaveNexusProcessed(InputWorkspace=INS,Filename=OutFile+".nxs")
 
 asciidir=SaveDir+'/ascii'
 if not os.path.exists(asciidir):
-    os.makedirs(asciidir)
+    os.umask(0002)
+    os.makedirs(asciidir,0775)
     print "Info: "+asciidir+" does not exist and will be created."
 OutFile=asciidir+'/VIS_'+INS
 SaveAscii(InputWorkspace=INS,Filename=OutFile+".dat",Separator='Space')
+
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
+#subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
 

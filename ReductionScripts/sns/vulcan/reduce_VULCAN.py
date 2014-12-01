@@ -726,7 +726,7 @@ def main(argv):
     5. Reduce for GSAS 
     """
     try: 
-        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2="]) 
+        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:d",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2=", "dryrun"]) 
     except getopt.GetoptError: 
         print 'test.py -i <inputfile> -o <outputfile>' 
         sys.exit(2)
@@ -739,6 +739,7 @@ def main(argv):
     gsasDir = None
     gsas2Dir = None
     logDir = None
+    dryRun = False
 
     # 2 modes: auto-reduction and manual reduction (options)
     if len(opts) == 0:
@@ -771,6 +772,8 @@ def main(argv):
                 print "-l: generate sample log files."
                 print "-g: generate GSAS file."
                 print "-G: copy GSAS file to another directory with file mode 664."
+                print "-r: experiment record file (writable only to auot reduction service)." 
+                print "-R: experiment record file (can be modified by manual reduction)." 
                 return
             elif opt in ("-i", "--ifile"):
                 # Input NeXus file
@@ -797,17 +800,20 @@ def main(argv):
                 else:
                     gsas2Dir = arg
             elif opt in ("-r", "--record"):
-                # GSAS file
+                # AutoReduce.txt
                 if arg == '0':
                     recordFileName = None
                 else:
                     recordFileName = arg
             elif opt in ("-R", "--record2"):
-                # GSAS file
+                # AutoReduce.txt
                 if arg == '0':
                     record2FileName = None
                 else:
                     record2FileName = arg
+            elif opt in ("-d", "--dryrun"):
+                # Dry run 
+                dryRun = True
             # ENDIFELSE
         # ENDFOR
     # ENDIFELSE
@@ -854,6 +860,8 @@ def main(argv):
     print "Record(2) file name : %s" % (str(record2FileName))
     print "1D plot file name   : %s" % (pngfilename)
 
+    if dryRun is True:
+        return
 
     #------------------------------------------------------
     # Generate logs and/or AutoRecord
