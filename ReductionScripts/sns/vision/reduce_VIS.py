@@ -261,7 +261,7 @@ def LoadInelasticBanks(ListRN,Banks):
                 print "Proton charge:", mtd[BanksT[i]].getRun().getProtonCharge()
                 if "Temperature Adjustment" in mtd[BanksT[i]].getTitle():
                     print "Error: Non-equilibrium runs will not be reduced"
-                    #sys.exit()
+                    sys.exit()
                 if mtd[BanksT[i]].getRun().getProtonCharge() < 5.0:
                     print "Error: Proton charge is too low"
                     sys.exit()
