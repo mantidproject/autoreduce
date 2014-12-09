@@ -98,8 +98,8 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
     MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
 
-    #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
-    groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #try this 12/2/2014 DLA
+    groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
+    #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #this worked for smaller files DLA
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
