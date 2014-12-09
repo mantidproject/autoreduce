@@ -41,7 +41,7 @@ elif Interface == 1:
 #*********************************************************************
 # Save processed nxs file?
 # 0: No. 1: Yes
-SaveNexus = 1
+SaveNexusOutput = 1
 #*********************************************************************
 
 #*********************************************************************
@@ -678,7 +678,7 @@ elif Interface == 1:
 Scale(InputWorkspace=MergedE,OutputWorkspace=INS,Factor='500',Operation='Multiply')
 mtd[INS].setYUnitLabel('Normalized intensity')
 
-if SaveNexus==0:
+if SaveNexusOutput==0:
     print "Warning: Reduced data NOT saved."
     sys.exit()
 
