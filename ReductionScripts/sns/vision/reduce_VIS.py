@@ -608,8 +608,13 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 
     return 'MergedE'
 
-
-
+######################################################################
+# Save Inelastic banks in a separate file
+######################################################################
+bank_list = ["bank%d" % i for i in range(1, 15)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, OutputWorkspace="__inelastic_data")
+SaveNexus(InputWorkspace="__inelastic_data", Filename=os.path.join(SaveDir, FileName.replace('.nxs.h5','_inelastic.nxs.h5')))
 
 ######################################################################
 # Main program
