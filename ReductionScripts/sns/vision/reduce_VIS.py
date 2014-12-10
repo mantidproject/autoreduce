@@ -613,9 +613,26 @@ def ReduceBanksE(NormE,BanksT,Banks,BanksForward,BanksBackward,ListPX,CalTab,bin
 ######################################################################
 bank_list = ["bank%d" % i for i in range(1, 15)]
 bank_property = ",".join(bank_list)
-LoadEventNexus(Filename=NexusFile, BankName=bank_property, OutputWorkspace="__inelastic_data")
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, OutputWorkspace="__inelastic_data", LoadMonitors=True)
 inelastic_file = os.path.join(SaveDir, FileName.replace('.nxs.h5','_inelastic.nxs.h5'))
 SaveNexus(InputWorkspace="__inelastic_data", Filename=inelastic_file)
+Rebin(InputWorkspace='__inelastic_data_monitors',OutputWorkspace='__inelastic_data_monitors',Params="0.001,-0.001,33333.0",PreserveEvents='0')
+monitor_file = os.path.join(SaveDir, FileName.replace('.nxs.h5','_monitors.nxs.h5'))
+SaveNexus(InputWorkspace="__inelastic_data_monitors", Filename=monitor_file)
+
+bank_list = ["bank%d" % i for i in range(15, 25)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace="__elastic_back_data")
+Rebin(InputWorkspace='__elastic_back_data',OutputWorkspace='__elastic_back_data',Params="0.001,-0.001,33333.0",PreserveEvents='0')
+elastic_file = os.path.join(SaveDir, FileName.replace('.nxs.h5','_elastic_backscattering.nxs.h5'))
+SaveNexus(InputWorkspace="__elastic_back_data", Filename=elastic_file)
+
+bank_list = ["bank%d" % i for i in range(25, 31)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace="__elastic_data")
+Rebin(InputWorkspace='__elastic_data',OutputWorkspace='__elastic_data',Params="0.001,-0.001,33333.0",PreserveEvents='0')
+elastic_file = os.path.join(SaveDir, FileName.replace('.nxs.h5','_elastic.nxs.h5'))
+SaveNexus(InputWorkspace="__elastic_data", Filename=elastic_file)
 
 ######################################################################
 # Main program
