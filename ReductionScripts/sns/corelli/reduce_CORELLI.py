@@ -16,6 +16,7 @@ output_directory=sys.argv[2]
 output_file=os.path.split(nexus_file)[-1].replace('.nxs.h5','')
 
 w=Load(nexus_file)
+wi=Integration(w)
 LoadInstrument(w, MonitorList='-1,-2,-3', InstrumentName='CORELLI')
 
 # Do the cross-correlation and save the file.
@@ -67,4 +68,22 @@ pcolormesh(X,Y,np.log(Zm2),shading='gouraud')
 xlabel('Qsample_x')
 ylabel('Qsample_z')
 savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
+clf()
 """
+
+
+#plot the instrument view
+rowA=np.transpose(wi.extractY()[0:118784].reshape([464,256]))
+rowB=np.transpose(wi.extractY()[118784:253952].reshape([528,256]))
+rowC=np.transpose(wi.extractY()[253952:372736].reshape([464,256]))
+rowA=np.concatenate((np.zeros([256,32]),rowA,np.zeros([256,32])),axis=1)
+rowC=np.concatenate((np.zeros([256,32]),rowC,np.zeros([256,32])),axis=1)
+inst=np.concatenate((rowA,rowB,rowC),axis=0)
+
+x=np.arange(0,528)
+y=np.arange(0,768)
+X,Y=np.meshgrid(x,y)
+instM=np.ma.masked_where(inst==0,inst)
+pcolormesh(X,Y,np.log(instM),shading='gouraud')
+axis('off')
+savefig(output_directory+output_file+'_inst.png',bbox_inches='tight')
