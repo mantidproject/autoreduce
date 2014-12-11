@@ -38,8 +38,8 @@ import shutil
 import xml.etree.ElementTree as ET
 
 
-sys.path.append('/opt/mantidunstable/bin/')
-#sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/mantidnightly/bin")
+#sys.path.append('/opt/mantidunstable/bin/')
 #sys.path.append("/opt/Mantid/bin")
 
 
