@@ -627,7 +627,9 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
         RemoveDuplicateRecord = True)
 
     # Set up the mode 
-    os.chmod(rfilename2, 0666)
+    mode = oct(os.stat(rfilename2)[stat.ST_MODE])
+    if mode != '666':
+        os.chmod(rfilename2, 0666)
     
     # Auto reduction only 
     if mode == "auto": 
