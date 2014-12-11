@@ -728,6 +728,7 @@ def main(argv):
     try: 
         opts, args = getopt.getopt(argv,"hdi:o:l:g:G:r:R:",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2=", "dryrun"]) 
     except getopt.GetoptError: 
+        print "Exception: %s" % (str(getopt.GetoptError))
         print 'test.py -i <inputfile> -o <outputfile>' 
         sys.exit(2)
 
