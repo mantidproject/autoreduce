@@ -864,7 +864,7 @@ def main(argv):
     print "Input NeXus file    : %s" % (eventFileAbs)
     print "Output directory    : %s" % (outputDir)
     print "Log directory       : %s" % (str(logDir))
-    print "GSAS  directory     : %s" % (str(gsasDir))
+    print "GSAS  directory     : %s;  If it is None, no GSAS will be written." % (str(gsasDir))
     print "GSAS2 directory     : %s" % (str(gsas2Dir))
     print "Record file name    : %s" % (str(recordFileName))
     print "Record(2) file name : %s" % (str(record2FileName))
