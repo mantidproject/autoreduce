@@ -628,7 +628,9 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
 
     # Set up the mode 
     mode = oct(os.stat(rfilename2)[stat.ST_MODE])
+    mode = mode[-3:]
     if mode != '666':
+        print "Current file %s's mode is %s." % (rfilename2, mode)
         os.chmod(rfilename2, 0666)
     
     # Auto reduction only 
