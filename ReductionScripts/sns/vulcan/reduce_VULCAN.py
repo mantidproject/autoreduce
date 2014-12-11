@@ -34,6 +34,7 @@
 import sys
 import getopt
 import os
+import stat
 import shutil 
 import xml.etree.ElementTree as ET
 
@@ -626,7 +627,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
         RemoveDuplicateRecord = True)
 
     # Set up the mode 
-    # os.chmod(rfilename2, 0666)
+    os.chmod(rfilename2, 0666)
     
     # Auto reduction only 
     if mode == "auto": 
