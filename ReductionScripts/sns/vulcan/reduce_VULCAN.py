@@ -42,8 +42,6 @@ sys.path.append('/opt/mantidunstable/bin/')
 #sys.path.append("/opt/mantidnightly/bin")
 #sys.path.append("/opt/Mantid/bin")
 
-#sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
-sys.path.append('/home/wzz/Projects/MantidProjects/Mantid2/Code/debug/bin/')
 
 from mantid.simpleapi import *
 import mantid
