@@ -56,7 +56,7 @@ class AutoReduction():
       elog.setSERotOptions('s1')
       elog.setSETempOptions('SampleTemp, sampletemp, SensorB,SensorB340')
       elog.setFilename(self._output_directory+'experiment_log.csv')
-      elog.save_line(autows)  
+      #elog.save_line(autows)  
       
       run = mtd[autows].getRun()
 
