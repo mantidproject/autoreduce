@@ -9,13 +9,14 @@ np.seterr("ignore")
 
 from matplotlib import *
 use("agg")
-from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
 
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 output_file=os.path.split(nexus_file)[-1].replace('.nxs.h5','')
 
 w=Load(nexus_file)
+wi=Integration(w)
 LoadInstrument(w, MonitorList='-1,-2,-3', InstrumentName='CORELLI')
 
 # Do the cross-correlation and save the file.
@@ -39,15 +40,18 @@ ss_where = np.argwhere(ss)
 ss_trim = ss[ystart:ystop, xstart:xstop]
 
 #Plot
+fig = plt.gcf()
+fig.set_size_inches(8.0,16.0)
+plt.subplot(2, 1, 2)
 x=np.arange(-20,20,0.05)
 y=np.arange(-20,20,0.05)
 X,Y=np.meshgrid(x[xstart:xstop],y[ystart:ystop])
 Zm=np.ma.masked_where(ss_trim==0,ss_trim)
-pcolormesh(X,Y,np.log(Zm),shading='gouraud')
-xlabel('Qsample_x')
-ylabel('Qsample_z')
-savefig(output_directory+output_file+'.png',bbox_inches='tight')
-clf()
+plt.pcolormesh(X,Y,np.log(Zm),shading='gouraud')
+plt.xlabel('Qsample_x')
+plt.ylabel('Qsample_z')
+#plt.savefig(output_directory+output_file+'.png',bbox_inches='tight')
+#plt.clf()
 
 #Do the same for the cross-correlated data.
 """
@@ -63,8 +67,26 @@ cc=bin2.getSignalArray()
 cc_trim = cc[ystart:ystop, xstart:xstop]
 
 Zm2=np.ma.masked_where(cc_trim<=0,cc_trim)
-pcolormesh(X,Y,np.log(Zm2),shading='gouraud')
-xlabel('Qsample_x')
-ylabel('Qsample_z')
-savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
+plt.pcolormesh(X,Y,np.log(Zm2),shading='gouraud')
+plt.xlabel('Qsample_x')
+plt.ylabel('Qsample_z')
+plt.savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
+plt.clf()
 """
+
+#plot the instrument view
+rowA=np.transpose(wi.extractY()[0:118784].reshape([464,256]))
+rowB=np.transpose(wi.extractY()[118784:253952].reshape([528,256]))
+rowC=np.transpose(wi.extractY()[253952:372736].reshape([464,256]))
+rowA=np.concatenate((np.zeros([256,32]),rowA,np.zeros([256,32])),axis=1)
+rowC=np.concatenate((np.zeros([256,32]),rowC,np.zeros([256,32])),axis=1)
+inst=np.concatenate((rowA,rowB,rowC),axis=0)
+
+plt.subplot(2, 1, 1)
+x=np.arange(0,528)
+y=np.arange(0,768)
+X,Y=np.meshgrid(x,y)
+instM=np.ma.masked_where(inst==0,inst)
+plt.pcolormesh(X,Y,np.log(instM),shading='gouraud')
+plt.axis('off')
+plt.savefig(output_directory+output_file+'.png',bbox_inches='tight')

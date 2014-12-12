@@ -34,16 +34,17 @@
 import sys
 import getopt
 import os
+import stat
 import shutil 
 import xml.etree.ElementTree as ET
 
 
-sys.path.append('/opt/mantidunstable/bin/')
 #sys.path.append("/opt/mantidnightly/bin")
+sys.path.append('/opt/mantidunstable/bin/')
 #sys.path.append("/opt/Mantid/bin")
 
 #sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
-sys.path.append('/home/wzz/Projects/MantidProjects/Mantid2/Code/debug/bin/')
+#sys.path.append('/Users/wzz/Mantid/Code/debug/bin')
 
 from mantid.simpleapi import *
 import mantid
@@ -626,7 +627,11 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
         RemoveDuplicateRecord = True)
 
     # Set up the mode 
-    os.chmod(rfilename2, 0666)
+    mode = oct(os.stat(rfilename2)[stat.ST_MODE])
+    mode = mode[-3:]
+    if mode != '666' and mode != '676':
+        print "Current file %s's mode is %s." % (rfilename2, mode)
+        os.chmod(rfilename2, 0666)
     
     # Auto reduction only 
     if mode == "auto": 
@@ -726,8 +731,9 @@ def main(argv):
     5. Reduce for GSAS 
     """
     try: 
-        opts, args = getopt.getopt(argv,"hi:o:l:g:G:r:R:d",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2=", "dryrun"]) 
+        opts, args = getopt.getopt(argv,"hdi:o:l:g:G:r:R:",["help", "ifile=","ofile=", "log=", "gsas=", "gsas2=", "record=", "record2=", "dryrun"]) 
     except getopt.GetoptError: 
+        print "Exception: %s" % (str(getopt.GetoptError))
         print 'test.py -i <inputfile> -o <outputfile>' 
         sys.exit(2)
 
@@ -747,7 +753,8 @@ def main(argv):
         mode = "auto"
 
         if len(argv) < 2:
-            print "Inputs: [1. File name with full length] [2. Output directory]"
+            print "Auto   reduction Inputs:   [1. File name with full length] [2. Output directory]"
+            print "Manual reduction Inputs:   --help"
             return
         eventFileAbs = argv[0]
         outputDir = argv[1]
@@ -768,12 +775,15 @@ def main(argv):
         for opt, arg in opts:
             if opt in ("-h", "--help"):
                 # Help
-                print "%s -i <inputfile> -o <outputdirectory> -a <autorecrddir> -l <0/logdir> -g <0/gsasdir> " % (sys.argv[0])
-                print "-l: generate sample log files."
-                print "-g: generate GSAS file."
-                print "-G: copy GSAS file to another directory with file mode 664."
-                print "-r: experiment record file (writable only to auot reduction service)." 
-                print "-R: experiment record file (can be modified by manual reduction)." 
+                print "%s -i <inputfile> -o <outputdirectory> ... ..." % (sys.argv[0])
+                print "-i/ifile  : mandatory input NeXus file name. "
+                print "-o/ofile  : mandatory directory for output files. "
+                print "-l/log    : optional directory for sample log files. "
+                print "-g/gsas   : optional directory for GSAS file owned by owner. "
+                print "-G/gsas2  : optional directory to copy GSAS file to  with file mode 664."
+                print "-r/record : optional experiment record file name (writable only to auot reduction service)." 
+                print "-R/record2: experiment record file (can be modified by manual reduction)." 
+                print "-d/dry    : dry run to check output status, file names and directories."
                 return
             elif opt in ("-i", "--ifile"):
                 # Input NeXus file
@@ -854,7 +864,7 @@ def main(argv):
     print "Input NeXus file    : %s" % (eventFileAbs)
     print "Output directory    : %s" % (outputDir)
     print "Log directory       : %s" % (str(logDir))
-    print "GSAS  directory     : %s" % (str(gsasDir))
+    print "GSAS  directory     : %s;  If it is None, no GSAS will be written." % (str(gsasDir))
     print "GSAS2 directory     : %s" % (str(gsas2Dir))
     print "Record file name    : %s" % (str(recordFileName))
     print "Record(2) file name : %s" % (str(record2FileName))
@@ -916,36 +926,3 @@ def main(argv):
 if __name__ == "__main__":
     import sys
     main(sys.argv[1:])
-
-#    # FIXMENOT
-#    # Write experiment log (Record.txt)
-#    if len(argv) >= 4:
-#	rfilenamebase = argv[3]
-#	rfilename = "/SNS/VULCAN/IPTS-%d/shared/%s" % (ipts, rfilenamebase)
-#    else:
-#	rfilename = "/SNS/VULCAN/IPTS-%d/shared/AutoRecord_Manual.txt" % (ipts)
-#	#rfilename = "/SNS/VULCAN/IPTS-%d/shared/auto_test/AutoRecord.txt" % (ipts)
-
-#        try: 
-#            pngfilename = os.path.join(outputDir, 'VULCAN_'+str(runNumber)+'.png')
-#            SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=outputDir+"VULCAN_"+str(runNumber)+'.png',  YLabel='Intensity')
-#        except ValueError as err:
-#    	print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
-
-#    # Reduce GSAS file
-#    # FIXMENOT
-#    outputDir = changeOutputDir(origOutputDir, "autoreduce/binned")
-#    #outputDir = changeOutputDir(origOutputDir, "auto_test/binned")
-#    gsasfilename = saveGSASFile(ipts, runNumber, outputDir)
-#    saveDir2 = changeOutputDir(origOutputDir, "binned_data")
-#    copyFile(gsasfilename, saveDir2)
-    
-
-#    # FIXMENOT
-#    outputDir = origOutputDir
-#    #outputDir = changeOutputDir(origOutputDir, "auto_test")
-#    try: 
-#	SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=outputDir+"VULCAN_"+str(runNumber)+'.png',  
-#	    YLabel='Intensity')
-#    except ValueError as err:
-#	print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
