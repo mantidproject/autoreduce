@@ -41,7 +41,7 @@ ss_trim = ss[ystart:ystop, xstart:xstop]
 
 #Plot
 fig = plt.gcf()
-fig.set_size_inches(8.0,16.0)
+fig.set_size_inches(6.0,12.0)
 plt.subplot(2, 1, 2)
 x=np.arange(-20,20,0.05)
 y=np.arange(-20,20,0.05)
