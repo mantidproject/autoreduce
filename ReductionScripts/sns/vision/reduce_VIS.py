@@ -20,6 +20,7 @@ Interface = 0
 if Interface == 0:
     sys.path.append("/opt/Mantid/bin")
     from mantid.simpleapi import *
+    from mantid.api import *
     NexusFile = os.path.abspath(sys.argv[1])
     FileName = NexusFile.split(os.sep)[-1]
     IPTS = NexusFile.split(os.sep)[-3]
