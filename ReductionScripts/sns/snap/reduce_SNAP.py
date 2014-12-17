@@ -52,7 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.003,4.2'
+binning='0.4,-0.0025,4.2'
 
 #Output should be one of the following strings :
 # 'None' # 'All' outputs both Fullprof and GSAS 
@@ -118,8 +118,8 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 8 
-	smooth_range = 4
+	window = 5 
+	smooth_range = 5
 				
 	peak_clip_WS = CloneWorkspace('ows')
 	n_histo = peak_clip_WS.getNumberHistograms()
