@@ -41,7 +41,8 @@ def _scale_data_sets(workspace_list):
     for i in range(n_data_sets):
         d = s.get_data_set(i)
         xmin, xmax = d.get_skipped_range()
-
+        scale = d.get_skipped_range()
+        print i, xmin, xmax, scale
         d.apply_scale(xmin, xmax)
 
     # Create combined output
