@@ -241,7 +241,7 @@ except:
 reduction_settings = {'1': {"signal": [150, 168], "background": [147, 168], "norm":119688, "norm_peak": [152,163], "norm_bck": [149,167], "norm_lowres": [98,158], "TOF": [50407,62821]},
                       '2': {"signal": [152, 170], "background": [149, 173], "norm":119689, "norm_peak": [152, 163], "norm_bck": [149,167], "norm_lowres": [98,158], "TOF": [40834,53450]},
                       '3': {"signal": [152, 172], "background": [149, 175], "norm":119690, "norm_peak": [152, 163], "norm_bck": [149,167], "norm_lowres": [98,158], "TOF": [29604,42085]},
-                      '4': {"signal": [153, 167], "background": [150, 170], "norm":119691, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [18364,31085]},
+                      '4': {"signal": [153, 167], "background": [150, 170], "norm":119691, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [112,141], "TOF": [18364,31085]},
                       '5': {"signal": [155, 165], "background": [146, 174], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
                       '6': {"signal": [153, 165], "background": [145, 172], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
                       '7': {"signal": [154, 164], "background": [147, 171], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
