@@ -197,7 +197,7 @@ try:
 except:
     pass
 
-reduction_settings = {1: {"signal": [153, 164], "background": [150, 167]},
+reduction_settings = {1: {"signal": [150, 168], "background": [147, 168]},
                       2: {"signal": [153, 164], "background": [150, 167]},
                       3: {"signal": [153, 164], "background": [150, 167]},
                       4: {"signal": [153, 164], "background": [150, 167]},
