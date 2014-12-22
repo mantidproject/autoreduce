@@ -40,10 +40,6 @@ def _scale_data_sets(workspace_list):
     for i in range(n_data_sets):
         d = s.get_data_set(i)
         xmin, xmax = d.get_range()
-        if i>0:
-            xmin = q_min[i-1]
-        if i<n_data_sets-1:
-            xmax = q_max[i]
 
         d.apply_scale(xmin, xmax)
 
