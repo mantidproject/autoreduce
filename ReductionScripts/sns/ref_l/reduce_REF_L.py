@@ -276,7 +276,7 @@ RefLReduction(RunNumbers=[int(runNumber)],
               AngleOffsetError=0.001,
               ScalingFactorFile='/SNS/REF_L/IPTS-11601/shared/directBeamDatabaseFall2014_after_16DEC.cfg',
               SlitsWidthFlag=True,
-              OutputWorkspace='reflectivity_%s' % runNumber)
+              OutputWorkspace='reflectivity_%sts_%s' % (sequence_number, runNumber))
 
 n_ts = 0
 output_ws = None
