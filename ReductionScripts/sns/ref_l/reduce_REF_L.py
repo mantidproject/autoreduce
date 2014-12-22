@@ -69,6 +69,7 @@ def _produce_y_of_same_x_(first_run_of_set):
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
 
+    print ws_list
     # Get the list of scaled histos
     for ws in ws_list:
         if ws.endswith("ts"):
