@@ -42,15 +42,9 @@ def _scale_data_sets(workspace_list):
 
 
         ref_data = item.get_user_data(ref_pol)
-        if ref_data is None:
-            QtGui.QMessageBox.warning(self,
-                "Invalid choice of reference cross-section",
-                "The selected cross-section is empty, please select another one")
-            return
         s.append(ref_data)
 
     if s.size()==0:
-        Logger("Stitcher").notice("No data to scale")
         return
 
     s.set_reference(refID)
