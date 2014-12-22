@@ -26,7 +26,7 @@ def _scale_data_sets(workspace_list):
     refID = 0
 
     # Get reference cross-section
-    ref_pol = ReflData.OFF_OFF
+    ref_pol = 0
 
     for i in range(len(workspace_list)):
         item = workspace_list[i]
@@ -51,7 +51,7 @@ def _scale_data_sets(workspace_list):
     s.set_reference(refID)
     s.compute()
 
-    for item in self._workspace_list:
+    for item in workspace_list:
         data = item.get_user_data(ref_pol)
         xmin, xmax = item.get_common_range()
         data.apply_scale(xmin=xmin, xmax=xmax)
