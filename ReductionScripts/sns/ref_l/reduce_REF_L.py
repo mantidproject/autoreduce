@@ -46,9 +46,11 @@ def _create_ascii_clicked():
             _line += ' ' + _precision
             text.append(_line)
 
-    f=open(file_name,'w')
+    file_path = os.path.join(outputDir,file_name)
+    f=open(file_path,'w')
     for _line in text:
         f.write(_line + '\n')
+    f.close()
 
 def _produce_y_of_same_x_(isUsingLessErrorValue):
     """
