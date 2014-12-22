@@ -19,7 +19,7 @@ from mantid.simpleapi import *
 
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
-    default_file_name = 'REFL_' + runNumber + '_combined_data.txt'
+    default_file_name = 'REFL_' + first_run_of_set + '_combined_data.txt'
 
     dq0 = 0.0009
     dq_over_q = 0.045
