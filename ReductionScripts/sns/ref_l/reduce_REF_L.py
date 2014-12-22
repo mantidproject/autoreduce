@@ -62,7 +62,6 @@ def _produce_y_of_same_x_(isUsingLessErrorValue):
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
 
-    print ws_list
     # Get the list of scaled histos
     for ws in ws_list:
         if ws.endswith("ts"):
@@ -233,6 +232,6 @@ for ws in AnalysisDataService.getObjectNames():
 if n_ts>1:
     print "ERROR: more than one reduced output"
 
-SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_auto.nxs" % first_run_of_set), InputWorkspace=output_ws)
+SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_auto.nxs" % (first_run_of_set, sequence_number)), InputWorkspace=output_ws)
 _create_ascii_clicked()
 
