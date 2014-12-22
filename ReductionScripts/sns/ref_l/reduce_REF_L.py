@@ -33,7 +33,7 @@ def _scale_data_sets(workspace_list):
     if s.size()==0:
         return
 
-    s.set_reference(refID)
+    s.set_reference(0)
     s.compute()
 
     for i in range(len(workspace_list)):
@@ -47,14 +47,14 @@ def _scale_data_sets(workspace_list):
         d.apply_scale(xmin, xmax)
 
     # Create combined output
-    if output_workspace is not None:
-        s.get_scaled_data(workspace=output_workspace)
+    #if output_workspace is not None:
+    #    s.get_scaled_data(workspace=output_workspace)
 
     # Save output to a file
-    if save_output:
-        if output_workspace is None:
-            output_workspace = "combined_scaled_Iq"
-        s.save_combined(output_workspace+".xml", as_canSAS=True, workspace=output_workspace)
+    #if save_output:
+    #    if output_workspace is None:
+    #        output_workspace = "combined_scaled_Iq"
+    #    s.save_combined(output_workspace+".xml", as_canSAS=True, workspace=output_workspace)
 
 
 def _create_ascii_clicked(first_run_of_set):
@@ -114,6 +114,8 @@ def _produce_y_of_same_x_(first_run_of_set):
 
     _scale_data_sets(scaled_ws_list)
     
+    ws_list = AnalysisDataService.getObjectNames()
+    print ws_list
     scaled_ws_list = []
     for ws in ws_list:
         if ws.endswith("histo"):
