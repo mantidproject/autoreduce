@@ -42,9 +42,8 @@ def _create_ascii_clicked():
             _line = str(x_axis[i])
             _line += ' ' + str(y_axis[i])
             _line += ' ' + str(e_axis[i])
-            if _with_4th_flag:
-                _precision = str(dq0 + dq_over_q * x_axis[i])
-                _line += ' ' + _precision
+            _precision = str(dq0 + dq_over_q * x_axis[i])
+            _line += ' ' + _precision
             text.append(_line)
 
     f=open(file_name,'w')
@@ -56,7 +55,7 @@ def _produce_y_of_same_x_(isUsingLessErrorValue):
     2 y values sharing the same x-axis will be average using
     the weighted mean
     """
-
+    from numpy import NAN
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
 
