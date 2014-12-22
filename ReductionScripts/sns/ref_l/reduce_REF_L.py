@@ -43,19 +43,10 @@ def _scale_data_sets(workspace_list):
         d = s.get_data_set(i)
         xmin, xmax = d.get_skipped_range()
         scale = d.get_scale()
-        print i, xmin, xmax, scale
         d.apply_scale(xmin, xmax)
 
     # Create combined output
-    #if output_workspace is not None:
-    #    s.get_scaled_data(workspace=output_workspace)
-
-    # Save output to a file
-    #if save_output:
-    #    if output_workspace is None:
-    #        output_workspace = "combined_scaled_Iq"
-    #    s.save_combined(output_workspace+".xml", as_canSAS=True, workspace=output_workspace)
-
+    s.get_scaled_data(workspace="reflictivity_combined")
 
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
@@ -294,4 +285,8 @@ if n_ts>1:
 
 SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_of_set, sequence_number, runNumber)), InputWorkspace=output_ws)
 _create_ascii_clicked(first_run_of_set)
+
+# Produce image on last job
+if sequence_number==7:
+    SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=outputDir+"REFL_"+runNumber+'.png', YLabel='Intensity')
 
