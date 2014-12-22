@@ -288,5 +288,11 @@ _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
 #if sequence_number==7:
+y_data = mtd['reflictivity_combined'].dataY(0)
+for i in range(len(y_data)):
+    if y_data[i]>0:
+        y_data[i] = math.log(y_data[i])
+    else:
+        y_data[i] = 0.0
 SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
