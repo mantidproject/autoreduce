@@ -29,6 +29,7 @@ def _scale_data_sets(workspace_list):
         item = workspace_list[i]
         data = DataSet(item)
         data.load(True, False)
+
         s.append(data)
 
     if s.size()==0:
