@@ -110,7 +110,8 @@ def _produce_y_of_same_x_(first_run_of_set):
     skip_index = 0
     point_to_skip = 3
     # Add in the other histos, averaging the overlaps
-    for i in range(1, len(scaled_ws_list)):
+    for i in range(1, len(scaled_ws_list)): 
+        print  scaled_ws_list[i]
         skip_point = True
         can_skip_last_point = False
 
