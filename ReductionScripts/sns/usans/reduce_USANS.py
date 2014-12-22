@@ -24,7 +24,9 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
+    load_monitors = False
+
+    LoadEventNexus(filename, LoadMonitors=load_monitors, OutputWorkspace="USANS")
     w=mtd["USANS"]
     run_number = w.getRunNumber()
     # Produce ASCII data
@@ -33,11 +35,10 @@ if __name__ == "__main__":
     file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
-    #Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
-    #file_path = os.path.join(outdir, "USANS_%s_monitor.txt" % run_number)
-    #SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
- 
-
+    if load_monitors:
+        Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
+        file_path = os.path.join(outdir, "USANS_%s_monitor.txt" % run_number)
+        SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
 
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
