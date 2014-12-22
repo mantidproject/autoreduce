@@ -29,7 +29,7 @@ def _create_ascii_clicked():
     text = [line1, line2, line3]
 
     #using mean or value with less error
-    wks_file_name = self._produce_y_of_same_x_(True)
+    wks_file_name = _produce_y_of_same_x_(True)
 
     x_axis = mtd[wks_file_name].readX(0)[:]
     y_axis = mtd[wks_file_name].readY(0)[:]
