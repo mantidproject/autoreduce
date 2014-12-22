@@ -24,7 +24,8 @@ def _scale_data_sets(workspace_list):
     """
     s = Stitcher()
 
-    for i in range(len(workspace_list)):
+    n_data_sets = len(workspace_list)
+    for i in range(n_data_sets):
         item = workspace_list[i]
         data = DataSet(item)
         data.load(True, True)
@@ -36,7 +37,7 @@ def _scale_data_sets(workspace_list):
     s.set_reference(0)
     s.compute()
 
-    for i in range(len(workspace_list)):
+    for i in range(n_data_sets):
         d = s.get_data_set(i)
         xmin, xmax = d.get_range()
         if i>0:
