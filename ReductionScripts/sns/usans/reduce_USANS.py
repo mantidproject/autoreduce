@@ -24,7 +24,7 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+    LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
     w=mtd["USANS"]
     run_number = w.getRunNumber()
     # Produce ASCII data
