@@ -21,8 +21,8 @@ def _create_ascii_clicked():
     #get default output file name
     default_file_name = 'REFL_' + runNumber + '_combined_data.txt'
 
-    dq0 = float(self._summary.dq0.text())
-    dq_over_q = float(0.045)
+    dq0 = 0.0009
+    dq_over_q = 0.045
     line1 = '#dQ0[1/Angstrom]=' + str(dq0)
     line2 = '#dQ/Q=' + str(dq_over_q)
     line3 = '#Q(1/Angstrom) R delta_R Precision'
