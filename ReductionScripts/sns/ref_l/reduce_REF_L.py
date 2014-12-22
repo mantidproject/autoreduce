@@ -233,6 +233,6 @@ for ws in AnalysisDataService.getObjectNames():
 if n_ts>1:
     print "ERROR: more than one reduced output"
 
-SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_auto.txt" % first_run_of_set), InputWorkspace=output_ws)
+SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_auto.nxs" % first_run_of_set), InputWorkspace=output_ws)
 _create_ascii_clicked()
 
