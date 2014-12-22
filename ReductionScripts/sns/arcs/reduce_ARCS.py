@@ -189,7 +189,6 @@ if __name__ == "__main__":
         y=arange(ymin,ymax,ystep)[0:100]
         X,Y=meshgrid(x,y)
 
-
         MD=ConvertToMD('__OWS',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
         ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
         ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
