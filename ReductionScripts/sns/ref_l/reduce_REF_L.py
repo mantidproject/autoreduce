@@ -75,7 +75,7 @@ def _produce_y_of_same_x_(first_run_of_set):
         if ws.endswith("ts"):
             scaled_ws_list.append(ws)
 
-    print scaled_ws_list
+    print "---->", scaled_ws_list
     # get binning parameters
     _from_q = 0.005
     _bin_size = 0.01
