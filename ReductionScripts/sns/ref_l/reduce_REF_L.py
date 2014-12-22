@@ -47,6 +47,7 @@ def _create_ascii_clicked():
             text.append(_line)
 
     file_path = os.path.join(outputDir,file_name)
+    print file_path
     f=open(file_path,'w')
     for _line in text:
         f.write(_line + '\n')
@@ -222,15 +223,6 @@ RefLReduction(RunNumbers=[int(runNumber)],
               ScalingFactorFile='/SNS/REF_L/IPTS-11601/shared/directBeamDatabaseFall2014_after_16DEC.cfg',
               SlitsWidthFlag=True,
               OutputWorkspace='reflectivity_%s' % runNumber)
-
-
-file_name = 'reflectivity_'+runNumber+'.txt'
-file_path = os.path.join(outputDir,file_name)
-SaveAscii(Filename=file_path,
-          InputWorkspace='reflectivity_'+runNumber,
-          WriteSpectrumID=False,
-          Separator='Tab',
-          CommentIndicator='# ')
 
 _create_ascii_clicked()
 
