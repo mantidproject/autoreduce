@@ -109,12 +109,18 @@ def _produce_y_of_same_x_(first_run_of_set):
 
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
-
-    print ws_list
-    # Get the list of scaled histos
     for ws in ws_list:
         if ws.endswith("ts"):
             scaled_ws_list.append(ws)
+
+    _scale_data_sets(scaled_ws_list)
+    
+    scaled_ws_list = []
+    for ws in ws_list:
+        if ws.endswith("histo"):
+            scaled_ws_list.append(ws)
+
+    
 
     print "---->", scaled_ws_list
     # get binning parameters
