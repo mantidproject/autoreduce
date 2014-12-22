@@ -287,6 +287,6 @@ SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_
 _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
-if sequence_number==7:
-    SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=outputDir+"REFL_"+runNumber+'.png', YLabel='Intensity')
+#if sequence_number==7:
+SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=outputDir+"REFL_"+runNumber+'.png', YLabel='Intensity')
 
