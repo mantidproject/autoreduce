@@ -23,14 +23,10 @@ def _scale_data_sets(workspace_list):
         Perform auto-scaling
     """
     s = Stitcher()
-    refID = 0
-
-    # Get reference cross-section
-    ref_pol = 0
 
     for i in range(len(workspace_list)):
         item = workspace_list[i]
-        data = DataSet(item.name)
+        data = DataSet(item)
         data.load(True, True)
         item.set_user_data(data)
 
