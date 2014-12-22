@@ -17,6 +17,67 @@ runNumber = eventFile.split('_')[2]
 import mantid
 from mantid.simpleapi import *
 
+def _scale_data_sets():
+    """
+        Perform auto-scaling
+    """
+    scale_to_unity = self._content.scale_to_one_chk.isChecked()
+    min_q_unity = float(self._content.min_q_unity_edit.text())
+    max_q_unity = float(self._content.max_q_unity_edit.text())
+
+    s = Stitcher()
+    refID = 0
+
+    # Get reference cross-section
+    ref_pol = ReflData.OFF_OFF
+    if self._content.off_on_radio.isChecked():
+        ref_pol = ReflData.OFF_ON
+    elif self._content.on_off_radio.isChecked():
+        ref_pol = ReflData.ON_OFF
+    elif self._content.on_on_radio.isChecked():
+        ref_pol = ReflData.ON_ON
+
+    for i in range(len(self._workspace_list)):
+        item = self._workspace_list[i]
+        data = DataSet(item.name)
+        data.load(True, True)
+        item.set_user_data(data)
+
+        # Set skipped points for all cross-section
+        xmin, xmax = item.update_skipped()
+
+        if item.is_selected():
+            data.set_scale(item.get_scale())
+            refID = i
+
+            if scale_to_unity:
+                scale = data.scale_to_unity(max(xmin,min_q_unity), min(xmax,max_q_unity))
+                data.set_scale(scale)
+                item.set_scale(scale)
+
+        ref_data = item.get_user_data(ref_pol)
+        if ref_data is None:
+            QtGui.QMessageBox.warning(self,
+                "Invalid choice of reference cross-section",
+                "The selected cross-section is empty, please select another one")
+            return
+        s.append(ref_data)
+
+    if s.size()==0:
+        Logger("Stitcher").notice("No data to scale")
+        return
+
+    s.set_reference(refID)
+    s.compute()
+
+    for item in self._workspace_list:
+        data = item.get_user_data(ref_pol)
+        xmin, xmax = item.get_common_range()
+        data.apply_scale(xmin=xmin, xmax=xmax)
+        scale = data.get_scale()
+        item.set_scale(scale)
+
+
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
     default_file_name = 'REFL_' + first_run_of_set + '_combined_data.txt'
