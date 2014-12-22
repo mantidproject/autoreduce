@@ -17,28 +17,18 @@ runNumber = eventFile.split('_')[2]
 import mantid
 from mantid.simpleapi import *
 
-def _scale_data_sets():
+def _scale_data_sets(workspace_list):
     """
         Perform auto-scaling
     """
-    scale_to_unity = self._content.scale_to_one_chk.isChecked()
-    min_q_unity = float(self._content.min_q_unity_edit.text())
-    max_q_unity = float(self._content.max_q_unity_edit.text())
-
     s = Stitcher()
     refID = 0
 
     # Get reference cross-section
     ref_pol = ReflData.OFF_OFF
-    if self._content.off_on_radio.isChecked():
-        ref_pol = ReflData.OFF_ON
-    elif self._content.on_off_radio.isChecked():
-        ref_pol = ReflData.ON_OFF
-    elif self._content.on_on_radio.isChecked():
-        ref_pol = ReflData.ON_ON
 
-    for i in range(len(self._workspace_list)):
-        item = self._workspace_list[i]
+    for i in range(len(workspace_list)):
+        item = workspace_list[i]
         data = DataSet(item.name)
         data.load(True, True)
         item.set_user_data(data)
@@ -50,10 +40,6 @@ def _scale_data_sets():
             data.set_scale(item.get_scale())
             refID = i
 
-            if scale_to_unity:
-                scale = data.scale_to_unity(max(xmin,min_q_unity), min(xmax,max_q_unity))
-                data.set_scale(scale)
-                item.set_scale(scale)
 
         ref_data = item.get_user_data(ref_pol)
         if ref_data is None:
