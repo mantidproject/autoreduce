@@ -28,18 +28,7 @@ def _scale_data_sets(workspace_list):
         item = workspace_list[i]
         data = DataSet(item)
         data.load(True, True)
-        item.set_user_data(data)
-
-        # Set skipped points for all cross-section
-        xmin, xmax = item.update_skipped()
-
-        if item.is_selected():
-            data.set_scale(item.get_scale())
-            refID = i
-
-
-        ref_data = item.get_user_data(ref_pol)
-        s.append(ref_data)
+        s.append(data)
 
     if s.size()==0:
         return
