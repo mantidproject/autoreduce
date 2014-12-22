@@ -36,13 +36,13 @@ def _scale_data_sets(workspace_list):
     s.set_reference(refID)
     s.compute()
 
-    for item in workspace_list:
-        data = item.get_user_data(ref_pol)
-        xmin, xmax = item.get_common_range()
-        data.apply_scale(xmin=xmin, xmax=xmax)
-        scale = data.get_scale()
-        item.set_scale(scale)
-
+    for i in range(len(workspace_list)):
+        d = s.get_data_set(i)
+        xmin, xmax = d.get_range()
+        if i>0:
+            xmin = q_min[i-1]
+        if i<n_data_sets-1:
+            xmax = q_max[i]
 
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
