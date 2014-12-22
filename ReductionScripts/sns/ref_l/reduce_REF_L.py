@@ -62,7 +62,7 @@ def _produce_y_of_same_x_(isUsingLessErrorValue):
 
     # Get the list of scaled histos
     for ws in ws_list:
-        if ws.endswith("_scaled"):
+        if ws.endswith("_ts"):
             scaled_ws_list.append(ws)
 
     # get binning parameters
