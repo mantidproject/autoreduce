@@ -197,17 +197,17 @@ try:
 except:
     pass
 
-reduction_settings = {1: {"signal": [150, 168], "background": [147, 168]},
-                      2: {"signal": [152, 170], "background": [149, 173]},
-                      3: {"signal": [152, 172], "background": [149, 175]},
-                      4: {"signal": [153, 167], "background": [150, 170]},
-                      5: {"signal": [155, 165], "background": [146, 174]},
-                      6: {"signal": [153, 165], "background": [145, 172]},
-                      7: {"signal": [154, 164], "background": [147, 171]}
+reduction_settings = {'1': {"signal": [150, 168], "background": [147, 168]},
+                      '2': {"signal": [152, 170], "background": [149, 173]},
+                      '3': {"signal": [152, 172], "background": [149, 175]},
+                      '4': {"signal": [153, 167], "background": [150, 170]},
+                      '5': {"signal": [155, 165], "background": [146, 174]},
+                      '6': {"signal": [153, 165], "background": [145, 172]},
+                      '7': {"signal": [154, 164], "background": [147, 171]}
 }
 
 if sequence_number not in reduction_settings:
-    sequence_number = 1
+    sequence_number = '1'
 
 RefLReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=119688,
