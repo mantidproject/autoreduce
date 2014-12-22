@@ -115,7 +115,7 @@ def _produce_y_of_same_x_(first_run_of_set):
     print ws_list
     scaled_ws_list = []
     for ws in ws_list:
-        if ws.endswith("histo"):
+        if ws.endswith("scaled"):
             scaled_ws_list.append(ws)
 
     
