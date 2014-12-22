@@ -38,6 +38,7 @@ def _scale_data_sets(workspace_list):
     s.set_reference(0)
     s.compute()
 
+    print "NDATASETS", n_data_sets
     for i in range(n_data_sets):
         d = s.get_data_set(i)
         xmin, xmax = d.get_skipped_range()
