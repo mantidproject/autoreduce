@@ -44,6 +44,19 @@ def _scale_data_sets(workspace_list):
         if i<n_data_sets-1:
             xmax = q_max[i]
 
+        d.apply_scale(xmin, xmax)
+
+    # Create combined output
+    if output_workspace is not None:
+        s.get_scaled_data(workspace=output_workspace)
+
+    # Save output to a file
+    if save_output:
+        if output_workspace is None:
+            output_workspace = "combined_scaled_Iq"
+        s.save_combined(output_workspace+".xml", as_canSAS=True, workspace=output_workspace)
+
+
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
     default_file_name = 'REFL_' + first_run_of_set + '_combined_data.txt'
