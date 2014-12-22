@@ -28,16 +28,18 @@ if __name__ == "__main__":
 
     LoadEventNexus(filename, LoadMonitors=load_monitors, OutputWorkspace="USANS")
     w=mtd["USANS"]
-    run_number = w.getRunNumber()
+    file_prefix = os.path.split(filename)[1].split('.')[0]
+
+
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
-    file_path = os.path.join(outdir, "USANS_%s_detector.txt" % run_number)
+    file_path = os.path.join(outdir, "%s_detector.txt" % file_prefix)
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
     if load_monitors:
         Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
-        file_path = os.path.join(outdir, "USANS_%s_monitor.txt" % run_number)
+        file_path = os.path.join(outdir, "%s_monitor.txt" % file_prefix)
         SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
 
     wi=Integration(w)
@@ -51,11 +53,7 @@ if __name__ == "__main__":
     xlabel('Tube')
     ylabel('Pixel')
     
-    
-    if run_number==0:
-        image_file = os.path.split(filename)[1].split('.')[0]
-        image_file += "_autoreduced.png"
-    else:
-        image_file = "USANS_%s_autoreduced.png" % run_number
+
+    image_file = "%s_autoreduced.png" % file_prefix
     image_path = os.path.join(outdir, image_file)
     savefig(str(image_path),bbox_inches='tight')
