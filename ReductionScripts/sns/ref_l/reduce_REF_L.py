@@ -60,8 +60,11 @@ def _produce_y_of_same_x_(first_run_of_set):
     """
     from numpy import NAN
     isUsingLessErrorValue = True
+    n_points = 0
     for f in os.listdir(outputDir):
-        if f 
+        if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("auto.nxs"):
+            LoadNexus(Filename=os.path.join(outputDir, f), OutputWorkspace="reflectivity_%sts" % n_points)
+            n_points += 1
 
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
