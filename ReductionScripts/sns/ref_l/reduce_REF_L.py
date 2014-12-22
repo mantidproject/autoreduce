@@ -46,7 +46,7 @@ def _create_ascii_clicked():
             _line += ' ' + _precision
             text.append(_line)
 
-    file_path = os.path.join(outputDir,file_name)
+    file_path = os.path.join(outputDir, default_file_name)
     print file_path
     f=open(file_path,'w')
     for _line in text:
@@ -224,5 +224,15 @@ RefLReduction(RunNumbers=[int(runNumber)],
               SlitsWidthFlag=True,
               OutputWorkspace='reflectivity_%s' % runNumber)
 
+n_ts = 0
+output_ws = None
+for ws in AnalysisDataService.getObjectNames():
+    if ws.endswith("ts"):
+        output_ws = ws
+        n_ts += 1
+if n_ts>1:
+    print "ERROR: more than one reduced output"
+
+SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_auto.txt" % first_run_of_set), InputWorkspace=output_ws)
 _create_ascii_clicked()
 
