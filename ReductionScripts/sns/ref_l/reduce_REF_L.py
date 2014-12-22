@@ -104,7 +104,7 @@ def _produce_y_of_same_x_(first_run_of_set):
     for f in os.listdir(outputDir):
         if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("auto.nxs") and not f.endswith("%s_auto.nxs" % runNumber):
             ws_name = f.replace("_auto.nxs", "")
-            ws_name = f.replace("REFL", "")
+            ws_name = f.replace("REFL_", "")
             LoadNexus(Filename=os.path.join(outputDir, f), OutputWorkspace="reflectivity_%sts" % ws_name)
             n_points += 1
 
