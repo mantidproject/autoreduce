@@ -17,7 +17,7 @@ runNumber = eventFile.split('_')[2]
 import mantid
 from mantid.simpleapi import *
 
-def _create_ascii_clicked():
+def _create_ascii_clicked(first_run_of_set):
     #get default output file name
     default_file_name = 'REFL_' + runNumber + '_combined_data.txt'
 
@@ -29,7 +29,7 @@ def _create_ascii_clicked():
     text = [line1, line2, line3]
 
     #using mean or value with less error
-    wks_file_name = _produce_y_of_same_x_(True)
+    wks_file_name = _produce_y_of_same_x_(first_run_of_set)
 
     x_axis = mtd[wks_file_name].readX(0)[:]
     y_axis = mtd[wks_file_name].readY(0)[:]
@@ -53,12 +53,16 @@ def _create_ascii_clicked():
         f.write(_line + '\n')
     f.close()
 
-def _produce_y_of_same_x_(isUsingLessErrorValue):
+def _produce_y_of_same_x_(first_run_of_set):
     """
     2 y values sharing the same x-axis will be average using
     the weighted mean
     """
     from numpy import NAN
+    isUsingLessErrorValue = True
+    for f in os.listdir(outputDir):
+        if f 
+
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
 
@@ -233,5 +237,5 @@ if n_ts>1:
     print "ERROR: more than one reduced output"
 
 SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_auto.nxs" % (first_run_of_set, sequence_number)), InputWorkspace=output_ws)
-_create_ascii_clicked()
+_create_ascii_clicked(first_run_of_set)
 
