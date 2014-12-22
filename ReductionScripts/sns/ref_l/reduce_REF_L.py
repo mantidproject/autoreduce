@@ -288,5 +288,5 @@ _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
 #if sequence_number==7:
-SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REFL_"+runNumber+'.png'), YLabel='Intensity')
+SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
