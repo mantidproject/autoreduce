@@ -69,7 +69,7 @@ def _produce_y_of_same_x_(isUsingLessErrorValue):
     _from_q = 0.005
     _bin_size = 0.01
     _bin_max = str(2)
-    binning_parameters = _from_q + ',-' + _bin_size + ',' + _bin_max
+    binning_parameters = str(_from_q) + ',-' + str(_bin_size) + ',' + str(_bin_max)
 
     file_number = 0
     for ws in scaled_ws_list:
