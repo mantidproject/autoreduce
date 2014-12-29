@@ -258,7 +258,8 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
         InputWorkspace = logwsname,
         OutputFilename = outputfilename,
         SampleLogNames = samplelognames,
-        WriteHeaderFile = True,
+        WriteHeaderFile = True, 
+	TimeZone = "UTC",
         Header = headstr)
 
 
