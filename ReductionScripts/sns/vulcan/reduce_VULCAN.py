@@ -621,7 +621,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
         SampleLogNames     = samplenames, 
         SampleLogTitles    = sampletitles, 
         SampleLogOperation = sampleoperations, 
-        TimeZone           = "America/New_York", 
+        TimeZone           = "UTC", 
         OverrideLogValue   = patchlist, 
         OrderByTitle       = 'RUN',
         RemoveDuplicateRecord = True)
