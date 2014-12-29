@@ -108,7 +108,9 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
     try:    
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
-            SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"])
+            SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
+	    TimeZone = "UTC"
+	)
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
@@ -168,6 +170,7 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
             OutputFilename = outputfilename,
             SampleLogNames = samplelognames,
             WriteHeaderFile = True,
+	    TimeZone = "UTC",
             Header = headstr)
     except RuntimeError:
         print "Error in exporting Generic DAQ log for run %s. " % (str(runNumber))
