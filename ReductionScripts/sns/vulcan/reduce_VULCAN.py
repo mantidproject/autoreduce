@@ -267,7 +267,7 @@ RecordBase = [
         ("Title",           "run_title", None),
         ("Notes",           "file_notes", None),
         ("Sample",          "Sample", None), # stored on sample object
-        ("StartTime",       "run_start", "localtime"),
+        ("StartTime",       "run_start", "time"),
         ("Duration",        "duration", None),
         ("ProtonCharge",    "proton_charge", "sum"),
         ("TotalCounts",     "das.counts", "sum"),
