@@ -738,7 +738,7 @@ def main(argv):
     except getopt.GetoptError: 
         print "Exception: %s" % (str(getopt.GetoptError))
         print 'test.py -i <inputfile> -o <outputfile>' 
-        sys.exit(2)
+	return
 
     # Initialize 
     eventFileAbs = None
