@@ -109,8 +109,7 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
             SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
-	    TimeZone = "UTC"
-	)
+	    TimeZone = "UTC")
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
@@ -651,7 +650,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = "UTC',
+            TimeZone           = "UTC",
             OverrideLogValue   = patchlist, 
             OrderByTitle       = 'RUN', 
             RemoveDuplicateRecord = True)
