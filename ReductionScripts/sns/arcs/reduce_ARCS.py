@@ -87,9 +87,9 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-     # Updated vanadium run 2014-11-22 using new calibration data scheme - DLA
-    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_53113_event.nxs"
-    ProcessedVanadium='van53113.nxs'
+     # Updated vanadium run 2014-12-15 - DLA
+    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_55205_event.nxs"
+    ProcessedVanadium='van55205.nxs'
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
@@ -188,7 +188,6 @@ if __name__ == "__main__":
         x=arange(xmin,xmax,xstep)[0:100]
         y=arange(ymin,ymax,ystep)[0:100]
         X,Y=meshgrid(x,y)
-
 
         MD=ConvertToMD('__OWS',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
         ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'

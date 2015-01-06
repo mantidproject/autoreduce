@@ -108,7 +108,8 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
     try:    
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
-            SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"])
+            SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
+	    TimeZone = "UTC")
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
@@ -168,6 +169,7 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
             OutputFilename = outputfilename,
             SampleLogNames = samplelognames,
             WriteHeaderFile = True,
+	    TimeZone = "UTC",
             Header = headstr)
     except RuntimeError:
         print "Error in exporting Generic DAQ log for run %s. " % (str(runNumber))
@@ -255,7 +257,8 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
         InputWorkspace = logwsname,
         OutputFilename = outputfilename,
         SampleLogNames = samplelognames,
-        WriteHeaderFile = True,
+        WriteHeaderFile = True, 
+	TimeZone = "UTC",
         Header = headstr)
 
 
@@ -267,7 +270,7 @@ RecordBase = [
         ("Title",           "run_title", None),
         ("Notes",           "file_notes", None),
         ("Sample",          "Sample", None), # stored on sample object
-        ("StartTime",       "run_start", "localtime"),
+        ("StartTime",       "run_start", "time"),
         ("Duration",        "duration", None),
         ("ProtonCharge",    "proton_charge", "sum"),
         ("TotalCounts",     "das.counts", "sum"),
@@ -621,7 +624,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
         SampleLogNames     = samplenames, 
         SampleLogTitles    = sampletitles, 
         SampleLogOperation = sampleoperations, 
-        TimeZone           = "America/New_York", 
+        TimeZone           = "UTC", 
         OverrideLogValue   = patchlist, 
         OrderByTitle       = 'RUN',
         RemoveDuplicateRecord = True)
@@ -647,7 +650,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = "America/New_York",
+            TimeZone           = "UTC",
             OverrideLogValue   = patchlist, 
             OrderByTitle       = 'RUN', 
             RemoveDuplicateRecord = True)
@@ -735,7 +738,7 @@ def main(argv):
     except getopt.GetoptError: 
         print "Exception: %s" % (str(getopt.GetoptError))
         print 'test.py -i <inputfile> -o <outputfile>' 
-        sys.exit(2)
+	return
 
     # Initialize 
     eventFileAbs = None
