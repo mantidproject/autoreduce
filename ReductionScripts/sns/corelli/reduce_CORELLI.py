@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys,os
-sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/Mantid/bin")
 
 from mantid.simpleapi import *
 import numpy as np
