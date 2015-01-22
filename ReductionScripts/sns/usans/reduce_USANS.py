@@ -40,6 +40,16 @@ if __name__ == "__main__":
     file_path = os.path.join(outdir, "%s_detector_trans.txt" % file_prefix)
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
+    CropWorkspace(InputWorkspace="USANS", StartWorkspaceIndex=0, EndWorkspaceIndex=1023, OutputWorkspace="USANS_detector")
+    SumSpectra(InputWorkspace="USANS_detector",OutputWorkspace="summed")
+    file_path = os.path.join(outdir, "%s_detector.txt" % file_prefix)
+    SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+
+    CropWorkspace(InputWorkspace="USANS", StartWorkspaceIndex=1024, EndWorkspaceIndex=2047, OutputWorkspace="USANS_trans")
+    SumSpectra(InputWorkspace="USANS_trans",OutputWorkspace="summed")
+    file_path = os.path.join(outdir, "%s_trans.txt" % file_prefix)
+    SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+
     if load_monitors:
         Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
         file_path = os.path.join(outdir, "%s_monitor.txt" % file_prefix)
