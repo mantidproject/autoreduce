@@ -65,12 +65,12 @@ if __name__ == "__main__":
                 StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
                 ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
                 file_path = os.path.join(outdir, "%s_detector_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+                SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
                 StepScan(InputWorkspace="USANS_trans", OutputWorkspace="scan_table")
                 ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
                 file_path = os.path.join(outdir, "%s_trans_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+                SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
