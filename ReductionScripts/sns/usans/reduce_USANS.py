@@ -33,7 +33,8 @@ if __name__ == "__main__":
     w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
-
+    # Find whether we have a motor turning
+    
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
