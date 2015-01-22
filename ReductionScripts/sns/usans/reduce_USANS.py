@@ -39,7 +39,6 @@ if __name__ == "__main__":
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
             if stats.mean>0 and stats.standard_deviation/item.getStatistics().mean>0.01:
-                print item.name
                 scan_var = item.name
             
     StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
