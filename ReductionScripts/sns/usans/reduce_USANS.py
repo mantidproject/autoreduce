@@ -26,7 +26,10 @@ if __name__ == "__main__":
 
     load_monitors = False
 
-    LoadEventNexus(filename, LoadMonitors=load_monitors, OutputWorkspace="USANS")
+    try:
+        LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+    except:
+        LoadEventNexus(filename, LoadMonitors=load_monitors, OutputWorkspace="USANS")
     w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
