@@ -33,24 +33,6 @@ if __name__ == "__main__":
     w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
-    # Find whether we have a motor turning
-    for item in mtd['USANS'].getRun().getProperties():
-        if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
-            stats = item.getStatistics()
-            if stats.mean>0 and stats.standard_deviation/item.getStatistics().mean>0.01:
-                scan_var = item.name
-                short_name = item.name.replace("BL1A:Mot:","")
-            
-                StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
-                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
-                file_path = os.path.join(outdir, "%s_detector_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
-
-                StepScan(InputWorkspace="USANS_trans", OutputWorkspace="scan_table")
-                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
-                file_path = os.path.join(outdir, "%s_trans_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
-
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
@@ -71,6 +53,24 @@ if __name__ == "__main__":
         Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
         file_path = os.path.join(outdir, "%s_monitor.txt" % file_prefix)
         SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
+
+    # Find whether we have a motor turning
+    for item in mtd['USANS'].getRun().getProperties():
+        if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
+            stats = item.getStatistics()
+            if stats.mean>0 and stats.standard_deviation/item.getStatistics().mean>0.01:
+                scan_var = item.name
+                short_name = item.name.replace("BL1A:Mot:","")
+            
+                StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
+                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                file_path = os.path.join(outdir, "%s_detector_scan_%s.txt" % (file_prefix, short_name))
+                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
+
+                StepScan(InputWorkspace="USANS_trans", OutputWorkspace="scan_table")
+                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
+                file_path = os.path.join(outdir, "%s_trans_scan_%s.txt" % (file_prefix, short_name))
+                SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
