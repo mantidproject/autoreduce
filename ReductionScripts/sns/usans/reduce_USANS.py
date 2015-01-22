@@ -24,12 +24,12 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]
 
-    load_monitors = False
-
     try:
         LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+        load_monitors = True
     except:
-        LoadEventNexus(filename, LoadMonitors=load_monitors, OutputWorkspace="USANS")
+        LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
+        load_monitors = False
     w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
     SumSpectra(InputWorkspace="USANS",OutputWorkspace="summed")
-    file_path = os.path.join(outdir, "%s_detector.txt" % file_prefix)
+    file_path = os.path.join(outdir, "%s_detector_trans.txt" % file_prefix)
     SaveAscii(InputWorkspace="summed",Filename=file_path, WriteSpectrumID=False)
 
     if load_monitors:
