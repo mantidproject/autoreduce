@@ -109,7 +109,7 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
             SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
-	    TimeZone = "UTC")
+	    TimeZone = TIMEZONE)
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
