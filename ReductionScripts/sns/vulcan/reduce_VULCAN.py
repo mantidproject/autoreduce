@@ -53,6 +53,8 @@ refLogTofFilename = "/SNS/VULCAN/shared/autoreduce/vdrive_log_bin.dat"
 calibrationfilename = "/SNS/VULCAN/shared/autoreduce/vulcan_foc_all_2bank_11p.cal"
 characterfilename = "/SNS/VULCAN/shared/autoreduce/VULCAN_Characterization_2Banks_v2.txt"
 
+TIMEZONE = 'America/New_York'
+
 def changeOutputDir(outputdir, newsubpath=None):
     """ Change the output direction from ..../autoreduce/ to ..../logs/ 
     If the new directory does not exist, make it
@@ -169,7 +171,7 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
             OutputFilename = outputfilename,
             SampleLogNames = samplelognames,
             WriteHeaderFile = True,
-	    TimeZone = "UTC",
+	    TimeZone = TIMEZONE,
             Header = headstr)
     except RuntimeError:
         print "Error in exporting Generic DAQ log for run %s. " % (str(runNumber))
@@ -258,7 +260,7 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
         OutputFilename = outputfilename,
         SampleLogNames = samplelognames,
         WriteHeaderFile = True, 
-	TimeZone = "UTC",
+	TimeZone = TIMEZONE,
         Header = headstr)
 
 
@@ -650,7 +652,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = "UTC",
+            TimeZone           = TIMEZONE,
             OverrideLogValue   = patchlist, 
             OrderByTitle       = 'RUN', 
             RemoveDuplicateRecord = True)
