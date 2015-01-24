@@ -36,10 +36,11 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 ProcessedVanadium="van101708both.nxs"
 HardMaskFile=''
-IntegrationRange=[51000.0,55000.0]#integration range for Vanadium in TOF
+IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
