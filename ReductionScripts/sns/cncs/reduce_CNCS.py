@@ -66,8 +66,8 @@ DGSdict['DetVanIntRangeUnits']='TOF'
 DGSdict['OutputWorkspace']='reduce'
 DGSdict['TibTofRangeStart']=tib[0]
 DGSdict['TibTofRangeEnd']=tib[1]
-#DGSdict['TimeIndepBackgroundSub']=True
-DGSdict['TimeIndepBackgroundSub']=False
+DGSdict['TimeIndepBackgroundSub']=True
+#DGSdict['TimeIndepBackgroundSub']=False
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
@@ -109,7 +109,7 @@ processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" +
 nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
 
 # Save a file
-#SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
+SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
 os.chmod(nxspe_filename,0444)
 # make a pretty image
