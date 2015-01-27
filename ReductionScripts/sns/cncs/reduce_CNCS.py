@@ -52,7 +52,7 @@ EGuess=w.getRun()['EnergyRequest'].firstValue()
 #tib=SuggestTibCNCS(EGuess)
 #if (abs(EGuess-12)<0.1):
 #    tib=[20500.0,21500.0]
-tib=[40000,43000]
+tib=[24000,29000]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
