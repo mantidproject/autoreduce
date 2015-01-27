@@ -5,8 +5,8 @@ sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 import mantid
 from matplotlib import *
-cal_dir = "/SNS/PG3/IPTS-2767/shared/2014_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d20720_2014_10_20.cal")
+cal_dir = "/SNS/PG3/IPTS-2767/shared/2015_1_11A_CAL/"
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d21989_2015_01_25.cal")
 char_file = os.path.join(cal_dir, "PG3_characterization_2014_08_15-HR-PAC-6mm-sub.txt")
 #MODE = 0664
 
@@ -27,7 +27,7 @@ SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs"
                    PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0008, BinInDspace=True, FilterBadPulses=10,
+                   Binning=-0.0004, BinInDspace=True, FilterBadPulses=10,
                    ScaleData =100,
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
