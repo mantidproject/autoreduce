@@ -172,7 +172,7 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
             OutputFilename = outputfilename,
             SampleLogNames = samplelognames,
             WriteHeaderFile = True,
-	    TimeZone = TIMEZONE,
+	    TimeZone = TIMEZONE2,
             Header = headstr)
     except RuntimeError:
         print "Error in exporting Generic DAQ log for run %s. " % (str(runNumber))
@@ -261,7 +261,7 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
         OutputFilename = outputfilename,
         SampleLogNames = samplelognames,
         WriteHeaderFile = True, 
-	TimeZone = TIMEZONE,
+	TimeZone = TIMEZONE2,
         Header = headstr)
 
 
@@ -653,7 +653,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = TIMEZONE,
+            TimeZone           = TIMEZONE1,
             OverrideLogValue   = patchlist, 
             OrderByTitle       = 'RUN', 
             RemoveDuplicateRecord = True)
