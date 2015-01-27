@@ -53,8 +53,8 @@ refLogTofFilename = "/SNS/VULCAN/shared/autoreduce/vdrive_log_bin.dat"
 calibrationfilename = "/SNS/VULCAN/shared/autoreduce/vulcan_foc_all_2bank_11p.cal"
 characterfilename = "/SNS/VULCAN/shared/autoreduce/VULCAN_Characterization_2Banks_v2.txt"
 
-#TIMEZONE = 'America/New_York'
-TIMEZONE = 'UTC'
+TIMEZONE1 = 'America/New_York'
+TIMEZONE2 = 'UTC'
 
 def changeOutputDir(outputdir, newsubpath=None):
     """ Change the output direction from ..../autoreduce/ to ..../logs/ 
@@ -112,7 +112,7 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
             SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
-	    TimeZone = TIMEZONE)
+	    TimeZone = TIMEZONE2)
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
