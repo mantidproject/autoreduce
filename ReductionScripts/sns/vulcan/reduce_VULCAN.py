@@ -53,7 +53,8 @@ refLogTofFilename = "/SNS/VULCAN/shared/autoreduce/vdrive_log_bin.dat"
 calibrationfilename = "/SNS/VULCAN/shared/autoreduce/vulcan_foc_all_2bank_11p.cal"
 characterfilename = "/SNS/VULCAN/shared/autoreduce/VULCAN_Characterization_2Banks_v2.txt"
 
-TIMEZONE = 'America/New_York'
+#TIMEZONE = 'America/New_York'
+TIMEZONE = 'UTC'
 
 def changeOutputDir(outputdir, newsubpath=None):
     """ Change the output direction from ..../autoreduce/ to ..../logs/ 
