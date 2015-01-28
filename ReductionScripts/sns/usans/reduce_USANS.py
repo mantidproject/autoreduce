@@ -64,16 +64,19 @@ if __name__ == "__main__":
                 scan_var = item.name
                 short_name = item.name.replace("BL1A:Mot:","")
             
-                
-                StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
-                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
-                file_path = os.path.join(outdir, "%s_detector_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
+                for i in range(len(peaks)):
+                    peak = peaks[i]
+                    CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
+                    StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
+                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                    file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
+                    SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
-                StepScan(InputWorkspace="USANS_trans", OutputWorkspace="scan_table")
-                ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
-                file_path = os.path.join(outdir, "%s_trans_scan_%s.txt" % (file_prefix, short_name))
-                SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
+                    CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
+                    StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
+                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
+                    file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
+                    SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
     wi=Integration(w)
     data=wi.extractY().reshape(16,128)
