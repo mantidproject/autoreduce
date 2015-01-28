@@ -12,6 +12,8 @@ numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
 
+peaks = [[10235,12460], [13230,14610], [8825,9450], [6700,7025]]
+
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 
@@ -62,6 +64,7 @@ if __name__ == "__main__":
                 scan_var = item.name
                 short_name = item.name.replace("BL1A:Mot:","")
             
+                
                 StepScan(InputWorkspace="USANS_detector", OutputWorkspace="scan_table")
                 ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
                 file_path = os.path.join(outdir, "%s_detector_scan_%s.txt" % (file_prefix, short_name))
