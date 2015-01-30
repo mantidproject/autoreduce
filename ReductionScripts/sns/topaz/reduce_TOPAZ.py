@@ -139,16 +139,16 @@ if __name__ == "__main__":
 
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        mantid.logger.error("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        mantid.logger.error("data file "+sys.argv[1]+ " not found")
         sys.exit()    
     else:
         filename = sys.argv[1]
         outdir = sys.argv[2]
     if not(os.path.isfile(os.path.join(outdir,"autoreduce_configuration.txt"))):
-        print "no configuration file"
+        mantid.logger.warning("no configuration file")
         sys.exit()  
     configuration=Configuration(os.path.join(outdir,"autoreduce_configuration.txt")) 
     makePlots(filename,configuration,outdir)
