@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/3y9/Mantid/Build/bin')
+sys.path.append('/opt/Mantid/bin')
 import numpy,os,mantid
 from mantid.simpleapi import *
 from matplotlib import *
