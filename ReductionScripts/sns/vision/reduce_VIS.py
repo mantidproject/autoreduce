@@ -404,7 +404,6 @@ RemoveLogs(INS)
 RemoveWorkspaceHistory(INS)
 SaveNexusProcessed(InputWorkspace=INS,Filename='VIS_'+INS+'.nxs')
 
-'''
 asciidir=os.path.join(SaveDir,"ascii")
 if not os.path.exists(asciidir):
     os.makedirs(asciidir)
@@ -450,4 +449,3 @@ Rebin(InputWorkspace='__elastic_data',OutputWorkspace='__elastic_data',Params="1
 elastic_file = os.path.join(sliced_dir, FileName.replace('.nxs.h5','_elastic.nxs.h5'))
 SaveNexus(InputWorkspace="__elastic_data", Filename=elastic_file)
 AnalysisDataService.remove("__elastic_data")
-'''
