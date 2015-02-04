@@ -322,7 +322,7 @@ def ReduceBanksE():
 # Main program
 ######################################################################
 
-#subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
 #subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
 
 # Read calibration table
