@@ -406,7 +406,8 @@ SaveNexusProcessed(InputWorkspace=INS,Filename='VIS_'+INS+'.nxs')
 
 asciidir=os.path.join(SaveDir,"ascii")
 if not os.path.exists(asciidir):
-    os.makedirs(asciidir)
+    os.umask(0002)
+    os.makedirs(asciidir,0775)
     print "Info: "+asciidir+" does not exist and will be created."
 OutFile=os.path.join(asciidir,'VIS_'+INS+'.dat')
 SaveAscii(InputWorkspace=INS,Filename=OutFile,Separator='Space')
@@ -416,7 +417,8 @@ SaveAscii(InputWorkspace=INS,Filename=OutFile,Separator='Space')
 ######################################################################
 sliced_dir = os.path.join(SaveDir, "sliced_data")
 if not os.path.exists(sliced_dir):
-    os.makedirs(sliced_dir)
+    os.umask(0002)
+    os.makedirs(sliced_dir,0775)
 
 from mantid.api import AnalysisDataService
 for item in AnalysisDataService.getObjectNames():
