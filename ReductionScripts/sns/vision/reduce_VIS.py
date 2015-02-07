@@ -358,7 +358,7 @@ print "Title:", mtd['IED_T'].getTitle()
 print "Proton charge:", mtd['IED_T'].getRun().getProtonCharge()
 if "Temperature" in mtd['IED_T'].getTitle():
     print "Error: Non-equilibrium runs will not be reduced"
-    #sys.exit()
+    sys.exit()
 if mtd['IED_T'].getRun().getProtonCharge() < 5.0:
     print "Error: Proton charge is too low"
     sys.exit()
