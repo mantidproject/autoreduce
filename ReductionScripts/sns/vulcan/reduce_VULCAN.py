@@ -40,8 +40,8 @@ import xml.etree.ElementTree as ET
 
 
 #sys.path.append("/opt/mantidnightly/bin")
-#sys.path.append('/opt/mantidunstable/bin/')
-sys.path.append("/opt/Mantid/bin")
+sys.path.append('/opt/mantidunstable/bin/')
+#sys.path.append("/opt/Mantid/bin")
 
 #sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
 #sys.path.append('/Users/wzz/Mantid/Code/debug/bin')
@@ -52,6 +52,9 @@ import mantid
 refLogTofFilename = "/SNS/VULCAN/shared/autoreduce/vdrive_log_bin.dat"
 calibrationfilename = "/SNS/VULCAN/shared/autoreduce/vulcan_foc_all_2bank_11p.cal"
 characterfilename = "/SNS/VULCAN/shared/autoreduce/VULCAN_Characterization_2Banks_v2.txt"
+
+TIMEZONE1 = 'America/New_York'
+TIMEZONE2 = 'UTC'
 
 def changeOutputDir(outputdir, newsubpath=None):
     """ Change the output direction from ..../autoreduce/ to ..../logs/ 
@@ -109,7 +112,7 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
         ExportSampleLogsToCSVFile(InputWorkspace = logwsname, 
             OutputFilename = logfilename, 
             SampleLogNames = ["furnace.temp1", "furnace.temp2", "furnace.power"],
-	    TimeZone = "UTC")
+	    TimeZone = TIMEZONE2)
     except RuntimeError:
         raise NotImplementedError("Add an error message and skip if it happens.")
 
@@ -169,7 +172,7 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
             OutputFilename = outputfilename,
             SampleLogNames = samplelognames,
             WriteHeaderFile = True,
-	    TimeZone = "UTC",
+	    TimeZone = TIMEZONE2,
             Header = headstr)
     except RuntimeError:
         print "Error in exporting Generic DAQ log for run %s. " % (str(runNumber))
@@ -258,7 +261,7 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
         OutputFilename = outputfilename,
         SampleLogNames = samplelognames,
         WriteHeaderFile = True, 
-	TimeZone = "UTC",
+	TimeZone = TIMEZONE2,
         Header = headstr)
 
 
@@ -650,7 +653,7 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
             SampleLogNames     = samplenames, 
             SampleLogTitles    = sampletitles, 
             SampleLogOperation = sampleoperations, 
-            TimeZone           = "UTC",
+            TimeZone           = TIMEZONE1,
             OverrideLogValue   = patchlist, 
             OrderByTitle       = 'RUN', 
             RemoveDuplicateRecord = True)
