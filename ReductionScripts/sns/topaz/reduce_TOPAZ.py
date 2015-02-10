@@ -129,7 +129,7 @@ def makePlots(filename,configuration,outdir):
         DeleteWorkspace(a)
         DeleteWorkspace(b)
          
-    plt.show()
+    #plt.show()
     processed_filename=os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'.png')
     plt.savefig(processed_filename, bbox_inches='tight')
     plt.close()
