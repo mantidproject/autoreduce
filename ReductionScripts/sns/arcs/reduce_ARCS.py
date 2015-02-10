@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
    
     processed_van_file = ProcessedVanadium
-    if not os.path.isfile(processed_van_file):
+    if not os.path.isabs(processed_van_file):
         processed_van_file = os.path.join(outdir, ProcessedVanadium)
 
     DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
