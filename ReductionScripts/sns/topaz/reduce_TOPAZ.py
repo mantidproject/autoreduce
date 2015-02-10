@@ -88,6 +88,7 @@ def makePlots(filename,configuration,outdir):
     DeleteWorkspace(data1)
     DeleteWorkspace(data2)
     md=ConvertToMD(InputWorkspace=data,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="HKL",QConversionScales="HKL")
+    SaveMD(md,os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'MD.nxs'))
     # Make Figures
     fig = plt.gcf()
     numfig=len(configuration.commands)
