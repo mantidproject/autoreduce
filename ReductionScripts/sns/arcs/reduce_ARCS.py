@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/CAL/2015-A/data/ARCS_56293_event.nxs"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/van_files/van56293_m103.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van56293_m103.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
