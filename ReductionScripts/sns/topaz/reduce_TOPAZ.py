@@ -76,16 +76,18 @@ def makePlots(filename,configuration,outdir):
         return  
     data=Load(filename)
     sa=Load(configuration.parameters["VanadiumSolidAngleFile"])
+    flux=Load(configuration.parameters["VanadiumFluxFile"])
+    mommin=flux.readX(0)[0]
+    mommax=flux.readX(0)[-1]
     MaskDetectors(Workspace=data,MaskedWorkspace=sa)
     data1=ConvertUnits(InputWorkspace=data,Target='Momentum')
     DeleteWorkspace(data)
-    data2=CropWorkspace(InputWorkspace=data1,XMin='1.85',XMax='10')
-    data=Rebin(InputWorkspace=data2,Params='1.85,10,10')
+    data2=CropWorkspace(InputWorkspace=data1,XMin=mommin,XMax=mommax)
+    data=Rebin(InputWorkspace=data2,Params=str(mommin)+','+str(mommax-mommin)+','+str(mommax))
     LoadIsawUB(InputWorkspace=data,Filename=os.path.join(outdir,configuration.parameters["UBMatrixFile"]))
     DeleteWorkspace(data1)
     DeleteWorkspace(data2)
     md=ConvertToMD(InputWorkspace=data,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="HKL",QConversionScales="HKL")
-    flux=Load(configuration.parameters["VanadiumFluxFile"])
     # Make Figures
     fig = plt.gcf()
     numfig=len(configuration.commands)
