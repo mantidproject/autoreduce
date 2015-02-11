@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/CAL/2015-A/data/ARCS_56293_event.nxs"
-    ProcessedVanadium="van56293.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van56293.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -132,8 +132,11 @@ if __name__ == "__main__":
     elog.setFilename(outdir+'experiment_log.csv')
 
    
+    processed_van_file = ProcessedVanadium
+    if not os.path.isabs(processed_van_file):
+        processed_van_file = os.path.join(outdir, ProcessedVanadium)
 
-    DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
+    DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
 
     #added to check the file for zero-summed packs in the event of a detector failure.
