@@ -120,13 +120,16 @@ def makePlots(filename,configuration,outdir):
 	        AlignedDim0=stringX,
 	        AlignedDim1=stringY,
 	        AlignedDim2=stringZ)
-        avals=a.getSignalArray()
-        bvals=b.getSignalArray()     
+	    norm=a/b
+	    imagevals=numpy.log(norm.getSignalArray())
+	    normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)
+        #avals=a.getSignalArray()
+        #bvals=b.getSignalArray()     
         X,Y=numpy.meshgrid(xvals,yvals)   
-        norm=avals/bvals
-        normmasked=numpy.ma.masked_where(bvals==0,norm)
-        normmasked=numpy.ma.masked_where(avals<=0 ,normmasked)
-        plt.pcolormesh(X,Y,numpy.log(normmasked),shading='gouraud')
+        #norm=avals/bvals
+        #normmasked=numpy.ma.masked_where(bvals==0,norm)
+        #normmasked=numpy.ma.masked_where(avals<=0 ,normmasked)
+        plt.pcolormesh(X,Y,normmasked,shading='gouraud')
         DeleteWorkspace(a)
         DeleteWorkspace(b)
          
