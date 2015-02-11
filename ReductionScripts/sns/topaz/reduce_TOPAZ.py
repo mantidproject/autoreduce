@@ -125,6 +125,7 @@ def makePlots(filename,configuration,outdir):
         X,Y=numpy.meshgrid(xvals,yvals)   
         norm=avals/bvals
         normmasked=numpy.ma.masked_where(bvals==0,norm)
+        normmasked=numpy.ma.masked_where(avals<=0 ,normmasked)
         plt.pcolormesh(X,Y,numpy.log(normmasked),shading='gouraud')
         DeleteWorkspace(a)
         DeleteWorkspace(b)
