@@ -117,12 +117,12 @@ def makePlots(filename,configuration,outdir):
             stringZ=titleparts[0]+'],'+vals[0]+','+vals[1]+',1'
             
         a,b=MDNormSCD(InputWorkspace=md,FluxWorkspace=flux,SolidAngleWorkspace=sa,
-	        AlignedDim0=stringX,
-	        AlignedDim1=stringY,
-	        AlignedDim2=stringZ)
-	    norm=a/b
-	    imagevals=numpy.log(norm.getSignalArray())
-	    normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)   
+            AlignedDim0=stringX,
+            AlignedDim1=stringY,
+            AlignedDim2=stringZ)
+        norm=a/b
+        imagevals=numpy.log(norm.getSignalArray())
+        normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)   
         X,Y=numpy.meshgrid(xvals,yvals)   
         plt.pcolormesh(X,Y,normmasked,shading='gouraud')
         DeleteWorkspace(a)
