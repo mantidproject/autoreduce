@@ -105,8 +105,8 @@ def makePlots(filename,configuration,outdir):
         plt.ylabel(titles[1])
         dimIDY=md.getDimensionIndexByName(titles[1])
         dimY=md.getDimension(dimIDY)
-        stringY=titles[1]+','+str(dimY.getMinimum())+','+str(dimY.getMaximum())+',200'
-        yvals=numpy.arange(dimY.getMinimum(),dimY.getMaximum(),(dimY.getMaximum()-dimY.getMinimum())/200.)
+        stringY=titles[1]+','+str(dimY.getMinimum())+','+str(dimY.getMaximum())+',300'
+        yvals=numpy.arange(dimY.getMinimum(),dimY.getMaximum(),(dimY.getMaximum()-dimY.getMinimum())/300.)
         if len(titles[2])==7: 
             plt.title("Integrated "+titles[2])
             stringZ=""
