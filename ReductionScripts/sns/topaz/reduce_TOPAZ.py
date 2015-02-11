@@ -88,7 +88,7 @@ def makePlots(filename,configuration,outdir):
     DeleteWorkspace(data1)
     DeleteWorkspace(data2)
     md=ConvertToMD(InputWorkspace=data,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="HKL",QConversionScales="HKL")
-    SaveMD(md,os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'MD.nxs'))
+    #SaveMD(md,os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'MD.nxs'))
     # Make Figures
     fig = plt.gcf()
     numfig=len(configuration.commands)
@@ -122,13 +122,8 @@ def makePlots(filename,configuration,outdir):
 	        AlignedDim2=stringZ)
 	    norm=a/b
 	    imagevals=numpy.log(norm.getSignalArray())
-	    normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)
-        #avals=a.getSignalArray()
-        #bvals=b.getSignalArray()     
+	    normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)   
         X,Y=numpy.meshgrid(xvals,yvals)   
-        #norm=avals/bvals
-        #normmasked=numpy.ma.masked_where(bvals==0,norm)
-        #normmasked=numpy.ma.masked_where(avals<=0 ,normmasked)
         plt.pcolormesh(X,Y,normmasked,shading='gouraud')
         DeleteWorkspace(a)
         DeleteWorkspace(b)
