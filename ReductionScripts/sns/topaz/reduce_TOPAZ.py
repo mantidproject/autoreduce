@@ -76,16 +76,19 @@ def makePlots(filename,configuration,outdir):
         return  
     data=Load(filename)
     sa=Load(configuration.parameters["VanadiumSolidAngleFile"])
+    flux=Load(configuration.parameters["VanadiumFluxFile"])
+    mommin=flux.readX(0)[0]
+    mommax=flux.readX(0)[-1]
     MaskDetectors(Workspace=data,MaskedWorkspace=sa)
     data1=ConvertUnits(InputWorkspace=data,Target='Momentum')
     DeleteWorkspace(data)
-    data2=CropWorkspace(InputWorkspace=data1,XMin='1.85',XMax='10')
-    data=Rebin(InputWorkspace=data2,Params='1.85,10,10')
+    data2=CropWorkspace(InputWorkspace=data1,XMin=mommin,XMax=mommax)
+    data=Rebin(InputWorkspace=data2,Params=str(mommin)+','+str(mommax-mommin)+','+str(mommax))
     LoadIsawUB(InputWorkspace=data,Filename=os.path.join(outdir,configuration.parameters["UBMatrixFile"]))
     DeleteWorkspace(data1)
     DeleteWorkspace(data2)
     md=ConvertToMD(InputWorkspace=data,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="HKL",QConversionScales="HKL")
-    flux=Load(configuration.parameters["VanadiumFluxFile"])
+    #SaveMD(md,os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'MD.nxs'))
     # Make Figures
     fig = plt.gcf()
     numfig=len(configuration.commands)
@@ -102,8 +105,8 @@ def makePlots(filename,configuration,outdir):
         plt.ylabel(titles[1])
         dimIDY=md.getDimensionIndexByName(titles[1])
         dimY=md.getDimension(dimIDY)
-        stringY=titles[1]+','+str(dimY.getMinimum())+','+str(dimY.getMaximum())+',200'
-        yvals=numpy.arange(dimY.getMinimum(),dimY.getMaximum(),(dimY.getMaximum()-dimY.getMinimum())/200.)
+        stringY=titles[1]+','+str(dimY.getMinimum())+','+str(dimY.getMaximum())+',300'
+        yvals=numpy.arange(dimY.getMinimum(),dimY.getMaximum(),(dimY.getMaximum()-dimY.getMinimum())/300.)
         if len(titles[2])==7: 
             plt.title("Integrated "+titles[2])
             stringZ=""
@@ -114,19 +117,18 @@ def makePlots(filename,configuration,outdir):
             stringZ=titleparts[0]+'],'+vals[0]+','+vals[1]+',1'
             
         a,b=MDNormSCD(InputWorkspace=md,FluxWorkspace=flux,SolidAngleWorkspace=sa,
-	        AlignedDim0=stringX,
-	        AlignedDim1=stringY,
-	        AlignedDim2=stringZ)
-        avals=a.getSignalArray()
-        bvals=b.getSignalArray()     
+            AlignedDim0=stringX,
+            AlignedDim1=stringY,
+            AlignedDim2=stringZ)
+        norm=a/b
+        imagevals=numpy.log(norm.getSignalArray())
+        normmasked=numpy.ma.masked_where(numpy.logical_not(numpy.isfinite(imagevals)),imagevals)   
         X,Y=numpy.meshgrid(xvals,yvals)   
-        norm=avals/bvals
-        normmasked=numpy.ma.masked_where(bvals==0,norm)
-        plt.pcolormesh(X,Y,numpy.log(normmasked),shading='gouraud')
+        plt.pcolormesh(X,Y,normmasked,shading='gouraud')
         DeleteWorkspace(a)
         DeleteWorkspace(b)
          
-    plt.show()
+    #plt.show()
     processed_filename=os.path.join(outdir,'TOPAZ_'+str(data.getRunNumber())+'.png')
     plt.savefig(processed_filename, bbox_inches='tight')
     plt.close()
