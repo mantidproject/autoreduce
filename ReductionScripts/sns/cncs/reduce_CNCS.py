@@ -56,7 +56,7 @@ if (abs(EGuess-12)<0.1):
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
-DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.002*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
 DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
 DGSdict['IncidentBeamNormalisation']='ByCurrent'  
