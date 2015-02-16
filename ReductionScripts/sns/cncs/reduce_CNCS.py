@@ -36,10 +36,11 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 ProcessedVanadium="van101708both.nxs"
 HardMaskFile=''
-IntegrationRange=[51000.0,55000.0]#integration range for Vanadium in TOF
+IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
@@ -51,10 +52,11 @@ EGuess=w.getRun()['EnergyRequest'].firstValue()
 tib=SuggestTibCNCS(EGuess)
 if (abs(EGuess-12)<0.1):
     tib=[20500.0,21500.0]
+#tib=[24000,29000]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
-DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.002*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
 DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
 DGSdict['IncidentBeamNormalisation']='ByCurrent'  
@@ -66,6 +68,7 @@ DGSdict['OutputWorkspace']='reduce'
 DGSdict['TibTofRangeStart']=tib[0]
 DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
+#DGSdict['TimeIndepBackgroundSub']=False
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
@@ -107,9 +110,9 @@ processed_filename = os.path.join(output_directory, "CNCS_" + run_number + "_" +
 nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
 
 # Save a file
-#SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
+SaveNexus(Filename=processed_filename, InputWorkspace="reduce")
 SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')
-os.chmod(nxspe_filename,0444)
+os.chmod(nxspe_filename,0664)
 # make a pretty image
 #minvals,maxvals=ConvertToMDMinMaxGlobal('reduce','|Q|','Direct')
 #xmin=minvals[0]

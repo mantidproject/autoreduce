@@ -88,18 +88,24 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/CAL/2014-B/data/ARCS_55205_event.nxs"
-    ProcessedVanadium='van55205.nxs'
+    RawVanadium="/SNS/ARCS/CAL/2015-A/data/ARCS_56293_event.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van56293.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
-    MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
-    MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
-    MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
-    MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
-    MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
+    MaskBTPParameters=[]
+    #MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
+    #MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
+    #MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
+    #MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
+    #MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
+    MaskBTPParameters.append({'Pixel': '1-7,122-128'})
+    MaskBTPParameters.append({'Pixel': '1-12,117-128', 'Bank': '70'})
+    MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
 
-    groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
+
+    #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #this worked for smaller files DLA
+    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml"
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
@@ -126,8 +132,11 @@ if __name__ == "__main__":
     elog.setFilename(outdir+'experiment_log.csv')
 
    
+    processed_van_file = ProcessedVanadium
+    if not os.path.isabs(processed_van_file):
+        processed_van_file = os.path.join(outdir, ProcessedVanadium)
 
-    DGSdict=preprocessVanadium(RawVanadium,outdir+ProcessedVanadium,MaskBTPParameters)
+    DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
     [EGuess,Ei,T0]=preprocessData(filename)
 
     #added to check the file for zero-summed packs in the event of a detector failure.
@@ -145,6 +154,7 @@ if __name__ == "__main__":
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
         DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
+        #DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
         DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']=groupingFile #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
