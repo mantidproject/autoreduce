@@ -41,38 +41,39 @@ ss_trim = ss[ystart:ystop, xstart:xstop]
 
 #Plot
 fig = plt.gcf()
-fig.set_size_inches(6.0,12.0)
-plt.subplot(2, 1, 2)
+fig.set_size_inches(6.0,14.0)
+plt.subplot(3, 1, 2)
 x=np.arange(-20,20,0.05)
 y=np.arange(-20,20,0.05)
 X,Y=np.meshgrid(x[xstart:xstop],y[ystart:ystop])
 Zm=np.ma.masked_where(ss_trim==0,ss_trim)
 plt.pcolormesh(X,Y,np.log(Zm),shading='gouraud')
+plt.title('Total')
 plt.xlabel('Qsample_x')
 plt.ylabel('Qsample_z')
 #plt.savefig(output_directory+output_file+'.png',bbox_inches='tight')
 #plt.clf()
 
 #Do the same for the cross-correlated data.
-"""
 MaskBTP(cc,Pixel="1-10,247-256")
 MaskBTP(cc,Bank="49",Tube="1")
 MaskBTP(cc,Bank="1-9,14-30,62-71,75-91")
 cc=ConvertUnits(cc,Target="Momentum",EMode="Elastic")
 cc=CropWorkspace(cc,XMin=2.5,XMax=10)
-SetGoniometer(cc,Axis0="BL9:SampleRotation:phi,0,1,0,1") 
+SetGoniometer(cc,"Universal") 
 md2=ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="Q_sample",LorentzCorrection=1,MinValues="-20,-0.2,-20",MaxValues="20,0.2,20",Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
 bin2=BinMD(md2, AlignedDim0='Q_sample_x,-20,20,800', AlignedDim1='Q_sample_y,-0.2,0.2,1', AlignedDim2='Q_sample_z,-20,20,800')
 cc=bin2.getSignalArray()
 cc_trim = cc[ystart:ystop, xstart:xstop]
-
 Zm2=np.ma.masked_where(cc_trim<=0,cc_trim)
+plt.subplot(3, 1, 3)
 plt.pcolormesh(X,Y,np.log(Zm2),shading='gouraud')
+plt.title('Elastic')
 plt.xlabel('Qsample_x')
 plt.ylabel('Qsample_z')
-plt.savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
-plt.clf()
-"""
+#plt.savefig(output_directory+output_file+'_elastic.png',bbox_inches='tight')
+#plt.clf()
+
 
 #plot the instrument view
 rowA=np.transpose(wi.extractY()[0:118784].reshape([464,256]))
@@ -82,7 +83,7 @@ rowA=np.concatenate((np.zeros([256,32]),rowA,np.zeros([256,32])),axis=1)
 rowC=np.concatenate((np.zeros([256,32]),rowC,np.zeros([256,32])),axis=1)
 inst=np.concatenate((rowA,rowB,rowC),axis=0)
 
-plt.subplot(2, 1, 1)
+plt.subplot(3, 1, 1)
 x=np.arange(0,528)
 y=np.arange(0,768)
 X,Y=np.meshgrid(x,y)
