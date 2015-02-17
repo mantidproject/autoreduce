@@ -5,10 +5,18 @@ from django.contrib.auth.models import User
 from urllib2 import URLError
 from settings import LOG_FILE, LOG_LEVEL, UOWS_URL
 import logging
-logging.basicConfig(filename=LOG_FILE,level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
 class UOWSAuthenticationBackend(object):
+    """
+    Custom authentication for use with the User Office Web Service
+    """
     def authenticate(self, token=None):
+        """
+        Checks that the given session ID (token) is still valid and returns an appropriate user object.
+        If this is the first time a user has logged in a new user object is created.
+        A users permissions (staff/superuser) is also set based on calls to ICAT.
+        """
         with UOWSClient() as client:
             if client.check_session(token):
                 person = client.get_person(token)
@@ -22,7 +30,7 @@ class UOWSAuthenticationBackend(object):
                     user.is_superuser = ICATCommunication().is_admin(int(person['usernumber']))
                     user.is_staff = (ICATCommunication().is_instrument_scientist(int(person['usernumber'])) or user.is_superuser)
                 except URLError:
-                    logging.error("Unable to connect to ICAT. Cannot update user's permission levels.")
+                    logger.error("Unable to connect to ICAT. Cannot update user's permission levels.")
                 user.save()
                 return user
 

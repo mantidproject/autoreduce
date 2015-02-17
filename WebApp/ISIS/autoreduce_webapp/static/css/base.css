@@ -23,8 +23,21 @@ hr {
 
 .zebra-rows .row:nth-of-type(even){
     background: #f9f9f9;
+}
+.zebra-rows .row{
     padding-top:10px;
     padding-bottom:10px;
+}
+
+.comma-seperated-list li a:after{
+    content: ',';
+}
+.comma-seperated-list li:last-of-type a:after{
+    content: '';
+}
+
+.word-wrap{
+    word-wrap: break-word;
 }
 
 /****************
@@ -56,6 +69,12 @@ header .alert {
 /****************
  4. Footer
 ****************/
+footer{
+    text-align: center;
+    margin-top: 30px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
 
 /****************
  5. Run List
@@ -140,6 +159,9 @@ search#run_search {
 #graphs img{
     max-width: 100%;
 }
+.file-path{
+    word-wrap: break-word;
+}
 
 /****************
  7. Variables
@@ -151,8 +173,24 @@ search#run_search {
     line-height: 0.9em;
     font-weight: bold;
     padding:5px;
+    height:90px;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+@media screen and (min-width: 767px) {
+    .run-numbers .middle{
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
+    }
 }
 @media screen and (max-width: 767px) {
+    .run-numbers{
+        height:auto;
+    }
     .run-numbers div{
         display: inline-block;
     }
@@ -160,6 +198,14 @@ search#run_search {
         display:block !important;
         width: 100% !important;
     }
+}
+
+#script-preview-modal .modal-dialog{
+    width:90%;
+}
+
+#script-preview-modal pre.prettyprint{
+    max-height: 65vh;
 }
 
 

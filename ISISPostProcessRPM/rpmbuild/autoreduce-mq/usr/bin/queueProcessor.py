@@ -1,51 +1,38 @@
 import json, logging, time, subprocess, sys, socket
+import logging.handlers
+import stomp
+from twisted.internet import reactor
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = logging.handlers.RotatingFileHandler('/var/log/autoreduction.log', maxBytes=104857600, backupCount=20)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+# Quite the Stomp logs as they are quite chatty
+logging.getLogger('stomp').setLevel(logging.WARNING)
 
-from twisted.internet import reactor, defer, task
-from stompest import async, sync
-from stompest.config import StompConfig
-from stompest.async.listener import SubscriptionListener
-from stompest.protocol import StompSpec, StompFailoverUri
-from Configuration import Configuration
-
-
-class Consumer(object):
-        
-    def __init__(self, config):
-        self.stompConfig = StompConfig(config.brokers, config.amq_user, config.amq_pwd)
-        self.config = config
+class Listener(object):
+    def __init__(self, client):
+        self._client = client
         self.procList = []
-        
-    @defer.inlineCallbacks
-    def run(self):
-        client = yield async.Stomp(self.stompConfig).connect()
-        headers = {
-            # client-individual mode is necessary for concurrent processing
-            # (requires ActiveMQ >= 5.2)
-            StompSpec.ACK_HEADER: StompSpec.ACK_CLIENT_INDIVIDUAL,
-            # the maximal number of messages the broker will let you work on at the same time
-            'activemq.prefetchSize': '1',
-        }
 
-        for q in self.config.queues:
-            client.subscribe(q, headers, listener=SubscriptionListener(self.consume, errorDestination=self.config.postprocess_error))
-        
-        #print "finished run"
-    
-    def consume(self, client, frame):
-        """
-        NOTE: you can return a Deferred here
-        """
-        headers = frame.headers
+    def on_error(self, headers, message):
+        logger.error("Error message recieved - %s" % str(message))
+
+    def on_message(self, headers, data):
+        processNum = 4 #processes allowed to run at one time
         destination = headers['destination']
-        data = frame.body
 
-        logging.info("Received frame destination: " + destination)
-        logging.info("Received frame body (data)" + data) 
+        logger.debug("Received frame destination: " + destination)
+        logger.debug("Received frame body (data)" + data) 
         proc = subprocess.Popen(["python", "/usr/bin/PostProcessAdmin.py", destination, data])
         self.procList.append(proc)
-
-        while len(self.procList) > 4:
-            logging.info("There are " + str(len(self.procList)) + " processors running at the moment, wait for a second")
+        
+        if len(self.procList) > processNum:
+          logger.info("There are " + str(len(self.procList)) + " processes running at the moment, waiting until one is available")
+        
+        while len(self.procList) > processNum:
             time.sleep(1.0)
             self.updateChildProcessList()
 
@@ -56,35 +43,36 @@ class Consumer(object):
             if i.poll() is not None:
                 self.procList.remove(i)
 
-class HeartBeat(object):
-
+class Consumer(object):
+        
     def __init__(self, config):
-        self.stompConfig = StompConfig(config.brokers, config.amq_user, config.amq_pwd)
         self.config = config
+        self.consumer_name = "queueProcessor"
+        
+    def run(self):
+        brokers = []
+        brokers.append((self.config['brokers'].split(':')[0],int(self.config['brokers'].split(':')[1])))
+        connection = stomp.Connection(host_and_ports=brokers, use_ssl=True)
+        connection.set_listener(self.consumer_name, Listener(self))
+        connection.start()
+        connection.connect(self.config['amq_user'], self.config['amq_pwd'], wait=True, header={'activemq.prefetchSize': '1',})
+
+        for queue in self.config['amq_queues']:
+            logger.info("[%s] Subscribing to %s" % (self.consumer_name, queue))
+            connection.subscribe(destination=queue, id=1, ack='auto')
 
 
-    def count(self):
-        logging.info("In HeartBeat.count")
-        stomp = sync.Stomp(self.stompConfig)
-        stomp.connect()
-        data_dict = {"src_name": socket.gethostname(), "status": "0"}
-        stomp.send(self.config.heart_beat, json.dumps(data_dict))
-        logging.info("called " + self.config.heart_beat + " --- " + json.dumps(data_dict))
-        stomp.disconnect() 
-    
-
-if __name__ == '__main__':
-    
+def main():
     try:
-        config = Configuration('/etc/autoreduce/post_process_consumer.conf')
+        config = json.load(open('/etc/autoreduce/post_process_consumer.conf'))
     except:
         sys.exit()
         
-    logging.info("Start post process asynchronous listener!")
+    logger.info("Start post process asynchronous listener!")
     
-    #l = task.LoopingCall(HeartBeat(config).count)
-    #l.start(5.0) # call every second
-
     reactor.callWhenRunning(Consumer(config).run)
     reactor.run()
-    logging.info("Stop post process asynchronous listener!")
+    logger.info("Stop post process asynchronous listener!")
+
+if __name__ == '__main__':
+    main()

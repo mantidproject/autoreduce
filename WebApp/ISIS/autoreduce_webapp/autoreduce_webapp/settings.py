@@ -15,6 +15,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ADMINS = ()
 
 # Application definition
 
@@ -94,29 +95,70 @@ STATICFILES_DIRS = (
 
 LOG_FILE = os.path.join(BASE_DIR, 'autoreduction.log')
 if DEBUG:
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = 'DEBUG'
 else:
-    LOG_LEVEL = logging.INFO
+    LOG_LEVEL = 'INFO'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': LOG_LEVEL,
+            'class': 'logging.FileHandler',
+            'filename': LOG_FILE,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file'],
+            'propagate': True,
+            'level':LOG_LEVEL,
+        },
+        'MYAPP': {
+            'handlers': ['file'],
+            'level': LOG_LEVEL,
+        },
+    }
+}
 
 # ActiveMQ 
 
 ACTIVEMQ = {
     'topics' : [
-        '/topic/DataReady',
-        '/topic/ReductionPending',
-        '/topic/ReductionStarted',
-        '/topic/ReductionComplete',
-        '/topic/ReductionError'
+        '/queue/DataReady',
+        #'/queue/ReductionPending', - Only used by autoreduction server
+        '/queue/ReductionStarted',
+        '/queue/ReductionComplete',
+        '/queue/ReductionError'
         ],
-    'username' : 'admin',
+    'username' : 'autoreduce',
     'password' : 'pa$$w0rd',
-    'broker' : [("datareducedev.isis.cclrc.ac.uk", 61613)]
+    'broker' : [("autoreduce.isis.cclrc.ac.uk", 61613)]
 }
 
 # File Locations
 
-REDUCTION_SCRIPT_BASE = '/reduction_data/'
-ARCHIVE_BASE = ''
+#REDUCTION_SCRIPT_BASE = '/reduction_data/'
+#ARCHIVE_BASE = ''
+if os.name == 'nt':
+    REDUCTION_DIRECTORY = '\\\\isis\\inst$\\NDX%s\\user\\scripts\\autoreduction' # %(instrument)
+    TEMP_OUTPUT_DIRECTORY = '\\\\autoreduce\\data\\reduction_script_temp'
+    ARCHIVE_DIRECTORY = '\\\\isis\\inst$\\NDX%s\\Instrument\\data\\cycle_%s\\autoreduced\\%s\\%s' # %(instrument, cycle, experiment_number, run_number)
+else:
+    REDUCTION_DIRECTORY = '/isis/NDX%s/user/scripts/autoreduction' # %(instrument)
+    TEMP_OUTPUT_DIRECTORY = '/tmp/autoreduce'
+    ARCHIVE_DIRECTORY = '/isis/NDX%s/Instrument/data/cycle_%s/autoreduced/%s/%s' # %(instrument, cycle, experiment_number, run_number)
 
 # ICAT 
 
@@ -131,3 +173,7 @@ ICAT = {
 
 UOWS_URL = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
 UOWS_LOGIN_URL = 'https://devusers.facilities.rl.ac.uk/auth/?service=http://datareducedev.isis.cclrc.ac.uk&redirecturl='
+
+# Constant vars
+
+FACILITY = "ISIS"

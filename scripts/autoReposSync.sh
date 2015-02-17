@@ -37,8 +37,8 @@ fi
 function process() {
   file=$1
   inst=$2
-  scripts=(reduce sumRun sumRun sumBatchRuns) 
-  exts=(py py cfg sh)
+  scripts=(reduce reduce sumRun sumRun sumBatchRuns) 
+  exts=(py py.template py cfg sh)
   for index in ${!scripts[*]}
   do
     script=${scripts[$index]}_$inst.${exts[$index]}

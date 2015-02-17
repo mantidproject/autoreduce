@@ -6,7 +6,7 @@ from sets import Set
 logging.basicConfig(filename=LOG_FILE.replace('.log', '.test.log'),level=LOG_LEVEL, format=u'%(message)s',)
 from daemon import Daemon
 from queue_processor_daemon import QueueProcessorDaemon
-from queue_processor import Client
+from queue_processor import Client, Listener
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 sys.path.insert(0, BASE_DIR)
 from reduction_viewer.models import ReductionRun, Instrument, ReductionLocation, Status, Experiment, DataLocation
@@ -17,6 +17,7 @@ from icat.exception import ICATSessionError
 from urllib2 import URLError
 from uows_client import UOWSClient
 from suds.client import Client as suds_client
+from mock import patch
 
 class QueueProcessorTestCase(TestCase):
     '''
@@ -36,7 +37,7 @@ class QueueProcessorTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._client = Client(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Autoreduction_QueueProcessor_Test')
+        cls._client = Client(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Autoreduction_QueueProcessor_Test', False, True)
         cls._client.connect()
         cls._rb_number = 0
         cls._timeout_wait = 1
@@ -124,7 +125,7 @@ class QueueProcessorTestCase(TestCase):
                 "data" : "/false/path",
                 "run_version" : 0
             }
-            self._client.send('/topic/DataReady', json.dumps(test_data))
+            self._client.send('/queue/DataReady', json.dumps(test_data))
             time.sleep(self._timeout_wait)
 
             experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -155,7 +156,7 @@ class QueueProcessorTestCase(TestCase):
                 "data" : "/false/path",
                 "run_version" : 0
             }
-            self._client.send('/topic/DataReady', json.dumps(test_data))
+            self._client.send('/queue/DataReady', json.dumps(test_data))
             time.sleep(self._timeout_wait)
 
             experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -193,7 +194,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/DataReady', json.dumps(test_data))
+        self._client.send('/queue/DataReady', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -220,7 +221,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/DataReady', json.dumps(test_data))
+        self._client.send('/queue/DataReady', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -255,8 +256,8 @@ class QueueProcessorTestCase(TestCase):
                 "data" : "/false/path",
                 "run_version" : 0
             }
-            self._client.send('/topic/DataReady', json.dumps(test_data_run_1))
-            self._client.send('/topic/DataReady', json.dumps(test_data_run_2))
+            self._client.send('/queue/DataReady', json.dumps(test_data_run_1))
+            self._client.send('/queue/DataReady', json.dumps(test_data_run_2))
             time.sleep(self._timeout_wait)
 
             experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -269,6 +270,50 @@ class QueueProcessorTestCase(TestCase):
             self.assertEqual(str(runs[1].status), "Queued", "Expecting status to be 'Queued' but was '%s'" % runs[1].status)
         finally:
             self.remove_dummy_reduce_script(instrument_name)
+
+    def test_data_ready_no_vaiables_in_script(self):
+        rb_number = self.get_rb_number()
+        instrument_name = "test_data_ready_no_vaiables_in_script-TestInstrument"
+        
+        directory = os.path.join(REDUCTION_SCRIPT_BASE, instrument_name)
+        test_reduce = os.path.join(os.path.dirname(__file__), '../', 'test_files','empty_reduce.py')
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        file_path = os.path.join(directory, 'reduce.py')
+        if not os.path.isfile(file_path):
+            shutil.copyfile(test_reduce, file_path)
+
+        headers = { 
+            "destination" : '/queue/DataReady'
+        }
+        message = {
+            "run_number" : 1,
+            "instrument" : instrument_name,
+            "rb_number" : rb_number,
+            "data" : "/false/path",
+            "run_version" : 0
+        }
+
+        parent = self
+        send_called = [False]
+        class mock_client(object):
+            def __init__(self):
+                pass
+
+            def connect(self):
+                pass
+
+            def send(self, destination, message, persistent='true'):
+                send_called[0] = True
+                data_dict = json.loads(message)
+                parent.assertEqual(destination, '/queue/ReductionPending', "Expecting destination to be '/queue/ReductionPending' but was %s" % destination)
+                parent.assertNotEqual(data_dict['reduction_script'], None, "Expecting a reduction script.")
+                parent.assertNotEqual(data_dict['reduction_script'], '', "Expecting a reduction script.")
+                parent.assertEqual(data_dict['reduction_arguments'], {}, "Expecting arguments to be an empty dictionary.")
+
+        listener = Listener(mock_client())
+        listener.on_message(headers, json.dumps(message))
+        self.assertTrue(send_called[0], "Expecting send to be called")
         
     '''
         Change an existing reduction run from Queued to Started
@@ -285,7 +330,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionStarted', json.dumps(test_data))
+        self._client.send('/queue/ReductionStarted', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -306,7 +351,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionStarted', json.dumps(test_data))
+        self._client.send('/queue/ReductionStarted', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -333,7 +378,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionStarted', json.dumps(test_data))
+        self._client.send('/queue/ReductionStarted', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -362,7 +407,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionStarted', json.dumps(test_data))
+        self._client.send('/queue/ReductionStarted', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -393,7 +438,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionStarted', json.dumps(test_data))
+        self._client.send('/queue/ReductionStarted', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -422,7 +467,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -445,7 +490,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -470,7 +515,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -502,7 +547,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -530,7 +575,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -558,7 +603,7 @@ class QueueProcessorTestCase(TestCase):
             "run_version" : 0,
             "message" : error_message
         }
-        self._client.send('/topic/ReductionError', json.dumps(test_data))
+        self._client.send('/queue/ReductionError', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -583,7 +628,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionError', json.dumps(test_data))
+        self._client.send('/queue/ReductionError', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -606,7 +651,7 @@ class QueueProcessorTestCase(TestCase):
             "data" : "/false/path",
             "run_version" : 0
         }
-        self._client.send('/topic/ReductionError', json.dumps(test_data))
+        self._client.send('/queue/ReductionError', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         experiment, created = Experiment.objects.get_or_create(reference_number=rb_number)
@@ -642,7 +687,7 @@ class QueueProcessorTestCase(TestCase):
             "run_version" : 0,
             "reduction_data" : [data_path]
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -686,7 +731,7 @@ class QueueProcessorTestCase(TestCase):
                 "run_version" : 0,
                 "reduction_data" : [data_path]
             }
-            self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+            self._client.send('/queue/ReductionComplete', json.dumps(test_data))
             time.sleep(self._timeout_wait)
 
             runs = ReductionRun.objects.filter(experiment=experiment)
@@ -730,7 +775,7 @@ class QueueProcessorTestCase(TestCase):
             "run_version" : 0,
             "reduction_data" : [data_path]
         }
-        self._client.send('/topic/ReductionComplete', json.dumps(test_data))
+        self._client.send('/queue/ReductionComplete', json.dumps(test_data))
         time.sleep(self._timeout_wait)
 
         runs = ReductionRun.objects.filter(experiment=experiment)
@@ -761,7 +806,7 @@ class QueueProcessorTestCase(TestCase):
             directory = os.path.join(REDUCTION_SCRIPT_BASE, 'reduction_script_temp')
             before = dict ([(f, None) for f in os.listdir (directory)])
             
-            self._client.send('/topic/DataReady', json.dumps(test_data))
+            self._client.send('/queue/DataReady', json.dumps(test_data))
             
             # Check it is created
             iterations = 0
@@ -786,6 +831,38 @@ class QueueProcessorTestCase(TestCase):
                 self.fail("Scripts do not match.")
         finally:
             self.remove_dummy_reduce_script(instrument_name)
+
+    def test_script_deleted(self):
+        rb_number = self.get_rb_number()
+        Experiment(reference_number=rb_number).save()
+        instrument_name = "test_data_ready_multiple_runs-TestInstrument"
+        
+        directory = os.path.join(REDUCTION_SCRIPT_BASE, instrument_name)
+        test_reduce = os.path.join(os.path.dirname(__file__), '../', 'test_files','empty_reduce.py')
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        file_path = os.path.join(directory, 'reduce.py')
+        if not os.path.isfile(file_path):
+            shutil.copyfile(test_reduce, file_path)
+
+        headers = { 
+            "destination" : '/queue/ReductionError'
+        }
+        message = {
+            "run_number" : 1,
+            "instrument" : instrument_name,
+            "rb_number" : rb_number,
+            "data" : "/false/path",
+            "run_version" : 0,
+            "reduction_script" : file_path
+        }
+        listener = Listener(None)
+
+        self.assertTrue(os.path.isfile(file_path), "Expecting file to exist before call.")
+
+        listener.on_message(headers, json.dumps(message))
+
+        self.assertFalse(os.path.isfile(file_path), "Expecting file to be deleted after call.")
 
 class ICATCommunicationTestCase(TestCase):
 

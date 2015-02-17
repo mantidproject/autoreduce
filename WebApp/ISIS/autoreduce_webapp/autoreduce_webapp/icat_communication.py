@@ -1,6 +1,6 @@
 from settings import LOG_FILE, LOG_LEVEL, ICAT, BASE_DIR
 import logging, os, sys, datetime
-logging.basicConfig(filename=LOG_FILE,level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 from sets import Set
 import icat
 sys.path.insert(0, BASE_DIR)
@@ -17,7 +17,7 @@ class ICATCommunication(object):
             kwargs['PASSWORD'] = ICAT['PASSWORD']
         if 'SESSION' not in kwargs:
             kwargs['SESSION'] = { 'username' : kwargs['USER'], 'password' : kwargs['PASSWORD']}
-        logging.debug("Logging in to ICAT at %s" % kwargs['URL'])
+        logger.debug("Logging in to ICAT at %s" % kwargs['URL'])
         self.client = icat.Client(url=kwargs['URL'])
         self.sessionId = self.client.login(kwargs['AUTH'], kwargs['SESSION'])
     
@@ -25,7 +25,7 @@ class ICATCommunication(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        logging.debug("Logging out of ICAT")
+        logger.debug("Logging out of ICAT")
         self.client.logout()
     
     '''
@@ -35,21 +35,11 @@ class ICATCommunication(object):
         [my_set.add(each) for each in my_list]
         return my_set
 
-    def _build_in_clause(self, field, values):
-        clause = field + " IN ("
-        for item in values:
-            if isinstance(item, (int, long)):
-                clause += "" + str(item) + ","
-            else:
-                clause += "'" + str(item) + "',"
-        clause = clause[:-1] + ")"
-        return clause
-
     '''
         Returns experiment details for the given reference number
     '''
     def get_experiment_details(self, reference_number):
-        logging.debug("Calling ICATCommunication.get_experiment_details")
+        logger.debug("Calling ICATCommunication.get_experiment_details")
         if not isinstance(reference_number, (int, long)):
             raise TypeError("Reference number must be a number")
 
@@ -75,35 +65,35 @@ class ICATCommunication(object):
         This includes instruments they own and are an experimenter on.
     '''
     def get_valid_instruments(self, user_number):
-        logging.debug("Calling ICATCommunication.get_valid_instruments")
+        logger.debug("Calling ICATCommunication.get_valid_instruments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
         instruments = Set()
         if self.is_admin(user_number):
-            self._add_list_to_set(self.client.search("SELECT inst.name FROM Instrument inst"), instruments)
+            self._add_list_to_set(self.client.search("SELECT inst.fullName FROM Instrument inst"), instruments)
         else:
             self._add_list_to_set(self.get_owned_instruments(user_number), instruments)
-            self._add_list_to_set(self.client.search("SELECT inst.name FROM Instrument inst JOIN inst.investigationInstruments ii WHERE ii.investigation.id IN (SELECT i.id from Investigation i JOIN i.investigationUsers iu WHERE iu.user.name = 'uows/" + str(user_number) + "')"), instruments)
+            self._add_list_to_set(self.client.search("SELECT inst.fullName FROM Instrument inst JOIN inst.investigationInstruments ii WHERE ii.investigation.id IN (SELECT i.id from Investigation i JOIN i.investigationUsers iu WHERE iu.user.name = 'uows/" + str(user_number) + "')"), instruments)
         return sorted(instruments)
 
     '''
         Returns all instruments for which the given user is an instrument scientist
     '''
     def get_owned_instruments(self, user_number):
-        logging.debug("Calling ICATCommunication.get_owned_instruments")
+        logger.debug("Calling ICATCommunication.get_owned_instruments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
         instruments = Set()
-        self._add_list_to_set(self.client.search("SELECT ins.instrument.name from InstrumentScientist ins WHERE ins.user.name = 'uows/" + str(user_number) + "'"), instruments)
+        self._add_list_to_set(self.client.search("SELECT ins.instrument.fullName from InstrumentScientist ins WHERE ins.user.name = 'uows/" + str(user_number) + "'"), instruments)
         return sorted(instruments)
 
     '''
         Checks if a user has any owned instruments and thus an instrument scientist
     '''
     def is_instrument_scientist(self, user_number):
-        logging.debug("Calling ICATCommunication.is_instrument_scientist")
+        logger.debug("Calling ICATCommunication.is_instrument_scientist")
         if self.get_owned_instruments(user_number):
             return True
         return False
@@ -112,7 +102,7 @@ class ICATCommunication(object):
         Returns True is the given user is part of the experiment team for the given reference number.
     '''
     def is_on_experiment_team(self, reference_number, user_number):
-        logging.debug("Calling ICATCommunication.is_on_experiment_team")
+        logger.debug("Calling ICATCommunication.is_on_experiment_team")
         if not isinstance(user_number, (int, long)) or not isinstance(reference_number, (int, long)):
             raise TypeError("User number and reference number must be a number")
 
@@ -125,7 +115,7 @@ class ICATCommunication(object):
         Returns a set of experiment reference numbers for which the given user is on the experiment team.
     '''
     def get_associated_experiments(self, user_number):
-        logging.debug("Calling ICATCommunication.get_associated_experiments")
+        logger.debug("Calling ICATCommunication.get_associated_experiments")
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
 
@@ -137,7 +127,7 @@ class ICATCommunication(object):
         Returns all experiments allowed for a given list of instruments
     '''
     def get_valid_experiments_for_instruments(self, user_number, instruments):
-        logging.debug("Calling ICATCommunication.get_valid_experiments_for_instruments")
+        logger.debug("Calling ICATCommunication.get_valid_experiments_for_instruments")
         from reduction_viewer.models import Setting
         if not isinstance(user_number, (int, long)):
             raise TypeError("User number must be a number")
@@ -154,16 +144,26 @@ class ICATCommunication(object):
 
         for instrument in instruments:
             experiments = Set()
-            self._add_list_to_set(self.client.search("SELECT i.name FROM Investigation i JOIN i.investigationInstruments inst WHERE i.endDate > '"+str(years_back)+"' and inst.instrument.name = '"+instrument+"' INCLUDE i.investigationInstruments.instrument"), experiments)
+            self._add_list_to_set(self.client.search("SELECT i.name FROM Investigation i JOIN i.investigationInstruments inst WHERE i.name NOT LIKE 'CAL%' and i.endDate > '"+str(years_back)+"' and (inst.instrument.name = '"+instrument+"' OR inst.instrument.fullName = '"+instrument+"') INCLUDE i.investigationInstruments.instrument"), experiments)
             instruments_dict[instrument] = sorted(experiments, reverse=True)
 
         return instruments_dict
+
+    def get_upcoming_experiments_for_instrument(self, instrument):
+        logger.debug("Calling ICATCommunication.get_upcoming_experiments_for_instrument")
+        if not instrument:
+            raise Exception("At least one instrument must be supplied")
+
+        experiments = Set()
+        self._add_list_to_set(self.client.search("SELECT i.name FROM Investigation i JOIN i.investigationInstruments inst WHERE i.name NOT LIKE 'CAL%' and i.endDate > CURRENT_TIMESTAMP and (inst.instrument.name = '"+instrument+"' OR inst.instrument.fullName = '"+instrument+"') INCLUDE i.investigationInstruments.instrument"), experiments)
+        return sorted(experiments, reverse=True)
+
 
     '''
         Check if the user is in the relevant admin group within ICAT for the autoreduction webapp
     '''
     def is_admin(self, user_number):
-        logging.debug("Calling ICATCommunication.is_admin")
+        logger.debug("Calling ICATCommunication.is_admin")
         admin_group = 'Autoreduce Admins'
         if self.client.search("SELECT g FROM Grouping g JOIN g.userGroups ug WHERE g.name = '"+ admin_group +"' and ug.user.name = 'uows/"+ str(user_number) +"'"):
             return True
@@ -174,6 +174,6 @@ class ICATCommunication(object):
         Currenty a placeholder. Not sure yet what this may contain.
     '''
     def post_process(self, reduction_run):
-        logging.debug("Calling ICATCommunication.post_process")
+        logger.debug("Calling ICATCommunication.post_process")
         # TODO: ICAT post-processing
         pass

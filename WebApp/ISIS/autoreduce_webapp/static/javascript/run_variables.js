@@ -1,7 +1,40 @@
 (function(){
     var formUrl = $('#run_variables').attr('action');
 
-    var previewScript  = function previewScript(event){
+    var previewScript = function previewScript(event){
+        var submitAction = function submitAction(){
+            var url = $('#preview_url').val();
+            var $form = $('#run_variables');
+            if($form.length===0) $form = $('#instrument_variables');
+            $form.attr('action', url);
+
+            $('.js-script-container').text('');
+            $('#script-preview-modal .progress').show();
+            $('#script-preview-modal').modal();
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $form.serialize(),
+                success: function(data) {
+                    $('.js-script-container').removeClass('prettyprinted').text(data);
+                    prettyPrint();
+                    $('#script-preview-modal .progress').hide();
+                }
+            });
+        };
+        var cancelAction = function cancelAction(){
+            return false;
+        };
+
+        event.preventDefault();
+        if(validateForm()){
+            submitAction();
+        }else{
+            cancelAction();
+        }
+    };
+
+    var downloadScript  = function downloadScript(event){
         var submitAction = function submitAction(){
             var url = $('#preview_url').val();
             var $form = $('#run_variables');
@@ -15,7 +48,7 @@
         };
         event.preventDefault();
         if(validateForm()){
-            checkForConflicts(submitAction);
+            submitAction();
         }else{
             cancelAction();
         }
@@ -23,37 +56,59 @@
 
     var validateForm = function validateForm(){
         var isValid = true;
+        var errorMessages = [];
+        var $errorList;
         var $form = $('#run_variables');
         if($form.length===0) $form = $('#instrument_variables');
 
         var resetValidationStates = function resetValidationStates(){
             $('.has-error').removeClass('has-error');
+            $('.js-form-validation-message').hide();
+        };
+
+        var getVarName = function getVarName($input){
+            return '<strong>' + $input.attr('id').replace('var-standard-','').replace('var-advanced-','').replace('-',' ') + '</strong>';
         };
 
         var validateRunRange = function validateRunRange(){
             var $start = $('#run_start');
             var $end = $('#run_end');
-            if($start.length && $end.length){
-                validateNotEmpty.call($start[0]);
-                if(!isNumber($start.val())){
-                    $start.parent().addClass('has-error');
-                    isValid = false;
-                }
-                if($end.val() !== '' && !isNumber($end.val())){
-                    $end.parent().addClass('has-error');
-                    isValid = false;
-                }
-                if(parseInt($end.val()) < parseInt($start.val())){
-                    $end.parent().addClass('has-error');
-                    isValid = false;
+            var $experiment_reference = $('#experiment_reference');
+            if($start.length && $end.length && $experiment_reference.length){
+                if($('#variable-range-toggle').length >0 && !$('#variable-range-toggle').bootstrapSwitch('state')){
+                    validateNotEmpty.call($experiment_reference[0]);
+                    if(!isNumber($experiment_reference.val())){
+                        $experiment_reference.parent().addClass('has-error');
+                        isValid = false;
+                        errorMessages.push('<strong>Experiment Reference Number</strong> must be a number.')
+                    }
+                }else{
+                    validateNotEmpty.call($start[0]);
+                    if(!isNumber($start.val())){
+                        $start.parent().addClass('has-error');
+                        isValid = false;
+                        errorMessages.push('<strong>Run start</strong> must be a number.')
+                    }
+                    if($end.val() !== '' && !isNumber($end.val())){
+                        $end.parent().addClass('has-error');
+                        isValid = false;
+                        errorMessages.push('<strong>Run finish</strong> can only be a number.')
+                    }
+                    if(parseInt($end.val()) < parseInt($start.val())){
+                        $end.parent().addClass('has-error');
+                        isValid = false;
+                        errorMessages.push('<strong>Run finish</strong> must be greater than the run start.')
+                    }
                 }
             }
         };
 
         var validateNotEmpty = function validateNotEmpty(){
+            
             if($(this).val().trim() === ''){
                 $(this).parent().addClass('has-error');
                 isValid = false;
+                errorMessages.push(getVarName($(this)) + ' is required.')
             }
         };
         var validateText = function validateText(){
@@ -64,6 +119,7 @@
             if(!isNumber($(this).val())){
                 $(this).parent().addClass('has-error');
                 isValid = false;
+                errorMessages.push(getVarName($(this)) + ' must be a number.')
             }
         };
         var validateBoolean = function validateBoolean(){
@@ -71,6 +127,7 @@
             if($(this).val().toLowerCase() !== 'true' && $(this).val().toLowerCase() !== 'false'){
                 $(this).parent().addClass('has-error');
                 isValid = false;
+                errorMessages.push(getVarName($(this)) + ' must be a boolean.')
             }
         };
         var validateListNumber = function validateListNumber(){
@@ -85,6 +142,7 @@
                     if(!isNumber(items[i])){
                         $(this).parent().addClass('has-error');
                         isValid = false;
+                        errorMessages.push(getVarName($(this)) + ' must be a comma seperated list of numbers.')
                         break;
                     }
                 }
@@ -102,28 +160,30 @@
                     if(items[i].trim() === ''){
                         $(this).parent().addClass('has-error');
                         isValid = false;
+                        errorMessages.push(getVarName($(this)) + ' must be a comma seperated list.')
                         break;
                     }
                 }
             }
         };
 
-        // Populate all boolean values with their checked state
-        $('[data-type="boolean"]').each(function(){
-            if($(this).attr('checked')){
-                $(this).val('True');
-            }else{
-                $(this).val('False');
-            }
-        });
-
         resetValidationStates();
         validateRunRange();
-        $('[data-type="text"]').each(validateText);
-        $('[data-type="number"]').each(validateNumber);
-        $('[data-type="boolean"]').each(validateBoolean);
-        $('[data-type="list_number"]').each(validateListNumber);
-        $('[data-type="list_text"]').each(validateListText);
+        $form.find('[data-type="text"]').each(validateText);
+        $form.find('[data-type="number"]').each(validateNumber);
+        $form.find('[data-type="boolean"]').each(validateBoolean);
+        $form.find('[data-type="list_number"]').each(validateListNumber);
+        $form.find('[data-type="list_text"]').each(validateListText);
+
+        if(!isValid){
+            $('.js-form-validation-message').html('');
+            $('.js-form-validation-message').append($('<p/>').text('Please fix the following error:'));
+            $errorList = $('<ul/>');
+            for(var i=0;i<errorMessages.length;i++){
+                $errorList.append($('<li/>').html(errorMessages[i]));
+            }
+            $('.js-form-validation-message').append($errorList).show();
+        }
 
         return isValid;
     };
@@ -148,7 +208,7 @@
         if($('#upcoming_runs').length > 0){
             var upcoming = $('#upcoming_runs').val().split(',');
             for(var i=0;i<upcoming.length;i++){
-                if(parseInt(upcoming[i]) >= start && (end == NaN || upcoming[i] <= end)){
+                if(parseInt(upcoming[i]) >= start && (!end || upcoming[i] <= end)){
                     conflicts.push(upcoming[i]);
                 }
             }
@@ -176,7 +236,16 @@
 
         event.preventDefault();
         if(validateForm()){
-            checkForConflicts(submitAction);
+            if($('#variable-range-toggle').length >0 && !$('#variable-range-toggle').bootstrapSwitch('state')){
+                $('#variable-range-toggle-value').val('False');
+                $('#run_start').val('');
+                $('#run_end').val('');
+                submitAction();
+            }else{
+                $('#variable-range-toggle-value').val('True');
+                $('#experiment_reference').val('');
+                checkForConflicts(submitAction);
+            }
         }else{
             cancelAction();
         }
@@ -215,17 +284,90 @@
         event.preventDefault();
         var $form = $('#run_variables');
         if($form.length===0) $form = $('#instrument_variables');
-        $form.html($('#default_instrument_variables_form').html());
+        $form.find('.js-variables-container').html($('.js-default-variables').html());
         // We need to enable the popover again as the element is new
         $('[data-toggle="popover"]').popover();
     };
+
+    var resetCurrentVariables = function resetCurrentVariables(event){
+        event.preventDefault();
+        var $form = $('#run_variables');
+        if($form.length===0) $form = $('#instrument_variables');
+        $form.find('.js-variables-container').html($('.js-current-variables').html());
+        // We need to enable the popover again as the element is new
+        $('[data-toggle="popover"]').popover();
+    };
+
+    var cancelForm = function cancelForm(event){
+        event.preventDefault();
+        window.onbeforeunload = undefined;
+        window.location.href = document.referrer;
+    };
     
+    var toggleActionExplainations = function toggleActionExplainations(event){
+        if(event.type==='mouseover'){
+            $('.js-action-explaination').text($(this).siblings('.js-explaination').text());
+        }else if(event.type==='mouseleave'){
+            $('.js-action-explaination').text('');
+        }
+    };
+
+    var updateBoolean = function updateBoolean(event){
+        var isChecked = $(this).prop('checked');
+        if(isChecked){
+            isChecked = 'True';
+        }else{
+            isChecked = 'False';
+        }
+        $(this).val(isChecked).siblings('input[type=hidden]').val(isChecked);
+    };
+
+    var handleToggleSwitch = function handleToggleSwitch(){
+        var toggleDisplay = function toggleDisplay(event, state){
+            if(state){
+                $('.js-variable-by-experiment').hide();
+                $('.js-experiment-label').css('font-weight', 'normal').css('color', '#ccc');
+                $('.js-variable-by-run').show();
+                $('.js-run-label').css('font-weight', 'bold').css('color', '#000');
+            }else{
+                $('.js-variable-by-experiment').show();
+                $('.js-experiment-label').css('font-weight', 'bold').css('color', '#000');
+                $('.js-variable-by-run').hide();
+                $('.js-run-label').css('font-weight', 'normal').css('color', '#ccc');
+            }
+        };
+
+        $('.js-experiment-label,.js-run-label').css('cursor','default').css('font-weight', 'bold');
+        toggleDisplay(undefined, $('#variable-range-toggle-value').val() === 'True');
+        
+        $('#variable-range-toggle').bootstrapSwitch();
+        $('#variable-range-toggle').bootstrapSwitch('state', ($('#variable-range-toggle-value').val() === 'True'))
+        $('#variable-range-toggle').on('switchChange.bootstrapSwitch', toggleDisplay);
+
+        $('.js-experiment-label').on('click', function(){
+            $('#variable-range-toggle').bootstrapSwitch('state', false);
+        });
+
+        $('.js-run-label').on('click', function(){
+            $('#variable-range-toggle').bootstrapSwitch('state', true);
+        });
+
+    };
+
     var init = function init(){
         $('#run_variables,#instrument_variables').on('click', '#previewScript', previewScript);
+        $('#script-preview-modal').on('click', '#downloadScript', downloadScript);
         $('#run_variables,#instrument_variables').on('click', '#resetValues', resetDefaultVariables);
+        $('#run_variables,#instrument_variables').on('click', '#currentScript', resetCurrentVariables);
         $('#run_variables,#instrument_variables').on('click', '#variableSubmit', submitForm);
+        $('#run_variables,#instrument_variables').on('click', '#cancelForm', cancelForm);
+        $('#run_variables,#instrument_variables').on('click', 'input[type=checkbox][data-type=boolean]', updateBoolean);
+        $('.js-form-actions li>a').on('mouseover mouseleave', toggleActionExplainations);
         $('#run_end').on('change', triggerAfterRunOptions);
         $('.js-show-default-variables').on('click', showDefaultSriptVariables);
+        if($('#variable-range-toggle').length >0){
+            handleToggleSwitch();
+        }
         restrictFinished();
         confirmUnsavedChanges();
     };

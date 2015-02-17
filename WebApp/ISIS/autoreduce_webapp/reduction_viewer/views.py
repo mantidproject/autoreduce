@@ -3,18 +3,20 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth import logout as django_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from autoreduce_webapp.uows_client import UOWSClient
 from autoreduce_webapp.icat_communication import ICATCommunication
 from autoreduce_webapp.settings import UOWS_LOGIN_URL, LOG_FILE, LOG_LEVEL
 from reduction_viewer.models import Experiment, ReductionRun, Instrument
 from reduction_viewer.utils import StatusUtils
+from reduction_viewer.view_utils import deactivate_invalid_instruments
 from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_staff
 from django.http import HttpResponse
 import operator 
 import logging
-logging.basicConfig(filename=LOG_FILE,level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
+@deactivate_invalid_instruments
 def index(request):
     return_url = UOWS_LOGIN_URL + request.build_absolute_uri()
     if request.GET.get('next'):
@@ -39,9 +41,7 @@ def index(request):
                 else:
                     return_url = default_next
                 # Cache these for the session as they are used for permission checking
-                #TODO: comment out when ICAT and uows are pointing at same session
-                #with ICATCommunication(AUTH='uows', SESSION={'sessionid':request.session['sessionid']}) as icat:
-                with ICATCommunication() as icat:
+                with ICATCommunication(AUTH='uows', SESSION={'sessionid':request.session['sessionid']}) as icat:
                     request.session['owned_instruments'] = icat.get_owned_instruments(int(request.user.username))
                     request.session['experiments'] = icat.get_associated_experiments(int(request.user.username))
 
@@ -56,9 +56,8 @@ def logout(request):
     request.session.flush()
     return redirect('index')
 
-@login_and_uows_valid
-@render_with('run_queue.html')
 @require_staff
+@render_with('run_queue.html')
 def run_queue(request):
     complete_status = StatusUtils().get_completed()
     error_status = StatusUtils().get_error()
@@ -73,28 +72,50 @@ def run_queue(request):
 def run_list(request):
     context_dictionary = {}
     instruments = []
-    # TODO: Uncomment on release: with ICATCommunication(AUTH='uows',SESSION={'sessionid':request.session.get('sessionid')}) as icat:
-    with ICATCommunication() as icat:
-        instrument_names = icat.get_valid_instruments(int(request.user.username))
-        if instrument_names:
-            experiments = icat.get_valid_experiments_for_instruments(int(request.user.username), instrument_names)
-        owned_instruments = icat.get_owned_instruments(int(request.user.username))
-    for instrument in instrument_names:
-        if not Instrument.objects.filter(name=instrument):
+    with ICATCommunication(AUTH='uows',SESSION={'sessionid':request.session.get('sessionid')}) as icat:
+        # Owned instruments is populated on login
+        owned_instruments = request.session.get('owned_instruments', default=[])
+        # Superuser sees everything
+        if request.user.is_superuser:
+            instrument_names = Instrument.objects.values_list('name', flat=True)
+            if instrument_names:
+                experiments = {}
+                for instrument_name in instrument_names:
+                    experiments[instrument_name] = []
+                    instrument = Instrument.objects.get(name=instrument_name)
+                    instrument_experiments = Experiment.objects.filter(reduction_runs__instrument=instrument).values_list('reference_number', flat=True)
+                    for experiment in instrument_experiments:
+                        experiments[instrument_name].append(str(experiment))
+                request.session['experiments_to_show'] = experiments
+        else:
+            instrument_names = icat.get_valid_instruments(int(request.user.username))
+            if instrument_names:
+                experiments = request.session.get('experiments_to_show', icat.get_valid_experiments_for_instruments(int(request.user.username), instrument_names))
+                request.session['experiments_to_show'] = experiments
+    for instrument_name in instrument_names:
+        try:
+            instrument = Instrument.objects.get(name=instrument_name)
+        except:
             continue
         instrument_queued_runs = 0
         instrument_processing_runs = 0
         instrument_error_runs = 0
 
         instrument_obj = {
-            'name' : instrument,
+            'name' : instrument_name,
             'experiments' : [],
-            'is_instrument_scientist' : (instrument in owned_instruments),
-            'runs' : []
+            'is_instrument_scientist' : (instrument_name in owned_instruments),
+            'runs' : [],
+            'is_active' : instrument.is_active
         }
         
-        instrument_experiments = experiments[instrument]
+        if instrument_name not in experiments:
+            experiments[instrument_name] = []
+            
+        instrument_experiments = experiments[instrument_name] 
         reference_numbers = []
+        
+            
         for experiment in instrument_experiments:
             # Filter out calibration runs
             if experiment.isdigit():
@@ -115,7 +136,7 @@ def run_list(request):
                 if run.status == StatusUtils().get_processing():
                     experiment_processing_runs += 1
 
-            # Add exepriment stats to instrument
+            # Add experiment stats to instrument
             instrument_queued_runs += experiment_queued_runs
             instrument_processing_runs += experiment_processing_runs
             instrument_error_runs += experiment_error_runs
@@ -140,7 +161,7 @@ def run_list(request):
         }
 
         # Sort lists before appending
-        instrument_obj['runs'] = sorted(instrument_obj['runs'], key=operator.attrgetter('created'), reverse=True)
+        instrument_obj['runs'] = sorted(instrument_obj['runs'], key=operator.attrgetter('last_updated'), reverse=True)
         instrument_obj['experiments'] = sorted(instrument_obj['experiments'], key=lambda k: k['reference_number'], reverse=True)
         instruments.append(instrument_obj)
     
@@ -180,24 +201,23 @@ def run_summary(request, run_number, run_version=0):
         run = ReductionRun.objects.get(run_number=run_number, run_version=run_version)
         # Check the user has permission
         if not request.user.is_superuser and run.experiment.reference_number not in request.session['experiments'] and run.instrument.name not in request.session['owned_instruments']:
-            return HttpResponseForbidden('Access Forbidden')
+            raise PermissionDenied()
         history = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version')
         context_dictionary = {
             'run' : run,
             'history' : history,
         }
     except Exception as e:
-        logging.error(e.message)
+        logger.error(e.message)
         context_dictionary = {}
     return context_dictionary
 
-@login_and_uows_valid
-@render_with('instrument_summary.html')
 @require_staff
+@render_with('instrument_summary.html')
 def instrument_summary(request, instrument):
     # Check the user has permission
     if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
-        return HttpResponseForbidden('Access Forbidden')
+        raise PermissionDenied()
 
     processing_status = StatusUtils().get_processing()
     queued_status = StatusUtils().get_queued()
@@ -209,7 +229,7 @@ def instrument_summary(request, instrument):
             'queued' : ReductionRun.objects.filter(instrument=instrument_obj, status=queued_status),
         }
     except Exception as e:
-        logging.error(e.message)
+        logger.error(e.message)
         context_dictionary = {}
 
     return context_dictionary
@@ -233,7 +253,7 @@ def experiment_summary(request, reference_number):
             with ICATCommunication(AUTH='uows', SESSION={'sessionid':request.session['sessionid']}) as icat:
                 experiment_details = icat.get_experiment_details(int(reference_number))
         except Exception as icat_e:
-            logging.error(icat_e.message)
+            logger.error(icat_e.message)
             experiment_details = {
                 'reference_number' : '',
                 'start_date' : '',
@@ -245,16 +265,20 @@ def experiment_summary(request, reference_number):
             }
         context_dictionary = {
             'experiment' : experiment,
-            'runs' : runs,
+            'runs' :  sorted(runs, key=operator.attrgetter('last_updated'), reverse=True),
             'experiment_details' : experiment_details,
             'data' : data,
             'reduced_data' : reduced_data,
         }
     except Exception as e:
-        logging.error(e.message)
+        logger.error(e.message)
         context_dictionary = {}
     
     #Check the users permissions
     if not request.user.is_superuser and reference_number not in request.session['experiments'] and experiment_details.instrument not in request.session['owned_instruments']:
-       return HttpResponseForbidden('Access Forbidden')
+       raise PermissionDenied()
     return context_dictionary
+
+@render_with('help.html')
+def help(request):
+    return {}

@@ -37,7 +37,7 @@ Masking = "Horizontal"
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Calibration File'
-calib_File = 'SNAP_calibrate_d18584_2014_08_29.cal'
+calib_File = '/SNS/SNAP/IPTS-11439/shared/SNAP_calibrate_d19311_2014_11_30.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -52,7 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.0015,4'
+binning='0.4,-0.0025,4.2'
 
 #Output should be one of the following strings :
 # 'None' # 'All' outputs both Fullprof and GSAS 
@@ -89,7 +89,7 @@ iws = CompressEvents(InputWorkspace='iws')
 if Calibration == 'Convert Units':
     ows = ConvertUnits(InputWorkspace='iws',Target='dSpacing')
 if Calibration == 'Calibration File':
-    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = folder + calib_File)
+    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = calib_File)
 
 if Masking != 'None':
 	
@@ -118,8 +118,8 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 8 
-	smooth_range = 4
+	window = 5 
+	smooth_range = 5
 				
 	peak_clip_WS = CloneWorkspace('ows')
 	n_histo = peak_clip_WS.getNumberHistograms()
