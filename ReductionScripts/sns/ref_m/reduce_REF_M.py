@@ -74,7 +74,7 @@ if __name__=="__main__":
     if result[0]:
       logging.info('Trigger autorefl script for index %i'%result[1].number)
       trigger_autorefl(result[1].number, filename,
-                       outdir+'/REF_M_%i_autoreduced.png'%result[1].number)
+                       outdir+'REF_M_%i_autoreduced.png'%result[1].number)
     else:
       logging.warning('Could not add run to database, check logs for details')
 
