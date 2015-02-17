@@ -42,15 +42,15 @@ def trigger_autorefl(fnumber, fname=None, image_path=None):
     The script will handle communication with running instance
     or start of new instance of the script.
   '''
-  from quicknxs.auto_reflectivity import ReflectivityBuilder, SocketCom
-  if SocketCom.check_running():
-    SocketCom.send_new_file(fnumber, fname, image_path)
+  from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
+  if FileCom.check_running():
+    FileCom.send_new_file(fnumber, fname, image_path)
   else:
     ReflectivityBuilder.spawn_daemon(fnumber, fname, image_path)
 
 def kill_autorefl():
-  from quicknxs.auto_reflectivity import SocketCom
-  SocketCom.kill_daemon()
+  from quicknxs.auto_reflectivity import FileCom
+  FileCom.kill_daemon()
 
 if __name__=="__main__":
   # initialize logging to file and console

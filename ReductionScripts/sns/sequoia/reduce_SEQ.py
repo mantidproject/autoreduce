@@ -105,6 +105,11 @@ def preprocessData(filename):
         LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
+    #adjust data times for addl frames
+    td=25.5*1e6/v
+    if (td > 16666.7):
+        tdf=int(td*60e-6)
+        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
     valC3=__MonWS.getRun()['Phase3'].getStatistics().median
@@ -172,6 +177,9 @@ if __name__ == "__main__":
         processed_van_file = os.path.join(outdir, ProcessedVanadium)
 
     DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
+    #--------------------------------------
+    #Preprocess data to get Ei and T0
+    #--------------------------------------
     [EGuess,Ei,T0]=preprocessData(filename)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
     #angle= 99.99 #This is where you can manually set the rotation angle
@@ -215,7 +223,8 @@ if __name__ == "__main__":
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
         ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-        
+#generate summed spectra_plot
+#---------------------------------------       
         s=SumSpectra("__OWS")
         x=s.readX(0)
         y=s.readY(0)
