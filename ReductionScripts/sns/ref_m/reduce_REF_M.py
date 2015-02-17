@@ -52,6 +52,20 @@ def kill_autorefl():
   from quicknxs.auto_reflectivity import FileCom
   FileCom.kill_daemon()
 
+def wait_image(ofile):
+  '''
+  Wait a maximum of 10min for the plot to be created.
+  The script needs to exit afterwards for the image
+  to show up on the analysis data homepage.
+  '''
+  for ignore in range(600):
+    if not os.path.exists(ofile):
+      time.sleep(1.)
+      continue
+    else:
+      return True
+  return False
+
 if __name__=="__main__":
   # initialize logging to file and console
   # console log level is given by LOG_LEVEL
@@ -73,8 +87,14 @@ if __name__=="__main__":
     result=update_database(filename.replace('_event.nxs', '_histo.nxs'))
     if result[0]:
       logging.info('Trigger autorefl script for index %i'%result[1].number)
-      trigger_autorefl(result[1].number, filename,
-                       outdir+'REF_M_%i_autoreduced.png'%result[1].number)
+      ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
+      trigger_autorefl(result[1].number, filename, ofile)
+      logging.info('Wait for image to be generated.')
+      img_result=wait_image(ofile)
+      if img_result:
+        logging.info('Image created')
+      else:
+        logging.info('No image created')
     else:
       logging.warning('Could not add run to database, check logs for details')
 
