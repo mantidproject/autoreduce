@@ -22,15 +22,14 @@ from quicknxs.version import str_version
 
 LOG_LEVEL=logging.INFO
 FILE_PREFIX=u'/SNS/REF_M/shared/autoreduce/logfiles/reduce_REF_M_'
-AUTOREFL_SCRIPT=u'/SNS/users/agf/bin/autorefl'
 #FILE_PREFIX=u'/tmp/reduce_'
-#AUTOREFL_SCRIPT=u'/home/agf/Software/Scripte/QuickNXS/scripts/autorefl'
 
 def update_database(filename):
   '''load file, run analysis and add parameters to the database'''
   from quicknxs.database_updater import database
   from quicknxs.qreduce import NXSData
-  dataset=NXSData(filename, use_caching=False)
+  nb=int(filename.split('_')[-2])
+  dataset=NXSData(nb, use_caching=False)
   db=database.DatabaseHandler()
   added=db.add_record(dataset)
   db.close_db()
@@ -84,7 +83,7 @@ if __name__=="__main__":
     outdir=unicode(sys.argv[2])
 
     logging.info('Analyze dataset and add to sample database')
-    result=update_database(filename.replace('_event.nxs', '_histo.nxs'))
+    result=update_database(filename)
     if result[0]:
       logging.info('Trigger autorefl script for index %i'%result[1].number)
       ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
