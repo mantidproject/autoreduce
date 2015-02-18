@@ -177,6 +177,9 @@ ${mask}
         processed_van_file = os.path.join(outdir, ProcessedVanadium)
 
     DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
+    #--------------------------------------
+    #Preprocess data to get Ei and T0
+    #--------------------------------------
     [EGuess,Ei,T0]=preprocessData(filename)
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
     #angle= 99.99 #This is where you can manually set the rotation angle
@@ -220,7 +223,8 @@ ${mask}
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
         ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-        
+#generate summed spectra_plot
+#---------------------------------------          
         s=SumSpectra("__OWS")
         x=s.readX(0)
         y=s.readY(0)
