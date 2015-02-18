@@ -31,8 +31,8 @@ w=ConvertUnits(w,Target="Momentum",EMode="Elastic")
 w=CropWorkspace(w,XMin=2.5,XMax=10)
 #SetGoniometer(w,"Universal") 
 SetGoniometer(w,Axis0="BL9:Mot:Sample:Axis5,0,1,0,1")
-md=ConvertToMD(w,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="Q_sample",LorentzCorrection=1,MinValues="-20,-0.2,-20",MaxValues="20,0.2,20",Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
-bin=BinMD(md, AlignedDim0='Q_sample_x,-20,20,800', AlignedDim1='Q_sample_y,-0.2,0.2,1', AlignedDim2='Q_sample_z,-20,20,800')
+md=ConvertToMD(w,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames="Q_sample",LorentzCorrection=1,MinValues="-20,-0.5,-20",MaxValues="20,0.5,20",Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
+bin=BinMD(md, AlignedDim0='Q_sample_x,-20,20,800', AlignedDim1='Q_sample_y,-0.5,0.5,1', AlignedDim2='Q_sample_z,-20,20,800')
 ss=bin.getSignalArray()
 
 #Trim array for non-zero values.
