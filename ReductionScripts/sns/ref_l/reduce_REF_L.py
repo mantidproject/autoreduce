@@ -29,8 +29,8 @@ if __name__ == "__main__":
     w=mtd["DETECTOR"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
-    nx = 304
-    ny = 256
+    nx = 256#304
+    ny = 304#256
     wi=Integration(w)
     data=wi.extractY().reshape(nx,ny)
     X,Y=meshgrid(arange(nx+1), arange(ny+1))
