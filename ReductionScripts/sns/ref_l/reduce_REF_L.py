@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys,os
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
@@ -12,7 +12,6 @@ numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
 
-peaks = [[10235,12460], [13230,14610], [8825,9450], [6700,7025]]
 
 if __name__ == "__main__":    
     #check number of arguments
