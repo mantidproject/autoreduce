@@ -57,7 +57,7 @@ def wait_image(ofile):
   The script needs to exit afterwards for the image
   to show up on the analysis data homepage.
   '''
-  for ignore in range(600):
+  for ignore in range(60):
     if not os.path.exists(ofile):
       time.sleep(1.)
       continue
