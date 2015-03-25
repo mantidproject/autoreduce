@@ -236,8 +236,9 @@ try:
     first_run_of_set = m.group(1)
     sequence_number = m.group(2)
 except:
-    pass
-
+    m=re.search("-(\d+).",title)
+    sequence_number = m.group(1)
+    first_run_of_set = int(runNumber)-int(sequence_number)-1
 
 reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [50322,62697]},
                       '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [40834,53450]},
