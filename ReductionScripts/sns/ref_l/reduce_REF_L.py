@@ -50,7 +50,7 @@ def _scale_data_sets(workspace_list):
 
 def _create_ascii_clicked(first_run_of_set):
     #get default output file name
-    default_file_name = 'REFL_' + first_run_of_set + '_combined_data.txt'
+    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
 
     dq0 = 0.0009
     dq_over_q = 0.045
@@ -114,9 +114,6 @@ def _produce_y_of_same_x_(first_run_of_set):
         if ws.endswith("scaled"):
             scaled_ws_list.append(ws)
 
-    
-
-    print "---->", scaled_ws_list
     # get binning parameters
     _from_q = 0.005
     _bin_size = 0.01
