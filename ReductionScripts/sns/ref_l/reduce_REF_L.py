@@ -238,6 +238,7 @@ try:
 except:
     pass
 
+
 reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [50322,62697]},
                       '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [40834,53450]},
                       '3': {"signal": [149, 161], "background": [146, 164], "norm":119690, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [29604,42085]},
@@ -289,11 +290,16 @@ _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
 #if sequence_number==7:
+x_data = mtd['reflictivity_combined'].dataX(0)
 y_data = mtd['reflictivity_combined'].dataY(0)
+clean_x = []
+clean_y = []
+
 for i in range(len(y_data)):
     if y_data[i]>0:
-        y_data[i] = math.log(y_data[i])
-    else:
-        y_data[i] = 0.0
+        clean_y.append(math.log(y_data[i]))
+        clean_x.append(x_data[i])
+CreateWorkspace(DataX=clean_x, DataY=clean_y, NSpec=1, OutputWorkspace='reflictivity_combined')
+        
 SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
