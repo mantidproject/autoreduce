@@ -293,14 +293,17 @@ _create_ascii_clicked(first_run_of_set)
 #if sequence_number==7:
 x_data = mtd['reflictivity_combined'].dataX(0)
 y_data = mtd['reflictivity_combined'].dataY(0)
+e_data = mtd['reflictivity_combined'].dataE(0)
 clean_x = []
 clean_y = []
+clean_e = []
 
 for i in range(len(y_data)):
     if y_data[i]>0:
         clean_y.append(math.log(y_data[i]))
         clean_x.append(x_data[i])
-CreateWorkspace(DataX=clean_x, DataY=clean_y, NSpec=1, OutputWorkspace='reflictivity_combined')
+        clean_e.append(e_data[i])
+CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_combined', UnitX="MomentumTransfer")
         
 SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
