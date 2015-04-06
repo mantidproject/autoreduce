@@ -253,7 +253,7 @@ reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "nor
                       '6': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
                       '7': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
                       '8': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
-                      'default': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [0,200s000]},
+                      'default': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [0,200000]},
 }
 
 if sequence_number not in reduction_settings:
