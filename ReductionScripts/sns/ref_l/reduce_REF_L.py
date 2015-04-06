@@ -230,12 +230,20 @@ sequence_number = 1
 title = meta_data_run.getProperty("run_title").value
 try:
     m=re.search("Run:(\d+)-(\d+).",title)
-    first_run_of_set = m.group(1)
-    sequence_number = m.group(2)
+    if m is not None:
+        first_run_of_set = m.group(1)
+        sequence_number = m.group(2)
+    else:
+        m=re.search("-(\d+).",title)
+        if m is not None:
+            sequence_number = m.group(1)
+            first_run_of_set = int(runNumber)-int(sequence_number)-1
+        else:
+            sequence_number = 1
+            first_run_of_set = int(runNumber)
 except:
-    m=re.search("-(\d+).",title)
-    sequence_number = m.group(1)
-    first_run_of_set = int(runNumber)-int(sequence_number)-1
+    sequence_number = 1
+    first_run_of_set = int(runNumber)
 
 reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [50322,62697]},
                       '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [40834,53450]},
