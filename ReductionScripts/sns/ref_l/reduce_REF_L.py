@@ -258,12 +258,13 @@ reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "nor
 if sequence_number not in reduction_settings:
     sequence_number = '1'
 
-RefLReduction(RunNumbers=[int(runNumber)],
+#RefLReduction
+LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
               SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
               SubtractSignalBackground=True,
               SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
-              NormFlag=True,
+              NormFlag=False,
               NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
               NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
               SubtractNormBackground=True,
