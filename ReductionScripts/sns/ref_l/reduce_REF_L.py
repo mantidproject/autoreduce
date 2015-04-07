@@ -48,7 +48,7 @@ def _scale_data_sets(workspace_list, endswith='combined'):
     # Create combined output
     s.get_scaled_data(workspace="reflictivity_%s" % endswith)
 
-def _create_ascii_clicked(first_run_of_set, endwith="auto"):
+def _create_ascii_clicked(first_run_of_set, endswith="auto"):
     #get default output file name
     default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
 
@@ -308,7 +308,6 @@ clean_y = []
 clean_e = []
 
 for i in range(len(y_data)):
-    if y_data[i]>0:
         clean_y.append(math.log(y_data[i]))
         clean_x.append(x_data[i])
         clean_e.append(e_data[i])
