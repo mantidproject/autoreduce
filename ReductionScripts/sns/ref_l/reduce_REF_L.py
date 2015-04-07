@@ -327,18 +327,20 @@ _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
 #if sequence_number==7:
-x_data = mtd['reflictivity_auto'].dataX(0)
-y_data = mtd['reflictivity_auto'].dataY(0)
-e_data = mtd['reflictivity_auto'].dataE(0)
-clean_x = []
-clean_y = []
-clean_e = []
+for item in ['auto', 'new']:
+    x_data = mtd['reflictivity_%s' % item].dataX(0)
+    y_data = mtd['reflictivity_%s' % item].dataY(0)
+    e_data = mtd['reflictivity_%s' % item].dataE(0)
+    clean_x = []
+    clean_y = []
+    clean_e = []
 
-for i in range(len(y_data)):
-        clean_y.append(math.log(y_data[i]))
-        clean_x.append(x_data[i])
-        clean_e.append(e_data[i])
-CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_auto', UnitX="MomentumTransfer")
-        
+    for i in range(len(y_data)):
+            clean_y.append(math.log(y_data[i]))
+            clean_x.append(x_data[i])
+            clean_e.append(e_data[i])
+    CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_%s' % item, UnitX="MomentumTransfer")
+            
+
 SavePlot1D(InputWorkspace="reflictivity_auto", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
