@@ -259,33 +259,34 @@ reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "nor
 if sequence_number not in reduction_settings:
     sequence_number = 'default'
 
+compare = False
+if compare:
+    LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+                  NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
+                  SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
+                  SubtractSignalBackground=True,
+                  SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
+                  NormFlag=True,
+                  NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
+                  NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
+                  SubtractNormBackground=True,
+                  LowResDataAxisPixelRangeFlag=True,
+                  LowResDataAxisPixelRange=[98,158],
+                  LowResNormAxisPixelRangeFlag=True,
+                  LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
+                  TOFRange=reduction_settings[sequence_number]["TOF"],
+                  TofRangeFlag=False,
+                  IncidentMediumSelected='2InDiamSi',
+                  GeometryCorrectionFlag=False,
+                  QMin=0.005,
+                  QStep=0.01,
+                  AngleOffset=0.016,
+                  AngleOffsetError=0.001,
+                  ScalingFactorFile='/SNS/REF_L/IPTS-13151/shared/directBeamDatabaseSpring2015_postRefill_IPTS_13151.cfg',
+                  SlitsWidthFlag=True,
+                  OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
-              NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
-              SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
-              SubtractSignalBackground=True,
-              SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
-              NormFlag=True,
-              NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
-              NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
-              SubtractNormBackground=True,
-              LowResDataAxisPixelRangeFlag=True,
-              LowResDataAxisPixelRange=[98,158],
-              LowResNormAxisPixelRangeFlag=True,
-              LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
-              TOFRange=reduction_settings[sequence_number]["TOF"],
-              TofRangeFlag=False,
-              IncidentMediumSelected='2InDiamSi',
-              GeometryCorrectionFlag=False,
-              QMin=0.005,
-              QStep=0.01,
-              AngleOffset=0.016,
-              AngleOffsetError=0.001,
-              ScalingFactorFile='/SNS/REF_L/IPTS-13151/shared/directBeamDatabaseSpring2015_postRefill_IPTS_13151.cfg',
-              SlitsWidthFlag=True,
-              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
-
-_create_ascii_clicked(first_run_of_set, "new")
+    _create_ascii_clicked(first_run_of_set, "new")
 
 RefLReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
@@ -327,7 +328,10 @@ _create_ascii_clicked(first_run_of_set)
 
 # Produce image on last job
 #if sequence_number==7:
-for item in ['auto', 'new']:
+result_list = ['auto']
+if compare:
+    result_list.append('new')
+for item in result_list:
     x_data = mtd['reflictivity_%s' % item].dataX(0)
     y_data = mtd['reflictivity_%s' % item].dataY(0)
     e_data = mtd['reflictivity_%s' % item].dataE(0)
@@ -341,6 +345,6 @@ for item in ['auto', 'new']:
             clean_e.append(e_data[i])
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_%s' % item, UnitX="MomentumTransfer")
             
-wGroup=GroupWorkspaces("auto,new")
+wGroup=GroupWorkspaces(','.join(result_list))
 SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
