@@ -48,7 +48,7 @@ def _scale_data_sets(workspace_list):
     # Create combined output
     s.get_scaled_data(workspace="reflictivity_combined")
 
-def _create_ascii_clicked(first_run_of_set):
+def _create_ascii_clicked(first_run_of_set, endwith="auto.nxs"):
     #get default output file name
     default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
 
@@ -60,7 +60,7 @@ def _create_ascii_clicked(first_run_of_set):
     text = [line1, line2, line3]
 
     #using mean or value with less error
-    wks_file_name = _produce_y_of_same_x_(first_run_of_set)
+    wks_file_name = _produce_y_of_same_x_(first_run_of_set, endswith=endswith)
 
     x_axis = mtd[wks_file_name].readX(0)[:]
     y_axis = mtd[wks_file_name].readY(0)[:]
@@ -84,7 +84,7 @@ def _create_ascii_clicked(first_run_of_set):
         f.write(_line + '\n')
     f.close()
 
-def _produce_y_of_same_x_(first_run_of_set):
+def _produce_y_of_same_x_(first_run_of_set, endswith="auto.nxs"):
     """
     2 y values sharing the same x-axis will be average using
     the weighted mean
@@ -93,7 +93,7 @@ def _produce_y_of_same_x_(first_run_of_set):
     isUsingLessErrorValue = True
     n_points = 0
     for f in os.listdir(outputDir):
-        if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("auto.nxs") and not f.endswith("%s_auto.nxs" % runNumber):
+        if f.startswith("REFL_%s" % first_run_of_set) and f.endswith(endswith) and not f.endswith("%s_%s" % (runNumber, endswith)):
             ws_name = f.replace("_auto.nxs", "")
             ws_name = ws_name.replace("REFL_", "")
             LoadNexus(Filename=os.path.join(outputDir, f), OutputWorkspace="reflectivity_%sts" % ws_name)
