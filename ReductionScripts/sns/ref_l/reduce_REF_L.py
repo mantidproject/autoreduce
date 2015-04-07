@@ -18,7 +18,7 @@ import mantid
 from mantid.simpleapi import *
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
-def _scale_data_sets(workspace_list):
+def _scale_data_sets(workspace_list, endswith='combined'):
     """
         Perform auto-scaling
     """
@@ -46,9 +46,9 @@ def _scale_data_sets(workspace_list):
         d.apply_scale(xmin, xmax)
 
     # Create combined output
-    s.get_scaled_data(workspace="reflictivity_combined")
+    s.get_scaled_data(workspace="reflictivity_%s" % endswith)
 
-def _create_ascii_clicked(first_run_of_set):
+def _create_ascii_clicked(first_run_of_set, endswith="auto"):
     #get default output file name
     default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
 
@@ -60,7 +60,7 @@ def _create_ascii_clicked(first_run_of_set):
     text = [line1, line2, line3]
 
     #using mean or value with less error
-    wks_file_name = _produce_y_of_same_x_(first_run_of_set)
+    wks_file_name = _produce_y_of_same_x_(first_run_of_set, endswith=endswith)
 
     x_axis = mtd[wks_file_name].readX(0)[:]
     y_axis = mtd[wks_file_name].readY(0)[:]
@@ -84,7 +84,7 @@ def _create_ascii_clicked(first_run_of_set):
         f.write(_line + '\n')
     f.close()
 
-def _produce_y_of_same_x_(first_run_of_set):
+def _produce_y_of_same_x_(first_run_of_set, endswith="auto"):
     """
     2 y values sharing the same x-axis will be average using
     the weighted mean
@@ -93,7 +93,7 @@ def _produce_y_of_same_x_(first_run_of_set):
     isUsingLessErrorValue = True
     n_points = 0
     for f in os.listdir(outputDir):
-        if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("auto.nxs") and not f.endswith("%s_auto.nxs" % runNumber):
+        if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("%s.nxs" % endswith) and not f.endswith("%s_%s.nxs" % (runNumber, endswith)):
             ws_name = f.replace("_auto.nxs", "")
             ws_name = ws_name.replace("REFL_", "")
             LoadNexus(Filename=os.path.join(outputDir, f), OutputWorkspace="reflectivity_%sts" % ws_name)
@@ -105,7 +105,7 @@ def _produce_y_of_same_x_(first_run_of_set):
         if ws.endswith("ts"):
             scaled_ws_list.append(ws)
 
-    _scale_data_sets(scaled_ws_list)
+    _scale_data_sets(scaled_ws_list, endswith)
     
     ws_list = AnalysisDataService.getObjectNames()
     print ws_list
@@ -259,8 +259,35 @@ reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "nor
 if sequence_number not in reduction_settings:
     sequence_number = 'default'
 
+compare = False
+if compare:
+    LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+                  NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
+                  SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
+                  SubtractSignalBackground=True,
+                  SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
+                  NormFlag=True,
+                  NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
+                  NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
+                  SubtractNormBackground=True,
+                  LowResDataAxisPixelRangeFlag=True,
+                  LowResDataAxisPixelRange=[94,160],
+                  LowResNormAxisPixelRangeFlag=True,
+                  LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
+                  TOFRange=reduction_settings[sequence_number]["TOF"],
+                  TofRangeFlag=True,
+                  IncidentMediumSelected='Air',
+                  GeometryCorrectionFlag=False,
+                  QMin=0.005,
+                  QStep=0.01,
+                  AngleOffset=0.016,
+                  AngleOffsetError=0.001,
+                  ScalingFactorFile='/SNS/REF_L/IPTS-11804/shared/directBeamDatabaseSpring2015_postRefill_IPTS_11084.cfg',
+                  SlitsWidthFlag=True,
+                  OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-#LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+    _create_ascii_clicked(first_run_of_set, "new")
+
 RefLReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
               SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
@@ -298,21 +325,29 @@ if n_ts>1:
 SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_of_set, sequence_number, runNumber)), InputWorkspace=output_ws)
 _create_ascii_clicked(first_run_of_set)
 
+
 # Produce image on last job
 #if sequence_number==7:
-x_data = mtd['reflictivity_combined'].dataX(0)
-y_data = mtd['reflictivity_combined'].dataY(0)
-e_data = mtd['reflictivity_combined'].dataE(0)
-clean_x = []
-clean_y = []
-clean_e = []
+result_list = ['auto']
+if compare:
+    result_list.append('new')
+group_ws = []
+for item in result_list:
+    x_data = mtd['reflictivity_%s' % item].dataX(0)
+    y_data = mtd['reflictivity_%s' % item].dataY(0)
+    e_data = mtd['reflictivity_%s' % item].dataE(0)
+    clean_x = []
+    clean_y = []
+    clean_e = []
 
-for i in range(len(y_data)):
-    if y_data[i]>0:
-        clean_y.append(math.log(y_data[i]))
-        clean_x.append(x_data[i])
-        clean_e.append(e_data[i])
-CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_combined', UnitX="MomentumTransfer")
-        
-SavePlot1D(InputWorkspace="reflictivity_combined", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
+    for i in range(len(y_data)):
+            if y_data[i]>0:
+                clean_y.append(math.log(y_data[i]))
+                clean_x.append(x_data[i])
+                clean_e.append(e_data[i])
+    CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_%s' % item, UnitX="MomentumTransfer")
+    group_ws.append('reflictivity_%s' % item)       
+
+wGroup=GroupWorkspaces(','.join(group_ws))
+SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
