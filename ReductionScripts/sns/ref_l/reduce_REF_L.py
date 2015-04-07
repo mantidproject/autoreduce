@@ -282,7 +282,7 @@ RefLReduction(RunNumbers=[int(runNumber)],
               QStep=0.01,
               AngleOffset=0.016,
               AngleOffsetError=0.001,
-              ScalingFactorFile='/SNS/REF_L/IPTS-13151/shared/directBeamDatabaseSpring2015_postRefill_IPTS_13151.cfg',
+              ScalingFactorFile='/SNS/REF_L/IPTS-11804/shared/directBeamDatabaseSpring2015_postRefill_IPTS_11084.cfg',
               SlitsWidthFlag=True,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
