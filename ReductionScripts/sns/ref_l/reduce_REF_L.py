@@ -245,15 +245,15 @@ except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
 
-reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [50322,62697]},
-                      '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [40834,53450]},
-                      '3': {"signal": [149, 161], "background": [146, 164], "norm":119690, "norm_peak": [154, 161], "norm_bck": [151,164], "norm_lowres": [98,158], "TOF": [29604,42085]},
-                      '4': {"signal": [149, 161], "background": [146, 164], "norm":119691, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [114,140], "TOF": [18364,31085]},
-                      '5': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
-                      '6': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
-                      '7': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
-                      '8': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [9820,22388]},
-                      'default': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [154, 162], "norm_bck": [151,165], "norm_lowres": [117,137], "TOF": [0,200000]},
+reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [98,158], "TOF": [50322,62697]},
+                      '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [98,158], "TOF": [40834,53450]},
+                      '3': {"signal": [149, 161], "background": [146, 164], "norm":119690, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [98,158], "TOF": [29604,42085]},
+                      '4': {"signal": [149, 161], "background": [146, 164], "norm":119691, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [114,140], "TOF": [18364,31085]},
+                      '5': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [9820,22388]},
+                      '6': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [9820,22388]},
+                      '7': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [9820,22388]},
+                      '8': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [9820,22388]},
+                      'default': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [0,200000]},
 }
 
 if sequence_number not in reduction_settings:
@@ -271,7 +271,7 @@ RefLReduction(RunNumbers=[int(runNumber)],
               NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
               SubtractNormBackground=True,
               LowResDataAxisPixelRangeFlag=True,
-              LowResDataAxisPixelRange=[98,158],
+              LowResDataAxisPixelRange=[94,160],
               LowResNormAxisPixelRangeFlag=True,
               LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
               TOFRange=reduction_settings[sequence_number]["TOF"],
