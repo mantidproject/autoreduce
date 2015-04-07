@@ -260,7 +260,33 @@ if sequence_number not in reduction_settings:
     sequence_number = 'default'
 
 
-#LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+              NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
+              SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
+              SubtractSignalBackground=True,
+              SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
+              NormFlag=True,
+              NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
+              NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
+              SubtractNormBackground=True,
+              LowResDataAxisPixelRangeFlag=True,
+              LowResDataAxisPixelRange=[98,158],
+              LowResNormAxisPixelRangeFlag=True,
+              LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
+              TOFRange=reduction_settings[sequence_number]["TOF"],
+              TofRangeFlag=False,
+              IncidentMediumSelected='2InDiamSi',
+              GeometryCorrectionFlag=False,
+              QMin=0.005,
+              QStep=0.01,
+              AngleOffset=0.016,
+              AngleOffsetError=0.001,
+              ScalingFactorFile='/SNS/REF_L/IPTS-13151/shared/directBeamDatabaseSpring2015_postRefill_IPTS_13151.cfg',
+              SlitsWidthFlag=True,
+              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
+
+_create_ascii_clicked(first_run_of_set, "new")
+
 RefLReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
               SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
@@ -297,6 +323,7 @@ if n_ts>1:
 
 SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_of_set, sequence_number, runNumber)), InputWorkspace=output_ws)
 _create_ascii_clicked(first_run_of_set)
+
 
 # Produce image on last job
 #if sequence_number==7:
