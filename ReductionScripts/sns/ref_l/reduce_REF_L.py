@@ -341,6 +341,6 @@ for item in ['auto', 'new']:
             clean_e.append(e_data[i])
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1, OutputWorkspace='reflictivity_%s' % item, UnitX="MomentumTransfer")
             
-
-SavePlot1D(InputWorkspace="reflictivity_auto", OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
+wGroup=GroupWorkspaces("auto,new")
+SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
