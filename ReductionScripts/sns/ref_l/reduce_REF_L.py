@@ -18,7 +18,7 @@ import mantid
 from mantid.simpleapi import *
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
-def _scale_data_sets(workspace_list, endswith=''):
+def _scale_data_sets(workspace_list, endswith='combined'):
     """
         Perform auto-scaling
     """
@@ -46,7 +46,7 @@ def _scale_data_sets(workspace_list, endswith=''):
         d.apply_scale(xmin, xmax)
 
     # Create combined output
-    s.get_scaled_data(workspace="reflictivity_combined")
+    s.get_scaled_data(workspace="reflictivity_%s" % endswith)
 
 def _create_ascii_clicked(first_run_of_set, endwith="auto"):
     #get default output file name
@@ -105,7 +105,7 @@ def _produce_y_of_same_x_(first_run_of_set, endswith="auto"):
         if ws.endswith("ts"):
             scaled_ws_list.append(ws)
 
-    _scale_data_sets(scaled_ws_list)
+    _scale_data_sets(scaled_ws_list, endswith)
     
     ws_list = AnalysisDataService.getObjectNames()
     print ws_list
