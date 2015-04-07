@@ -245,15 +245,15 @@ except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
 
-reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":119688, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [50322,62697]},
-                      '2': {"signal": [149, 161], "background": [146, 164], "norm":119689, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [40834,53450]},
-                      '3': {"signal": [149, 161], "background": [146, 164], "norm":119690, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [100,150], "TOF": [29604,42085]},
-                      '4': {"signal": [149, 161], "background": [146, 164], "norm":119691, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [111,140], "TOF": [18364,31085]},
-                      '5': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
-                      '6': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
-                      '7': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
-                      '8': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
-                      'default': {"signal": [149, 161], "background": [146, 164], "norm":119692, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [0,200000]},
+reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":124294, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [50322,62697]},
+                      '2': {"signal": [149, 161], "background": [146, 164], "norm":124295, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [40834,53450]},
+                      '3': {"signal": [149, 161], "background": [146, 164], "norm":124296, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [100,150], "TOF": [29604,42085]},
+                      '4': {"signal": [149, 161], "background": [146, 164], "norm":124297, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [111,140], "TOF": [18364,31085]},
+                      '5': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '6': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '7': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '8': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      'default': {"signal": [149, 161], "background": [146, 164], "norm":124294, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [0,200000]},
 }
 
 if sequence_number not in reduction_settings:
