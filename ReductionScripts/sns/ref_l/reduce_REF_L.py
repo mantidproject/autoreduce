@@ -333,7 +333,7 @@ SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_
 
 #_create_ascii_clicked(first_run_of_set)
 from liquids_reflectometry_stitching import autoreduction_stitching
-autoreduction_stitching(outputDir, first_run_of_set, "auto")
+is_absolute = autoreduction_stitching(outputDir, first_run_of_set, "auto")
 
 result_list = ['auto']
 if compare:
@@ -356,5 +356,10 @@ for item in result_list:
     group_ws.append('reflictivity_%s' % item)       
 
 wsGroup=GroupWorkspaces(','.join(group_ws))
+y_label = "Reflectivity "
+if is_absolute:
+    y_label += "(absolute)"
+else:
+    y_label += "(stitched)"
 SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
 
