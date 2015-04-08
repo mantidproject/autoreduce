@@ -251,7 +251,7 @@ except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
 
-
+s = DataSeries()
 fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
