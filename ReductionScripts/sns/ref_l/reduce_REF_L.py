@@ -42,7 +42,6 @@ def _scale_data_sets(workspace_list, endswith='combined'):
     s.set_reference(0)
     s.compute()
 
-    print "NDATASETS", n_data_sets
     for i in range(n_data_sets):
         d = s.get_data_set(i)
         xmin, xmax = d.get_skipped_range()
@@ -112,7 +111,6 @@ def _produce_y_of_same_x_(first_run_of_set, endswith="auto"):
     _scale_data_sets(scaled_ws_list, endswith)
     
     ws_list = AnalysisDataService.getObjectNames()
-    print ws_list
     scaled_ws_list = []
     for ws in ws_list:
         if ws.endswith("scaled"):
@@ -266,28 +264,28 @@ else:
 compare = False
 if compare:
     LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
-                  NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
-                  SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
-                  SubtractSignalBackground=True,
-                  SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
-                  NormFlag=True,
-                  NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
-                  NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
-                  SubtractNormBackground=True,
-                  LowResDataAxisPixelRangeFlag=True,
-                  LowResDataAxisPixelRange=[94,160],
-                  LowResNormAxisPixelRangeFlag=True,
-                  LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
-                  TOFRange=reduction_settings[sequence_number]["TOF"],
+                  NormalizationRunNumber=str(data_set.norm_file),
+                  SignalPeakPixelRange=data_set.DataPeakPixels,
+                  SubtractSignalBackground=data_set.DataBackgroundFlag,
+                  SignalBackgroundPixelRange=data_set.DataBackgroundRoi[:2],
+                  NormFlag=data_set.NormFlag,
+                  NormPeakPixelRange=data_set.NormPeakPixels,
+                  NormBackgroundPixelRange=data_set.NormBackgroundRoi,
+                  SubtractNormBackground=data_set.NormBackgroundFlag,
+                  LowResDataAxisPixelRangeFlag=data_set.data_x_range_flag,
+                  LowResDataAxisPixelRange=data_set.data_x_range,
+                  LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
+                  LowResNormAxisPixelRange=data_set.norm_x_range,
+                  TOFRange=data_set.DataTofRange,
                   TofRangeFlag=True,
-                  IncidentMediumSelected='Air',
+                  IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
                   GeometryCorrectionFlag=False,
-                  QMin=0.005,
-                  QStep=0.01,
-                  AngleOffset=0.016,
-                  AngleOffsetError=0.001,
-                  ScalingFactorFile='/SNS/REF_L/IPTS-11804/shared/directBeamDatabaseSpring2015_postRefill_IPTS_11084.cfg',
-                  SlitsWidthFlag=True,
+                  QMin=data_set.q_min,
+                  QStep=data_set.q_step,
+                  AngleOffset=data_set.angle_offset,
+                  AngleOffsetError=data_set.angle_offset_error,
+                  ScalingFactorFile=str(data_set.scaling_factor_file),
+                  SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
     _create_ascii_clicked(first_run_of_set, "new")
@@ -330,8 +328,11 @@ if n_ts>1:
     print "ERROR: more than one reduced output"
 
 SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_of_set, sequence_number, runNumber)), InputWorkspace=output_ws)
-_create_ascii_clicked(first_run_of_set)
 
+
+#_create_ascii_clicked(first_run_of_set)
+from liquids_reflectometry_stitch import autoreduction_stitching
+autoreduction_stitching(outputDir, first_run_of_set, "auto"
 
 result_list = ['auto']
 if compare:
