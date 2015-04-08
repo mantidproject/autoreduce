@@ -18,10 +18,6 @@ import mantid
 from mantid.simpleapi import *
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
-sys.path.append("/opt/mantidnightly/scripts/Interface/")
-from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
-
-
 def _scale_data_sets(workspace_list, endswith='combined'):
     """
         Perform auto-scaling
@@ -215,8 +211,6 @@ def weightedMean(data_array, error_array):
 
     return [mean, mean_error]
 
-
-
 #remove all previous workspaces
 list_mt = AnalysisDataService.getObjectNames()
 for _mt in list_mt:
@@ -238,11 +232,11 @@ try:
     m=re.search("Run:(\d+)-(\d+).",title)
     if m is not None:
         first_run_of_set = m.group(1)
-        sequence_number = int(m.group(2))
+        sequence_number = m.group(2)
     else:
         m=re.search("-(\d+).",title)
         if m is not None:
-            sequence_number = int(m.group(1))
+            sequence_number = m.group(1)
             first_run_of_set = int(runNumber)-int(sequence_number)-1
         else:
             sequence_number = 1
@@ -251,17 +245,19 @@ except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
 
-s = DataSeries()
-fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
-xml_str = fd.read()
-s.from_xml(xml_str)
+reduction_settings = {'1': {"signal": [149, 161], "background": [146, 164], "norm":124294, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [50322,62697]},
+                      '2': {"signal": [149, 161], "background": [146, 164], "norm":124295, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [94,160], "TOF": [40834,53450]},
+                      '3': {"signal": [149, 161], "background": [146, 164], "norm":124296, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [100,150], "TOF": [29604,42085]},
+                      '4': {"signal": [149, 161], "background": [146, 164], "norm":124297, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [111,140], "TOF": [18364,31085]},
+                      '5': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '6': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '7': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      '8': {"signal": [149, 161], "background": [146, 164], "norm":124298, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [113,137], "TOF": [9820,22388]},
+                      'default': {"signal": [149, 161], "background": [146, 164], "norm":124294, "norm_peak": [147, 155], "norm_bck": [144,158], "norm_lowres": [117,137], "TOF": [0,200000]},
+}
 
-if len(s.data_sets)>sequence_number:
-    data_set = s.data_sets[sequence_number]
-elif len(s.data_sets)>0:
-    data_set = s.data_sets[0]
-else:
-    raise RuntimeError, "Invalid reduction template"
+if sequence_number not in reduction_settings:
+    sequence_number = 'default'
 
 compare = False
 if compare:
@@ -292,33 +288,30 @@ if compare:
 
     _create_ascii_clicked(first_run_of_set, "new")
 
-_incident_medium_str = str(data_set.incident_medium_list[0])
-_list = _incident_medium_str.split(',')
-
 RefLReduction(RunNumbers=[int(runNumber)],
-              NormalizationRunNumber=data_set.norm_file,
-              SignalPeakPixelRange=data_set.DataPeakPixels,
-              SubtractSignalBackground=data_set.DataBackgroundFlag,
-              SignalBackgroundPixelRange=data_set.DataBackgroundRoi[:2],
-              NormFlag=data_set.NormFlag,
-              NormPeakPixelRange=data_set.NormPeakPixels,
-              NormBackgroundPixelRange=data_set.NormBackgroundRoi,
-              SubtractNormBackground=data_set.NormBackgroundFlag,
-              LowResDataAxisPixelRangeFlag=data_set.data_x_range_flag,
-              LowResDataAxisPixelRange=data_set.data_x_range,
-              LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
-              LowResNormAxisPixelRange=data_set.norm_x_range,
-              TOFRange=data_set.DataTofRange,
+              NormalizationRunNumber=reduction_settings[sequence_number]["norm"],
+              SignalPeakPixelRange=reduction_settings[sequence_number]["signal"],
+              SubtractSignalBackground=True,
+              SignalBackgroundPixelRange=reduction_settings[sequence_number]["background"],
+              NormFlag=True,
+              NormPeakPixelRange=reduction_settings[sequence_number]["norm_peak"],
+              NormBackgroundPixelRange=reduction_settings[sequence_number]["norm_bck"],
+              SubtractNormBackground=True,
+              LowResDataAxisPixelRangeFlag=True,
+              LowResDataAxisPixelRange=[94,160],
+              LowResNormAxisPixelRangeFlag=True,
+              LowResNormAxisPixelRange=reduction_settings[sequence_number]["norm_lowres"],
+              TOFRange=reduction_settings[sequence_number]["TOF"],
               TofRangeFlag=True,
-              IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
+              IncidentMediumSelected='Air',
               GeometryCorrectionFlag=False,
-              QMin=data_set.q_min,
-              QStep=data_set.q_step,
-              AngleOffset=data_set.angle_offset,
-              AngleOffsetError=data_set.angle_offset_error,
-              ScalingFactorFile=data_set.scaling_factor_file,
-              SlitsWidthFlag=data_set.slits_width_flag,
-              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, str(sequence_number), runNumber))
+              QMin=0.005,
+              QStep=0.01,
+              AngleOffset=0.016,
+              AngleOffsetError=0.001,
+              ScalingFactorFile='/SNS/REF_L/IPTS-11804/shared/directBeamDatabaseSpring2015_postRefill_IPTS_11084.cfg',
+              SlitsWidthFlag=True,
+              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 n_ts = 0
 output_ws = None
@@ -333,6 +326,8 @@ SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_
 _create_ascii_clicked(first_run_of_set)
 
 
+# Produce image on last job
+#if sequence_number==7:
 result_list = ['auto']
 if compare:
     result_list.append('new')
