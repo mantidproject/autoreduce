@@ -332,7 +332,7 @@ SaveNexus(Filename=os.path.join(outputDir,"REFL_%s_%s_%s_auto.nxs" % (first_run_
 
 
 #_create_ascii_clicked(first_run_of_set)
-from liquids_reflectometry_stitch import autoreduction_stitching
+from liquids_reflectometry_stitching import autoreduction_stitching
 autoreduction_stitching(outputDir, first_run_of_set, "auto")
 
 result_list = ['auto']
