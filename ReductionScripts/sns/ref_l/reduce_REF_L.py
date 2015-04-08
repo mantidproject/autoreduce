@@ -19,6 +19,7 @@ from mantid.simpleapi import *
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
 sys.path.append("/opt/mantidnightly/scripts/Interface/")
+sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 
 
