@@ -361,5 +361,5 @@ if is_absolute:
     y_label += "(absolute)"
 else:
     y_label += "(stitched)"
-SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel='Intensity')
+SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 
