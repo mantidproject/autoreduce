@@ -318,7 +318,7 @@ RefLReduction(RunNumbers=[int(runNumber)],
               AngleOffsetError=data_set.angle_offset_error,
               ScalingFactorFile=data_set.scaling_factor_file,
               SlitsWidthFlag=data_set.slits_width_flag,
-              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
+              OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, str(sequence_number), runNumber))
 
 n_ts = 0
 output_ws = None
