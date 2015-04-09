@@ -169,7 +169,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
 
     # Set the reference data (index of the data set in the workspace list)
     s.set_reference(0)
-    if not normalization_available:
+    if normalization_available is False:
         logger.notice("Absolute normalization not available: stitching")
         s.compute()
 
@@ -211,7 +211,7 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
         return False
     input_ws_list = sorted(input_ws_list)
     
-    scaled_ws_list, normalization_available = create_single_reflectivity(input_ws_list, endswith=endswith)
+    scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith)
     
     create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
     
@@ -219,8 +219,8 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     for item in scaled_ws_list:
         if AnalysisDataService.doesExist(item):
             AnalysisDataService.remove(item)
-    logger.notice("Has normalization (%s)? %s" % (endswith, normalization_available))
-    return normalization_available
+    logger.notice("Has normalization (%s)? %s" % (endswith, has_normalizatio))
+    return has_normalization
 
 if __name__ == '__main__':
     autoreduction_stitching('/SNS/REF_L/IPTS-11804/shared/autoreduce/', 124391, 'auto')
