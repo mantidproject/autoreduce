@@ -109,7 +109,7 @@ if compare:
 
     save_partial_output(endswith='new')
 
-
+logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
 RefLReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
