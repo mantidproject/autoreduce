@@ -178,8 +178,8 @@ for item in result_list:
     clean_x = []
     clean_y = []
     clean_e = []
-    qmin = min(clean_x)*0.95
-    qmax = max(clean_y)*1.1
+    qmin = min(x_data)*0.95
+    qmax = max(x_data)*1.1
     for i in range(len(y_data)):
         if y_data[i]>0:
             clean_y.append(y_data[i])
