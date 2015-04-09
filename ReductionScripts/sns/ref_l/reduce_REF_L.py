@@ -8,9 +8,6 @@ if (os.environ.has_key("MANTIDPATH")):
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 
-import matplotlib
-import matplotlib.pyplot as plt
-
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 
@@ -20,6 +17,12 @@ runNumber = eventFile.split('_')[2]
 
 import mantid
 from mantid.simpleapi import *
+from matplotlib import *
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
 sys.path.append("/opt/mantidnightly/scripts/Interface/")
