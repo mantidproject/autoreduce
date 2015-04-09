@@ -217,7 +217,7 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     for item in scaled_ws_list:
         if AnalysisDataService.doesExist(item):
             AnalysisDataService.remove(item)
-    logger.notice("Has normalization? %s" % normalization_available)
+    logger.notice("Has normalization (%s)? %s" % (endswith, normalization_available))
     return normalization_available
 
 if __name__ == '__main__':
