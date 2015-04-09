@@ -7,6 +7,10 @@ if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
 sys.path.insert(0,'/opt/mantidnightly/bin')
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 
@@ -157,7 +161,9 @@ logger.notice(str(AnalysisDataService.getObjectNames()))
 result_list = ['output_auto']
 if compare:
     result_list.append('output_new')
+
 group_ws = []
+plot_data = []
 for item in result_list:
     if not AnalysisDataService.doesExist(item):
         continue
@@ -175,14 +181,26 @@ for item in result_list:
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
                     OutputWorkspace=item, UnitX="MomentumTransfer")
     group_ws.append(item)       
+    plot_data.append([item, clean_x, clean_y])
 
-if len(group_ws) > 0:
+y_label = "Reflectivity "
+if is_absolute:
+    y_label += "(absolute)"
+else:
+    y_label += "(stitched)"
+    
+if len(plot_data)>0: 
+
+    plt.cla()
+    if len(plot_data)==2:
+        plt.plot(plot_data[0][1], plot_data[0][2], 'o', plot_data[1][1], plot_data[1][2])
+    plt.title(y_label)
+    plt.legend([plot_data[0][0], plot_data[1][0]])
+    plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
+
+
+elif len(group_ws) > 0:
     wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
-    y_label = "Reflectivity "
-    if is_absolute:
-        y_label += "(absolute)"
-    else:
-        y_label += "(stitched)"
     SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
     logger.notice("Nothing to plot")
