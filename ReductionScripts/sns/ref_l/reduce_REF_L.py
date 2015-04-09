@@ -90,6 +90,20 @@ elif len(s.data_sets)>0:
 else:
     raise RuntimeError, "Invalid reduction template"
 
+# Write out a template for this run
+xml_str = "<Reduction>\n"
+xml_str += "  <instrument_name>%s</instrument_name>\n" % self.instrument_name
+xml_str += "  <timestamp>%s</timestamp>\n" % time.ctime()
+xml_str += "  <python_version>%s</python_version>\n" % sys.version
+xml_str += "  <platform>%s</platform>\n" % platform.system()
+xml_str += "  <architecture>%s</architecture>\n" % str(platform.architecture())
+
+data_set.data_files=[int(runNumber)]
+s.data_sets = [data_set]
+xml_str += s.to_xml()
+xml_str += "</Reduction>\n"
+print xml_str
+
 _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
 
