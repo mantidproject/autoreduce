@@ -39,7 +39,14 @@ def save_partial_output(endswith='auto'):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    return autoreduction_stitching(outputDir, first_run_of_set, endswith)
+    is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith)
+
+    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
+    new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
+    os.system("cp %s %s" % (os.path.join(outputDir, default_file_name),
+                            os.path.join(outputDir, default_file_name)))
+
+    return is_absolute
 
 # Load meta data to decide what to do
 meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
@@ -108,6 +115,7 @@ if compare:
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
     save_partial_output(endswith='new')
+
     for item in AnalysisDataService.getObjectNames():
         if not item == "reflectivity_new":
             AnalysisDataService.remove(item)
