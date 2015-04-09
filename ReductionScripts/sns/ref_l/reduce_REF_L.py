@@ -178,7 +178,7 @@ for item in result_list:
     clean_e = []
     for i in range(len(y_data)):
         if y_data[i]>0:
-            clean_y.append(math.log(y_data[i]))
+            clean_y.append(y_data[i])
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
@@ -206,6 +206,7 @@ if len(plot_data)>1:
 
 elif len(group_ws) > 0:
     wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
+    # If we want a log scale, we have to do something here
     SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
     logger.notice("Nothing to plot")
