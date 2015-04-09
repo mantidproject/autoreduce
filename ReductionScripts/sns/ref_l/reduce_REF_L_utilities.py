@@ -227,5 +227,6 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     logger.notice("Has normalization (%s)? %s" % (endswith, has_normalization))
     return has_normalization
 
+
 if __name__ == '__main__':
     autoreduction_stitching('/SNS/REF_L/IPTS-11804/shared/autoreduce/', 124391, 'auto')
