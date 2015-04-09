@@ -160,11 +160,13 @@ for item in result_list:
                     OutputWorkspace='reflectivity_%s' % item, UnitX="MomentumTransfer")
     group_ws.append('reflectivity_%s' % item)       
 
-wsGroup=GroupWorkspaces(group_ws)
-y_label = "Reflectivity "
-if is_absolute:
-    y_label += "(absolute)"
+if len(group_ws) > 0:
+    wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
+    y_label = "Reflectivity "
+    if is_absolute:
+        y_label += "(absolute)"
+    else:
+        y_label += "(stitched)"
+    SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
-    y_label += "(stitched)"
-SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
-
+    logger.notice("Nothing to plot")
