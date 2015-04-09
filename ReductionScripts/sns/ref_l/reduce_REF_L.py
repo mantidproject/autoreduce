@@ -118,7 +118,7 @@ if compare:
                   AngleOffset=data_set.angle_offset,
                   AngleOffsetError=data_set.angle_offset_error,
                   ScalingFactorFile=str(data_set.scaling_factor_file),
-                  SlitsWidthFlag=False, #data_set.slits_width_flag,
+                  SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
     save_partial_output(endswith='new')
