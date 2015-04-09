@@ -160,7 +160,7 @@ for item in result_list:
                     OutputWorkspace='reflectivity_%s' % item, UnitX="MomentumTransfer")
     group_ws.append('reflectivity_%s' % item)       
 
-wsGroup=GroupWorkspaces(','.join(group_ws))
+wsGroup=GroupWorkspaces(group_ws)
 y_label = "Reflectivity "
 if is_absolute:
     y_label += "(absolute)"
