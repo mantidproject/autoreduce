@@ -200,16 +200,17 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
             LoadNexus(Filename=os.path.join(output_dir, f), OutputWorkspace="reflectivity_%s_%s_ts" % (ws_name, endswith))
 
     ws_list = AnalysisDataService.getObjectNames()
-    scaled_ws_list = []
+    input_ws_list = []
     for ws in ws_list:
         if ws.endswith("%s_ts" % endswith):
-            scaled_ws_list.append(ws)
+            input_ws_list.append(ws)
             
-    if len(scaled_ws_list) == 0:
+    if len(input_ws_list) == 0:
         logger.notice("No data sets to stitch (%s)." % endswith)
         return False
-
-    scaled_ws_list, normalization_available = create_single_reflectivity(scaled_ws_list, endswith=endswith)
+    input_ws_list = sorted(input_ws_list)
+    
+    scaled_ws_list, normalization_available = create_single_reflectivity(input_ws_list, endswith=endswith)
     
     create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
     
