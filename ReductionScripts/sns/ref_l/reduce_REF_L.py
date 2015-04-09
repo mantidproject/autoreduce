@@ -109,7 +109,7 @@ if compare:
 
     save_partial_output(endswith='new')
     for item in AnalysisDataService.getObjectNames():
-        if item is not "reflectivity_new":
+        if not item == "reflectivity_new":
             AnalysisDataService.remove(item)
     if AnalysisDataService.doesExist('reflectivity_new'):
         RenameWorkspace(InputWorkspace="reflectivity_new", OutputWorkspace="output_new")
