@@ -160,7 +160,10 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
 
         # Scale to unity as needed
         if i==0 and scale_to_unity:
-            global_normalization = data.scale_to_unity(0.0, max_q_unity)
+            try:  
+                global_normalization = data.scale_to_unity(0.0, max_q_unity)
+            except:
+                logger.notice("Could not scale to unity for %s" % item)
         data.set_scale(global_normalization)
 
     # Set the reference data (index of the data set in the workspace list)
