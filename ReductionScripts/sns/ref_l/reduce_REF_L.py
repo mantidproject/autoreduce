@@ -108,6 +108,9 @@ if compare:
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
     save_partial_output(endswith='new')
+    for item in AnalysisDataService.getObjectNames():
+        if item is not "reflectivity_new":
+            AnalysisDataService.remove(item)
 
 logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
 RefLReduction(RunNumbers=[int(runNumber)],
