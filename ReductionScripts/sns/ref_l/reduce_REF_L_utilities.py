@@ -142,7 +142,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     normalization_available = True
     for ws in workspace_list:
         if mtd[ws].getRun().hasProperty("isSFfound"):
-            if mtd[ws].getRun().getProperty("isSFfound").value is False:
+            if mtd[ws].getRun().getProperty("isSFfound").value == False:
                 normalization_available = False
         else:
             normalization_available = False
@@ -169,7 +169,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
 
     # Set the reference data (index of the data set in the workspace list)
     s.set_reference(0)
-    if normalization_available is False:
+    if normalization_available == False:
         logger.notice("Absolute normalization not available: stitching")
         s.compute()
 
