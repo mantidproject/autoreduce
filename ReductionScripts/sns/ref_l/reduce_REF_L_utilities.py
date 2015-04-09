@@ -143,6 +143,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     for ws in workspace_list:
         if mtd[ws].getRun().hasProperty("isSFfound"):
             if mtd[ws].getRun().getProperty("isSFfound").value == 'False':
+                wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
                 logger.notice(ws)
                 normalization_available = False
         else:
