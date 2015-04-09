@@ -205,6 +205,10 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
         if ws.endswith("%s_ts" % endswith):
             scaled_ws_list.append(ws)
             
+    if len(scaled_ws_list) == 0:
+        logger.notice("No data sets to stitch (%s)." % endswith)
+        return False
+
     scaled_ws_list, normalization_available = create_single_reflectivity(scaled_ws_list, endswith=endswith)
     
     create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
