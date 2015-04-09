@@ -197,7 +197,7 @@ if len(plot_data)>1:
     plt.cla()
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
-        plt.legend(["Standard reduction (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new], loc=1)
+        plt.legend(handles=["Standard reduction (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new], loc=4)
         #plt.errorbar(plot_data[0][1], plot_data[0][2], yerr=plot_data[0][2])
     plt.title(y_label)
     plt.xlabel('Q')
