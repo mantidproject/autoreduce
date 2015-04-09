@@ -7,10 +7,6 @@ from matplotlib import *
 use("agg")
 import warnings
 warnings.filterwarnings('ignore',module='matplotlib')
-
-#sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
-#import matplotlib
-#matplotlib.use('agg', warn=False)
 import matplotlib.pyplot as plt
 
 if (os.environ.has_key("MANTIDPATH")):
