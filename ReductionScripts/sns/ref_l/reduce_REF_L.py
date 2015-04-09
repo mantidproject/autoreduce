@@ -6,6 +6,7 @@ import math
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
 sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 
 import matplotlib
 matplotlib.use('Agg')
