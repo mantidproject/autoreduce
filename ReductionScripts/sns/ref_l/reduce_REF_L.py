@@ -103,9 +103,9 @@ xml_str += "  <architecture>%s</architecture>\n" % str(platform.architecture())
 xml_str += "  <mantid_version>%s</mantid_version>\n" % mantid.__version__
 
 s.data_sets = []
-for i in range(int(runNumber)-first_run_of_set+1):
+for i in range(int(runNumber)-int(first_run_of_set)+1):
     d = s.data_sets[i]
-    d.data_files=[first_run_of_set+i]
+    d.data_files=[int(first_run_of_set)+i]
     s.data_sets.append(d)
 
 xml_str += s.to_xml()
