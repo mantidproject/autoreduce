@@ -3,6 +3,7 @@
     Most of this code was extracted from the REFL reduction UI.
 """
 import os
+import sys
 sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
