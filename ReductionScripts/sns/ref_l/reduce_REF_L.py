@@ -167,6 +167,8 @@ if compare:
 
 group_ws = []
 plot_data = []
+qmin = 0
+qmax = 0.2
 for item in result_list:
     if not AnalysisDataService.doesExist(item):
         continue
@@ -176,6 +178,8 @@ for item in result_list:
     clean_x = []
     clean_y = []
     clean_e = []
+    qmin = min(clean_x)*0.95
+    qmax = max(clean_y)*1.1
     for i in range(len(y_data)):
         if y_data[i]>0:
             clean_y.append(y_data[i])
@@ -204,6 +208,7 @@ if len(plot_data)>1:
     plt.ylabel('Reflectivity')
     plt.yscale('log')
     plt.xscale('log')
+    plt.set_xlim(xmin=qmin, xmax=qmax)
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
 
 elif len(group_ws) > 0:
