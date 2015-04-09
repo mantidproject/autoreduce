@@ -137,6 +137,8 @@ RefLReduction(RunNumbers=[int(runNumber)],
 
 is_absolute = save_partial_output(endswith='auto')
 
+
+logger.notice(str(AnalysisDataService.getObjectNames()))
 # Clean up the output and produce a nice plot for the web monitor
 result_list = ['auto']
 if compare:
