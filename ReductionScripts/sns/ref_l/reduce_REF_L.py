@@ -80,7 +80,7 @@ _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
 
 # Set the following to True to compare the old and new reduction algorithms
-compare = False
+compare = True
 if compare:
     LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
                   NormalizationRunNumber=str(data_set.norm_file),
