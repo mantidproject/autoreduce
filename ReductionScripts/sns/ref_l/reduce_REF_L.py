@@ -196,17 +196,15 @@ if len(plot_data)>1:
 
     plt.cla()
     if len(plot_data)==2:
-        plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
+        plt.loglog(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
         plt.legend(["Standard reduction (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
 
-
 elif len(group_ws) > 0:
     wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
-    # If we want a log scale, we have to do something here
     SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
     logger.notice("Nothing to plot")
