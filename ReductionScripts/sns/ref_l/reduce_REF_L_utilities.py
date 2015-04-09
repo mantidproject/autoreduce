@@ -181,7 +181,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
         scaled_ws_list.append(d.get_scaled_ws())
 
     # Create combined output
-    s.get_scaled_data(workspace="reflictivity_%s" % endswith)
+    s.get_scaled_data(workspace="reflectivity_%s" % endswith)
 
     return scaled_ws_list, normalization_available
 
