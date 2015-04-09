@@ -143,9 +143,11 @@ if compare:
     result_list.append('new')
 group_ws = []
 for item in result_list:
-    x_data = mtd['reflictivity_%s' % item].dataX(0)
-    y_data = mtd['reflictivity_%s' % item].dataY(0)
-    e_data = mtd['reflictivity_%s' % item].dataE(0)
+    if not AnalysisDataService.DoesExist('reflectivity_%s' % item):
+        continue
+    x_data = mtd['reflectivity_%s' % item].dataX(0)
+    y_data = mtd['reflectivity_%s' % item].dataY(0)
+    e_data = mtd['reflectivity_%s' % item].dataE(0)
     clean_x = []
     clean_y = []
     clean_e = []
@@ -155,8 +157,8 @@ for item in result_list:
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
-                    OutputWorkspace='reflictivity_%s' % item, UnitX="MomentumTransfer")
-    group_ws.append('reflictivity_%s' % item)       
+                    OutputWorkspace='reflectivity_%s' % item, UnitX="MomentumTransfer")
+    group_ws.append('reflectivity_%s' % item)       
 
 wsGroup=GroupWorkspaces(','.join(group_ws))
 y_label = "Reflectivity "
