@@ -197,7 +197,7 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
         if f.startswith("REFL_%s" % first_run_of_set) and f.endswith("%s.nxs" % endswith):
             ws_name = f.replace("_%s.nxs" % endswith, "")
             ws_name = ws_name.replace("REFL_", "")
-            LoadNexus(Filename=os.path.join(output_dir, f), OutputWorkspace="reflectivity_%s_%s_ts" % (endswith, ws_name))
+            LoadNexus(Filename=os.path.join(output_dir, f), OutputWorkspace="reflectivity_%s_%s_ts" % (ws_name, endswith))
 
     ws_list = AnalysisDataService.getObjectNames()
     scaled_ws_list = []
