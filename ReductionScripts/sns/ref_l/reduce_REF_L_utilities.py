@@ -143,9 +143,13 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     for ws in workspace_list:
         if mtd[ws].getRun().hasProperty("isSFfound"):
             if mtd[ws].getRun().getProperty("isSFfound").value == 'False':
-                wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
-                logger.notice(ws)
-                normalization_available = False
+                try:
+                    wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
+                    # We don't care about the scaling factor for wl < 9 A
+                    normalization_available = wl<9.0
+                except:
+                    logger.notice("Could not find LambdaRequest for %s" % ws)  
+                    normalization_available = False
         else:
             normalization_available = False
 
