@@ -195,6 +195,8 @@ if len(plot_data)>0:
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
     plt.title(y_label)
+    plt.xlabel('Q')
+    plt.ylabel('Reflectivity')
     plt.legend([plot_data[0][0], plot_data[1][0]])
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
 
