@@ -111,6 +111,8 @@ if compare:
     for item in AnalysisDataService.getObjectNames():
         if item is not "reflectivity_new":
             AnalysisDataService.remove(item)
+        else:
+            RenameWorkspace(InputWorkspace=item, OutputWorkspace="output_new")
 
 logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
 RefLReduction(RunNumbers=[int(runNumber)],
@@ -139,20 +141,21 @@ RefLReduction(RunNumbers=[int(runNumber)],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto')
-
+if AnalysisDataService.doesExist('reflectivity_auto'):
+    RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
 logger.notice(str(AnalysisDataService.getObjectNames()))
 # Clean up the output and produce a nice plot for the web monitor
-result_list = ['auto']
+result_list = ['output_auto']
 if compare:
-    result_list.append('new')
+    result_list.append('output_new')
 group_ws = []
 for item in result_list:
-    if not AnalysisDataService.doesExist('reflectivity_%s' % item):
+    if not AnalysisDataService.doesExist(item):
         continue
-    x_data = mtd['reflectivity_%s' % item].dataX(0)
-    y_data = mtd['reflectivity_%s' % item].dataY(0)
-    e_data = mtd['reflectivity_%s' % item].dataE(0)
+    x_data = mtd[item].dataX(0)
+    y_data = mtd[item].dataY(0)
+    e_data = mtd[item].dataE(0)
     clean_x = []
     clean_y = []
     clean_e = []
@@ -162,8 +165,8 @@ for item in result_list:
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
-                    OutputWorkspace='reflectivity_%s' % item, UnitX="MomentumTransfer")
-    group_ws.append('reflectivity_%s' % item)       
+                    OutputWorkspace=item, UnitX="MomentumTransfer")
+    group_ws.append(item)       
 
 if len(group_ws) > 0:
     wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
