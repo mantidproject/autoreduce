@@ -3,7 +3,6 @@ import os
 import re
 import math
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
-sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
@@ -100,7 +99,7 @@ _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
 
 # Set the following to True to compare the old and new reduction algorithms
-compare = False
+compare = True
 if compare:
     LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
                   NormalizationRunNumber=str(data_set.norm_file),
