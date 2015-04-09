@@ -2,6 +2,8 @@ import sys
 import os
 import re
 import math
+import time
+import platform
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from matplotlib import *
 use("agg")
@@ -92,7 +94,7 @@ else:
 
 # Write out a template for this run
 xml_str = "<Reduction>\n"
-xml_str += "  <instrument_name>%s</instrument_name>\n" % self.instrument_name
+xml_str += "  <instrument_name>REFL</instrument_name>\n"
 xml_str += "  <timestamp>%s</timestamp>\n" % time.ctime()
 xml_str += "  <python_version>%s</python_version>\n" % sys.version
 xml_str += "  <platform>%s</platform>\n" % platform.system()
