@@ -101,11 +101,16 @@ xml_str += "  <python_version>%s</python_version>\n" % sys.version
 xml_str += "  <platform>%s</platform>\n" % platform.system()
 xml_str += "  <architecture>%s</architecture>\n" % str(platform.architecture())
 xml_str += "  <mantid_version>%s</mantid_version>\n" % mantid.__version__
-data_set.data_files=[int(runNumber)]
-s.data_sets = [data_set]
+
+s.data_sets = []
+for i in range(int(runNumber)-first_run_of_set+1):
+    d = s.data_sets[i]
+    d.data_files=[first_run_of_set+i]
+    s.data_sets.append(d)
+
 xml_str += s.to_xml()
 xml_str += "</Reduction>\n"
-template_file = open(os.path.join(outputDir, "REFL_%s_auto_template.xml" % runNumber), 'w')
+template_file = open(os.path.join(outputDir, "REFL_%s_auto_template.xml" % first_run_of_set), 'w')
 template_file.write(xml_str)
 template_file.close()
 
