@@ -184,7 +184,6 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
 
     # Create combined output
     s.get_scaled_data(workspace="reflectivity_%s" % endswith)
-    logger.notice("%s = %s" % (endswith, normalization_available))
     return scaled_ws_list, normalization_available
 
 def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
