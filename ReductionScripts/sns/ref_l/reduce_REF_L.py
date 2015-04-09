@@ -143,7 +143,7 @@ if compare:
     result_list.append('new')
 group_ws = []
 for item in result_list:
-    if not AnalysisDataService.DoesExist('reflectivity_%s' % item):
+    if not AnalysisDataService.doesExist('reflectivity_%s' % item):
         continue
     x_data = mtd['reflectivity_%s' % item].dataX(0)
     y_data = mtd['reflectivity_%s' % item].dataY(0)
