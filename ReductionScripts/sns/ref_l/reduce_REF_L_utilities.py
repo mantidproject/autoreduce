@@ -212,7 +212,11 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     scaled_ws_list, normalization_available = create_single_reflectivity(scaled_ws_list, endswith=endswith)
     
     create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
-
+    
+    # Remove workspaces we created
+    for item in scaled_ws_list:
+        if AnalysisDataService.doesExist(item):
+            AnalysisDataService.remove(item)
     logger.notice("Has normalization? %s" % normalization_available)
     return normalization_available
 
