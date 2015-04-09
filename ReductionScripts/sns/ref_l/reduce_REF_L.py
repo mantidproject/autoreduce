@@ -111,8 +111,8 @@ if compare:
     for item in AnalysisDataService.getObjectNames():
         if item is not "reflectivity_new":
             AnalysisDataService.remove(item)
-        else:
-            RenameWorkspace(InputWorkspace=item, OutputWorkspace="output_new")
+    if AnalysisDataService.doesExist('reflectivity_new'):
+        RenameWorkspace(InputWorkspace="reflectivity_new", OutputWorkspace="output_new")
 
 logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
 RefLReduction(RunNumbers=[int(runNumber)],
