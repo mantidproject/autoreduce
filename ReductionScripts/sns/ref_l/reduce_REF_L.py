@@ -48,7 +48,7 @@ def save_partial_output(endswith='auto'):
     default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
     new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
     os.system("cp %s %s" % (os.path.join(outputDir, default_file_name),
-                            os.path.join(outputDir, default_file_name)))
+                            os.path.join(outputDir, new_file_name)))
 
     return is_absolute
 
