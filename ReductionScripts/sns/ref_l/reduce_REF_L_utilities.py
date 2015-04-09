@@ -141,7 +141,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     # Check whether all data sets have absolute normalization available
     normalization_available = True
     for ws in workspace_list:
-        logging.notice("%s = %s" % (ws, mtd[ws].getRun().getProperty("isSFfound").value))
+        logger.notice("%s = %s" % (ws, mtd[ws].getRun().getProperty("isSFfound").value))
         if mtd[ws].getRun().hasProperty("isSFfound"):
             normalization_available = normalization_available and mtd[ws].getRun().getProperty("isSFfound").value
         else:
