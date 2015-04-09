@@ -80,6 +80,7 @@ except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
 
+# Read in the configuration for this run in the set
 s = DataSeries()
 fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
@@ -104,7 +105,9 @@ data_set.data_files=[int(runNumber)]
 s.data_sets = [data_set]
 xml_str += s.to_xml()
 xml_str += "</Reduction>\n"
-print xml_str
+template_file = open(os.path.join(outputDir, "REFL_%s_auto_template.xml" % runNumber), 'w')
+template_file.write(xml_str)
+template_file.close()
 
 _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
