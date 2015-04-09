@@ -4,7 +4,6 @@ sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py
 
 sys.path.append("/opt/Mantid/bin")
 import numpy
-from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
