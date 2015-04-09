@@ -184,7 +184,7 @@ for item in result_list:
     CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
                     OutputWorkspace=item, UnitX="MomentumTransfer")
     group_ws.append(item)       
-    plot_data.append([item, clean_x, clean_y])
+    plot_data.append([item, clean_x, clean_y, clean_e])
 
 y_label = "Reflectivity "
 if is_absolute:
@@ -198,6 +198,7 @@ if len(plot_data)>1:
     if len(plot_data)==2:
         plt.loglog(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
         plt.legend(["Standard reduction (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new])
+        plt.errorbar(plot_data[0][1], plot_data[0][2], yerr=plot_data[0][2])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
