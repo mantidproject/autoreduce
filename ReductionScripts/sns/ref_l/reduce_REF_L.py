@@ -99,7 +99,7 @@ xml_str += "  <timestamp>%s</timestamp>\n" % time.ctime()
 xml_str += "  <python_version>%s</python_version>\n" % sys.version
 xml_str += "  <platform>%s</platform>\n" % platform.system()
 xml_str += "  <architecture>%s</architecture>\n" % str(platform.architecture())
-
+xml_str += "  <mantid_version>%s</mantid_version>\n" % version_str()
 data_set.data_files=[int(runNumber)]
 s.data_sets = [data_set]
 xml_str += s.to_xml()
