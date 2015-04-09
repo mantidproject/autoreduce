@@ -189,7 +189,7 @@ if is_absolute:
 else:
     y_label += "(stitched)"
     
-if len(plot_data)>0: 
+if len(plot_data)>1: 
 
     plt.cla()
     if len(plot_data)==2:
