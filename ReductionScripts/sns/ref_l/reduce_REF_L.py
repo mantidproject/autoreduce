@@ -121,7 +121,7 @@ if compare:
                   SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    save_partial_output(endswith='new')
+    is_absolute_new = save_partial_output(endswith='new')
 
     for item in AnalysisDataService.getObjectNames():
         if not item == "reflectivity_new":
@@ -197,10 +197,10 @@ if len(plot_data)>1:
     plt.cla()
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
+        plt.legend(["Standard reduction (%s)" is_absolute, "Test (%s)" % is_absolute_new])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
-    plt.legend([plot_data[0][0], plot_data[1][0]])
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
 
 
