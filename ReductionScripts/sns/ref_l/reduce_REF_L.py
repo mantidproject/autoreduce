@@ -72,7 +72,7 @@ try:
         m=re.search("-(\d+).",title)
         if m is not None:
             sequence_number = int(m.group(1))
-            first_run_of_set = int(runNumber)-int(sequence_number)-1
+            first_run_of_set = int(runNumber)-int(sequence_number)+1
         else:
             sequence_number = 1
             first_run_of_set = int(runNumber)
