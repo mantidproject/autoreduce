@@ -86,7 +86,7 @@ fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
 
-if len(s.data_sets)>sequence_number:
+if len(s.data_sets)>=sequence_number:
     data_set = s.data_sets[sequence_number-1]
 elif len(s.data_sets)>0:
     data_set = s.data_sets[0]
