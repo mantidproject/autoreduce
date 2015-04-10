@@ -113,7 +113,7 @@ s.data_sets = new_data_sets
 
 xml_str += s.to_xml()
 xml_str += "</Reduction>\n"
-template_file = open(os.path.join(outputDir, "REFL_%s_auto_template.xml" % first_run_of_set), 'w')
+template_file = open(os.path.join(outputDir, "REF_L_%s_auto_template.xml" % first_run_of_set), 'w')
 template_file.write(xml_str)
 template_file.close()
 
