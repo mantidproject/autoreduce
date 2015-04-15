@@ -137,7 +137,6 @@ if compare:
                   LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
                   LowResNormAxisPixelRange=data_set.norm_x_range,
                   TOFRange=data_set.DataTofRange,
-                  TofRangeFlag=True,
                   IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
                   GeometryCorrectionFlag=False,
                   QMin=data_set.q_min,
