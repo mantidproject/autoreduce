@@ -250,7 +250,7 @@ def selection_plots(workspace, output_dir, run_number):
 
     json_data = json.dumps(data)
     
-    fd = open(os.path.join(output_dir, "plot_data_%s.json" % run_number), 'w')
+    fd = open(os.path.join(output_dir, "plot_data_%s.dat" % run_number), 'w')
     fd.write(json_data)
     fd.close()
 
