@@ -260,6 +260,7 @@ def selection_plots(workspace, output_dir, run_number):
     e = tof_selection.readE(0)
     data["tof_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
 
+    #TODO: add the current selection ranges from the template
     json_data = json.dumps(data)
     
     fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
