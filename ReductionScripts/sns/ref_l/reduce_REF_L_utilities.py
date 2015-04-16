@@ -4,6 +4,7 @@
 """
 import os
 import sys
+import json
 sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
@@ -227,6 +228,31 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     logger.notice("Has normalization (%s)? %s" % (endswith, has_normalization))
     return has_normalization
 
+def selection_plots(workspace, output_dir, run_number):
+    n_x = int(ws_event_data.getInstrument().getNumberParameter("number-of-x-pixels")[0])
+    n_y = int(ws_event_data.getInstrument().getNumberParameter("number-of-y-pixels")[0])
+
+    peak_selection = RefRoi(InputWorkspace=workspace, NXPixel=n_x, NYPixel=n_y, IntegrateY=False, ConvertToQ=False)
+    peak_selection = Transpose(InputWorkspace=peak_selection)
+    lowres_selection = RefRoi(InputWorkspace=workspace, NXPixel=n_x, NYPixel=n_y, IntegrateY=True, ConvertToQ=False)
+    lowres_selection = Transpose(InputWorkspace=lowres_selection)
+
+    data = {}
+    x = peak_selection.readX(0)
+    y = peak_selection.readY(0)
+    e = peak_selection.readE(0)
+    data["peak_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
+    x = lowres_selection.readX(0)
+    y = lowres_selection.readY(0)
+    e = lowres_selection.readE(0)
+    data["lowres_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
+    json_data = json.dumps(data)
+    
+    fd = open(os.path.join(output_dir, "REF_L_%s.json" % run_number), 'w')
+    fd.write(json_data)
+    fd.close()
 
 if __name__ == '__main__':
     autoreduction_stitching('/SNS/REF_L/IPTS-11804/shared/autoreduce/', 124391, 'auto')
