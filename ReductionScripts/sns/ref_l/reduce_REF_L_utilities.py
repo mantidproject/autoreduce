@@ -229,6 +229,9 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     return has_normalization
 
 def selection_plots(workspace, output_dir, run_number):
+    """
+        Write the selection plot data to a file so that we can read it back and display it in the web monitor
+    """
     n_x = int(workspace.getInstrument().getNumberParameter("number-of-x-pixels")[0])
     n_y = int(workspace.getInstrument().getNumberParameter("number-of-y-pixels")[0])
 
