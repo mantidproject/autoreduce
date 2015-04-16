@@ -30,7 +30,7 @@ from LargeScaleStructures.data_stitching import DataSet, Stitcher
 sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
-from reduce_REF_L_utilities import autoreduction_stitching
+from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
 def save_partial_output(endswith='auto'):
     """
@@ -58,7 +58,7 @@ def save_partial_output(endswith='auto'):
     return _is_absolute
 
 # Load meta data to decide what to do
-meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=False)
 meta_data_run = meta_data.getRun()
 first_run_of_set = int(runNumber)
 sequence_number = 1
@@ -79,6 +79,9 @@ try:
 except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
+
+# Save selection plots
+selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 s = DataSeries()

@@ -229,8 +229,8 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     return has_normalization
 
 def selection_plots(workspace, output_dir, run_number):
-    n_x = int(ws_event_data.getInstrument().getNumberParameter("number-of-x-pixels")[0])
-    n_y = int(ws_event_data.getInstrument().getNumberParameter("number-of-y-pixels")[0])
+    n_x = int(workspace.getInstrument().getNumberParameter("number-of-x-pixels")[0])
+    n_y = int(workspace.getInstrument().getNumberParameter("number-of-y-pixels")[0])
 
     peak_selection = RefRoi(InputWorkspace=workspace, NXPixel=n_x, NYPixel=n_y, IntegrateY=False, ConvertToQ=False)
     peak_selection = Transpose(InputWorkspace=peak_selection)
