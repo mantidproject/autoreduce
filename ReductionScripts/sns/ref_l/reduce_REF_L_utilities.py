@@ -251,6 +251,15 @@ def selection_plots(workspace, output_dir, run_number):
     e = lowres_selection.readE(0)
     data["lowres_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
 
+    tof_dist = SumSpectra(InputWorkspace=workspace)
+    tof_max =  workspace.getTofMax()
+    tof_min =  workspace.getTofMin()
+    tof_selection = Rebin(InputWorkspace=tof_dist, Params=[tof_min, 40, tof_max])
+    x = tof_selection.readX(0)
+    y = tof_selection.readY(0)
+    e = tof_selection.readE(0)
+    data["tof_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
     json_data = json.dumps(data)
     
     fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
