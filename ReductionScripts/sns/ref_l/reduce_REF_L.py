@@ -152,6 +152,12 @@ if compare:
 
     is_absolute_new = save_partial_output(endswith='no_clocking', to_file=False)
 
+    for item in AnalysisDataService.getObjectNames():
+        if not item == "reflectivity_new":
+            AnalysisDataService.remove(item)
+    if AnalysisDataService.doesExist('reflectivity_no_clocking'):
+        RenameWorkspace(InputWorkspace="reflectivity_no_clocking", OutputWorkspace="output_no_clocking")
+
 LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
@@ -179,11 +185,13 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto')
+if AnalysisDataService.doesExist('reflectivity_auto'):
+    RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
 # Clean up the output and produce a nice plot for the web monitor
-result_list = ['reflectivity_auto']
+result_list = ['output_auto']
 if compare:
-    result_list.append('reflectivity_no_clocking')
+    result_list.append('output_no_clocking')
 group_ws = []
 plot_data = []
 qmin = 0
