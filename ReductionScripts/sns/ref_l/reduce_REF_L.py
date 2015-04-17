@@ -125,6 +125,7 @@ _list = _incident_medium_str.split(',')
 
 # Set the following to True to compare the old and new reduction algorithms
 compare = True
+comparison_ending = 'no_clocking'
 if compare:
     LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
                   NormalizationRunNumber=str(data_set.norm_file),
@@ -150,13 +151,13 @@ if compare:
                   SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    is_absolute_new = save_partial_output(endswith='no_clocking', to_file=False)
+    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False)
 
     for item in AnalysisDataService.getObjectNames():
-        if not item == "reflectivity_new":
+        if not item == "reflectivity_%s" % comparison_ending:
             AnalysisDataService.remove(item)
-    if AnalysisDataService.doesExist('reflectivity_no_clocking'):
-        RenameWorkspace(InputWorkspace="reflectivity_no_clocking", OutputWorkspace="output_no_clocking")
+    if AnalysisDataService.doesExist('reflectivity_%s' % comparison_ending):
+        RenameWorkspace(InputWorkspace="reflectivity_%s" % comparison_ending, OutputWorkspace="output_%s" % comparison_ending)
 
 LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
@@ -191,7 +192,7 @@ if AnalysisDataService.doesExist('reflectivity_auto'):
 # Clean up the output and produce a nice plot for the web monitor
 result_list = ['output_auto']
 if compare:
-    result_list.append('output_no_clocking')
+    result_list.append('output_%s' % comparison_ending)
 group_ws = []
 plot_data = []
 qmin = 0
