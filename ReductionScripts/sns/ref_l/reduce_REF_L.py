@@ -49,11 +49,11 @@ def save_partial_output(endswith='auto', to_file=True):
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
     _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file)
-
-    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
-    new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
-    os.system("cp %s %s" % (os.path.join(outputDir, default_file_name),
-                            os.path.join(outputDir, new_file_name)))
+    if to_file:
+        default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
+        new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
+        os.system("mv %s %s" % (os.path.join(outputDir, default_file_name),
+                                os.path.join(outputDir, new_file_name)))
 
     return _is_absolute
 
