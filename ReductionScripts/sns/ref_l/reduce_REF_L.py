@@ -32,7 +32,7 @@ sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
-def save_partial_output(endswith='auto'):
+def save_partial_output(endswith='auto', to_file=True):
     """
         Stitch and save the full reflectivity curve, or as much as we have at the moment.
     """
@@ -48,7 +48,7 @@ def save_partial_output(endswith='auto'):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith)
+    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file)
 
     default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
     new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
@@ -148,20 +148,13 @@ if compare:
                   AngleOffsetError=data_set.angle_offset_error,
                   ScalingFactorFile=str(data_set.scaling_factor_file),
                   SlitsWidthFlag=data_set.slits_width_flag,
-                  ApplyPrimaryFraction=True,
+                  ApplyPrimaryFraction=False,
                   PrimaryFractionRange=[117,197],
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    is_absolute_new = save_partial_output(endswith='new')
+    is_absolute_new = save_partial_output(endswith='no_clocking', to_file=False)
 
-    for item in AnalysisDataService.getObjectNames():
-        if not item == "reflectivity_new":
-            AnalysisDataService.remove(item)
-    if AnalysisDataService.doesExist('reflectivity_new'):
-        RenameWorkspace(InputWorkspace="reflectivity_new", OutputWorkspace="output_new")
-
-logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
-RefLReduction(RunNumbers=[int(runNumber)],
+LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
               SubtractSignalBackground=data_set.DataBackgroundFlag,
@@ -175,7 +168,6 @@ RefLReduction(RunNumbers=[int(runNumber)],
               LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
               LowResNormAxisPixelRange=data_set.norm_x_range,
               TOFRange=data_set.DataTofRange,
-              TofRangeFlag=True,
               IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
               GeometryCorrectionFlag=False,
               QMin=data_set.q_min,
@@ -184,18 +176,16 @@ RefLReduction(RunNumbers=[int(runNumber)],
               AngleOffsetError=data_set.angle_offset_error,
               ScalingFactorFile=str(data_set.scaling_factor_file),
               SlitsWidthFlag=data_set.slits_width_flag,
+              ApplyPrimaryFraction=True,
+              PrimaryFractionRange=[117,197],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto')
-if AnalysisDataService.doesExist('reflectivity_auto'):
-    RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
-logger.notice(str(AnalysisDataService.getObjectNames()))
 # Clean up the output and produce a nice plot for the web monitor
-result_list = ['output_auto']
+result_list = ['reflectivity_auto']
 if compare:
-    result_list.append('output_new')
-
+    result_list.append('reflectivity_no_clocking')
 group_ws = []
 plot_data = []
 qmin = 0
@@ -232,7 +222,10 @@ if len(plot_data)>1:
     plt.cla()
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
-        plt.legend(["Standard (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new])
+        plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
+    else::
+        plt.plot(plot_data[0][1], plot_data[0][2], '-')
+        plt.legend(["Standard (absolute=%s)" % is_absolute])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
@@ -241,9 +234,5 @@ if len(plot_data)>1:
     plt.xlim(xmin=qmin, xmax=qmax)
     plt.ylim(ymax=2.0)
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
-
-elif len(group_ws) > 0:
-    wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
-    SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
     logger.notice("Nothing to plot")
