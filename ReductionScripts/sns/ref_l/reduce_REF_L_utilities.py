@@ -192,7 +192,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     s.get_scaled_data(workspace="reflectivity_%s" % endswith)
     return scaled_ws_list, normalization_available
 
-def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
+def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_file=True):
     """
         Utility function used by the automated reduction to load 
         partial results and stitched them together.
@@ -219,7 +219,8 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     
     scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith)
     
-    create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
+    if to_file:
+        create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
     
     # Remove workspaces we created
     for item in scaled_ws_list:
