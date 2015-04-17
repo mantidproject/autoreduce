@@ -223,7 +223,7 @@ if len(plot_data)>1:
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
         plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
-    else::
+    else:
         plt.plot(plot_data[0][1], plot_data[0][2], '-')
         plt.legend(["Standard (absolute=%s)" % is_absolute])
     plt.title(y_label)
