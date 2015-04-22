@@ -63,6 +63,10 @@ meta_data_run = meta_data.getRun()
 first_run_of_set = int(runNumber)
 sequence_number = 1
 title = meta_data_run.getProperty("run_title").value
+if "direct beam" in title.lower():
+    logger.notice("Direct beam run: skip")
+    sys.exit(0)
+   
 try:
     m=re.search("Run:(\d+)-(\d+).",title)
     if m is not None:
