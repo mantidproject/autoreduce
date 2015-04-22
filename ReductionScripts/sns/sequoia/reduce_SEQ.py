@@ -130,7 +130,7 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
     RawVanadium="/SNS/SEQ/IPTS-13532/nexus/SEQ_64933.nxs.h5"
-    ProcessedVanadium="van64933mask64_118_2X2.nxs"
+    ProcessedVanadium="van64933shortpacksmask64_118_2X2.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     #MaskBTPParameters.append({'Bank':"141"})
     #MaskBTPParameters.append({'Bank':"70"})
     MaskBTPParameters.append({'Pixel': '1-8,121-128'})
-    MaskBTPParameters.append({'Bank': '99-102,114,115,75,76,38,39'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
     MaskBTPParameters.append({'Bank': '64'})
     MaskBTPParameters.append({'Bank': '118'})
 
