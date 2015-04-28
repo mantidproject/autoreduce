@@ -22,8 +22,8 @@ def create_ascii_file(first_run_of_set, scaled_ws_list, output_dir):
         @param scaled_ws_list: list of scaled workspaces to combine
         @param output_dir: output directory for the reflectivity file
     """
-    dq0 = 0.0009
-    dq_over_q = 0.045
+    dq0 = 0.0004
+    dq_over_q = 0.02
     content = '#dQ0[1/Angstrom]=%g\n' % dq0
     content += '#dQ/Q=%g\n' % dq_over_q
     content += '#Q(1/Angstrom) R delta_R Precision\n'
