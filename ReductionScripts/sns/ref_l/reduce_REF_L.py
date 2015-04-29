@@ -32,7 +32,7 @@ sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
-def save_partial_output(endswith='auto', to_file=True):
+def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
     """
         Stitch and save the full reflectivity curve, or as much as we have at the moment.
     """
@@ -48,7 +48,7 @@ def save_partial_output(endswith='auto', to_file=True):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file)
+    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file, scale_to_unity=scale_to_unity)
     if to_file:
         default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
         new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
