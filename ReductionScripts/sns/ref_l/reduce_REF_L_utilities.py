@@ -85,8 +85,9 @@ def average_points_for_single_q(first_run_of_set, scaled_ws_list):
     # Convert each histo to histograms and rebin to final binning
     for ws in scaled_ws_list:
         new_name = "%s_histo" % ws
-        ConvertToHistogram(InputWorkspace=ws, OutputWorkspace=new_name)
-        Rebin(InputWorkspace=new_name, Params=binning_parameters,
+        #ConvertToHistogram(InputWorkspace=ws, OutputWorkspace=new_name)
+        mtd[ws].setDistribution(True)
+        Rebin(InputWorkspace=ws, Params=binning_parameters,
               OutputWorkspace=new_name)
 
     # Take the first rebinned histo as our output
