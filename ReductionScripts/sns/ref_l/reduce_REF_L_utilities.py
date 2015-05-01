@@ -65,7 +65,7 @@ def average_points_for_single_q(first_run_of_set, scaled_ws_list):
 
     # Get binning parameters
     _from_q = 0.005
-    _bin_size = 0.02
+    _bin_size = 0.01
     _bin_max = 2
     binning_parameters = "%g,-%g,%g" % (_from_q, _bin_size, _bin_max)
 
