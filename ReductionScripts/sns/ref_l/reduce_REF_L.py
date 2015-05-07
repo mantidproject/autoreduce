@@ -67,6 +67,11 @@ if "direct beam" in title.lower():
     logger.notice("Direct beam run: skip")
     sys.exit(0)
    
+thi = meta_data_run.getProperty('thi').value[0]
+tthd = meta_data_run.getProperty('tthd').value[0]
+if math.fabs(thi-tthd)<0.001:
+    logger.notice("Angle appears to be zero: probably a direct beam run")
+    sys.exit(0)
 try:
     m=re.search("Run:(\d+)-(\d+).",title)
     if m is not None:
