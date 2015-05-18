@@ -46,14 +46,15 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, Ox2WeldRot') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
       elog=ExperimentLog()
       elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
-      elog.setSERotOptions('s1')
+      #elog.setSERotOptions('s1')
+      elog.setSERotOptions('Ox2WeldRot')
       elog.setSETempOptions('SampleTemp, sampletemp, SensorB,SensorB340')
       elog.setFilename(self._output_directory+'experiment_log.csv')
       elog.save_line(autows)  
@@ -66,7 +67,7 @@ class AutoReduction():
 
   
       # Get Angle
-      s1 = run['s1'].getStatistics().mean
+      s1 = run['Ox2WeldRot'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei

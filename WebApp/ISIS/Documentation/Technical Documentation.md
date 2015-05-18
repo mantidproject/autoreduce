@@ -38,7 +38,7 @@ Web framework for python. Abstracts away various tasks such as database access, 
 **Updating:** Django is installed through `pip` or `easy_install`. Update using these tools for best results. Make sure to check https://docs.djangoproject.com/en/1.7/releases/ for any breaking changes before updating.
 
 ### [ActiveMQ](http://activemq.apache.org/) 
-**Version:** 5.10.0
+**Version:** 5.11.1
 
 ActiveMQ is a messaging server that supports publish/subscribe to both queues and topics. It handles multiple protocols but only Stomp is being used in this web app. It should be ensured that the server is restricted to SSL and with credentials (See installation instructions).
 
@@ -100,6 +100,7 @@ When using the `Client` there are some optional arguments that could cause probl
 `topics` - a list stating what queues/topics to subscribe to (Default: None)
 `client_only` - Set this True if you only require sending a message to the message queue (for example in `MessagingUtils.send_pending`).
 `use_ssl` - This needs to be set to True is connecting to the messaging queue over SSL (recommended). (Default: False)
+`ssl_version=3` - Dependent on what version of Java is being run, but the default is considered to have security issues which using TLS fixes.
 
 #### icat_communication.py
 
