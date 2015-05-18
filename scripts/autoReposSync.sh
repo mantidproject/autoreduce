@@ -51,6 +51,19 @@ function process() {
       fi
     fi
   done
+  specific_files = (template.xml)
+  for index in ${!specific_files[*]}
+  do
+    script=${specific_files[$index]}
+    echo $script
+    file1="$file/$script"
+    file2="/SNS/"$inst"/shared/autoreduce/$script"
+    if [ -f $file1 ]; then 
+      if [ -f $file2 ]; then
+        diffScript $file1 $file2
+      fi
+    fi
+  done
 }
 
 # Update the local copy of the code
