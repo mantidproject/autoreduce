@@ -11,30 +11,44 @@ Please see: http://www.mantidproject.org/Installing_Mantid_Via_Yum#ISIS_RHEL7_.2
         export http_proxy=http://wwwcache.rl.ac.uk
         export https_proxy=http://wwwcache.rl.ac.uk
 
-2.  Downloaded apache-activemq-5.8.0-bin.tar.gz and unpack (https://activemq.apache.org/activemq-580-release.html)
+2.  Downloaded apache-activemq-5.11.1-bin.tar.gz and unpack (https://activemq.apache.org/activemq-5111-release.html)
 
-        wget http://archive.apache.org/dist/activemq/apache-activemq/5.8.0/apache-activemq-5.8.0-bin.tar.gz -o autoreduce-mq.tgz
-        tar -zxvf autoreduce-mq.tgz
-        mv apache-activemq-5.8.0 /opt/
-        ln -sf /opt/apache-activemq-5.6.0/ /opt/activemq
+        wget http://www.apache.org/dyn/closer.cgi?path=/activemq/5.11.1/apache-activemq-5.11.1-bin.tar.gz
+        tar -zxvf apache-activemq-5.11.1-bin.tar.gz
+        mv apache-activemq-5.11.1 /opt/
+        ln -sf /opt/apache-activemq-5.11.1/ /opt/activemq
 
-3. Configure ActiveMQ to require SSL
+3. Create/renew SSL certificates - keystore and truststore (http://activemq.apache.org/how-do-i-use-ssl.html)
 
-        (Create own SSL certificates - keystore and truststore)
+        keytool -genkey -alias broker -keyalg RSA -keystore broker.ks -validity 2160
+        keytool -export -alias broker -keystore broker.ks -file broker_cert
+        keytool -genkey -alias client -keyalg RSA -keystore client.ks -validity 2160
+        keytool -import -alias broker -keystore client.ts -file broker_cert
+        keytool -export -alias client -keystore client.ks -file client_cert -validity 2160
+        keytool -import -alias client -keystore broker.ts -file client_cert
+        cp all of above created files into activemq/conf
+                
+4. Configure ActiveMQ to require SSL
+
         nano /opt/activemq/conf/activemq.xml
         Modify the transportConnector tag to be: <transportConnector name="stomp+ssl" uri="stomp+ssl://0.0.0.0:61613?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
         Add the following (making sure to change cert names and passwords):
         <sslContext>
-                <sslContext keyStore="amq-server.ks" keyStorePassword="changeit"
-                trustStore="amq-server.ts" trustStorePassword="changeit"/>
+                <sslContext keyStore="broker.ks" keyStorePassword="changeit"
+                trustStore="client.ts" trustStorePassword="changeit"/>
         </sslContext>
 
-For option for starting up ActiveMQ type: `/opt/activemq/bin/activemq`
+To start up ActiveMQ, ensure you are in root and type: `/opt/activemq/bin/activemq start`
 
-To check that ActiveMQ is listening type e.g. 'lsof –i' or 'netstat –tulpn'. Note in table outputted, 'command' or 'program name' for activemq is 'java'. To check which java is used you may type "ls –l /proc/'PID number'/exe" and to get the working directory of a process "ls –l /proc/'PID number'/cwd"
-ActiveMQ should be listening on ports **61616** and **61613**
+To stop, type: `/opt/activemq/bin/activemq stop`
 
-Use a URL like http://autoreduce.isis.cclrc.ac.uk:8161/admin/index.jsp to check ActiveMQ. This should be tested from localhost first (due to firewall restrictions). Note the factory username/password is admin/admin. 
+To check that ActiveMQ is running e.g. type 
+
+* `netstat –tulpn` and check if port **61613** is listed. 
+* or `ps ax | grep activemq` and look for java entry running activemq.jar 
+* or check if http://localhost:8161/admin/index.jsp is running. Note the factory username/password is admin/admin. 
+
+ActiveMQ logs can by default be found in /activemq-install-dir/data.
 
 ### Setting up a worker on linux (redhat) 
 
@@ -55,10 +69,11 @@ Use a URL like http://autoreduce.isis.cclrc.ac.uk:8161/admin/index.jsp to check 
 
 5.  At present specify the location where the script and reduced data get stored by modifying the instrument_dir variable in the method reduce() of python file /usr/bin/PostProcessAdmin.py
 
-6.  Type: `sudo python /usr/bin/queueProcessor.py`
-
+6.  Type: `sudo python /usr/bin/queueProcessor.py` or to start this as a daemon type `python /usr/bin/queueProcessor_daemon.py start`
 
 Logging associated with the Logger used in the python worker script gets stored in `/var/log/mantid_autoreduce_worker.log` (optionally change this in `/usr/bin/Configuration.py`).  
+
+To check rpm and uninstall do `rpm -qa | grep autoreduce` and `rpm -evv name-of-rpm-package`.
 
 In step 4 if the key python line reads: `instrument_dir = "/home/autoreducetmp/" + self.instrument.lower() + "/"` then it is assumed that the reduce.py for a given instrument is located at `reduce_script_path = instrument_dir + "scripts/reduce.py"` and the output will be stored at `reduce_result_dir = instrument_dir + "results/" + self.proposal + "/"`
 

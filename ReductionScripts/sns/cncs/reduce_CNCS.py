@@ -36,7 +36,9 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-13623/0/115557/NeXus/CNCS_115557_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 ProcessedVanadium="van101708both.nxs"
 HardMaskFile=''
@@ -92,6 +94,7 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
+#elog.setSERotOptions('Ox2WeldRot')
 elog.setSERotOptions('SERotator2')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
@@ -101,7 +104,7 @@ elog.setFilename(output_directory+'experiment_log.csv')
 s1=elog.save_line('reduce')
 
 # Get Angle
-#s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 

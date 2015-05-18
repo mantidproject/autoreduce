@@ -38,7 +38,7 @@ Web framework for python. Abstracts away various tasks such as database access, 
 **Updating:** Django is installed through `pip` or `easy_install`. Update using these tools for best results. Make sure to check https://docs.djangoproject.com/en/1.7/releases/ for any breaking changes before updating.
 
 ### [ActiveMQ](http://activemq.apache.org/) 
-**Version:** 5.10.0
+**Version:** 5.11.1
 
 ActiveMQ is a messaging server that supports publish/subscribe to both queues and topics. It handles multiple protocols but only Stomp is being used in this web app. It should be ensured that the server is restricted to SSL and with credentials (See installation instructions).
 
@@ -100,6 +100,7 @@ When using the `Client` there are some optional arguments that could cause probl
 `topics` - a list stating what queues/topics to subscribe to (Default: None)
 `client_only` - Set this True if you only require sending a message to the message queue (for example in `MessagingUtils.send_pending`).
 `use_ssl` - This needs to be set to True is connecting to the messaging queue over SSL (recommended). (Default: False)
+`ssl_version=3` - Dependent on what version of Java is being run, but the default is considered to have security issues which using TLS fixes.
 
 #### icat_communication.py
 
@@ -532,6 +533,9 @@ This indicates that the `reduce.py` script doesn't contain a `standard_vars` var
 This happens when the connection to MySQL has been idle for longer than the wait period (default 8 hours). A fix should now be included but if it presents itself again restarting the 'AutoreduceQueueProcessor" service should resolve the issue.
 
 See: https://code.djangoproject.com/ticket/21597#comment:29 
+
+### Mantid unicode errors
+The mantid program does not work well with unicode format, so any file path names passed to the scripts need to be in Ascii. 
 
 ## Updating
 

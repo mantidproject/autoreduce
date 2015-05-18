@@ -37,11 +37,11 @@ fi
 function process() {
   file=$1
   inst=$2
-  scripts=(reduce sumRun sumRun sumBatchRuns) 
-  exts=(py py cfg sh)
+  scripts=(reduce reduce sumRun sumRun sumBatchRuns) 
+  exts=(.py _utilities.py .py.template .py .cfg .sh)
   for index in ${!scripts[*]}
   do
-    script=${scripts[$index]}_$inst.${exts[$index]}
+    script=${scripts[$index]}_$inst${exts[$index]}
     echo $script
     file1="$file/$script"
     file2="/SNS/"$inst"/shared/autoreduce/$script"

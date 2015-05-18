@@ -322,9 +322,6 @@ def ReduceBanksE():
 # Main program
 ######################################################################
 
-subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
-#subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
-
 # Read calibration table
 CalTab = [[0 for _ in range(2)] for _ in range(1024*14)]
 tab = list(csv.reader(open(CalFile,'r')))
@@ -411,6 +408,10 @@ if not os.path.exists(asciidir):
     print "Info: "+asciidir+" does not exist and will be created."
 OutFile=os.path.join(asciidir,'VIS_'+INS+'.dat')
 SaveAscii(InputWorkspace=INS,Filename=OutFile,Separator='Space')
+
+
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
+#subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
 
 ######################################################################
 # Save Inelastic banks in a separate file
