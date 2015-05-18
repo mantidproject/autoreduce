@@ -66,7 +66,7 @@ class processInputs(object):
             if not isinstance(pl,dict):
                 logger.warning("this is not a dict: "+str(pl))
                 continue
-            if set(pl.keys())!={'PerpendicularTo','Minimum','Maximum'}:
+            if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
             if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
