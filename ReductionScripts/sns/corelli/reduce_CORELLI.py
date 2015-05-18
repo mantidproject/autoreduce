@@ -151,7 +151,7 @@ def makePlot(mdws,plotConfig,normalize):
         plt.pcolormesh(X,Y,normmasked,shading='gouraud')
     plt.xlabel(dim0.getName())
     plt.ylabel(dim1.getName())
-    plt.title(dim2.getName()+'integrated from '+"{:.3f}".format(d2min)+' to '+"{:.3f}".format(d2max)) 
+    plt.title(dim2.getName()+'integrated from '+"{0:.3f}".format(d2min)+' to '+"{0:.3f}".format(d2max)) 
 
 if __name__ == "__main__":
     # check number of arguments
