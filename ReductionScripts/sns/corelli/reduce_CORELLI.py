@@ -57,7 +57,7 @@ class processInputs(object):
             self.good_mask=True
             for i in range(lenMask):
                 dicti=self.mask[i]
-                if not isinstance(dicti,dict) or set(dicti.keys())!={'Bank','Tube','Pixel'}:
+                if not isinstance(dicti,dict) or set(dicti.keys())!=set(['Bank','Tube','Pixel']):
                     self.good_mask=False
         if not self.good_mask:
             logger.warning("BTP mask is missing or invalid. It will be ignored")
