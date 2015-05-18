@@ -51,7 +51,7 @@ function process() {
       fi
     fi
   done
-  specific_files = (template.xml)
+  specific_files=(template.xml)
   for index in ${!specific_files[*]}
   do
     script=${specific_files[$index]}
