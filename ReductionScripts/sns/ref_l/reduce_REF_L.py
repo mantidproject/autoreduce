@@ -237,7 +237,7 @@ for item in result_list:
             data = json.loads(json_data)
             data["reflectivity"] = {"x":clean_x, "y":clean_y, "e": clean_e}
             json_data = json.dumps(data)
-            fd = open(file_path), 'w')
+            fd = open(file_path, 'w')
             fd.write(json_data)
             fd.close()
 
