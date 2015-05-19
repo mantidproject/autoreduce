@@ -51,6 +51,14 @@ def create_ascii_file(first_run_of_set, scaled_ws_list, output_dir):
     f.write(content)
     f.close()
 
+    # Update plot data file if it exists
+    #if os.path.isfile(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % first_run_of_set):
+    #    json_data = json.dumps(data)
+        
+    #    fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
+    #    fd.write(json_data)
+    #    fd.close()
+
 def average_points_for_single_q(first_run_of_set, scaled_ws_list):
     """
         Take the point with the smalled error when multiple points are
