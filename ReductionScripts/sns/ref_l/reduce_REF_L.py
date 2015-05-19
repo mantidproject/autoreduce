@@ -230,10 +230,16 @@ for item in result_list:
     # Update json data file for interactive plotting
     if item == "output_auto":
         file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % runNumber
-        json_data = json.dumps(data)    
-        fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
-        fd.write(json_data)
-        fd.close()
+        if os.path.isfile(file_path):
+            fd = open(file_path, 'r')
+            json_data = fd.read()
+            fd.close()
+            data = json.loads(json_data)
+            data["reflectivity"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+            json_data = json.dumps(data)
+            fd = open(file_path), 'w')
+            fd.write(json_data)
+            fd.close()
 
 y_label = "Reflectivity "
 if is_absolute:
