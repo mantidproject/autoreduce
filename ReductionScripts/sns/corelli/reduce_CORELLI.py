@@ -20,7 +20,7 @@ class processInputs(object):
         self.vanadium_flux_file='' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[{'Bank': '1'}, {'Tube': '1'}] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
         self.plot_requests=[[{'Minimum': '-0.05', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.05'}, {'Minimum': '-0.05', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.05'}]] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='False' #"1"
+        self.useCC='True' #"1"
         #other
         self.can_do_HKL=False
         self.can_do_norm=False
