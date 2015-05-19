@@ -18,9 +18,9 @@ class processInputs(object):
         self.ub_matrix_file='/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
-        self.mask=[{'Bank': '1'}, {'Tube': '1'}] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[[{'Minimum': '-0.05', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.05'}, {'Minimum': '-0.05', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.05'}]] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='True' #"1"
+        self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
+        self.plot_requests=[{'Minimum': '-0.05', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.05'}, {'Minimum': '-0.05', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.05'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
         self.can_do_norm=False
@@ -57,7 +57,7 @@ class processInputs(object):
             self.good_mask=True
             for i in range(lenMask):
                 dicti=self.mask[i]
-                if not isinstance(dicti,dict) or set(dicti.keys())!=set(['Bank','Tube','Pixel']):
+                if not isinstance(dicti,dict) or set(dicti.keys()).issubset(set(['Bank','Tube','Pixel'])):
                     self.good_mask=False
         if not self.good_mask:
             logger.warning("BTP mask is missing or invalid. It will be ignored")
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     fig.set_size_inches(6.0,6.0*(numfig+1))
     for i in range(numfig):
         plt.subplot(numfig+1,1,i+2)
-        if config.useCC=="1":
+        if config.useCC=="True":
             makePlot(mdcc,config.plots[i],config.can_do_norm)
         else:
             makePlot(mdraw,config.plots[i],config.can_do_norm)
