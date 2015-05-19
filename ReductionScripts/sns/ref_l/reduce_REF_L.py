@@ -227,6 +227,14 @@ for item in result_list:
     group_ws.append(item)       
     plot_data.append([item, clean_x, clean_y, clean_e])
 
+    # Update json data file for interactive plotting
+    if item == "output_auto":
+        file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % runNumber
+        json_data = json.dumps(data)    
+        fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
+        fd.write(json_data)
+        fd.close()
+
 y_label = "Reflectivity "
 if is_absolute:
     y_label += "(absolute)"
