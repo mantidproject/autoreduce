@@ -229,7 +229,7 @@ for item in result_list:
 
     # Update json data file for interactive plotting
     if item == "output_auto":
-        file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % runNumber)
+        file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
         if os.path.isfile(file_path):
             fd = open(file_path, 'r')
             json_data = fd.read()
