@@ -127,6 +127,9 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
     vulcanheaderlist.append( ("Time [sec]"          , "")       )
     vulcanheaderlist.append( ("Current"             , "Current"))
     vulcanheaderlist.append( ("Voltage"             , "Voltage"))
+    if runNumber >= 69214:
+    for ilog in xrange(1, 17):
+        vucanheaderlist.append(
     
     # Format to lists for input
     samplelognames = []
