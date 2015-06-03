@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Jun  3 11:15:11 2015</timestamp>
+  <timestamp>Wed Jun  3 11:16:44 2015</timestamp>
   <python_version>2.6.6 (r266:84292, Nov 21 2013, 10:50:32) 
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
   <platform>Linux</platform>
@@ -44,11 +44,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -90,11 +90,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -136,11 +136,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -182,11 +182,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -228,11 +228,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -274,11 +274,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
@@ -320,11 +320,11 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-11601/shared/mathieu/sf_ipts_11601.cfg</scaling_factor_file>
-<slits_width_flag>False</slits_width_flag>
+<scaling_factor_file>/SNS/REF_L/shared/sf_april_md_new.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirSip,2InDiamSiSkip,2InDiamSi,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_list>Si,Air</incident_medium_list>
+<incident_medium_index_selected>1</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
