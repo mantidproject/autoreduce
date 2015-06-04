@@ -244,7 +244,7 @@ if __name__ == "__main__":
     # do some plots
     fig = plt.gcf()
     numfig=len(config.plots)
-    fig.set_size_inches(6.0,6.0*(numfig+1))
+    fig.set_size_inches(5.0,5.0*(numfig+1))
     for i in range(numfig):
         plt.subplot(numfig+1,1,i+2)
         if config.useCC=="True":
