@@ -70,8 +70,8 @@ DGSdict['DetVanIntRangeUnits']='TOF'
 DGSdict['OutputWorkspace']='reduce'
 DGSdict['TibTofRangeStart']=tib[0]
 DGSdict['TibTofRangeEnd']=tib[1]
-DGSdict['TimeIndepBackgroundSub']=True
-#DGSdict['TimeIndepBackgroundSub']=False
+#DGSdict['TimeIndepBackgroundSub']=True
+DGSdict['TimeIndepBackgroundSub']=False
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
