@@ -67,7 +67,8 @@ class AutoReduction():
 
   
       # Get Angle
-      s1 = run['CRYO09Rot'].getStatistics().mean
+      #s1 = run['CRYO09Rot'].getStatistics().mean
+      s1 = run['s1'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
