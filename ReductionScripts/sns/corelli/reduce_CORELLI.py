@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.ub_matrix_file='/SNS/CORELLI/IPTS-14608/shared/CePtSi2-UB3.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.05', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.05'}, {'Minimum': '-0.05', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.05'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='True' #"True"
+        self.plot_requests=[{'Minimum': '-0.05', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.05'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.useCC='False' #"True"
         #other
         self.can_do_HKL=False
         self.can_do_norm=False
@@ -132,7 +132,7 @@ def makePlot(mdws,plotConfig,normalize):
                      AlignedDim2=AlignedDim2)
     xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/500.)
     yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/500.)
-    arrayToPlot=np.log(wsToPlot.getSignalArray())
+    arrayToPlot=np.log(wsToPlot.getSignalArray()[0,:,:])
     arrayToPlot[np.where(np.logical_not(np.isfinite(arrayToPlot)))]=0.
     arrayToPlot_where = np.argwhere(arrayToPlot)
     xstart=0
