@@ -7,7 +7,7 @@ from numpy import *
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantid34/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
@@ -53,8 +53,8 @@ w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
 tib=SuggestTibCNCS(EGuess)
-if (abs(EGuess-12)<0.1):
-    tib=[20500.0,21500.0]
+#if (abs(EGuess-12)<0.1):
+#    tib=[20500.0,21500.0]
 #tib=[24000,29000]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
