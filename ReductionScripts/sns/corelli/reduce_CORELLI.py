@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys,os
-sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/mantid34/bin")
 
 from mantid.simpleapi import *
 from mantid import logger
@@ -132,7 +132,8 @@ def makePlot(mdws,plotConfig,normalize):
                      AlignedDim2=AlignedDim2)
     xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/500.)
     yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/500.)
-    arrayToPlot=np.log(wsToPlot.getSignalArray()[0,:,:])
+    #arrayToPlot=np.log(wsToPlot.getSignalArray()[0,:,:]) #this is for next mantid release, or nightly
+    arrayToPlot=np.log(wsToPlot.getSignalArray()
     arrayToPlot[np.where(np.logical_not(np.isfinite(arrayToPlot)))]=0.
     arrayToPlot_where = np.argwhere(arrayToPlot)
     xstart=0
