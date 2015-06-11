@@ -4,6 +4,7 @@
 """
 import os
 import sys
+import json
 sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
@@ -21,8 +22,8 @@ def create_ascii_file(first_run_of_set, scaled_ws_list, output_dir):
         @param scaled_ws_list: list of scaled workspaces to combine
         @param output_dir: output directory for the reflectivity file
     """
-    dq0 = 0.0009
-    dq_over_q = 0.045
+    dq0 = 0.0004
+    dq_over_q = 0.02
     content = '#dQ0[1/Angstrom]=%g\n' % dq0
     content += '#dQ/Q=%g\n' % dq_over_q
     content += '#Q(1/Angstrom) R delta_R Precision\n'
@@ -84,8 +85,9 @@ def average_points_for_single_q(first_run_of_set, scaled_ws_list):
     # Convert each histo to histograms and rebin to final binning
     for ws in scaled_ws_list:
         new_name = "%s_histo" % ws
-        ConvertToHistogram(InputWorkspace=ws, OutputWorkspace=new_name)
-        Rebin(InputWorkspace=new_name, Params=binning_parameters,
+        #ConvertToHistogram(InputWorkspace=ws, OutputWorkspace=new_name)
+        mtd[ws].setDistribution(True)
+        Rebin(InputWorkspace=ws, Params=binning_parameters,
               OutputWorkspace=new_name)
 
     # Take the first rebinned histo as our output
@@ -191,7 +193,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     s.get_scaled_data(workspace="reflectivity_%s" % endswith)
     return scaled_ws_list, normalization_available
 
-def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
+def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_file=True, scale_to_unity=True):
     """
         Utility function used by the automated reduction to load 
         partial results and stitched them together.
@@ -216,9 +218,10 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
         return False
     input_ws_list = sorted(input_ws_list)
     
-    scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith)
+    scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith, scale_to_unity=scale_to_unity)
     
-    create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
+    if to_file:
+        create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
     
     # Remove workspaces we created
     for item in scaled_ws_list:
@@ -227,6 +230,44 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto'):
     logger.notice("Has normalization (%s)? %s" % (endswith, has_normalization))
     return has_normalization
 
+def selection_plots(workspace, output_dir, run_number):
+    """
+        Write the selection plot data to a file so that we can read it back and display it in the web monitor
+    """
+    n_x = int(workspace.getInstrument().getNumberParameter("number-of-x-pixels")[0])
+    n_y = int(workspace.getInstrument().getNumberParameter("number-of-y-pixels")[0])
+
+    peak_selection = RefRoi(InputWorkspace=workspace, NXPixel=n_x, NYPixel=n_y, IntegrateY=False, ConvertToQ=False)
+    peak_selection = Transpose(InputWorkspace=peak_selection)
+    lowres_selection = RefRoi(InputWorkspace=workspace, NXPixel=n_x, NYPixel=n_y, IntegrateY=True, ConvertToQ=False)
+    lowres_selection = Transpose(InputWorkspace=lowres_selection)
+
+    data = {}
+    x = peak_selection.readX(0)
+    y = peak_selection.readY(0)
+    e = peak_selection.readE(0)
+    data["peak_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
+    x = lowres_selection.readX(0)
+    y = lowres_selection.readY(0)
+    e = lowres_selection.readE(0)
+    data["lowres_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
+    tof_dist = SumSpectra(InputWorkspace=workspace)
+    tof_max =  workspace.getTofMax()
+    tof_min =  workspace.getTofMin()
+    tof_selection = Rebin(InputWorkspace=tof_dist, Params=[tof_min, 40, tof_max])
+    x = tof_selection.readX(0)
+    y = tof_selection.readY(0)
+    e = tof_selection.readE(0)
+    data["tof_selection"] = {"x":list(x), "y":list(y), "e":list(e)}
+
+    #TODO: add the current selection ranges from the template
+    json_data = json.dumps(data)
+    
+    fd = open(os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number), 'w')
+    fd.write(json_data)
+    fd.close()
 
 if __name__ == '__main__':
     autoreduction_stitching('/SNS/REF_L/IPTS-11804/shared/autoreduce/', 124391, 'auto')

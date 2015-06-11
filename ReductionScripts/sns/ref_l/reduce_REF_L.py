@@ -3,6 +3,7 @@ import os
 import re
 import math
 import time
+import json
 import platform
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from matplotlib import *
@@ -30,9 +31,9 @@ from LargeScaleStructures.data_stitching import DataSet, Stitcher
 sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
-from reduce_REF_L_utilities import autoreduction_stitching
+from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
-def save_partial_output(endswith='auto'):
+def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
     """
         Stitch and save the full reflectivity curve, or as much as we have at the moment.
     """
@@ -48,21 +49,30 @@ def save_partial_output(endswith='auto'):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith)
-
-    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
-    new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
-    os.system("cp %s %s" % (os.path.join(outputDir, default_file_name),
-                            os.path.join(outputDir, new_file_name)))
+    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file, scale_to_unity=scale_to_unity)
+    if to_file:
+        default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
+        new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
+        os.system("mv %s %s" % (os.path.join(outputDir, default_file_name),
+                                os.path.join(outputDir, new_file_name)))
 
     return _is_absolute
 
 # Load meta data to decide what to do
-meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=False)
 meta_data_run = meta_data.getRun()
 first_run_of_set = int(runNumber)
 sequence_number = 1
 title = meta_data_run.getProperty("run_title").value
+if "direct beam" in title.lower():
+    logger.notice("Direct beam run: skip")
+    sys.exit(0)
+   
+thi = meta_data_run.getProperty('thi').value[0]
+tthd = meta_data_run.getProperty('tthd').value[0]
+if math.fabs(thi-tthd)<0.001:
+    logger.notice("Angle appears to be zero: probably a direct beam run")
+    sys.exit(0)
 try:
     m=re.search("Run:(\d+)-(\d+).",title)
     if m is not None:
@@ -79,6 +89,9 @@ try:
 except:
     sequence_number = 1
     first_run_of_set = int(runNumber)
+
+# Save selection plots
+selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 s = DataSeries()
@@ -122,6 +135,7 @@ _list = _incident_medium_str.split(',')
 
 # Set the following to True to compare the old and new reduction algorithms
 compare = True
+comparison_ending = 'no_clocking'
 if compare:
     LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
                   NormalizationRunNumber=str(data_set.norm_file),
@@ -147,16 +161,15 @@ if compare:
                   SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    is_absolute_new = save_partial_output(endswith='new')
+    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=True)
 
     for item in AnalysisDataService.getObjectNames():
-        if not item == "reflectivity_new":
+        if not item == "reflectivity_%s" % comparison_ending:
             AnalysisDataService.remove(item)
-    if AnalysisDataService.doesExist('reflectivity_new'):
-        RenameWorkspace(InputWorkspace="reflectivity_new", OutputWorkspace="output_new")
+    if AnalysisDataService.doesExist('reflectivity_%s' % comparison_ending):
+        RenameWorkspace(InputWorkspace="reflectivity_%s" % comparison_ending, OutputWorkspace="output_%s" % comparison_ending)
 
-logger.notice("BEFORE "+str(AnalysisDataService.getObjectNames()))
-RefLReduction(RunNumbers=[int(runNumber)],
+LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
               SubtractSignalBackground=data_set.DataBackgroundFlag,
@@ -170,7 +183,6 @@ RefLReduction(RunNumbers=[int(runNumber)],
               LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
               LowResNormAxisPixelRange=data_set.norm_x_range,
               TOFRange=data_set.DataTofRange,
-              TofRangeFlag=True,
               IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
               GeometryCorrectionFlag=False,
               QMin=data_set.q_min,
@@ -179,18 +191,18 @@ RefLReduction(RunNumbers=[int(runNumber)],
               AngleOffsetError=data_set.angle_offset_error,
               ScalingFactorFile=str(data_set.scaling_factor_file),
               SlitsWidthFlag=data_set.slits_width_flag,
+              ApplyPrimaryFraction=True,
+              PrimaryFractionRange=[121,195],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-is_absolute = save_partial_output(endswith='auto')
+is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
-logger.notice(str(AnalysisDataService.getObjectNames()))
 # Clean up the output and produce a nice plot for the web monitor
 result_list = ['output_auto']
 if compare:
-    result_list.append('output_new')
-
+    result_list.append('output_%s' % comparison_ending)
 group_ws = []
 plot_data = []
 qmin = 0
@@ -216,6 +228,20 @@ for item in result_list:
     group_ws.append(item)       
     plot_data.append([item, clean_x, clean_y, clean_e])
 
+    # Update json data file for interactive plotting
+    if item == "output_auto":
+        file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+        if os.path.isfile(file_path):
+            fd = open(file_path, 'r')
+            json_data = fd.read()
+            fd.close()
+            data = json.loads(json_data)
+            data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+            json_data = json.dumps(data)
+            fd = open(file_path, 'w')
+            fd.write(json_data)
+            fd.close()
+
 y_label = "Reflectivity "
 if is_absolute:
     y_label += "(absolute)"
@@ -227,7 +253,10 @@ if len(plot_data)>1:
     plt.cla()
     if len(plot_data)==2:
         plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
-        plt.legend(["Standard (absolute=%s)" % is_absolute, "Test (absolute=%s)" % is_absolute_new])
+        plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
+    else:
+        plt.plot(plot_data[0][1], plot_data[0][2], '-')
+        plt.legend(["Standard (absolute=%s)" % is_absolute])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
@@ -236,9 +265,5 @@ if len(plot_data)>1:
     plt.xlim(xmin=qmin, xmax=qmax)
     plt.ylim(ymax=2.0)
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
-
-elif len(group_ws) > 0:
-    wsGroup=GroupWorkspaces(InputWorkspaces=group_ws)
-    SavePlot1D(InputWorkspace=wsGroup, OutputFilename=os.path.join(outputDir,"REF_L_"+runNumber+'.png'), YLabel=y_label)
 else:
     logger.notice("Nothing to plot")

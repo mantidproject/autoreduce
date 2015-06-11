@@ -39,8 +39,8 @@ import shutil
 import xml.etree.ElementTree as ET
 
 
-#sys.path.append("/opt/mantidnightly/bin")
-sys.path.append('/opt/mantidunstable/bin/')
+sys.path.append("/opt/mantidnightly/bin")
+#sys.path.append('/opt/mantidunstable/bin/')
 #sys.path.append("/opt/Mantid/bin")
 
 #sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
@@ -127,6 +127,9 @@ def exportGenericDAQLog(logwsname, outputDir, ipts, runNumber):
     vulcanheaderlist.append( ("Time [sec]"          , "")       )
     vulcanheaderlist.append( ("Current"             , "Current"))
     vulcanheaderlist.append( ("Voltage"             , "Voltage"))
+    if runNumber >= 69214:
+        for ilog in xrange(1, 17):
+            vulcanheaderlist.append( ("tc.user%d"%(ilog), "tc.user%d"%(ilog)) )
     
     # Format to lists for input
     samplelognames = []
