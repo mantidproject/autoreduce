@@ -119,7 +119,7 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 10 
+	window = 13 
 	smooth_range = 5
 				
 	peak_clip_WS = CloneWorkspace('ows')
