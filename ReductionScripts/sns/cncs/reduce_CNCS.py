@@ -41,13 +41,13 @@ RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 #ProcessedVanadium="van101708both.nxs"
-ProcessedVanadium="van123012oneside.nxs"
+ProcessedVanadium="van123012.nxs"
 HardMaskFile=''
 IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-MaskBTPParameters.append({'Bank': '37-50'})
+#MaskBTPParameters.append({'Bank': '37-50'})
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
