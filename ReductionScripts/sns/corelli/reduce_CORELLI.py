@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys,os
-sys.path.append("/opt/mantid34/bin")
+sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
 from mantid import logger
