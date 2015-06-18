@@ -7,7 +7,7 @@ from numpy import *
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantid34/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
@@ -41,20 +41,20 @@ RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 #ProcessedVanadium="van101708both.nxs"
-ProcessedVanadium="van123012oneside.nxs"
+ProcessedVanadium="van123012.nxs"
 HardMaskFile=''
 IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-MaskBTPParameters.append({'Bank': '37-50'})
+#MaskBTPParameters.append({'Bank': '37-50'})
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
 tib=SuggestTibCNCS(EGuess)
-if (abs(EGuess-12)<0.1):
-    tib=[20500.0,21500.0]
+#if (abs(EGuess-12)<0.1):
+#    tib=[20500.0,21500.0]
 #tib=[24000,29000]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)

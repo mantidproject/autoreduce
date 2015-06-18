@@ -2,7 +2,7 @@
 
 ## Red Hat 7
 
-Please see: http://www.mantidproject.org/Installing_Mantid_Via_Yum#ISIS_RHEL7_.28beta.29
+First install Mantid using: http://download.mantidproject.org/redhat.html
 
 ### ActiveMQ
 
@@ -62,7 +62,8 @@ ActiveMQ logs can by default be found in /activemq-install-dir/data.
 
 3.  Create and install the RPM
 
-        sudo ISISPostProcessRPM/rpmbuild/make-autoreduce-rpm.sh
+        cd ISISPostProcessRPM/rpmbuild/
+        sudo ./make-autoreduce-rpm.sh
         sudo rpm -i ~/rpmbuild/RPMS/x86_64/autoreduce-mq-1.3-16.x86_64.rpm
 
 4.  Modify the address "brokers" in /etc/autoreduce/post_process_consumer.conf to point to ActiveMQ address 
