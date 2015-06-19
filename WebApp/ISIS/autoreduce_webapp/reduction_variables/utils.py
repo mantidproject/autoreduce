@@ -1,4 +1,4 @@
-import logging, os, sys, imp, uuid, re, json
+import logging, os, sys, imp, uuid, re, json, time
 sys.path.append(os.path.join("../", os.path.dirname(os.path.dirname(__file__))))
 os.environ["DJANGO_SETTINGS_MODULE"] = "autoreduce_webapp.settings"
 from autoreduce_webapp.settings import LOG_FILE, LOG_LEVEL, BASE_DIR, ACTIVEMQ, TEMP_OUTPUT_DIRECTORY, REDUCTION_DIRECTORY, FACILITY
@@ -35,6 +35,16 @@ def write_script_to_temp(script, script_vars_file):
         logger.error('Error opening %s: %s' % (value.filename, value.strerror))
         raise e
     return script_path
+
+
+def log_error_and_notify(message):
+    """
+    Helper method to log an error and save a notifcation
+    """
+    logger.error(message)
+    notification = Notification(is_active=True, is_staff_only=True, severity='e', message=message)
+    notification.save()
+
 
 class VariableUtils(object):
     def wrap_in_type_syntax(self, value, var_type):
@@ -124,6 +134,7 @@ class VariableUtils(object):
             return "list_" + list_type
         return "text"
 
+
 class InstrumentVariablesUtils(object):
     def __load_reduction_script(self, instrument_name):
         """
@@ -135,21 +146,15 @@ class InstrumentVariablesUtils(object):
         try:
             f = open(reduction_file, 'rb')
             script_binary = f.read()
-            return  script_binary
+            return script_binary
         except ImportError, e:
-            logger.error("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s due to import error. (%s)" % (instrument_name, e.message))
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
             return None
         except IOError:
-            logger.error("Unable to load reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s" % reduction_file)
             return None
         except SyntaxError:
-            logger.error("Syntax error in reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Syntax error in reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Syntax error in reduction script %s" % reduction_file)
             return None
 
     def __load_reduction_vars_script(self, instrument_name):
@@ -166,20 +171,55 @@ class InstrumentVariablesUtils(object):
             script_binary = f.read()
             return reduce_script, script_binary
         except ImportError, e:
-            logger.error("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s due to import error. (%s)" % (instrument_name, e.message))
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
             return None, None
         except IOError:
-            logger.error("Unable to load reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s" % reduction_file)
             return None, None
         except SyntaxError:
-            logger.error("Syntax error in reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Syntax error in reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Syntax error in reduction script %s" % reduction_file)
             return None, None
+
+    def __get_scripts_modified(self, instrument_name):
+        """
+        Returns the last modification time of the scripts located in the filesystem
+        """
+        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce.py")
+        script_mod_time = os.path.getmtime(reduction_file)
+        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce_vars.py")
+        script_vars_mod_time = os.path.getmtime(reduction_file)
+        return script_mod_time, script_vars_mod_time
+
+    def __add_new_script_to_variables(self, variables, script_binary, script_name):
+        """
+        Helper method to save a new script into the database and update a set of instrument variables with the script
+        """
+        script = ScriptFile(script=script_binary, file_name=script_name)
+        script.save()
+        for variable in variables:
+            variable.scripts.add(script)
+            variable.save()
+
+    def __check_script_up_to_date(self, variables):
+        """
+        Reloads script in variables to match that on disk (inefficient)
+        """
+        variable = variables[0]  # Assume script will be the same for all variables
+
+        script_cache_mod, script_vars_cache_mod = ScriptUtils().get_cache_scripts_modified(variable.scripts.all())
+        script_file_mod, script_vars_file_mod = self.__get_scripts_modified(variable.instrument.name)
+
+        if script_cache_mod < script_file_mod:
+            logger.info("Reduce.py script out of date, reloading")
+            script_binary = self.__load_reduction_script(variable.instrument.name)
+            self.__add_new_script_to_variables(variables, script_binary, 'reduce.py')
+
+        if script_vars_cache_mod < script_vars_file_mod:
+            logger.info("Reduce_vars.py script out of date, reloading")
+            reduce_vars_script, vars_script_binary = self.__load_reduction_vars_script(variable.instrument.name)
+            self.__add_new_script_to_variables(variables, vars_script_binary, 'reduce_vars.py')
+
+        return variables
 
     def set_default_instrument_variables(self, instrument_name, start_run=1):
         """
@@ -224,6 +264,7 @@ class InstrumentVariablesUtils(object):
             except AttributeError:
                 # Still not found any variables, we better create some
                 variables = self.set_default_instrument_variables(reduction_run.instrument.name)
+        variables = self.__check_script_up_to_date(variables)  # For the moment reload script on all new runs
         return variables
 
     def get_current_script_text(self, instrument_name):
@@ -405,3 +446,22 @@ class ScriptUtils(object):
             elif script.file_name == "reduce_vars.py":
                 script_vars_binary = script.script
         return script_binary, script_vars_binary
+
+    def get_cache_scripts_modified(self, scripts):
+        """
+        Returns the last time the scripts in the database were modified (in seconds since epoch).
+        """
+        script_modified = None
+        script_vars_modified = None
+
+        for script in scripts:
+            if script.file_name == "reduce.py":
+                script_modified = self._convert_time_from_string(str(script.created))
+            elif script.file_name == "reduce_vars.py":
+                script_vars_modified = self._convert_time_from_string(str(script.created))
+        return script_modified, script_vars_modified
+
+    def _convert_time_from_string(self, string_time):
+        time_format = "%Y-%m-%d %H:%M:%S"
+        string_time = string_time[:string_time.find('+')]
+        return int(time.mktime(time.strptime(string_time, time_format)))
