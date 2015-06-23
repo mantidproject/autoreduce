@@ -98,9 +98,9 @@ selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 s = DataSeries()
-if is_silicon:
+if is_silicon and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_si.xml"):
     fd = open("/SNS/REF_L/shared/autoreduce/template_si.xml", "r")
-elif is_air:
+elif is_air and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_air.xml"):
     fd = open("/SNS/REF_L/shared/autoreduce/template_air.xml", "r")
 else:
     fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
