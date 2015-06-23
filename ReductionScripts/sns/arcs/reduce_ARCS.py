@@ -102,6 +102,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-12,117-128', 'Bank': '70'})
     MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
     MaskBTPParameters.append({'Tube': '6', 'Bank': '102'})
+    MaskBTPParameters.append({'Bank': '103'})
 
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
