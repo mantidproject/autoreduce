@@ -2,7 +2,7 @@
 """
 Post Process Administrator. It kicks off cataloging and reduction jobs.
 """
-import logging, json, socket, os, sys, subprocess, time, shutil, imp, stomp, re
+import logging, json, socket, os, sys, subprocess, time, shutil, imp, stomp, re, errno
 import logging.handlers
 
 logger = logging.getLogger(__name__)
@@ -154,10 +154,8 @@ class PostProcessAdmin:
             # specify script to run and directory
             if os.path.exists(os.path.join(self.reduction_script, "reduce.py")) is False:
                 self.data['message'] = "Reduce script doesn't exist within %s" % self.reduction_script
-                logger.info("Reduction script not found within %s" % self.reduction_script)
-                self.client.send(self.conf['reduction_error'], json.dumps(self.data))
                 print "\nCalling: "+self.conf['reduction_error'] + "\n" + json.dumps(self.data) + "\n"
-                logger.debug("Calling: "+self.conf['reduction_error'] + "\n" + json.dumps(self.data))
+                self._send_error_and_log()
                 return
             
             # specify directory where autoreduction output goes
@@ -246,36 +244,54 @@ class PostProcessAdmin:
                             except Exception, e:
                                 self.log_and_message("Unable to copy %s to %s - %s" % (run_output_dir[:-1], out_dir, e))
                         else:
-                            logger.info("Unable to access directory: %s" % out_dir)
+                            self.log_and_message("Unable to access directory: %s" % out_dir)
+                            
+            if os.stat(out_err).st_size == 0:
+                os.remove(out_err)
+            else:
+                maxLineLength=80
+                fp=file(out_err, "r")
+                fp.seek(-maxLineLength-1, 2) # 2 means "from the end of the file"
+                lastLine = fp.readlines()[-1]
+                errMsg = lastLine.strip() + ", see reduction_log/" + os.path.basename(out_log) + " or " + os.path.basename(out_err) + " for details."
+                self.data["message"] = "REDUCTION: %s" % errMsg
 
             self.client.send(self.conf['reduction_complete'] , json.dumps(self.data))
             logging.info("\nCalling: "+self.conf['reduction_complete'] + "\n" + json.dumps(self.data) + "\n")
 
-            logger.info("Reduction job complete")
         except Exception, e:
+            self.data["message"] = "REDUCTION Error: %s " % e
+
+        if self.data["message"] != "":
+            # This means an error has been produced somewhere
             try:
-                self.data["message"] = "REDUCTION Error: %s " % e
-                logger.exception("Called "+self.conf['reduction_error'] + "\nException: " + str(e) + "\nJSON: " + json.dumps(self.data))
-                self.client.send(self.conf['reduction_error'], json.dumps(self.data))
-            except BaseException, e:
-                print "\nFailed to send to queue!\n%s\n%s" % (e, repr(e))
+                self._send_error_and_log()
+            except Exception as e:
                 logger.info("Failed to send to queue! - %s - %s" % (e, repr(e)))
+            finally:
+                logger.info("Reduction job failed")
+        else:
+            self.client.send(self.conf['reduction_complete'], json.dumps(self.data))
+            print "\nCalling: " + self.conf['reduction_complete'] + "\n" + json.dumps(self.data) + "\n"
+            logger.info("Reduction job successfully complete")
+
+    def _send_error_and_log(self):
+        logger.info("Called " + self.conf['reduction_error'] + " --- " + json.dumps(self.data))
+        self.client.send(self.conf['reduction_error'], json.dumps(self.data))
 
     def copy_temp_directory(self, reduce_result_dir, reduce_result_dir_tail_length):
         """ Method that copies the temporary files held in results_directory to CEPH/archive, replacing old data if it
         exists"""
         copy_destination = reduce_result_dir[len(TEMP_ROOT_DIRECTORY):-reduce_result_dir_tail_length]
+
         if os.path.isdir(copy_destination):
-            try:
-                shutil.rmtree(copy_destination, ignore_errors=True)
-            except Exception, e:
-                logger.info("Unable to remove existing directory %s - %s" % (copy_destination, e))
+            self._remove_directory(copy_destination)
+
         try:
             os.makedirs(copy_destination)
         except Exception, e:
             self.log_and_message("Unable to create %s - %s. " % (copy_destination, e))
 
-        # [4,-8] is used to remove the prepending '/tmp' and the trailing 'results/' from the destination
         self.data['reduction_data'].append(linux_to_windows_path(copy_destination))
         logger.info("Moving %s to %s" % (reduce_result_dir[:-1], copy_destination))
         try:
@@ -292,7 +308,41 @@ class PostProcessAdmin:
     def log_and_message(self, message):
         """Helper function to add text to the outgoing activemq message and to the info logs """
         logger.info(message)
-        self.data["message"] += message
+        if self.data["message"] == "":
+            # Only send back first message as there is a char limit
+            self.data["message"] = message
+
+    def _remove_with_wait(self, remove_folder, full_path):
+        """ Removes a folder or file and waits for it to be removed
+        """
+        for sleep in [0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20]:
+            try:
+                if remove_folder:
+                    os.removedirs(full_path)
+                else:
+                    os.remove(full_path)
+            except Exception as e:
+                if e.errno == errno.ENOENT:
+                    # File has been deleted
+                    break
+            time.sleep(sleep)
+        else:
+            self.log_and_message("Failed to delete %s" % full_path)
+
+    def _remove_directory(self, directory):
+        """ Helper function to remove a directory. shutil.rmtree cannot be used as it is not robust enough when folders
+        are open over the network.
+        """
+        try:
+            for file in os.listdir(directory):
+                full_path = os.path.join(directory, file)
+                if os.path.isdir(full_path):
+                    self._remove_directory(full_path)
+                else:
+                    self._remove_with_wait(False, full_path)
+            self._remove_with_wait(True, directory)
+        except Exception as e:
+            self.log_and_message("Unable to remove existing directory %s - %s" % (directory, e))
 
 if __name__ == "__main__":
     print "\n> In PostProcessAdmin.py\n"
