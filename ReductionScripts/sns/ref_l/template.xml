@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Jul  1 10:14:41 2015</timestamp>
+  <timestamp>Wed Jul  1 10:37:49 2015</timestamp>
   <python_version>2.6.6 (r266:84292, Nov 21 2013, 10:50:32) 
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
   <platform>Linux</platform>
@@ -37,7 +37,7 @@
 <norm_to_back_pixels>123</norm_to_back_pixels>
 <norm_dataset>109297</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -83,7 +83,7 @@
 <norm_to_back_pixels>124</norm_to_back_pixels>
 <norm_dataset>109298</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -129,7 +129,7 @@
 <norm_to_back_pixels>126</norm_to_back_pixels>
 <norm_dataset>109299</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -175,7 +175,7 @@
 <norm_to_back_pixels>123</norm_to_back_pixels>
 <norm_dataset>109300</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -221,7 +221,7 @@
 <norm_to_back_pixels>123</norm_to_back_pixels>
 <norm_dataset>109301</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -267,7 +267,7 @@
 <norm_to_back_pixels>123</norm_to_back_pixels>
 <norm_dataset>109301</norm_dataset>
 <q_min>0.005</q_min>
-<q_step>0.01</q_step>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
