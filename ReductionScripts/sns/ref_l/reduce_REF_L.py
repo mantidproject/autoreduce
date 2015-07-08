@@ -67,7 +67,10 @@ title = meta_data_run.getProperty("run_title").value
 if "direct beam" in title.lower():
     logger.notice("Direct beam run: skip")
     sys.exit(0)
-   
+is_silicon = "on si" in title.lower() or "[Si]" in title.lower()
+is_air = "in air" in title.lower() or "[air]" in title.lower()
+
+
 thi = meta_data_run.getProperty('thi').value[0]
 tthd = meta_data_run.getProperty('tthd').value[0]
 if math.fabs(thi-tthd)<0.001:
@@ -95,7 +98,12 @@ selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 s = DataSeries()
-fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
+if is_silicon and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_si.xml"):
+    fd = open("/SNS/REF_L/shared/autoreduce/template_si.xml", "r")
+elif is_air and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_air.xml"):
+    fd = open("/SNS/REF_L/shared/autoreduce/template_air.xml", "r")
+else:
+    fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
 
@@ -193,6 +201,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               SlitsWidthFlag=data_set.slits_width_flag,
               ApplyPrimaryFraction=True,
               PrimaryFractionRange=[121,195],
+              #PrimaryFractionRange=[82,154],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
