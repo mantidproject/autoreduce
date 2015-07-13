@@ -22,7 +22,6 @@ def instrument_summary(request, instrument):
         raise PermissionDenied()
 
     instrument = Instrument.objects.get(name=instrument)
-    completed_status = StatusUtils().get_completed()
     
     current_variables, upcoming_variables_by_run, upcoming_variables_by_experiment = InstrumentVariablesUtils().get_current_and_upcoming_variables(instrument.name)
 
@@ -33,6 +32,7 @@ def instrument_summary(request, instrument):
             upcoming_variables_by_run_dict[variables.start_run] = {
                 'run_start': variables.start_run,
                 'run_end': 0, # We'll fill this in after
+                'tracks_script': variables.tracks_script,
                 'variables': [],
                 'instrument': instrument,
             }
@@ -58,6 +58,7 @@ def instrument_summary(request, instrument):
     current_vars = {
         'run_start': current_variables[0].start_run,
         'run_end': next_variable_run_start-1,
+        'tracks_script': current_variables[0].tracks_script,
         'variables': current_variables,
         'instrument': instrument,
     }
@@ -102,14 +103,17 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
         # Truth value comes back as text so we'll compare it to a string of "True"
         is_run_range = request.POST.get("variable-range-toggle-value", "True") == "True"
 
+        track_scripts = request.POST.get("track_script_checkbox") == "on"
+
         if is_run_range:
             start = request.POST.get("run_start", 1)
             end = request.POST.get("run_end", None)
 
             if request.POST.get("is_editing", '') == 'True':
                 old_variables = InstrumentVariable.objects.filter(instrument=instrument, start_run=start)
-                script, script_vars = ScriptUtils().get_reduce_scripts(old_variables[0].scripts.all())
-                default_variables = list(old_variables)
+                if old_variables:
+                    script, script_vars = ScriptUtils().get_reduce_scripts(old_variables[0].scripts.all())
+                    default_variables = list(old_variables)
             if script is None or request.POST.get("is_editing", '') != 'True':
                 script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
                 script = ScriptFile(script=script_binary, file_name='reduce.py')
@@ -133,8 +137,9 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
 
             if request.POST.get("is_editing", '') == 'True':
                 old_variables = InstrumentVariable.objects.filter(instrument=instrument, experiment_reference=experiment_reference)
-                script, script_vars = ScriptUtils().get_reduce_scripts(old_variables[0].scripts.all())
-                default_variables = list(old_variables)
+                if old_variables:
+                    script, script_vars = ScriptUtils().get_reduce_scripts(old_variables[0].scripts.all())
+                    default_variables = list(old_variables)
             if script is None or request.POST.get("is_editing", '') != 'True':
                 script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
                 script = ScriptFile(script=script_binary, file_name='reduce.py')
@@ -163,6 +168,7 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
                     value=post_variable, 
                     is_advanced=default_var.is_advanced, 
                     type=default_var.type,
+                    tracks_script=track_scripts,
                     )
                 if is_run_range:
                     variable.start_run = start
@@ -252,6 +258,7 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
             'minimum_run_start' : max(latest_completed_run, latest_processing_run),
             'upcoming_run_variables' : upcoming_run_variables,
             'editing' : editing,
+            'tracks_script' : variables[0].tracks_script,
         }
         context_dictionary.update(csrf(request))
 
@@ -324,15 +331,16 @@ def run_confirmation(request, run_number, run_version=0):
 
         if use_current_script:
             script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
+            default_variables = InstrumentVariablesUtils().get_variables_from_current_script(reduction_run.instrument.name)
         else:
-            script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts(run_variables[0].scripts.all())
+            script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
+            default_variables = run_variables
 
         script = ScriptFile(script=script_binary, file_name='reduce.py')
         script.save()
         script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
         script_vars.save()
 
-        default_variables = InstrumentVariablesUtils().get_variables_for_run(reduction_run, use_current_script)
         new_variables = []
 
         for key,value in request.POST.iteritems():
@@ -405,13 +413,17 @@ def preview_script(request, instrument, run_number=0, experiment_reference=0):
     standard_pattern = "(?P<before>(\s)standard_vars\s*=\s*\{(([\s\S])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
     advanced_pattern = "(?P<before>(\s)advanced_vars\s*=\s*\{(([\s\S])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
 
+    instrument_object = Instrument.objects.get(name=instrument)
+
     if request.method == 'GET':
-        instrument = Instrument.objects.get(name=instrument)
-        if experiment_reference > 0:
-            run_variables = InstrumentVariable.objects.filter(experiment_reference=experiment_reference, instrument=instrument)
+        if int(experiment_reference) > 0:
+            run_variables = InstrumentVariable.objects.filter(experiment_reference=experiment_reference, instrument=instrument_object)
         else:
-            run_variables = InstrumentVariable.objects.filter(start_run=run_number, instrument=instrument)
-        script, script_vars = ScriptUtils().get_reduce_scripts(run_variables[0].scripts.all())
+            run_variables = InstrumentVariable.objects.filter(start_run=run_number, instrument=instrument_object)
+        if run_variables[0].tracks_script:
+            script, script_vars = InstrumentVariablesUtils().get_current_script_text(instrument)
+        else:
+            script, script_vars = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
         script_file = script.decode("utf-8")
         script_vars_file = script_vars.decode("utf-8")
 
@@ -426,11 +438,15 @@ def preview_script(request, instrument, run_number=0, experiment_reference=0):
             script_vars_file = re.sub(pattern, value, script_vars_file)
 
     elif request.method == 'POST':
-        experiment_reference = request.POST.get('experiment_reference', None)
-        start_run = request.POST.get('start_run', None)
+        experiment_reference = request.POST.get('experiment_reference_number', None)
+        start_run = request.POST.get('run_start', None)
         lookup_run_number = request.POST.get('run_number', None)
         lookup_run_version = request.POST.get('run_version', None)
-        use_current_script = request.POST.get('use_current_script', u"false").lower() == u"true"
+        if 'use_current_script' in request.POST:
+            use_current_script = request.POST.get('use_current_script', u"false").lower() == u"true"
+        else:
+            use_current_script = request.POST.get("track_script_checkbox") == "on"
+
         default_variables = None
         if not use_current_script:
             if lookup_run_number is not None:
@@ -440,13 +456,13 @@ def preview_script(request, instrument, run_number=0, experiment_reference=0):
                 except Exception as e:
                     logger.info("Run not found :" + str(e))
             else:
-                if experiment_reference > 0:
-                    default_variables = InstrumentVariable.objects.filter(experiment_reference=experiment_reference, instrument=instrument)
-                elif start_run > 0:
-                    default_variables = InstrumentVariable.objects.filter(start_run=start_run, instrument=instrument)
+                if int(experiment_reference) > 0:
+                    default_variables = InstrumentVariable.objects.filter(experiment_reference=experiment_reference, instrument=instrument_object)
+                elif int(start_run) > 0:
+                    default_variables = InstrumentVariable.objects.filter(start_run=start_run, instrument=instrument_object)
 
         if default_variables:
-            script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts(default_variables[0].scripts.all())
+            script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(default_variables[0].scripts.all())
         else:
             script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument)
             default_variables = InstrumentVariablesUtils().get_default_variables(instrument)
