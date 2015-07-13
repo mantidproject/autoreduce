@@ -87,7 +87,7 @@ class Listener(object):
         reduction_run.save()
         self._data_dict['run_version'] = reduction_run.run_version
 
-        variables = InstrumentVariablesUtils().get_variables_for_run(reduction_run, True)
+        variables = InstrumentVariablesUtils().get_variables_for_run(reduction_run)
         data_location = DataLocation(file_path=self._data_dict['data'], reduction_run=reduction_run)
 
         if not variables:

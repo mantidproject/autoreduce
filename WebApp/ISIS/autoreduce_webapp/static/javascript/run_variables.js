@@ -1,5 +1,9 @@
 (function(){
-    var formUrl = $('#run_variables').attr('action');
+    if ($('#run_variables').length == 0) {
+        var originalFormUrl = $('#instrument_variables').attr('action');
+    }else {
+        var originalFormUrl = $('#run_variables').attr('action');
+    }
 
     var previewScript = function previewScript(event){
         var submitAction = function submitAction(){
@@ -234,7 +238,8 @@
         var submitAction = function submitAction(){
             var $form = $('#run_variables');
             if($form.length===0) $form = $('#instrument_variables');
-            $form.attr('action', formUrl);
+
+            $form.attr('action', originalFormUrl);
             window.onbeforeunload = undefined;
             $form.submit();
         };
@@ -291,7 +296,10 @@
     var resetDefaultVariables = function resetDefaultVariables(event){
         event.preventDefault();
         var $form = $('#run_variables');
-        if($form.length===0) $form = $('#instrument_variables');
+        if($form.length===0){
+            $("#is_editing").val("false") //Set this so new reduce_vars are picked up from script
+            $form = $('#instrument_variables');
+        }
         $form.find('.js-variables-container').html($('.js-default-variables').html());
         $('#use_current_script').val("false");
         // We need to enable the popover again as the element is new
@@ -306,6 +314,11 @@
         $('#use_current_script').val("true");
         // We need to enable the popover again as the element is new
         $('[data-toggle="popover"]').popover();
+    };
+
+    var toggleTrackScript = function toggleTrackScript(event) {
+        var checkBox = $('#track_script_checkbox');
+        checkBox.prop("checked", !checkBox.prop("checked"));
     };
 
     var cancelForm = function cancelForm(event){
@@ -372,6 +385,8 @@
         $('#run_variables,#instrument_variables').on('click', '#variableSubmit', submitForm);
         $('#run_variables,#instrument_variables').on('click', '#cancelForm', cancelForm);
         $('#run_variables,#instrument_variables').on('click', 'input[type=checkbox][data-type=boolean]', updateBoolean);
+        $('#instrument_variables').on('click', '#track_script', toggleTrackScript);
+        $('#instrument_variables').on('mouseover mouseleave', '#track_script', toggleActionExplainations);
         $('.js-form-actions li>a').on('mouseover mouseleave', toggleActionExplainations);
         $('#run_end').on('change', triggerAfterRunOptions);
         $('.js-show-default-variables').on('click', showDefaultSriptVariables);
