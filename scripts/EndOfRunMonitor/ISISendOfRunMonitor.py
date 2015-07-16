@@ -10,10 +10,8 @@ LAST_RUN_LOC = "\logs\lastrun.txt"
 LOG_FILE = "xx\\monitor_log.txt"
 INSTRUMENTS = [{'name': 'LET', 'use_nexus': True},
                {'name': 'MERLIN', 'use_nexus': False},
-               {'name': 'MARI', 'use_nexus': False},
                {'name': 'MAPS', 'use_nexus': True},
-               {'name': 'WISH', 'use_nexus': True},
-               {'name': 'GEM', 'use_nexus': True}]
+               {'name': 'WISH', 'use_nexus': True}]
 TIME_CONSTANT = 1  # Time between file reads (in seconds)
 DEBUG = False
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format='%(asctime)s %(message)s')
@@ -106,7 +104,7 @@ class InstrumentMonitor(threading.Thread):
         with self.lock:
             data_dict = self.build_dict(last_run_data)
         if not DEBUG:
-            self.client.send('/queue/DataReady', json.dumps(data_dict))
+            self.client.send('/queue/DataReady', json.dumps(data_dict), priority='9')
         logging.info("Data sent: " + str(data_dict))
 
 

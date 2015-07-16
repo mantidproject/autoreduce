@@ -201,6 +201,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               SlitsWidthFlag=data_set.slits_width_flag,
               ApplyPrimaryFraction=True,
               PrimaryFractionRange=[121,195],
+              #PrimaryFractionRange=[82,154],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
