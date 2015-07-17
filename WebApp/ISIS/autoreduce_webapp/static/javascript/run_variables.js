@@ -1,15 +1,23 @@
 (function(){
-    if ($('#run_variables').length == 0) {
-        var originalFormUrl = $('#instrument_variables').attr('action');
-    }else {
+    if ($('#run_variables').length) {
         var originalFormUrl = $('#run_variables').attr('action');
+    }else if ($('#instrument_variables').length) {
+        var originalFormUrl = $('#instrument_variables').attr('action');
+    }else if ($('#submit_jobs').length) {
+        var originalFormUrl = $('#submit_jobs').attr('action');
+    }
+
+    var getForm = function getForm(){
+        var $form = $('#run_variables');
+        if($form.length===0) $form = $('#instrument_variables');
+        if($form.length===0) $form = $('#submit_jobs');
+        return $form;
     }
 
     var previewScript = function previewScript(event){
         var submitAction = function submitAction(){
             var url = $('#preview_url').val();
-            var $form = $('#run_variables');
-            if($form.length===0) $form = $('#instrument_variables');
+            $form = getForm();
             $form.attr('action', url);
 
             $('.js-script-container').text('');
@@ -41,8 +49,7 @@
     var downloadScript  = function downloadScript(event){
         var submitAction = function submitAction(){
             var url = $('#preview_url').val();
-            var $form = $('#run_variables');
-            if($form.length===0) $form = $('#instrument_variables');
+            $form = getForm();
             $form.attr('action', url);
             window.onbeforeunload = undefined;
             $form.submit();
@@ -62,8 +69,7 @@
         var isValid = true;
         var errorMessages = [];
         var $errorList;
-        var $form = $('#run_variables');
-        if($form.length===0) $form = $('#instrument_variables');
+        $form = getForm();
 
         var resetValidationStates = function resetValidationStates(){
             $('.has-error').removeClass('has-error');
@@ -104,6 +110,16 @@
                         $end.parent().addClass('has-error');
                         isValid = false;
                         errorMessages.push('<strong>Run finish</strong> must be greater than the run start.')
+                    }
+                    if($('#submit_jobs').length != 0) {
+                        if (!checkRangeValid()) {
+                            isValid = false;
+                            errorMessages.push('A maximum of 20 runs can be submitted at one time.')
+                        }
+                        if ($end.val() > $('#last_run_number').val()) {
+                            isValid = false;
+                            errorMessages.push('<strong>Run finish</strong> must be less than or equal to the latest run.')
+                        }
                     }
                 }
             }
@@ -203,11 +219,15 @@
     };
 
     var triggerAfterRunOptions = function triggerAfterRunOptions(){
-        if($(this).val().trim() !== ''){
-            $('#next_run').text(parseInt($(this).val())+1);
-            $('#run_finish_warning').show();
-        }else{
-            $('#run_finish_warning').hide();
+        if($('#submit_jobs').length != 0){
+            checkRangeValid();
+        } else {
+            if($(this).val().trim() !== ''){
+                $('#next_run').text(parseInt($(this).val())+1);
+                $('#run_finish_warning').show();
+            }else{
+                $('#run_finish_warning').hide();
+            }
         }
     };
 
@@ -236,13 +256,27 @@
         }
     };
 
+    var checkRangeValid = function checkRangeValid() {
+        var start = parseInt($('#run_start').val());
+        var end = parseInt($('#run_end').val());
+        var valid = (end-start <= 20);
+        if (valid) {
+            $('#run_range_warning').hide();
+        } else {
+            $('#run_range_warning').show();
+        }
+        return valid;
+    };
+
     var submitForm = function submitForm(event){
         var submitAction = function submitAction(){
-            var $form = $('#run_variables');
-            if($form.length===0) $form = $('#instrument_variables');
-
+            $form = getForm();
             $form.attr('action', originalFormUrl);
             window.onbeforeunload = undefined;
+
+            //Set cursor to waiting
+            $("body").css("cursor", "wait");
+            $("#variableSubmit").css("cursor", "wait");
             $form.submit();
         };
         var cancelAction = function cancelAction(){
@@ -277,9 +311,7 @@
     };
 
     var confirmUnsavedChanges = function confirmUnsavedChanges(){
-        var $form = $('#run_variables');
-        if($form.length===0) $form = $('#instrument_variables');
-
+        $form = getForm();
         $form.on('change', function(){
             $form.unbind('change');
             window.onbeforeunload = function confirmLeave(event) {
@@ -297,9 +329,7 @@
 
     var resetDefaultVariables = function resetDefaultVariables(event){
         event.preventDefault();
-        var $form = $('#run_variables');
-        if($form.length===0)
-            $form = $('#instrument_variables');
+        $form = getForm();
         $form.find('.js-variables-container').html($('.js-default-variables').html());
         $('#use_current_script').val("false");
         // We need to enable the popover again as the element is new
@@ -308,14 +338,13 @@
 
     var resetCurrentVariables = function resetCurrentVariables(event){
         event.preventDefault();
-        var $form = $('#run_variables');
+        $form = getForm();
         //Set cursor to waiting
         $("body").css("cursor", "wait");
         $("#currentScript").css("cursor", "wait");
 
-        if($form.length===0) {
-            $form = $('#instrument_variables');
-            $("#is_editing").val("false"); //Set this so new reduce_vars are picked up from script
+        if($("#is_editing").length != 0) {
+            $("#is_editing").val("false"); //Set this so new reduce_vars are picked up from script (bit of a hack)
         }
 
         //Update variables to those in reduce_vars
@@ -392,17 +421,18 @@
     };
 
     var init = function init(){
-        $('#run_variables,#instrument_variables').on('click', '#previewScript', previewScript);
+        $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#previewScript', previewScript);
         $('#script-preview-modal').on('click', '#downloadScript', downloadScript);
         $('#run_variables,#instrument_variables').on('click', '#resetValues', resetDefaultVariables);
-        $('#run_variables,#instrument_variables').on('click', '#currentScript', resetCurrentVariables);
-        $('#run_variables,#instrument_variables').on('click', '#variableSubmit', submitForm);
-        $('#run_variables,#instrument_variables').on('click', '#cancelForm', cancelForm);
+        $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#currentScript', resetCurrentVariables);
+        $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#variableSubmit', submitForm);
+        $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#cancelForm', cancelForm);
         $('#run_variables,#instrument_variables').on('click', 'input[type=checkbox][data-type=boolean]', updateBoolean);
         $('#instrument_variables').on('click', '#track_script', toggleTrackScript);
         $('#instrument_variables').on('mouseover mouseleave', '#track_script', toggleActionExplainations);
         $('.js-form-actions li>a').on('mouseover mouseleave', toggleActionExplainations);
         $('#run_end').on('change', triggerAfterRunOptions);
+        $('#run_start').on('change', checkRangeValid);
         $('.js-show-default-variables').on('click', showDefaultSriptVariables);
         if($('#variable-range-toggle').length >0){
             handleToggleSwitch();
