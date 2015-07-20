@@ -5,6 +5,7 @@ Post Process Administrator. It kicks off cataloging and reduction jobs.
 import logging, json, socket, os, sys, time, shutil, imp, stomp, re, errno, traceback
 import logging.handlers
 from contextlib import contextmanager
+from distutils.dir_util import copy_tree
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -16,12 +17,10 @@ logger.addHandler(handler)
 # Quite the Stomp logs as they are quite chatty
 logging.getLogger('stomp').setLevel(logging.INFO)
 
-
-REDUCTION_DIRECTORY = '/isis/NDX%s/user/scripts/autoreduction'  # %(instrument) This is where scripts are stored
 ARCHIVE_DIRECTORY = '/isis/NDX%s/Instrument/data/cycle_%s/autoreduced/%s/%s'  # %(instrument, cycle, experiment_number, run_number)
 CEPH_DIRECTORY = '/instrument/%s/CYCLE20%s/RB%s/autoreduced/%s'  # %(instrument, cycle, experiment_number, run_number)
 TEMP_ROOT_DIRECTORY = '/autoreducetmp'
-CEPH_INSTRUMENTS = ['EMU']   # A list of instruments, other than the excitation ones, which should save reduced data to CEPH
+CEPH_INSTRUMENTS = []   # A list of instruments, other than the excitation ones, which should save reduced data to CEPH
 EXCITATION_INSTRUMENTS = ['LET', 'MARI', 'MAPS', 'MERLIN']  # These are all saved into CEPH slightly differently
 
 CEPH_INSTRUMENTS.extend(EXCITATION_INSTRUMENTS)  # Excitations also saved in CEPH
@@ -173,33 +172,32 @@ class PostProcessAdmin:
         return reduce_script
 
     def reduce(self):
-        print "\n> In reduce()\n"
+        logger.debug("In reduce() method")
         try:         
-            print "\nCalling: " + self.conf['reduction_started'] + "\n" + json.dumps(self.data) + "\n"
             logger.debug("Calling: " + self.conf['reduction_started'] + "\n" + json.dumps(self.data))
             self.client.send(self.conf['reduction_started'], json.dumps(self.data))
 
             # specify instrument directory
             cycle = re.match(r'.*cycle_(\d\d_\d).*', self.data_file.lower()).group(1)
-            if self.instrument.upper() in CEPH_INSTRUMENTS:
+            if self.instrument in CEPH_INSTRUMENTS:
                 cycle = re.sub('[_]', '', cycle)
-                instrument_dir = CEPH_DIRECTORY % (self.instrument.upper(), cycle, self.proposal, self.run_number)
-                if self.instrument.upper() in EXCITATION_INSTRUMENTS:
+                instrument_dir = CEPH_DIRECTORY % (self.instrument, cycle, self.proposal, self.run_number)
+                if self.instrument in EXCITATION_INSTRUMENTS:
                     #Excitations would like to remove the run number folder at the end
                     instrument_dir = instrument_dir[:instrument_dir.rfind('/')+1]
             else:
-                instrument_dir = ARCHIVE_DIRECTORY % (self.instrument.upper(), cycle, self.proposal, self.run_number)
+                instrument_dir = ARCHIVE_DIRECTORY % (self.instrument, cycle, self.proposal, self.run_number)
 
             # specify script to run and directory
             if os.path.exists(os.path.join(self.reduction_script, "reduce.py")) is False:
                 self.data['message'] = "Reduce script doesn't exist within %s" % self.reduction_script
-                print "\nCalling: "+self.conf['reduction_error'] + "\n" + json.dumps(self.data) + "\n"
+                logger.debug(self.data['message'])
                 self._send_error_and_log()
                 return
             
             # specify directory where autoreduction output goes
             reduce_result_dir = TEMP_ROOT_DIRECTORY + instrument_dir
-            if self.instrument.upper() not in EXCITATION_INSTRUMENTS:
+            if self.instrument not in EXCITATION_INSTRUMENTS:
                 run_output_dir = os.path.join(TEMP_ROOT_DIRECTORY, instrument_dir[:instrument_dir.rfind('/')+1])
             else:
                 run_output_dir = reduce_result_dir
@@ -300,13 +298,13 @@ class PostProcessAdmin:
         exists"""
         copy_destination = temp_result_dir[len(TEMP_ROOT_DIRECTORY):]
 
-        if os.path.isdir(copy_destination):
+        if os.path.isdir(copy_destination) and self.instrument not in EXCITATION_INSTRUMENTS:
             self._remove_directory(copy_destination)
 
         self.data['reduction_data'].append(linux_to_windows_path(copy_destination))
         logger.info("Moving %s to %s" % (temp_result_dir, copy_destination))
         try:
-            shutil.copytree(temp_result_dir, copy_destination)
+            copy_tree(temp_result_dir, copy_destination)
         except Exception, e:
             self.log_and_message("Unable to copy to %s - %s" % (copy_destination, e))
 
