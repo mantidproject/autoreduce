@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 '''
 def instrument_summary(request, instrument):
     # Check the user has permission
-    if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
-        raise PermissionDenied()
+    #if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
+    #    raise PermissionDenied()
 
     instrument = Instrument.objects.get(name=instrument)
     
@@ -89,12 +89,13 @@ def instrument_summary(request, instrument):
 
     return render_to_response('snippets/instrument_summary_variables.html', context_dictionary, RequestContext(request))
 
-@require_staff
+#@require_staff
+@login_and_uows_valid
 @render_with('instrument_variables.html')
 def instrument_variables(request, instrument, start=0, end=0, experiment_reference=0):
     # Check the user has permission
-    if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
-        raise PermissionDenied()
+    #if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
+    #    raise PermissionDenied()
     
     instrument = Instrument.objects.get(name=instrument)
     script = None
@@ -169,6 +170,7 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
                     is_advanced=default_var.is_advanced, 
                     type=default_var.type,
                     tracks_script=track_scripts,
+                    help_text=default_var.help_text,
                     )
                 if is_run_range:
                     variable.start_run = start
@@ -264,7 +266,142 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
 
         return context_dictionary
 
-@require_staff
+#@require_staff
+@login_and_uows_valid
+@render_with('submit_runs.html')
+def submit_runs(request, instrument):
+    # Check the user has permission
+    if not request.user.is_superuser and instrument not in request.session['owned_instruments']:
+        raise PermissionDenied()
+
+    instrument = Instrument.objects.get(name=instrument)
+
+    if request.method == 'POST':
+        # TODO: Need to check ICAT credentials
+        start = int(request.POST.get("run_start", 1))
+        end = int(request.POST.get("run_end", start))
+
+        for run_number in range(start, end):
+            old_reduction_run = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version').first()
+            if not old_reduction_run:
+                continue
+            queued_status = StatusUtils().get_queued()
+            new_job = ReductionRun(
+                instrument=instrument,
+                run_number=run_number,
+                run_name=request.POST.get('run_description'),
+                run_version=old_reduction_run.run_version+1,
+                experiment=old_reduction_run.experiment, #TODO: Get from ICAT
+                started_by=request.user.username,
+                status=queued_status,
+                )
+            new_job.save()
+
+            for data_location in old_reduction_run.data_location.all(): #TODO: If old run get from there otherwise should be able to create (maybe by assuming same format as old data locs)
+                new_data_location = DataLocation(file_path=data_location.file_path, reduction_run=new_job)
+                new_data_location.save()
+                new_job.data_location.add(new_data_location)
+
+            script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
+            default_variables = InstrumentVariablesUtils().get_variables_from_current_script(instrument.name)
+
+            script = ScriptFile(script=script_binary, file_name='reduce.py')
+            script.save()
+            script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
+            script_vars.save()
+
+            new_variables = []
+
+            for key,value in request.POST.iteritems():
+                if 'var-' in key:
+                    name = None
+                    if 'var-advanced-' in key:
+                        name = key.replace('var-advanced-', '').replace('-', ' ')
+                        is_advanced = True
+                    if 'var-standard-' in key:
+                        name = key.replace('var-standard-', '').replace('-', ' ')
+                        is_advanced = False
+
+                    if name is not None:
+                        default_var = next((x for x in default_variables if x.name == name), None)
+                        if not default_var:
+                            continue
+                        variable = RunVariable(
+                            reduction_run=new_job,
+                            name=default_var.name,
+                            value=value,
+                            is_advanced=is_advanced,
+                            type=default_var.type,
+                            help_text=default_var.help_text
+                        )
+                        variable.save()
+                        variable.scripts.add(script)
+                        variable.scripts.add(script_vars)
+                        variable.save()
+                        new_variables.append(variable)
+
+            queue_count = ReductionRun.objects.filter(instrument=instrument, status=queued_status).count()
+
+            context_dictionary = {
+                'run' : None,
+                'variables' : None,
+                'queued' : queue_count,
+            }
+
+            if len(new_variables) == 0:
+                new_job.delete()
+                script.delete()
+                script_vars.delete()
+                context_dictionary['error'] = 'No variables were found to be submitted.'
+            else:
+                try:
+                    MessagingUtils().send_pending(new_job)
+                    context_dictionary['run'] = new_job
+                    context_dictionary['variables'] = new_variables
+                except Exception, e:
+                    new_job.delete()
+                    script.delete()
+                    script_vars.delete()
+                    context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e)
+
+        return redirect('instrument_summary', instrument=instrument.name)
+    else:
+        processing_status = StatusUtils().get_processing()
+        queued_status = StatusUtils().get_queued()
+
+        last_run = ReductionRun.objects.filter(instrument=instrument).order_by('-run_number')[0]
+
+        standard_vars = {}
+        advanced_vars = {}
+
+        default_variables = InstrumentVariablesUtils().get_default_variables(instrument.name)
+        default_standard_variables = {}
+        default_advanced_variables = {}
+        for variable in default_variables:
+            if variable.is_advanced:
+                advanced_vars[variable.name] = variable
+                default_advanced_variables[variable.name] = variable
+            else:
+                standard_vars[variable.name] = variable
+                default_standard_variables[variable.name] = variable
+
+        context_dictionary = {
+            'instrument' : instrument,
+            'last_instrument_run' : last_run,
+            'processing' : ReductionRun.objects.filter(instrument=instrument, status=processing_status),
+            'queued' : ReductionRun.objects.filter(instrument=instrument, status=queued_status),
+            'standard_variables' : standard_vars,
+            'advanced_variables' : advanced_vars,
+            'default_standard_variables' : default_standard_variables,
+            'default_advanced_variables' : default_advanced_variables,
+        }
+        context_dictionary.update(csrf(request))
+
+        return context_dictionary
+
+
+#@require_staff
+@login_and_uows_valid
 @render_with('snippets/edit_variables.html')
 def current_default_variables(request, instrument):
     variables = InstrumentVariablesUtils().get_default_variables(instrument)
@@ -321,7 +458,8 @@ def run_summary(request, run_number, run_version=0):
     context_dictionary.update(csrf(request))
     return render_to_response('snippets/run_variables.html', context_dictionary, RequestContext(request))
 
-@require_staff
+#@require_staff
+@login_and_uows_valid
 @render_with('run_confirmation.html')
 def run_confirmation(request, run_number, run_version=0):
     reduction_run = ReductionRun.objects.get(run_number=run_number, run_version=run_version)
