@@ -1,25 +1,117 @@
+######################################################################
+# Python script for VISION data reduction
+######################################################################
 import sys
 import os
-import grp
-import getpass
 import numpy
+import csv
+import string
+import subprocess
+
+# Please check/change the following parameters
+#=====================================================================
+#=====================================================================
+
+#*********************************************************************
+# How would you like to run the script?
+# 0: command-line mode. 1: GUI-mode
+Interface = 0
+#*********************************************************************
+if Interface == 0:
+    sys.path.append("/opt/Mantid/bin")
+    from mantid.simpleapi import *
+    NexusFile = os.path.abspath(sys.argv[1])
+    FileName = NexusFile.split(os.sep)[-1]
+    IPTS = NexusFile.split(os.sep)[-3]
+    RunNumber = int(FileName.strip('VIS_').replace('.nxs.h5',''))
+    SaveDir = sys.argv[2]
+elif Interface == 1:
+    IPTS='IPTS-6966'
+    RunNumber=16933
+    NexusFile='/SNS/VIS/'+IPTS+'/nexus/VIS_'+str(RunNumber)+'.nxs.h5'
+    FileName='VIS_'+str(RunNumber)+'.nxs.h5'
+    SaveDir='/SNS/VIS/shared/VIS_team/YQ'
+
+config['defaultsave.directory'] = SaveDir
+Root='/SNS/VIS/'+IPTS+'/nexus'  
+config.setDataSearchDirs(Root) 
+MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorL-corrected-hist.nxs'
+#MonFile = '/SNS/VIS/shared/autoreduce/VIS_5669_ISISMonitorL-corrected-hist.nxs'
+
+#*********************************************************************
+# Save processed nxs file?
+# 0: No. 1: Yes
+SaveNexusOutput = 1
+#*********************************************************************
+
+
+#*********************************************************************
+# Binning parameters
+binT='10,1,33333'
+binL='0.281,0.0002,8.199'
+binE='-2,0.005,5,-0.001,1000'
+#*********************************************************************
+
+#*********************************************************************
+# Banks to be reduced
+BanksForward=[2,3,4,5,6]
+BanksBackward=[8,9,10,11,12,13,14]
+Banks=BanksForward+BanksBackward
+#*********************************************************************
+
+#*********************************************************************
+# Pixels to be reduced
+ListPX = []
+ListPXF = []
+ListPXB = []
+PXs=range(2*128+48,2*128+80)+  \
+    range(3*128+32,3*128+96)+  \
+    range(4*128+32,4*128+96)+  \
+    range(5*128+48,5*128+80)
+for i in BanksForward:
+    offset=(i-1)*1024
+    ListPX=ListPX+[j+offset for j in PXs]
+    ListPXF=ListPXF+[j+offset for j in PXs]
+for i in BanksBackward:
+    offset=(i-1)*1024
+    ListPX=ListPX+[j+offset for j in PXs]
+    ListPXB=ListPXB+[j+offset for j in PXs]
+
+# Create a list of pixels to mask
+# Inelastic Pixels = 0-14335
+allPixels = set(range(14336))
+toKeep = set(ListPX)
+mask = allPixels.difference(toKeep)
+MaskPX = list(mask)
+
+#*********************************************************************
+
+#*********************************************************************
+# Calibration table
+CalFile='/SNS/VIS/shared/autoreduce/VIS_CalTab-03-03-2014.csv'
+#*********************************************************************
+
+#=====================================================================
+#=====================================================================
+
+
+
+
+
+
+
+
 
 ######################################################################
-# Find raw data file with a given run number
+# Make a valid file name from a string
 ######################################################################
 
-def findfiles(RunNum):
+def FormatFilename(s):
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    outfilename = ''.join(c for c in s if c in valid_chars)
+    outfilename = outfilename.replace(' ','_')
+    return outfilename
 
-    for ipts in os.listdir('/SNS/VIS'):
-        rawdir='/SNS/VIS/'+ipts+'/nexus'
-        if os.path.exists(rawdir):
-            for rawfilename in os.listdir(rawdir):
-                if 'VIS_'+str(RunNum) in rawfilename:
-                    rawfullname=os.path.join(rawdir, rawfilename)
-                    print rawfullname
-                    return ipts, rawfilename, rawfullname
-    print 'Error: Could not find file(s) for run number '+str(RunNum)
-    sys.exit()
 
 ######################################################################
 # Remove artifacts such as prompt pulse
@@ -40,154 +132,148 @@ def RemoveArtifact(WS,Xmin,Xmax,Xa,Delta):
     Plus(LHSWorkspace='__aux0',RHSWorkspace='__aux1',OutputWorkspace=WS)
     Plus(LHSWorkspace=WS,RHSWorkspace='__aux2',OutputWorkspace=WS)
     Plus(LHSWorkspace=WS,RHSWorkspace='__aux3',OutputWorkspace=WS)
+
     
+######################################################################
+# Inelastic data reduction (pixel level, normalization in wavelength)
+######################################################################
+
+def ReducePixelsL():
+
+    for i,Pixel in enumerate(ListPX):
+        Ef=CalTab[Pixel][0]
+        Df=CalTab[Pixel][1]
+        Efe=(0.7317/Df)**2*Ef
+        mtd['IED_T'].setEFixed(Pixel, Efe)
+    ConvertUnits(InputWorkspace='IED_T',OutputWorkspace='IED_L',EMode='Indirect',Target='Wavelength')
+    Rebin(InputWorkspace='IED_L',OutputWorkspace='IED_L',Params=binL,PreserveEvents='0')
+    InterpolatingRebin(InputWorkspace='DBM_L',OutputWorkspace='DBM_L',Params=binL)
+    #RebinToWorkspace(WorkspaceToRebin='DBM_L',WorkspaceToMatch='IED_L',OutputWorkspace='DBM_L')
+    Divide(LHSWorkspace='IED_L',RHSWorkspace='DBM_L',OutputWorkspace='IED_L')
+    for i,Pixel in enumerate(ListPX):
+        Ef=CalTab[Pixel][0]
+        mtd['IED_L'].setEFixed(Pixel, Ef)
+    ConvertUnits(InputWorkspace='IED_L',OutputWorkspace='IED_E',EMode='Indirect',Target='DeltaE')
+    Rebin(InputWorkspace='IED_E',OutputWorkspace='IED_E',Params=binE,PreserveEvents='0')
+    CorrectKiKf(InputWorkspace='IED_E',OutputWorkspace='IED_E',EMode='Indirect')
+
+    GroupDetectors(InputWorkspace='IED_E',OutputWorkspace='__IED_E_Forward',DetectorList=ListPXF)
+    GroupDetectors(InputWorkspace='IED_E',OutputWorkspace='__IED_E_Backward',DetectorList=ListPXB)
+    GroupDetectors(InputWorkspace='IED_E',OutputWorkspace='__IED_E_Average',DetectorList=ListPX)
+
+    Scale(InputWorkspace='__IED_E_Forward',OutputWorkspace='__IED_E_Forward',Factor=str(1.0/len(BanksForward)),Operation='Multiply')
+    Scale(InputWorkspace='__IED_E_Backward',OutputWorkspace='__IED_E_Backward',Factor=str(1.0/len(BanksBackward)),Operation='Multiply')
+    Scale(InputWorkspace='__IED_E_Average',OutputWorkspace='__IED_E_Average',Factor=str(1.0/len(Banks)),Operation='Multiply')
+    
+    AppendSpectra(InputWorkspace1='__IED_E_Backward',InputWorkspace2='__IED_E_Forward',OutputWorkspace='IED_reduced')
+    AppendSpectra(InputWorkspace1='IED_reduced',InputWorkspace2='__IED_E_Average',OutputWorkspace='IED_reduced')
+
+
 ######################################################################
 # Main program
 ######################################################################
-def process_all(ListRN,LoadOption,PixRng,PPulse,Norm,LogTbin,binD,ListTB,TimeStart,TimeStop):
 
-    Pixel=[0,0]
-    DiffTube=[]
+# Read calibration table
+CalTab = [[0 for _ in range(2)] for _ in range(1024*14)]
+tab = list(csv.reader(open(CalFile,'r')))
+for i in range(0,len(tab)):
+    for j in [0,1]:
+        tab[i][j]=int(tab[i][j])
+    for j in [2,3]:
+        tab[i][j]=float(tab[i][j])
+    j=(tab[i][0]-1)*1024+tab[i][1]
+    CalTab[j][0]=tab[i][2]
+    CalTab[j][1]=tab[i][3]
 
-    Pixel0=14*8*128
-    for i in range(0,10):
-        Pixel[0]=Pixel0+i*256*8
-        Pixel[1]=Pixel0+(i+1)*256*8-1
-        for j in range(0,8):
-            DiffTube.append([Pixel[0]+j*256,Pixel[0]+(j+1)*256-1])
+print 'Loading inelastic banks from', NexusFile
+bank_list = ["bank%d" % i for i in range(1, 15)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, OutputWorkspace='IED_T', LoadMonitors='0')
+LoadInstrument(Workspace='IED_T',Filename='/SNS/VIS/shared/autoreduce/VISION_Definition_no_efixed.xml')
+MaskDetectors(Workspace='IED_T', DetectorList=MaskPX)
 
-    if len(ListRN)==1:
-        MergedWS='VIS_BSD_'+str(ListRN[0])
-    else:
-        MergedWS='VIS_BSD_'+str(ListRN[0])+'-'+str(ListRN[len(ListRN)-1])
-        
-    if Norm==1:
-        if LogTbin==0:
-            MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorT-hist.nxs'
-        elif LogTbin==1:
-            MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorTlog-hist.nxs'
-        LoadNexusProcessed(Filename=MonFile,OutputWorkspace='Monitor',LoadHistory=False)
+print "Title:", mtd['IED_T'].getTitle()
+print "Proton charge:", mtd['IED_T'].getRun().getProtonCharge()
+if "Temperature" in mtd['IED_T'].getTitle():
+    print "Error: Non-equilibrium runs will not be reduced"
+    sys.exit()
+if mtd['IED_T'].getRun().getProtonCharge() < 5.0:
+    print "Error: Proton charge is too low"
+    sys.exit()
 
-    bank_list = ["bank%d" % i for i in range(15, 25)]
-    bank_property = ",".join(bank_list)
+NormaliseByCurrent(InputWorkspace='IED_T',OutputWorkspace='IED_T')
+RemoveArtifact('IED_T',10,33333,16660,240)
 
-    for RunNum in ListRN:
-        [IPTS,h5FileName,h5FullName]=findfiles(RunNum)
-        FileName=h5FileName.strip('.nxs.h5')
-        if LoadOption==2:
-            break
-        elif LoadOption==0 and TimeStop==0:
-            LoadEventNexus(Filename=h5FullName, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace=FileName)
-        elif LoadOption==0 and TimeStop!=0:
-            TStart=TimeStart*60
-            TStop=TimeStop*60
-            LoadEventNexus(Filename=h5FullName, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace=FileName,FilterByTimeStart=TStart,FilterByTimeStop=TStop)
-        elif LoadOption==1:
-            SlicedFile='/SNS/VIS/'+IPTS+'/shared/autoreduce/sliced_data/'+FileName+'_elastic_backscattering.nxs.h5'
-            if os.path.isfile(SlicedFile):
-                Load(Filename=SlicedFile, OutputWorkspace=FileName, LoaderName='LoadNexusProcessed', LoaderVersion=1)
-            else:
-                print "Error: Sliced data not found. Set LoadSliced=0 to use the original data."
-                sys.exit()
 
-        print "Title:", mtd[FileName].getTitle()
-        print "Proton charge:", mtd[FileName].getRun().getProtonCharge()
-        if "Temperature" in mtd[FileName].getTitle():
-            print "Error: Non-equilibrium runs will not be reduced"
-            sys.exit()
-        if mtd[FileName].getRun().getProtonCharge() < 1.0:
-            print "Error: Proton charge is too low"
-            sys.exit()
+LoadNexusProcessed(Filename=MonFile,OutputWorkspace='DBM_L',LoadHistory=False)
 
-        NormaliseByCurrent(InputWorkspace=FileName,OutputWorkspace=FileName)
-        if PPulse==1:
-            RemoveArtifact(FileName,10,33333,16662,70)
-        if Norm==1:
-            RebinToWorkspace(WorkspaceToRebin=FileName, WorkspaceToMatch='Monitor', OutputWorkspace=FileName, PreserveEvents=False)
-            Divide(LHSWorkspace=FileName, RHSWorkspace='Monitor', OutputWorkspace=FileName)
-        ConvertUnits(InputWorkspace=FileName, OutputWorkspace=FileName, Target='dSpacing')
-        Rebin(InputWorkspace=FileName, OutputWorkspace=FileName, Params=binD, PreserveEvents=False)
-        if Norm!=1:
-            ConvertToDistribution(FileName)
-        if RunNum==ListRN[0]:
-            CloneWorkspace(InputWorkspace=FileName,OutputWorkspace=MergedWS)
-        else:
-            WeightedMean(InputWorkspace1=MergedWS,InputWorkspace2=FileName,OutputWorkspace=MergedWS)
-        DeleteWorkspace(FileName)
+ReducePixelsL()
 
-    ListWS=[]
-    ListInt=[]
+Title = mtd['IED_reduced'].getTitle()
+Note = Title.split('>')[0]
+Note = FormatFilename(Note)
+INS = str(RunNumber)+'_'+Note
 
-    for i,Tube in enumerate(DiffTube):
-        #ListPX=range(Tube[0]+PixRng[0],Tube[0]+PixRng[1])
-        #BK=i/8+15
-        #TB=i%8+1
-        #ListWS.append(MergedWS+'-BK'+str(BK)+'-TB'+str(TB)+'_'+str(PixRng[0])+'-'+str(PixRng[1]))
-        #GroupDetectors(InputWorkspace=MergedWS, OutputWorkspace=MergedWS+'-BK'+str(BK)+'-TB'+str(TB)+'_'+str(PixRng[0])+'-'+str(PixRng[1]), DetectorList=ListPX, Behaviour='Average')
-        if i+1 in ListTB:
-            ListInt+=range(Tube[0]+PixRng[0],Tube[0]+PixRng[1])
-    BSD=MergedWS+'_TB'+str(ListTB[0])+'-TB'+str(ListTB[len(ListTB)-1])+'_PX'+str(PixRng[0])+'-PX'+str(PixRng[1])
-    GroupDetectors(InputWorkspace=MergedWS, OutputWorkspace=BSD, DetectorList=ListInt, Behaviour='Average')
-    #GroupWorkspaces(InputWorkspaces=ListWS,OutputWorkspace=MergedWS+'-Diffraction'+'-'+str(PixRng[0])+'-'+str(PixRng[1]))
-    #DeleteWorkspace(MergedWS)
-    if Norm==1:
-        DeleteWorkspace('Monitor')
+Scale(InputWorkspace='IED_reduced',OutputWorkspace=INS,Factor='500',Operation='Multiply')
+mtd[INS].setYUnitLabel('Normalized intensity')
 
-    if SaveNexusOutput==0:
-        print "Warning: Reduced data NOT saved."
-        sys.exit()
-    RemoveLogs(BSD)
-    RemoveWorkspaceHistory(BSD)
-    SaveDir='/SNS/VIS/'+IPTS+'/shared/diffraction'
-    if not os.path.exists(SaveDir):
-        os.umask(0002)
-        os.makedirs(SaveDir,0775)
-        gid= grp.getgrnam('users').gr_gid
-        os.chown(SaveDir,-1,gid)
-        print "Info: "+SaveDir+" does not exist and will be created."
-    cmdline='nxdir '+h5FullName+' --data-mode script -p /entry/title'
-    f=os.popen(cmdline)
-    title = f.read()
-    title=title.split('=')[1]
-    title='_'.join(title.split()[0:-2])
-    username=getpass.getuser()
-    if LoadOption==0 and TimeStop!=0 :
-        OutFile=os.path.join(SaveDir,BSD+'_'+str(TimeStart)+'-'+str(TimeStop)+'_'+title+'-'+username+'.nxs')
-    else:
-        OutFile=os.path.join(SaveDir,BSD+'_'+title+'-'+username+'.nxs')
-    SaveNexusProcessed(InputWorkspace=BSD,Filename=OutFile)
+if SaveNexusOutput==0:
+    print "Warning: Reduced data NOT saved."
+    sys.exit()
 
-# Please check/change the following parameters
-#=====================================================================
-Interface = 0
-if Interface == 0:
-    sys.path.append("/opt/Mantid/bin")
-    from mantid.simpleapi import *
-    NexusFile = os.path.abspath(sys.argv[1])
-    FileName = NexusFile.split(os.sep)[-1]
-    RunNumber = int(FileName.strip('VIS_').replace('.nxs.h5',''))
-    ListRN=[RunNumber]
-    if len(sys.argv)!=4:
-        TimeStart=0
-        TimeStop=0
-    else:
-        TimeStart=int(sys.argv[2])
-        TimeStop=int(sys.argv[3])
-elif Interface == 1:
-    ListRN=[17071]
-    TimeStart=0
-    TimeStop=0
+RemoveLogs(INS)
+RemoveWorkspaceHistory(INS)
+SaveNexusProcessed(InputWorkspace=INS,Filename='VIS_'+INS+'.nxs')
 
-LoadOption=0   # 0: load original nxs file (BSD only)  1: Load histogramed data  2: Use the already loaded data
-PixRng=[128,240]     # Range of pixels to reduce (0-255)
-PPulse=0        # 0: no action on the prompt pulse    1: remove prompt pulse 
-Norm=1          # 0: no normalization  1: with normalization 
-LogTbin=1      # 0: binT='10,1,33333'    1: binT='10,1,2000,-0.0005,33333'
-binD='0.02,0.0002,4' # bin parameters in dspace
-ListTB=range(2,20) # list of tubes to integrate
-# TB01-10(N),TB11-20(N),TB21-30(Y),TB31-40(Y),TB41-50(Y),TB51-60(N),TB61-70(YL),TB71-80(Y)
-# BK15: TB01-08, BK16: TB09-16, BK17: TB17-24, BK18: TB25-32, BK19: TB33-40
-# BK20: TB41-48, BK21: TB49-56, BK22: TB57-64, BK23: TB65-72, BK24: TB73-80
-SaveNexusOutput=1
-#=====================================================================
-process_all(ListRN,LoadOption,PixRng,PPulse,Norm,LogTbin,binD,ListTB,TimeStart,TimeStop)
+asciidir=os.path.join(SaveDir,"ascii")
+if not os.path.exists(asciidir):
+    os.umask(0002)
+    os.makedirs(asciidir,0775)
+    print "Info: "+asciidir+" does not exist and will be created."
+OutFile=os.path.join(asciidir,'VIS_'+INS+'.dat')
+SaveAscii(InputWorkspace=INS,Filename=OutFile,Separator='Space')
+
+'''
+subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh", IPTS])
+#subprocess.call(["/SNS/VIS/shared/autoreduce/update_VIS.sh"])
+
+######################################################################
+# Save Inelastic banks in a separate file
+######################################################################
+sliced_dir = os.path.join(SaveDir, "sliced_data")
+if not os.path.exists(sliced_dir):
+    os.umask(0002)
+    os.makedirs(sliced_dir,0775)
+
+from mantid.api import AnalysisDataService
+for item in AnalysisDataService.getObjectNames():
+    AnalysisDataService.remove(item)
+
+bank_list = ["bank%d" % i for i in range(1, 15)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, OutputWorkspace="__inelastic_data", LoadMonitors=True)
+inelastic_file = os.path.join(sliced_dir, FileName.replace('.nxs.h5','_inelastic.nxs.h5'))
+SaveNexus(InputWorkspace="__inelastic_data", Filename=inelastic_file)
+Rebin(InputWorkspace='__inelastic_data_monitors',OutputWorkspace='__inelastic_data_monitors',Params="1,1,35000",PreserveEvents='0')
+monitor_file = os.path.join(sliced_dir, FileName.replace('.nxs.h5','_monitors.nxs.h5'))
+SaveNexus(InputWorkspace="__inelastic_data_monitors", Filename=monitor_file)
+AnalysisDataService.remove("__inelastic_data")
+AnalysisDataService.remove("__inelastic_data_monitors")
+
+bank_list = ["bank%d" % i for i in range(15, 25)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace="__elastic_back_data")
+Rebin(InputWorkspace='__elastic_back_data',OutputWorkspace='__elastic_back_data',Params="10,1,2000,-0.0005,35000",PreserveEvents='0')
+CropWorkspace(InputWorkspace='__elastic_back_data', OutputWorkspace='__elastic_back_data', StartWorkspaceIndex=14336, EndWorkspaceIndex=34815)
+elastic_file = os.path.join(sliced_dir, FileName.replace('.nxs.h5','_elastic_backscattering.nxs.h5'))
+SaveNexus(InputWorkspace="__elastic_back_data", Filename=elastic_file)
+AnalysisDataService.remove("__elastic_back_data")
+
+bank_list = ["bank%d" % i for i in range(25, 31)]
+bank_property = ",".join(bank_list)
+LoadEventNexus(Filename=NexusFile, BankName=bank_property, SingleBankPixelsOnly=False, OutputWorkspace="__elastic_data")
+Rebin(InputWorkspace='__elastic_data',OutputWorkspace='__elastic_data',Params="10,1,2000,-0.0005,35000",PreserveEvents='0')
+elastic_file = os.path.join(sliced_dir, FileName.replace('.nxs.h5','_elastic.nxs.h5'))
+SaveNexus(InputWorkspace="__elastic_data", Filename=elastic_file)
+AnalysisDataService.remove("__elastic_data")
+'''
