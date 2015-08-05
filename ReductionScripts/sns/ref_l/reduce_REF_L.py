@@ -239,7 +239,7 @@ for item in result_list:
     plot_data.append([item, clean_x, clean_y, clean_e])
 
     # Update json data file for interactive plotting
-    if item == "output_auto":
+    if is_absolute and item == "output_auto":
         file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
         if os.path.isfile(file_path):
             fd = open(file_path, 'r')
