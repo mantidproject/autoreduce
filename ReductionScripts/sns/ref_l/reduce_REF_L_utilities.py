@@ -149,11 +149,14 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
                     wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
                     # We don't care about the scaling factor for wl > 10 A
                     normalization_available = wl>10.0
-                    logger.notice("No normalization for %s: wl=%s" % (ws, str(wl)))
+                    logger.notice("%s: no normalization for wl=%s" % (ws, str(wl)))
                 except:
-                    logger.notice("Could not find LambdaRequest for %s" % ws)  
+                    logger.notice("%s: could not find LambdaRequest" % ws)  
                     normalization_available = False
+            else:
+                logger.notice("%s: normalization found" % ws)
         else:
+            logger.notice("%s: no normalization info" % ws)
             normalization_available = False
 
     # Prepare the data sets
