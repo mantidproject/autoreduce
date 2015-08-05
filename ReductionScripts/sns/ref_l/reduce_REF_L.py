@@ -200,6 +200,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               ScalingFactorFile=str(data_set.scaling_factor_file),
               SlitsWidthFlag=data_set.slits_width_flag,
               ApplyPrimaryFraction=True,
+              BackSlitName="S2",
               #PrimaryFractionRange=[121,195],
               PrimaryFractionRange=[82,154],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
