@@ -130,7 +130,7 @@ def average_points_for_single_q(first_run_of_set, scaled_ws_list):
     return scaled_ws_list[0]+'_histo'
 
 def create_single_reflectivity(workspace_list, scale_to_unity=True,
-                               max_q_unity = 0.01, endswith="auto"):
+                               max_q_unity = 0.01, endswith="auto", wl_cutoff=10.0):
     """
         Create a single reflectivity curve out of several reduced data sets.
         @param workspace_list: list of scaled workspaces to combine
@@ -148,7 +148,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
                 try:
                     wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
                     # We don't care about the scaling factor for wl > 10 A
-                    normalization_available = wl>10.0
+                    normalization_available = wl>wl_cutoff
                     logger.notice("%s: no normalization for wl=%s" % (ws, str(wl)))
                 except:
                     logger.notice("%s: could not find LambdaRequest" % ws)  
