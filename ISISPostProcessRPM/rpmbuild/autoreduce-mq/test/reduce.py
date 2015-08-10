@@ -7,6 +7,8 @@ import reduce_vars as web_var
 
 from mantid.simpleapi import *
 
+import mantid
+
 def main(input_file, output_dir):
     """ This is the (only) method required by the autoreduction interface. 
     
@@ -21,27 +23,39 @@ def main(input_file, output_dir):
     f = open(fileToWriteTo,"w")
     """
     
-    logger.information("Save a dummy test file")
-    fileToWriteTo = os.path.join(output_dir, "dummyTestFile.txt")
+    # write out information set in mantid.user.properties to standard out
+    # which should appear in *.out file in reduction_log subfolder
+    configService = mantid.config
+    print(configService.getInstrument())    
+
+    # write out standard_vars to log
+    for key, value in web_var.standard_vars.iteritems():
+      logger.notice(str(key)+"="+str(value))
+
+    # write out a dummy test file
+    fileToWriteTo = os.path.join(output_dir, "dummyTestFile.txt")    
     f = open(fileToWriteTo,"w")
     f.write("Hello")
     f.close()    
+
+    # copy input_file to output_dir    
     # shutil.copy(input_file, output_dir)
     
-    # This is a just a message which should appear in reduction_log/#.log 
-    # where # is the RB number
-    print("Hello\n")
-    
-    print("Load data, integrate and save to output_dir")   
+    # try to do some Mantid stuff
+    # print("Load data, integrate and save to output_dir")     
     ws = Load(input_file)
     ws = Integration(ws)
     SaveNexus(ws, os.path.join(output_dir, "integrated.nxs"))
 
     # Define additional custom folder to copy results to
     # Note this folder needs to be visible by the autoreduction system
-    output_folder = ''    
+    #output_folder = '/isis/NDXWISH/Instrument/data/cycle_14_3/autoreduced/'    
+    output_folder = ''
     return output_folder
 
 if __name__ == "__main__":
-    # To run reduction script manually
-    main('some input file', 'output location')
+    print("OK here we go")
+    main('/isis/NDXGEM/Instrument/data/cycle_15_1/GEM00075513.nxs', '/home/reduce/reducedData')
+    #main('\\isis\\NDXGEM\\Instrument\\data\\cycle_15_1\\GEM00075513.nxs', '/home/reduce/reducedData')
+    #main('/home/reduce/tmp/test/testdata/testData.txt','/home/reduce/reducedData')
+

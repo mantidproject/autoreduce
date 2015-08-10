@@ -5,12 +5,12 @@ sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 import mantid
 
-cal_dir = "/SNS/NOM/IPTS-8377/shared"
-cal_file  = os.path.join(cal_dir, "NOM_calibrate_d12283_2015_06_23.cal")
+cal_dir = "/SNS/NOM/IPTS-4480/shared"
+cal_file  = os.path.join(cal_dir, "NOM_calibrate_d48296_2015_07_13.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     12288
-van      =     12284
-van_back =     12285
+sam_back =     48294
+van      =     48292
+van_back =     48289
 
 #from mantidsimple import *
 
