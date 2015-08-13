@@ -179,7 +179,7 @@ if compare:
                   SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=True)
+    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=NORMALIZE_TO_UNITY)
 
     for item in AnalysisDataService.getObjectNames():
         if not item == "reflectivity_%s" % comparison_ending:
@@ -215,7 +215,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
+is_absolute = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
