@@ -146,8 +146,6 @@ if __name__ == "__main__":
     #MaskBTPParameters.append({'Bank':"70"})
     MaskBTPParameters.append({'Pixel': '1-8,121-128'})
     MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
-    MaskBTPParameters.append({'Bank': '64'})
-    MaskBTPParameters.append({'Bank': '118'})
 
 
  # only for the runs in IPTS-11831
