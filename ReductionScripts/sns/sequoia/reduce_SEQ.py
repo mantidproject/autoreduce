@@ -17,7 +17,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
-        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
+        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
@@ -28,34 +28,36 @@ def preprocessData(filename):
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
 
-    #PV streamer not running. Copying logs from some other run
-    if (runnum >= 55959 and runnum <= 55960):
-        LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #Example of PV streamer not running. Copying logs from some other run
+    #if (runnum >= 55959 and runnum <= 55960):
+    #    LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #
+    
     
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     ###########################
     #Temporary workaround for IPTS-9145  GEG
-    if Eguess<5:
-      Eguess=120.
+    #if Eguess<5:
+    #  Eguess=120.
     ###################  
     
-    if (runnum >= 46951 and runnum <= 46994):
-
-        Efixed = 119.37
-        T0 = 25.84
-
-        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-        #Fix that all time series log values start at the same time as the proton_charge
-        CorrectLogTimes('__IWS')
-
-        #Filter chopper 3 bad events
-        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
-
-        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
-
-        return [Eguess,Efixed,T0]
-    
+    #if (runnum >= 46951 and runnum <= 46994):
+#	
+#        Efixed = 119.37
+#        T0 = 25.84
+#
+#        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
+#        #Fix that all time series log values start at the same time as the proton_charge
+#        CorrectLogTimes('__IWS')
+#
+#        #Filter chopper 3 bad events
+#        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+#
+#        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
+#
+#        return [Eguess,Efixed,T0]
+   
     try:   
              sp1=-1
              sp2=-1
@@ -101,8 +103,8 @@ def preprocessData(filename):
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-    if (runnum >= 55959 and runnum <= 55960):
-        LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #if (runnum >= 55959 and runnum <= 55960):
+    #    LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
     #adjust data times for addl frames
@@ -133,9 +135,9 @@ if __name__ == "__main__":
     ProcessedVanadium="van64933shortpacksmask64_118_2X2.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
-    MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+    #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
-    MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
+    #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
     #MaskBTPParameters.append({'Bank':"62,92"})
     #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
