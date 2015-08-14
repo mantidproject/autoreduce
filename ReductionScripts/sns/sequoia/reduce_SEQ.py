@@ -18,7 +18,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
         ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
-        for d in Parameters:
+        for d in Parameters:175
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
@@ -137,9 +137,9 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
     RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80013.nxs.h5"
-    ProcessedVanadium="van80013.nxs"
+    ProcessedVanadium="van80013b.nxs"
     HardMaskFile=''
-    IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
+    IntegrationRange=[0.3,1.0] #integration range for Vanadium in angstroms
 
 
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
