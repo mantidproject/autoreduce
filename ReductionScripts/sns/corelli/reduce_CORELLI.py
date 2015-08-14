@@ -232,8 +232,8 @@ if __name__ == "__main__":
             AlignedDim2='[0,0,L],'+str(minn[2])+','+str(maxx[2])+',300'
         else:
             AlignedDim0='Q_sample_x,'+str(minn[0])+','+str(maxx[0])+',300'
-            AlignedDim1='Q_sample_x,'+str(minn[1])+','+str(maxx[1])+',300'
-            AlignedDim2='Q_sample_x,'+str(minn[2])+','+str(maxx[2])+',300'
+            AlignedDim1='Q_sample_y,'+str(minn[1])+','+str(maxx[1])+',300'
+            AlignedDim2='Q_sample_z,'+str(minn[2])+','+str(maxx[2])+',300'
         mdrawgrid,mdnorm=MDNormSCD(InputWorkspace=mdraw,
                                    AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2,
                                    FluxWorkspace='autoreduction_flux',SolidAngleWorkspace='autoreduction_sa')
