@@ -171,7 +171,6 @@ if __name__ == "__main__":
 
     # load file
     raw=Load(nexus_file)
-    LoadInstrument(raw, MonitorList='-1,-2,-3', InstrumentName='CORELLI')
     
     # Do the cross-correlation and save the file.
     cc=CorelliCrossCorrelate(raw,56000)
