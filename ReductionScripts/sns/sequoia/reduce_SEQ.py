@@ -107,11 +107,16 @@ def preprocessData(filename):
     #    LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
+
+
     #adjust data times for addl frames
     td=25.5*1e6/v
     if (td > 16666.7):
         tdf=int(td*60e-6)
         ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
+ 
+    #Adjust time of flight for one of the 8-packs
+    ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
 
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
