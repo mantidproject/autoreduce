@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-12310/shared/20150610-Dy2Ti2O7/DTO-UB.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.ub_matrix_file='' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20150601.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150601.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.1', 'PerpendicularTo': '[H,0,0]', 'Maximum': '0.1'}, {'Minimum': '-0.05', 'PerpendicularTo': '[H,0,0]', 'Maximum': '0.06'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.plot_requests=[{'Minimum': '-0.1', 'PerpendicularTo': 'Q_sample_y', 'Maximum': '0.1'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
         self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
@@ -132,7 +132,7 @@ def makePlot(mdws,plotConfig,normalize):
                      AlignedDim2=AlignedDim2)
     xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/500.)
     yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/500.)
-    arrayToPlot=np.log(wsToPlot.getSignalArray()[0,:,:]) #this is for next mantid release, or nightly
+    arrayToPlot=np.log(wsToPlot.getSignalArray()[:,:,0]) #this is for next mantid release, or nightly
     #arrayToPlot=np.log(wsToPlot.getSignalArray())
     arrayToPlot[np.where(np.logical_not(np.isfinite(arrayToPlot)))]=0.
     arrayToPlot_where = np.argwhere(arrayToPlot)
