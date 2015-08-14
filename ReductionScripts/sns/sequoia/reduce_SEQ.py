@@ -18,7 +18,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
         ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
-        for d in Parameters:175
+        for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
