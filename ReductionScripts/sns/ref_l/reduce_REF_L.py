@@ -28,6 +28,14 @@ from mantid.simpleapi import *
 
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
+#-------------------------------------
+# Reduction options
+WL_CUTOFF = 9.0  # Wavelength below which we don't need the absolute normalization
+PRIMARY_FRACTION_RANGE = [82,154]
+#-------------------------------------
+
+
+
 sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
@@ -49,7 +57,8 @@ def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file, scale_to_unity=scale_to_unity)
+    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, 
+                                           to_file=to_file, scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
     if to_file:
         default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
         new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
@@ -200,8 +209,9 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               ScalingFactorFile=str(data_set.scaling_factor_file),
               SlitsWidthFlag=data_set.slits_width_flag,
               ApplyPrimaryFraction=True,
-              PrimaryFractionRange=[121,195],
-              #PrimaryFractionRange=[82,154],
+              BackSlitName="S2",
+              #PrimaryFractionRange=[121,195],
+              PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
@@ -238,7 +248,7 @@ for item in result_list:
     plot_data.append([item, clean_x, clean_y, clean_e])
 
     # Update json data file for interactive plotting
-    if item == "output_auto":
+    if is_absolute and item == "output_auto":
         file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
         if os.path.isfile(file_path):
             fd = open(file_path, 'r')

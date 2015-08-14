@@ -130,7 +130,7 @@ def average_points_for_single_q(first_run_of_set, scaled_ws_list):
     return scaled_ws_list[0]+'_histo'
 
 def create_single_reflectivity(workspace_list, scale_to_unity=True,
-                               max_q_unity = 0.01, endswith="auto"):
+                               max_q_unity = 0.01, endswith="auto", wl_cutoff=10.0):
     """
         Create a single reflectivity curve out of several reduced data sets.
         @param workspace_list: list of scaled workspaces to combine
@@ -148,11 +148,15 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
                 try:
                     wl = mtd[ws].getRun().getProperty("LambdaRequest").value[0]
                     # We don't care about the scaling factor for wl > 10 A
-                    normalization_available = wl>10.0
+                    normalization_available = wl>wl_cutoff
+                    logger.notice("%s: no normalization for wl=%s" % (ws, str(wl)))
                 except:
-                    logger.notice("Could not find LambdaRequest for %s" % ws)  
+                    logger.notice("%s: could not find LambdaRequest" % ws)  
                     normalization_available = False
+            else:
+                logger.notice("%s: normalization found" % ws)
         else:
+            logger.notice("%s: no normalization info" % ws)
             normalization_available = False
 
     # Prepare the data sets
@@ -193,7 +197,7 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
     s.get_scaled_data(workspace="reflectivity_%s" % endswith)
     return scaled_ws_list, normalization_available
 
-def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_file=True, scale_to_unity=True):
+def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_file=True, scale_to_unity=True, wl_cutoff=10.0):
     """
         Utility function used by the automated reduction to load 
         partial results and stitched them together.
@@ -218,7 +222,8 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_fi
         return False
     input_ws_list = sorted(input_ws_list)
     
-    scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith, scale_to_unity=scale_to_unity)
+    scaled_ws_list, has_normalization = create_single_reflectivity(input_ws_list, endswith=endswith, 
+                                                                   scale_to_unity=scale_to_unity, wl_cutoff=wl_cutoff)
     
     if to_file:
         create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)

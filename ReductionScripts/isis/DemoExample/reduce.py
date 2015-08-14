@@ -43,4 +43,5 @@ def main(input_file, output_dir):
     return output_folder
 
 if __name__ == "__main__":
-    main()
+    # To run reduction script manually
+    main('some input file', 'output location')
