@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
-sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/Mantid/bin')
+#sys.path.insert(0,'/opt/mantidnightly/bin')
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
