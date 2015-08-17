@@ -248,6 +248,9 @@ if __name__ == "__main__":
         
         if NXSPE_flag:            
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+            
+
+
         if clean:
             WS_clean()
     else:
