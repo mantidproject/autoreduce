@@ -116,7 +116,7 @@ def preprocessData(filename):
         ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
  
     #Adjust time of flight for one of the 8-packs
-    ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
+    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
 
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
