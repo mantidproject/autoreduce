@@ -37,7 +37,7 @@ NORMALIZE_TO_UNITY = True
 
 
 
-sys.path.append("/opt/mantidnightly/scripts/Interface/")
+#sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
