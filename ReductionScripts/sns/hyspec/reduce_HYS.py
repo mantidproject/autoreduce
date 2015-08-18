@@ -46,8 +46,7 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='BL14B:Mot:Sample:Axis1, s2, msd, BL14B:Det:TH:BL:Ei') 
-      #checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
@@ -65,14 +64,12 @@ class AutoReduction():
       run = mtd[autows].getRun()
 
       # Get Ei
-      Ei = run['BL14B:Det:TH:BL:Ei'].getStatistics().mean
-      #Ei = run['EnergyRequest'].getStatistics().mean
+      Ei = run['EnergyRequest'].getStatistics().mean
       self._Ei = Ei
 
   
       # Get Angle
-      s1 = run['BL14B:Mot:Sample:Axis1'].getStatistics().mean
-      #s1 = run['s1'].getStatistics().mean
+      s1 = run['s1'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
