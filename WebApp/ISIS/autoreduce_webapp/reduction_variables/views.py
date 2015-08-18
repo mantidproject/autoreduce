@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_staff
 from reduction_variables.models import InstrumentVariable, RunVariable, ScriptFile
-from reduction_variables.utils import InstrumentVariablesUtils, VariableUtils, MessagingUtils, ScriptUtils
+from reduction_variables.utils import InstrumentVariablesUtils, VariableUtils, MessagingUtils, ScriptUtils, DataTooLong
 from reduction_viewer.models import Instrument, ReductionRun, DataLocation
 from reduction_viewer.utils import StatusUtils
 
@@ -318,9 +318,17 @@ def submit_runs(request, instrument):
             default_variables = InstrumentVariablesUtils().get_variables_from_current_script(instrument.name)
 
             script = ScriptFile(script=script_binary, file_name='reduce.py')
-            script.save()
             script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
-            script_vars.save()
+
+            #TODO: Share code with run_confirmation
+
+            queue_count = ReductionRun.objects.filter(instrument=instrument, status=queued_status).count()
+
+            context_dictionary = {
+                'run' : None,
+                'variables' : None,
+                'queued' : queue_count,
+            }
 
             new_variables = []
 
@@ -338,6 +346,8 @@ def submit_runs(request, instrument):
                         default_var = next((x for x in default_variables if x.name == name), None)
                         if not default_var:
                             continue
+                        if len(value) > InstrumentVariable._meta.get_field('value').max_length:
+                            context_dictionary['error'] = 'Value given in ' + str(key) + ' is too long.'
                         variable = RunVariable(
                             reduction_run=new_job,
                             name=default_var.name,
@@ -346,26 +356,20 @@ def submit_runs(request, instrument):
                             type=default_var.type,
                             help_text=default_var.help_text
                         )
-                        variable.save()
-                        variable.scripts.add(script)
-                        variable.scripts.add(script_vars)
-                        variable.save()
                         new_variables.append(variable)
 
-            queue_count = ReductionRun.objects.filter(instrument=instrument, status=queued_status).count()
-
-            context_dictionary = {
-                'run' : None,
-                'variables' : None,
-                'queued' : queue_count,
-            }
-
             if len(new_variables) == 0:
-                new_job.delete()
-                script.delete()
-                script_vars.delete()
                 context_dictionary['error'] = 'No variables were found to be submitted.'
-            else:
+
+            if 'error' not in context_dictionary:
+                script.save()
+                script_vars.save()
+                for variable in new_variables:
+                    variable.save()
+                    variable.scripts.add(script)
+                    variable.scripts.add(script_vars)
+                    variable.save()
+
                 try:
                     MessagingUtils().send_pending(new_job)
                     context_dictionary['run'] = new_job
@@ -375,6 +379,8 @@ def submit_runs(request, instrument):
                     script.delete()
                     script_vars.delete()
                     context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e)
+            else:
+                new_job.delete()
 
         return redirect('instrument_summary', instrument=instrument.name)
     else:
@@ -507,9 +513,15 @@ def run_confirmation(request, run_number, run_version=0):
             default_variables = run_variables
 
         script = ScriptFile(script=script_binary, file_name='reduce.py')
-        script.save()
         script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
-        script_vars.save()
+
+        queue_count = ReductionRun.objects.filter(instrument=reduction_run.instrument, status=queued_status).count()
+
+        context_dictionary = {
+            'run' : None,
+            'variables' : None,
+            'queued' : queue_count,
+        }
 
         new_variables = []
 
@@ -527,6 +539,8 @@ def run_confirmation(request, run_number, run_version=0):
                     default_var = next((x for x in run_variables if x.name == name), next((x for x in default_variables if x.name == name), None))
                     if not default_var:
                         continue
+                    if len(value) > InstrumentVariable._meta.get_field('value').max_length:
+                        context_dictionary['error'] = 'Value given in ' + str(name) + ' is too long.'
                     variable = RunVariable(
                         reduction_run=new_job,
                         name=default_var.name,
@@ -535,26 +549,20 @@ def run_confirmation(request, run_number, run_version=0):
                         type=default_var.type,
                         help_text=default_var.help_text
                     )
-                    variable.save()
-                    variable.scripts.add(script)
-                    variable.scripts.add(script_vars)
-                    variable.save()
                     new_variables.append(variable)
 
-        queue_count = ReductionRun.objects.filter(instrument=reduction_run.instrument, status=queued_status).count()
-
-        context_dictionary = {
-            'run' : None,
-            'variables' : None,
-            'queued' : queue_count,
-        }
-
         if len(new_variables) == 0:
-            new_job.delete()
-            script.delete()
-            script_vars.delete()
             context_dictionary['error'] = 'No variables were found to be submitted.'
-        else:
+
+        if 'error' not in context_dictionary:
+            script.save()
+            script_vars.save()
+            for variable in new_variables:
+                variable.save()
+                variable.scripts.add(script)
+                variable.scripts.add(script_vars)
+                variable.save()
+
             try:
                 MessagingUtils().send_pending(new_job)
                 context_dictionary['run'] = new_job
@@ -564,6 +572,8 @@ def run_confirmation(request, run_number, run_version=0):
                 script.delete()
                 script_vars.delete()
                 context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e),
+        else:
+            new_job.delete()
 
         return context_dictionary
     else:
