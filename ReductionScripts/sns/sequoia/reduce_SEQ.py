@@ -110,10 +110,10 @@ def preprocessData(filename):
 
 
     #adjust data times for addl frames
-    td=25.5*1e6/v
-    if (td > 16666.7):
-        tdf=int(td*60e-6)
-        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
+#    td=25.5*1e6/v
+#    if (td > 16666.7):
+#        tdf=int(td*60e-6)
+#        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
  
     #Adjust time of flight for one of the 8-packs
     ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
