@@ -3,6 +3,7 @@ import os
 import re
 import math
 import time
+import json
 import platform
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from matplotlib import *
@@ -13,7 +14,8 @@ import matplotlib.pyplot as plt
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
-sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/Mantid/bin')
+#sys.path.insert(0,'/opt/mantidnightly/bin')
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -27,7 +29,16 @@ from mantid.simpleapi import *
 
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
-sys.path.append("/opt/mantidnightly/scripts/Interface/")
+#-------------------------------------
+# Reduction options
+WL_CUTOFF = 1.0  # Wavelength below which we don't need the absolute normalization
+PRIMARY_FRACTION_RANGE = [118, 197] #[121,195] #[82,154]
+NORMALIZE_TO_UNITY = True
+#-------------------------------------
+
+
+
+#sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
@@ -48,7 +59,8 @@ def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, to_file=to_file, scale_to_unity=scale_to_unity)
+    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, 
+                                           to_file=to_file, scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
     if to_file:
         default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
         new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
@@ -66,7 +78,10 @@ title = meta_data_run.getProperty("run_title").value
 if "direct beam" in title.lower():
     logger.notice("Direct beam run: skip")
     sys.exit(0)
-   
+is_silicon = "on si" in title.lower() or "[Si]" in title.lower()
+is_air = "in air" in title.lower() or "[air]" in title.lower()
+
+
 thi = meta_data_run.getProperty('thi').value[0]
 tthd = meta_data_run.getProperty('tthd').value[0]
 if math.fabs(thi-tthd)<0.001:
@@ -94,7 +109,12 @@ selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 s = DataSeries()
-fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
+if is_silicon and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_si.xml"):
+    fd = open("/SNS/REF_L/shared/autoreduce/template_si.xml", "r")
+elif is_air and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_air.xml"):
+    fd = open("/SNS/REF_L/shared/autoreduce/template_air.xml", "r")
+else:
+    fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
 
@@ -160,7 +180,7 @@ if compare:
                   SlitsWidthFlag=data_set.slits_width_flag,
                   OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=True)
+    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=NORMALIZE_TO_UNITY)
 
     for item in AnalysisDataService.getObjectNames():
         if not item == "reflectivity_%s" % comparison_ending:
@@ -191,10 +211,12 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               ScalingFactorFile=str(data_set.scaling_factor_file),
               SlitsWidthFlag=data_set.slits_width_flag,
               ApplyPrimaryFraction=True,
-              PrimaryFractionRange=[121,195],
+              BackSlitName="S2",
+              #PrimaryFractionRange=[121,195],
+              PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-is_absolute = save_partial_output(endswith='auto', scale_to_unity=True)
+is_absolute = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
@@ -226,6 +248,20 @@ for item in result_list:
                     OutputWorkspace=item, UnitX="MomentumTransfer")
     group_ws.append(item)       
     plot_data.append([item, clean_x, clean_y, clean_e])
+
+    # Update json data file for interactive plotting
+    if is_absolute and item == "output_auto":
+        file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+        if os.path.isfile(file_path):
+            fd = open(file_path, 'r')
+            json_data = fd.read()
+            fd.close()
+            data = json.loads(json_data)
+            data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+            json_data = json.dumps(data)
+            fd = open(file_path, 'w')
+            fd.write(json_data)
+            fd.close()
 
 y_label = "Reflectivity "
 if is_absolute:

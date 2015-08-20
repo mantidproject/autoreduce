@@ -17,7 +17,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
-        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=54272,IndexMax=55295) # adjust time for pack C17 wired backward
+        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
@@ -28,34 +28,36 @@ def preprocessData(filename):
     runnum = int(f1.strip('SEQ_').replace('.nxs.h5',''))
     __MonWS=LoadNexusMonitors(Filename=filename)
 
-    #PV streamer not running. Copying logs from some other run
-    if (runnum >= 55959 and runnum <= 55960):
-        LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #Example of PV streamer not running. Copying logs from some other run
+    #if (runnum >= 55959 and runnum <= 55960):
+    #    LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #
+    
     
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     ###########################
     #Temporary workaround for IPTS-9145  GEG
-    if Eguess<5:
-      Eguess=120.
+    #if Eguess<5:
+    #  Eguess=120.
     ###################  
     
-    if (runnum >= 46951 and runnum <= 46994):
-
-        Efixed = 119.37
-        T0 = 25.84
-
-        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-        #Fix that all time series log values start at the same time as the proton_charge
-        CorrectLogTimes('__IWS')
-
-        #Filter chopper 3 bad events
-        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
-
-        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
-
-        return [Eguess,Efixed,T0]
-    
+    #if (runnum >= 46951 and runnum <= 46994):
+#	
+#        Efixed = 119.37
+#        T0 = 25.84
+#
+#        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
+#        #Fix that all time series log values start at the same time as the proton_charge
+#        CorrectLogTimes('__IWS')
+#
+#        #Filter chopper 3 bad events
+#        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+#
+#        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
+#
+#        return [Eguess,Efixed,T0]
+   
     try:   
              sp1=-1
              sp2=-1
@@ -101,15 +103,20 @@ def preprocessData(filename):
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-    if (runnum >= 55959 and runnum <= 55960):
-        LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #if (runnum >= 55959 and runnum <= 55960):
+    #    LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
+
+
     #adjust data times for addl frames
-    td=25.5*1e6/v
-    if (td > 16666.7):
-        tdf=int(td*60e-6)
-        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
+#    td=25.5*1e6/v
+#    if (td > 16666.7):
+#        tdf=int(td*60e-6)
+#        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
+ 
+    #Adjust time of flight for one of the 8-packs
+    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
 
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
@@ -129,23 +136,23 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-13532/nexus/SEQ_64933.nxs.h5"
-    ProcessedVanadium="van64933shortpacksmask64_118_2X2.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80033.nxs.h5"
+    ProcessedVanadium="van80033.nxs"
     HardMaskFile=''
-    IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
+    IntegrationRange=[0.3,1.0] #integration range for Vanadium in angstroms
+
+
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+    #MaskBTPParameters.append({'Pixel': '1-8,121-128'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
+
     #short packs around beam stop, and uninstalled packs at far left
-    MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
- 
+    #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"}) 
     #MaskBTPParameters.append({'Bank':"62,92"})
     #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
     #MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
     #MaskBTPParameters.append({'Bank':"141"})
     #MaskBTPParameters.append({'Bank':"70"})
-    MaskBTPParameters.append({'Pixel': '1-8,121-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
-    MaskBTPParameters.append({'Bank': '64'})
-    MaskBTPParameters.append({'Bank': '118'})
 
 
  # only for the runs in IPTS-11831
@@ -196,10 +203,10 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.2*EGuess,0.01*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_1x1_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
@@ -240,7 +247,12 @@ if __name__ == "__main__":
         savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
         
         if NXSPE_flag:            
-            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
+            GenerateGroupingPowder(InputWorkspace="__OWS",AngleStep=0.5, GroupingFilename=outdir+'powdergroupfile.xml')
+            GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
+            SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par')
+
+
         if clean:
             WS_clean()
     else:

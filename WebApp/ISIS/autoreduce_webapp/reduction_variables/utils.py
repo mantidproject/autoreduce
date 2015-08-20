@@ -1,14 +1,16 @@
-import logging, os, sys, imp, uuid, re, json
+import logging, os, sys, imp, uuid, re, json, time
 sys.path.append(os.path.join("../", os.path.dirname(os.path.dirname(__file__))))
 os.environ["DJANGO_SETTINGS_MODULE"] = "autoreduce_webapp.settings"
-from autoreduce_webapp.settings import LOG_FILE, LOG_LEVEL, BASE_DIR, ACTIVEMQ, TEMP_OUTPUT_DIRECTORY, REDUCTION_DIRECTORY, FACILITY
+from autoreduce_webapp.settings import ACTIVEMQ, TEMP_OUTPUT_DIRECTORY, REDUCTION_DIRECTORY, FACILITY
 from autoreduce_webapp.queue_processor import Client as ActiveMQClient
 logger = logging.getLogger('django')
-from django.db import models
 from reduction_variables.models import InstrumentVariable, ScriptFile, RunVariable
-from reduction_viewer.models import ReductionRun, Instrument, Notification
+from reduction_viewer.models import ReductionRun, Notification
 from reduction_viewer.utils import InstrumentUtils, StatusUtils
 from autoreduce_webapp.icat_communication import ICATCommunication
+
+class DataTooLong(ValueError):
+    pass
 
 def write_script_to_temp(script, script_vars_file):
     """
@@ -22,7 +24,6 @@ def write_script_to_temp(script, script_vars_file):
             unique_name = str(uuid.uuid4())
             script_path = os.path.join(TEMP_OUTPUT_DIRECTORY, 'scripts', unique_name)
         os.makedirs(script_path)
-        logger.error("Made dir")
         f = open(os.path.join(script_path, 'reduce.py'), 'wb')
         f.write(script)
         f.close()
@@ -35,6 +36,16 @@ def write_script_to_temp(script, script_vars_file):
         logger.error('Error opening %s: %s' % (value.filename, value.strerror))
         raise e
     return script_path
+
+
+def log_error_and_notify(message):
+    """
+    Helper method to log an error and save a notifcation
+    """
+    logger.error(message)
+    notification = Notification(is_active=True, is_staff_only=True, severity='e', message=message)
+    notification.save()
+
 
 class VariableUtils(object):
     def wrap_in_type_syntax(self, value, var_type):
@@ -124,6 +135,7 @@ class VariableUtils(object):
             return "list_" + list_type
         return "text"
 
+
 class InstrumentVariablesUtils(object):
     def __load_reduction_script(self, instrument_name):
         """
@@ -135,21 +147,15 @@ class InstrumentVariablesUtils(object):
         try:
             f = open(reduction_file, 'rb')
             script_binary = f.read()
-            return  script_binary
+            return script_binary
         except ImportError, e:
-            logger.error("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s due to import error. (%s)" % (instrument_name, e.message))
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
             return None
         except IOError:
-            logger.error("Unable to load reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s" % reduction_file)
             return None
         except SyntaxError:
-            logger.error("Syntax error in reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Syntax error in reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Syntax error in reduction script %s" % reduction_file)
             return None
 
     def __load_reduction_vars_script(self, instrument_name):
@@ -166,20 +172,51 @@ class InstrumentVariablesUtils(object):
             script_binary = f.read()
             return reduce_script, script_binary
         except ImportError, e:
-            logger.error("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s due to import error. (%s)" % (instrument_name, e.message))
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
             return None, None
         except IOError:
-            logger.error("Unable to load reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Unable to open reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Unable to load reduction script %s" % reduction_file)
             return None, None
         except SyntaxError:
-            logger.error("Syntax error in reduction script %s" % reduction_file)
-            notification = Notification(is_active=True, is_staff_only=True,severity='e', message="Syntax error in reduction script for %s" % instrument_name)
-            notification.save()
+            log_error_and_notify("Syntax error in reduction script %s" % reduction_file)
             return None, None
+
+    def __get_scripts_modified(self, instrument_name):
+        """
+        Returns the last modification time of the scripts located in the filesystem
+        """
+        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce.py")
+        script_mod_time = os.path.getmtime(reduction_file)
+        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce_vars.py")
+        script_vars_mod_time = os.path.getmtime(reduction_file)
+        return script_mod_time, script_vars_mod_time
+
+    def __update_variable_scripts(self, variables, script_binary, script_vars_binary):
+        """
+        Helper method to save a new script into the database and update a set of variables with the script
+        """
+        script = ScriptFile(script=script_binary, file_name='reduce.py')
+        script.save()
+        script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
+        script_vars.save()
+
+        for variable in variables:
+            variable.save()
+            variable.scripts.clear()
+            variable.scripts.add(script)
+            variable.scripts.add(script_vars)
+            variable.save()
+
+    def get_variables_from_current_script(self, instrument_name):
+        """
+        Reloads script in variables to match that on disk. For now ignore modification time check.
+        """
+        reduce_vars_script, vars_script_binary = self.__load_reduction_vars_script(instrument_name)
+        variables = self.get_default_variables(instrument_name, reduce_vars_script)
+        script_binary = self.__load_reduction_script(instrument_name)
+        self.__update_variable_scripts(variables, script_binary, vars_script_binary)
+
+        return variables
 
     def set_default_instrument_variables(self, instrument_name, start_run=1):
         """
@@ -215,6 +252,7 @@ class InstrumentVariablesUtils(object):
         otherwise the variables with the closest run start will be used.
         If no variable are found, default variables are created for the instrument and those are returned.
         """
+        instrument_name = reduction_run.instrument.name
         variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument, experiment_reference=reduction_run.experiment.reference_number)
         # No experiment-specific variables, lets look for run number
         if not variables:
@@ -223,7 +261,13 @@ class InstrumentVariablesUtils(object):
                 variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run=variables_run_start)
             except AttributeError:
                 # Still not found any variables, we better create some
-                variables = self.set_default_instrument_variables(reduction_run.instrument.name)
+                variables = self.set_default_instrument_variables(instrument_name)
+
+        if variables[0].tracks_script:
+            script_binary = self.__load_reduction_script(instrument_name)
+            reduce_vars_script, vars_script_binary = self.__load_reduction_vars_script(instrument_name)
+            self.__update_variable_scripts(variables, script_binary, vars_script_binary)
+
         return variables
 
     def get_current_script_text(self, instrument_name):
@@ -243,6 +287,24 @@ class InstrumentVariablesUtils(object):
         script_binary, vars_script_binary = self.get_current_script_text(instrument_name)
         return write_script_to_temp(script_binary, vars_script_binary)
 
+    def _create_variables(self, instrument, script, variable_dict, is_advanced):
+        variables = []
+        for key, value in variable_dict.iteritems():
+            str_value = str(value).replace('[','').replace(']','')
+            if len(str_value) > InstrumentVariable._meta.get_field('value').max_length:
+                raise DataTooLong
+            variable = InstrumentVariable(
+                instrument=instrument,
+                name=key,
+                value=str_value,
+                is_advanced=is_advanced,
+                type=VariableUtils().get_type_string(value),
+                start_run = 0,
+                help_text=self.get_help_text('standard_vars', key, instrument.name, script),
+                )
+            variables.append(variable)
+        return variables
+
     def get_default_variables(self, instrument_name, reduce_script=None):
         """
         Creates and returns a list of variables matching those found in the appropriate reduce script.
@@ -253,32 +315,12 @@ class InstrumentVariablesUtils(object):
         instrument = InstrumentUtils().get_instrument(instrument_name)
         variables = []
         if 'standard_vars' in dir(reduce_script):
-            for key in reduce_script.standard_vars:
-                variable = InstrumentVariable(
-                    instrument=instrument, 
-                    name=key, 
-                    value=str(reduce_script.standard_vars[key]).replace('[','').replace(']',''), 
-                    is_advanced=False, 
-                    type=VariableUtils().get_type_string(reduce_script.standard_vars[key]),
-                    start_run = 0,
-                    help_text=self.get_help_text('standard_vars', key, reduce_script),
-                    )
-                variables.append(variable)
+            variables.extend(self._create_variables(instrument, reduce_script, reduce_script.standard_vars, False))
         if 'advanced_vars' in dir(reduce_script):
-            for key in reduce_script.advanced_vars:
-                variable = InstrumentVariable(
-                    instrument=instrument, 
-                    name=key, 
-                    value=str(reduce_script.advanced_vars[key]).replace('[','').replace(']',''), 
-                    is_advanced=True, 
-                    type=VariableUtils().get_type_string(reduce_script.advanced_vars[key]),
-                    start_run = 0,
-                    help_text=self.get_help_text('advanced_vars', key, reduce_script),
-                    )
-                variables.append(variable)
+            variables.extend(self._create_variables(instrument, reduce_script, reduce_script.advanced_vars, True))
         return variables
 
-    def get_help_text(self, dictionary, key, reduce_script=None):
+    def get_help_text(self, dictionary, key, instrument_name, reduce_script=None):
         if not dictionary or not key:
             return ""
         if not reduce_script:
@@ -347,7 +389,7 @@ class ReductionVariablesUtils(object):
                 if reduction_run != variables.reduction_run.id:
                     raise Exception("All run variables must be for the same reduction run")
         
-        script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts(run_variables[0].scripts.all())
+        script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
 
         script_path = write_script_to_temp(script_binary, script_vars_binary)
 
@@ -392,16 +434,39 @@ class MessagingUtils(object):
             'facility':FACILITY,
             'message':'',
         }
-        message_client.send('/queue/ReductionPending', json.dumps(data_dict))    
+        message_client.send('/queue/ReductionPending', json.dumps(data_dict), priority='0')
         message_client.stop()
 
 class ScriptUtils(object):
     def get_reduce_scripts(self, scripts):
-        script_binary = None
-        script_vars_binary = None
+        script_out = None
+        script_vars_out = None
         for script in scripts:
             if script.file_name == "reduce.py":
-                script_binary = script.script
+                script_out = script
             elif script.file_name == "reduce_vars.py":
-                script_vars_binary = script.script
-        return script_binary, script_vars_binary
+                script_vars_out = script
+        return script_out, script_vars_out
+
+    def get_reduce_scripts_binary(self, scripts):
+        script, script_vars = self.get_reduce_scripts(scripts)
+        return script.script, script_vars.script
+
+    def get_cache_scripts_modified(self, scripts):
+        """
+        Returns the last time the scripts in the database were modified (in seconds since epoch).
+        """
+        script_modified = None
+        script_vars_modified = None
+
+        for script in scripts:
+            if script.file_name == "reduce.py":
+                script_modified = self._convert_time_from_string(str(script.created))
+            elif script.file_name == "reduce_vars.py":
+                script_vars_modified = self._convert_time_from_string(str(script.created))
+        return script_modified, script_vars_modified
+
+    def _convert_time_from_string(self, string_time):
+        time_format = "%Y-%m-%d %H:%M:%S"
+        string_time = string_time[:string_time.find('+')]
+        return int(time.mktime(time.strptime(string_time, time_format)))

@@ -7,7 +7,7 @@ from numpy import *
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantid34/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
@@ -36,24 +36,27 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-4654/25/137573/NeXus/CNCS_137573_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-13623/0/115557/NeXus/CNCS_115557_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
-ProcessedVanadium="van101708both.nxs"
+#ProcessedVanadium="van101708both.nxs"
+#ProcessedVanadium="van123012.nxs"
+ProcessedVanadium="vanadium.nxs"
 HardMaskFile=''
 IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-# MaskBTPParameters.append({'Bank': '37-50'})
+#MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
+#MaskBTPParameters.append({'Bank': '37-50'})
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
 tib=SuggestTibCNCS(EGuess)
-if (abs(EGuess-12)<0.1):
-    tib=[20500.0,21500.0]
+#if (abs(EGuess-12)<0.1):
+#    tib=[20500.0,21500.0]
 #tib=[24000,29000]
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
@@ -96,6 +99,7 @@ elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,
 elog.setSimpleLogList("EnergyRequest")
 #elog.setSERotOptions('Ox2WeldRot')
 elog.setSERotOptions('SERotator2')
+#elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
 elog.setSETempOptions('SensorB')
@@ -105,6 +109,7 @@ s1=elog.save_line('reduce')
 
 # Get Angle
 s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+#s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 

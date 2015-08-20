@@ -3,7 +3,7 @@ import sys
 import shutil
 import numpy
 
-mantid_root = "/opt/Mantid"
+mantid_root = "/opt/mantidnightly"
 mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
 
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
@@ -108,6 +108,8 @@ autows_sqw=mtd[autows+'_sqw']
 Qm,dQ,QM = [float(x) for x in QAxisBinning.split(',')]
 nQ = int( (QM-Qm)/dQ )
 for i in range(nQ):
+    if max(autows_sqw.readY(i))<=0:
+        continue
     irow=(i+1)/2+2
     icol=(i+1)%2
     ax1 = plt.subplot2grid((7,2), (irow,icol) )

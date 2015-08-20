@@ -30,14 +30,15 @@ folder = outputDir.replace('autoreduce/','')
 # 'None' ## 'Horizontal' 
 # 'Vertical' ## 'Custom mask - xml file'
 
-Masking = "Horizontal"
+Masking = "Vertical"
 
 
 #Calibration  should be one of the following strings :
 # 'Convert Units' or  'Calibration File' 
 
-Calibration = 'Calibration File'
-calib_File = '/SNS/SNAP/IPTS-11439/shared/SNAP_calibrate_d19311_2014_11_30.cal'
+Calibration = 'Convert Units'
+calib_file = 'dummy' # use when convert units
+#calib_File = '/SNS/SNAP/IPTS-11439/shared/SNAP_calibrate_d19311_2014_11_30.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -52,7 +53,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.0025,4.2'
+binning='0.65,-0.002,3.0'
 
 #Output should be one of the following strings :
 # 'None' # 'All' outputs both Fullprof and GSAS 
@@ -118,7 +119,7 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 5 
+	window = 13 
 	smooth_range = 5
 				
 	peak_clip_WS = CloneWorkspace('ows')
