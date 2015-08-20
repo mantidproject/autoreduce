@@ -37,16 +37,21 @@ fi
 function process() {
   file=$1
   inst=$2
-  scripts=(reduce reduce sumRun sumRun sumBatchRuns) 
-  exts=(.py _utilities.py .py.template .py .cfg .sh)
+  scripts=(reduce   reduce        reduce        sumRun sumRun sumBatchRuns) 
+  exts=(  .py       _utilities.py .py.template  .py    .cfg   .sh)
   for index in ${!scripts[*]}
   do
     script=${scripts[$index]}_$inst${exts[$index]}
     echo $script
     file1="$file/$script"
     file2="/SNS/"$inst"/shared/autoreduce/$script"
-    if [ -f $file1 ]; then 
-      if [ -f $file2 ]; then
+    if [ -f $file2 ]; then
+      echo "Found $file2"
+      if [ -f $file1 ]; then
+        diffScript $file1 $file2
+      else
+        touch $file1
+        echo "Adding $file1"
         diffScript $file1 $file2
       fi
     fi
@@ -58,8 +63,14 @@ function process() {
     echo $script
     file1="$file/$script"
     file2="/SNS/"$inst"/shared/autoreduce/$script"
-    if [ -f $file1 ]; then 
-      if [ -f $file2 ]; then
+    
+    if [ -f $file2 ]; then
+      echo "Found $file2"
+      if [ -f $file1 ]; then
+        diffScript $file1 $file2
+      else
+        touch $file1
+        echo "Adding $file1"
         diffScript $file1 $file2
       fi
     fi
