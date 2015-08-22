@@ -133,7 +133,7 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
     RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80033.nxs.h5"
-    ProcessedVanadium="van80033c.nxs"
+    ProcessedVanadium="van80033d.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
@@ -148,7 +148,8 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-8,121-128'})
     MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
     MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
-    MaskBTPParameters.append({'Tube': '1-8', 'Pixel': '1-52', 'Bank': '54-60'})
+    MaskBTPParameters.append({'Tube': '1-8', 'Pixel': '1-55', 'Bank': '54-60'})
+    MaskBTPParameters.append({'Tube': '1-8', 'Pixel': '1-55', 'Bank': '61-74'})
 
 
  # only for the runs in IPTS-11831
