@@ -107,20 +107,16 @@ def preprocessData(filename):
     #    LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
-
-
     #adjust data times for addl frames
 #    td=25.5*1e6/v
 #    if (td > 16666.7):
 #        tdf=int(td*60e-6)
 #        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
- 
-    #Adjust time of flight for one of the 8-packs
-    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
 
     #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
     #Filter chopper 3 bad events
     valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
     #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
     #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
     return [Eguess,Efixed,T0]
@@ -136,23 +132,22 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80033.nxs.h5"
-    ProcessedVanadium="van80033.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80013.nxs.h5"
+    ProcessedVanadium="van80013.nxs"
     HardMaskFile=''
-    IntegrationRange=[0.3,1.0] #integration range for Vanadium in angstroms
-
-
-    MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-    #MaskBTPParameters.append({'Pixel': '1-8,121-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
-
+    IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
+    #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
-    #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"}) 
+    #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
+ 
     #MaskBTPParameters.append({'Bank':"62,92"})
     #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
     #MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
     #MaskBTPParameters.append({'Bank':"141"})
     #MaskBTPParameters.append({'Bank':"70"})
+    MaskBTPParameters.append({'Pixel': '1-8,121-128'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
+    MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
 
 
  # only for the runs in IPTS-11831
@@ -250,9 +245,7 @@ if __name__ == "__main__":
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
             GenerateGroupingPowder(InputWorkspace="__OWS",AngleStep=0.5, GroupingFilename=outdir+'powdergroupfile.xml')
             GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
-            SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par')
-
-
+            SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par') 
         if clean:
             WS_clean()
     else:
