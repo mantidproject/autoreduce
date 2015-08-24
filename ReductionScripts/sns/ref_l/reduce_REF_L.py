@@ -88,7 +88,7 @@ if math.fabs(thi-tthd)<0.001:
     logger.notice("Angle appears to be zero: probably a direct beam run")
     sys.exit(0)
 try:
-    m=re.search("Run:(\d+)-(\d+).",title)
+    m=re.search("Run:(\d+)-(\d+)\.",title)
     if m is not None:
         first_run_of_set = m.group(1)
         sequence_number = int(m.group(2))
