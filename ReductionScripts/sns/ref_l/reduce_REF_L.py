@@ -31,7 +31,7 @@ from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
 #-------------------------------------
 # Reduction options
-WL_CUTOFF = 9.0  # Wavelength below which we don't need the absolute normalization
+WL_CUTOFF = 10.0  # Wavelength below which we don't need the absolute normalization
 PRIMARY_FRACTION_RANGE = [118, 197] #[121,195] #[82,154]
 NORMALIZE_TO_UNITY = True
 #-------------------------------------
