@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Mon Aug 24 18:30:05 2015</timestamp>
+  <timestamp>Tue Aug 25 10:50:01 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -50,7 +50,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -65,7 +65,7 @@
 <back_roi2_to>0</back_roi2_to>
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>40762.0</from_tof_range>
-<to_tof_range>53149.0</to_tof_range>
+<to_tof_range>53473.0</to_tof_range>
 <data_sets>129149</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
@@ -96,7 +96,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -110,8 +110,8 @@
 <back_roi2_from>0</back_roi2_from>
 <back_roi2_to>0</back_roi2_to>
 <tof_range_flag>True</tof_range_flag>
-<from_tof_range>29724.0</from_tof_range>
-<to_tof_range>42030.0</to_tof_range>
+<from_tof_range>29567.0</from_tof_range>
+<to_tof_range>42468.0</to_tof_range>
 <data_sets>129150</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
@@ -142,7 +142,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -188,7 +188,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -234,7 +234,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -280,7 +280,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -326,7 +326,7 @@
 <incident_medium_list>Si,air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 </DataSeries>
