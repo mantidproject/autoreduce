@@ -122,6 +122,6 @@ if __name__ == "__main__":
         plt.title('')
         plt.xlabel(short_name)
         plt.ylabel('')
-        plt.xlim(xmin=xmax, xmax=xmax)
+        plt.xlim(xmin=x_min, xmax=x_max)
         plt.savefig(str(image_path))
     
