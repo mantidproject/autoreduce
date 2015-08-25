@@ -82,8 +82,12 @@ if __name__ == "__main__":
 
                     x_data = mtd["USANS_scan_detector"].readX(0)
                     y_data = mtd["USANS_scan_detector"].readY(0)
-                    print x
-                    print y
+                    x = []
+                    y = []
+                    for item in x_data:
+                        x.append(float(item))
+                    for item in y_data:
+                        y.append(float(item))
                     if x_min is None or x_min>min(x):
                         x_min = min(x)
                     if x_max is None or x_max<max(x):
