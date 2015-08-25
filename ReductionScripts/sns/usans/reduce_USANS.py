@@ -80,6 +80,9 @@ if __name__ == "__main__":
 
                     x = mtd["USANS_scan_detector"].dataX(0)
                     y = mtd["USANS_scan_detector"].dataY(0)
+                    print x
+                    print y
+                    
                     plot_data.append([x,y])
                     twoD = False
                     
