@@ -80,8 +80,8 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
-                    x = mtd["USANS_scan_detector"].dataX(0)
-                    y = mtd["USANS_scan_detector"].dataY(0)
+                    x_data = mtd["USANS_scan_detector"].readX(0)
+                    y_data = mtd["USANS_scan_detector"].readY(0)
                     print x
                     print y
                     if x_min is None or x_min>min(x):
