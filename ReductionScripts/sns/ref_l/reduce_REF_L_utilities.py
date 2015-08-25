@@ -5,11 +5,13 @@
 import os
 import sys
 import json
-sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/Mantid/bin')
+#sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
 
-sys.path.append("/opt/mantidnightly/scripts/")
+sys.path.append("/opt/Mantid/scripts/")
+#sys.path.append("/opt/mantidnightly/scripts/")
 from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
 def create_ascii_file(first_run_of_set, scaled_ws_list, output_dir):
