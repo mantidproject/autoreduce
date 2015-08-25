@@ -59,6 +59,10 @@ if __name__ == "__main__":
         SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
 
     # Find whether we have a motor turning
+    plt.cla()
+    twoD = True
+    short_name = ''
+    plot_data = []
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
@@ -74,12 +78,22 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
+                    x = mtd["USANS_scan_detector"].readX(0)
+                    y = mtd["USANS_scan_detector"].readY(0)
+                    plot_data.append([x,y])
+                    twoD = False
+                    
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
                     file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
+                    
+
+
+    image_file = "%s_autoreduced.png" % file_prefix
+    image_path = os.path.join(outdir, image_file)
     if twoD==True:
         wi=Integration(w)
         data=wi.extractY().reshape(16,128)
@@ -91,25 +105,14 @@ if __name__ == "__main__":
         xlim([0,16])
         xlabel('Tube')
         ylabel('Pixel')
-    
-
-        image_file = "%s_autoreduced.png" % file_prefix
-        image_path = os.path.join(outdir, image_file)
         savefig(str(image_path),bbox_inches='tight')
     else:
         plt.cla()
-        if len(plot_data)==2:
-            plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
-            plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
-        else:
-            plt.plot(plot_data[0][1], plot_data[0][2], '-')
-            plt.legend(["Standard (absolute=%s)" % is_absolute])
-        plt.title(y_label)
-        plt.xlabel('Q')
-        plt.ylabel('Reflectivity')
+        plt.plot(plot_data[0][0], plot_data[0][1], '-', plot_data[1][0], plot_data[1][1])
+        plt.legend(["Peak 0", "Peak 1"])
+        plt.title('')
+        plt.xlabel(short_name)
+        plt.ylabel('')
         plt.yscale('log')
-        plt.xscale('log')
-        plt.xlim(xmin=qmin, xmax=qmax)
-        plt.ylim(ymax=2.0)
-        plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
+        plt.savefig(str(image_path))
     
