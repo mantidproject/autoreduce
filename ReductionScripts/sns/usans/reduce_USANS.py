@@ -116,6 +116,5 @@ if __name__ == "__main__":
         plt.title('')
         plt.xlabel(short_name)
         plt.ylabel('')
-        plt.yscale('log')
         plt.savefig(str(image_path))
     
