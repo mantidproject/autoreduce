@@ -132,11 +132,11 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80033.nxs.h5"
-    ProcessedVanadium="van80033d.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80013.nxs.h5"
+    ProcessedVanadium="van80013b.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
-    MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+    #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
     #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
@@ -148,8 +148,6 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-8,121-128'})
     MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
     MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
-    MaskBTPParameters.append({'Tube': '1-8', 'Pixel': '1-55', 'Bank': '54-60'})
-    MaskBTPParameters.append({'Tube': '1-8', 'Pixel': '1-55', 'Bank': '61-74'})
 
 
  # only for the runs in IPTS-11831
@@ -203,7 +201,7 @@ if __name__ == "__main__":
         DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_1x1_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
