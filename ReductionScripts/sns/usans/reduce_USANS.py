@@ -6,6 +6,7 @@ from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
 from numpy import *
 numpy.seterr(all='ignore')
 
@@ -79,18 +80,36 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
-    wi=Integration(w)
-    data=wi.extractY().reshape(16,128)
-    data2=data[[4,0,5,1,6,2,7,3, 12,8,13,9,14,10,15,11]]
-    X,Y=meshgrid(arange(17), arange(129))
-    Z=ma.masked_where(data2<.1,data2)
-    pcolormesh(X,Y,log(Z.transpose()))
-    ylim([0,128])
-    xlim([0,16])
-    xlabel('Tube')
-    ylabel('Pixel')
+    if twoD==True:
+        wi=Integration(w)
+        data=wi.extractY().reshape(16,128)
+        data2=data[[4,0,5,1,6,2,7,3, 12,8,13,9,14,10,15,11]]
+        X,Y=meshgrid(arange(17), arange(129))
+        Z=ma.masked_where(data2<.1,data2)
+        pcolormesh(X,Y,log(Z.transpose()))
+        ylim([0,128])
+        xlim([0,16])
+        xlabel('Tube')
+        ylabel('Pixel')
     
 
-    image_file = "%s_autoreduced.png" % file_prefix
-    image_path = os.path.join(outdir, image_file)
-    savefig(str(image_path),bbox_inches='tight')
+        image_file = "%s_autoreduced.png" % file_prefix
+        image_path = os.path.join(outdir, image_file)
+        savefig(str(image_path),bbox_inches='tight')
+    else:
+        plt.cla()
+        if len(plot_data)==2:
+            plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
+            plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
+        else:
+            plt.plot(plot_data[0][1], plot_data[0][2], '-')
+            plt.legend(["Standard (absolute=%s)" % is_absolute])
+        plt.title(y_label)
+        plt.xlabel('Q')
+        plt.ylabel('Reflectivity')
+        plt.yscale('log')
+        plt.xscale('log')
+        plt.xlim(xmin=qmin, xmax=qmax)
+        plt.ylim(ymax=2.0)
+        plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
+    
