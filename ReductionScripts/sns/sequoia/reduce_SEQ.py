@@ -136,7 +136,7 @@ if __name__ == "__main__":
     ProcessedVanadium="van80013b.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
-    #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+    MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
     #short packs around beam stop, and uninstalled packs at far left
     #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
