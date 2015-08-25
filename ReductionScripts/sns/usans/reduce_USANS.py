@@ -108,7 +108,7 @@ if __name__ == "__main__":
         savefig(str(image_path),bbox_inches='tight')
     else:
         plt.cla()
-        plt.plot(plot_data[0][0], plot_data[0][1], '-', plot_data[1][0], plot_data[1][1])
+        plt.plot(plot_data[0][0], plot_data[0][1], '-', plot_data[1][0], plot_data[1][1], '-', plot_data[2][0], plot_data[2][1])
         plt.legend(["Peak 0", "Peak 1"])
         plt.title('')
         plt.xlabel(short_name)
