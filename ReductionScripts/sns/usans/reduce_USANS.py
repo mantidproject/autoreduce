@@ -63,6 +63,8 @@ if __name__ == "__main__":
     twoD = True
     short_name = ''
     plot_data = []
+    x_min = None
+    x_max = None
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
@@ -82,6 +84,10 @@ if __name__ == "__main__":
                     y = mtd["USANS_scan_detector"].dataY(0)
                     print x
                     print y
+                    if x_min is None or x_min>min(x):
+                        x_min = min(x)
+                    if x_max is None or x_max<max(x):
+                        x_max = max(x)
                     
                     plot_data.append([x,y])
                     twoD = False
@@ -116,5 +122,6 @@ if __name__ == "__main__":
         plt.title('')
         plt.xlabel(short_name)
         plt.ylabel('')
+        plt.xlim(xmin=xmax, xmax=xmax)
         plt.savefig(str(image_path))
     
