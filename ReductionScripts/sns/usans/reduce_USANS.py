@@ -63,6 +63,7 @@ if __name__ == "__main__":
     twoD = True
     short_name = ''
     plot_data = []
+    plot_trans = []
     x_min = None
     x_max = None
     for item in mtd['USANS'].getRun().getProperties():
@@ -102,7 +103,21 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
+                    x_data = mtd["USANS_scan_trans"].readX(0)
+                    y_data = mtd["USANS_scan_trans"].readY(0)
+                    x = []
+                    y = []
+                    for item in x_data:
+                        x.append(float(item))
+                    for item in y_data:
+                        y.append(float(item))
+                    if x_min is None or x_min>min(x):
+                        x_min = min(x)
+                    if x_max is None or x_max<max(x):
+                        x_max = max(x)
                     
+                    plot_trans.append([x,y])
+                   
 
 
     image_file = "%s_autoreduced.png" % file_prefix
@@ -121,7 +136,7 @@ if __name__ == "__main__":
         savefig(str(image_path),bbox_inches='tight')
     else:
         plt.cla()
-        plt.plot(plot_data[0][0], plot_data[0][1], '-', plot_data[1][0], plot_data[1][1])
+        plt.plot(plot_data[0][0], plot_data[0][1], '-', plot_data[1][0], plot_data[1][1], '-', plot_trans[0][0], plot_trans[0][1], '-', plot_trans[1][0], plot_trans[1][1])
         plt.legend(["Peak 0", "Peak 1"])
         plt.title('')
         plt.xlabel(short_name)
