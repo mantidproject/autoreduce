@@ -32,6 +32,7 @@ if __name__ == "__main__":
     except:
         LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
         load_monitors = False
+    LoadNexusLogs(Workspace="USANS", Filename=filename, OverwriteLogs=True)
     w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
