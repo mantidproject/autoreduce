@@ -78,8 +78,8 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
-                    x = mtd["USANS_scan_detector"].readX(0)
-                    y = mtd["USANS_scan_detector"].readY(0)
+                    x = mtd["USANS_scan_detector"].dataX(0)
+                    y = mtd["USANS_scan_detector"].dataY(0)
                     plot_data.append([x,y])
                     twoD = False
                     
