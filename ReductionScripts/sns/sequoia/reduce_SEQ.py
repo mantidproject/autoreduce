@@ -161,6 +161,8 @@ if __name__ == "__main__":
     
     for i,name in enumerate(stitles.split(',')):
         name=name.strip()
+        if name in ['Title','Comment','StartTime','EndTime']:
+            soperations[i] = 'None'
         if name.find('min') == len(name)-3:
             soperations[i] = 'min'
         if name.find('max') == len(name)-3:
