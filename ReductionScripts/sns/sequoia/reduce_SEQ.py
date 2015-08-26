@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys,os,math
+import sys,os
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 from matplotlib import *
@@ -56,6 +56,7 @@ def preprocessData(filename):
 
     #delete all bad pulses below   10% of the average of the file.
     FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
+    AddSampleLogsMultiple("__IWS","CalculatedEi,CalculatedT0",str(Efixed)+','str(T0))
     return [Eguess,Efixed,T0]
   
     
@@ -138,7 +139,7 @@ if __name__ == "__main__":
     'Lakeshore2SensorB,Lakeshore2SensorB,Lakeshore2SensorB,'+\
     'Lakeshore2SensorC,Lakeshore2SensorC,Lakeshore2SensorC,'+\
     'Lakeshore2SensorD,Lakeshore2SensorD,Lakeshore2SensorD,'+\
-    'SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo'
+    'SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,CalculatedEi,CalculatedT0'
     
     stitles='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+\
     'vChTrans,Speed1min,Speed1max,Speed1avg,Phase1min,Phase1max,Phase1avg,Speed2min,Speed2max,Speed2avg,'+\
@@ -153,18 +154,19 @@ if __name__ == "__main__":
     'Lakeshore2SensorBmin,Lakeshore2SensorBmax,Lakeshore2SensorBavg,'+\
     'Lakeshore2SensorCmin,Lakeshore2SensorCmax,Lakeshore2SensorCavg,'+\
     'Lakeshore2SensorDmin,Lakeshore2SensorDmax,Lakeshore2SensorDavg,'+\
-    'SampleTemperatureOrangeCryomin,SampleTemperatureOrangeCryomax,SampleTemperatureOrangeCryoavg'
+    'SampleTemperatureOrangeCryomin,SampleTemperatureOrangeCryomax,SampleTemperatureOrangeCryoavg,CalculatedEi,CalculatedT0'
     
     
     soperations = '0,'*len(snames.split(','))
     soperations = soperations.rstrip(',')
     
     for i,name in enumerate(stitles.split(',')):
-        if name.find('min') != -1:
+        name=name.strip()
+        if name.find('min') == len(name)-3:
             soperations[i] = 'min'
-        if name.find('max') != -1:
+        if name.find('max') == len(name)-3:
             soperations[i] = 'max'
-        if name.find('avg') != -1:
+        if name.find('avg') == len(name)-3:
             soperations[i] = 'average'
                            
     
@@ -177,24 +179,10 @@ if __name__ == "__main__":
                         FileFormat = "comma",
                         TimeZone = "America/New_York")
 
-
-
-    elog=ExperimentLog()
-    elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
-    elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
-    elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot, phi')
-    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340 ')
-    elog.setFilename(outdir+'experiment_log.csv')
-    
-    
-    
-    
-    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
-    #angle= 99.99 #This is where you can manually set the rotation angle
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
-    if not math.isnan(Ei):
+    if not numpy.isnan(Ei):
         DGSdict['SampleInputWorkspace']='__IWS'
         DGSdict['SampleInputMonitorWorkspace']='__MonWS'
         DGSdict['IncidentEnergyGuess']=Ei
@@ -221,17 +209,18 @@ if __name__ == "__main__":
               datay = mtd['__VAN'].extractY()
               meanval = float(datay[datay>0].mean())
               CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
-              Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
-              Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+              #Divide the vanadium by the mean
+              Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') 
+              #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+              Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') 
               SaveNexus(InputWorkspace="__VAN", Filename= filename)        
         
-        
-        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
         RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
         NormaliseByCurrent(InputWorkspace="__OWS",OutputWorkspace="__OWS")
-        ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
-#generate summed spectra_plot
+        #Divide by bin width
+        ConvertToDistribution(Workspace="__OWS") 
+        #generate summed spectra_plot		                                                                
 #---------------------------------------          
         s=SumSpectra("__OWS")
         x=s.readX(0)
@@ -243,11 +232,13 @@ if __name__ == "__main__":
         show()
         savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
         
-        if NXSPE_flag:            
+        if NXSPE_flag:    
+            angle="__OWS".run()['phi'].getStatistics().mean      
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
             GenerateGroupingPowder(InputWorkspace="__OWS",AngleStep=0.5, GroupingFilename=outdir+'powdergroupfile.xml')
             GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
-            SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par') 
+            SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",
+                      Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par') 
         if clean:
             WS_clean()
     else:
