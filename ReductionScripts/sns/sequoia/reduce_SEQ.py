@@ -121,6 +121,7 @@ if __name__ == "__main__":
     [EGuess,Ei,T0]=preprocessData(filename)
 
 
+"""
 
     if os.path.isfile(outdir+'experiment_log.csv'):
         fm='fastappend'
@@ -179,7 +180,15 @@ if __name__ == "__main__":
                         SampleLogOperation = ','.join(soperations),
                         FileFormat = "comma (csv)",
                         TimeZone = "America/New_York")
-
+"""
+    elog=ExperimentLog()
+    elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
+    elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
+    elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot')
+    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340 ')
+    elog.setFilename(outdir+'experiment_log.csv')
+    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)
+    
     outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'
