@@ -126,10 +126,53 @@ if __name__ == "__main__":
     else:
         fm='new'
         
-    snames='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+
-    'vChTrans,Speed1,Speed1,Speed1,Phase1,Phase1,Phase1,Speed2,Speed2,Speed2,'+
-    'Phase2,Phase2,Phase2,Speed3,Speed3,Speed3,Phase3,Phase3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,'+
-    'vAttenuator2,vAttenuator1,svpressure,svpressure,svpressure,dvpressure,dvpressure,dvpressure'
+    snames='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+\
+    'vChTrans,Speed1,Speed1,Speed1,Phase1,Phase1,Phase1,Speed2,Speed2,Speed2,'+\
+    'Phase2,Phase2,Phase2,Speed3,Speed3,Speed3,Phase3,Phase3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,'+\
+    'vAttenuator2,vAttenuator1,svpressure,svpressure,svpressure,dvpressure,dvpressure,dvpressure'+\
+    'phi,phi,phi,Lakeshore1SensorA,Lakeshore1SensorA,Lakeshore1SensorA,'+\
+    'Lakeshore1SensorB,Lakeshore1SensorB,Lakeshore1SensorB,'+\
+    'Lakeshore1SensorC,Lakeshore1SensorC,Lakeshore1SensorC,'+\
+    'Lakeshore1SensorD,Lakeshore1SensorD,Lakeshore1SensorD,'+\
+    'Lakeshore2SensorA,Lakeshore2SensorA,Lakeshore2SensorA,'+\
+    'Lakeshore2SensorB,Lakeshore2SensorB,Lakeshore2SensorB,'+\
+    'Lakeshore2SensorC,Lakeshore2SensorC,Lakeshore2SensorC,'+\
+    'Lakeshore2SensorD,Lakeshore2SensorD,Lakeshore2SensorD,'+\
+    'SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo'
+    
+    stitles='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+\
+    'vChTrans,Speed1min,Speed1max,Speed1avg,Phase1min,Phase1max,Phase1avg,Speed2min,Speed2max,Speed2avg,'+\
+    'Phase2min,Phase2max,Phase2avg,Speed3min,Speed3max,Speed3avg,Phase3min,Phase3max,Phase3avg,'+\
+    'EnergyRequest,s1t,s1r,s1l,s1b,'+\
+    'vAttenuator2,vAttenuator1,svpressuremin,svpressuremax,svpressureavg,dvpressuremin,dvpressuremax,dvpressureavg'+\
+    'phimin,phimax,phiavg,Lakeshore1SensorAmin,Lakeshore1SensorAmax,Lakeshore1SensorAavg,'+\
+    'Lakeshore1SensorBmin,Lakeshore1SensorBmax,Lakeshore1SensorBavg,'+\
+    'Lakeshore1SensorCmin,Lakeshore1SensorCmax,Lakeshore1SensorCavg,'+\
+    'Lakeshore1SensorDmin,Lakeshore1SensorDmax,Lakeshore1SensorDavg,'+\
+    'Lakeshore2SensorAmin,Lakeshore2SensorAmax,Lakeshore2SensorAavg,'+\
+    'Lakeshore2SensorBmin,Lakeshore2SensorBmax,Lakeshore2SensorBavg,'+\
+    'Lakeshore2SensorCmin,Lakeshore2SensorCmax,Lakeshore2SensorCavg,'+\
+    'Lakeshore2SensorDmin,Lakeshore2SensorDmax,Lakeshore2SensorDavg,'+\
+    'SampleTemperatureOrangeCryomin,SampleTemperatureOrangeCryomax,SampleTemperatureOrangeCryoavg'
+    
+    
+    soperations = '0,'*len(snames.split(','))
+    soperations = soperations.rstrip(',')
+    
+    'RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+\
+    'vChTrans,Speed1,Speed1,Speed1,Phase1,Phase1,Phase1,Speed2,Speed2,Speed2,'+\
+    'Phase2,Phase2,Phase2,Speed3,Speed3,Speed3,Phase3,Phase3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,'+\
+    'vAttenuator2,vAttenuator1,svpressure,svpressure,svpressure,dvpressure,dvpressure,dvpressure'+\
+    'phi,phi,phi,Lakeshore1SensorA,Lakeshore1SensorA,Lakeshore1SensorA,'+\
+    'Lakeshore1SensorB,Lakeshore1SensorB,Lakeshore1SensorB,'+\
+    'Lakeshore1SensorC,Lakeshore1SensorC,Lakeshore1SensorC,'+\
+    'Lakeshore1SensorD,Lakeshore1SensorD,Lakeshore1SensorD,'+\
+    'Lakeshore2SensorA,Lakeshore2SensorA,Lakeshore2SensorA,'+\
+    'Lakeshore2SensorB,Lakeshore2SensorB,Lakeshore2SensorB,'+\
+    'Lakeshore2SensorC,Lakeshore2SensorC,Lakeshore2SensorC,'+\
+    'Lakeshore2SensorD,Lakeshore2SensorD,Lakeshore2SensorD,'+\
+    'SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo'
+    
     
     ExportExperimentLog(InputWorkspace = '__IWS',
                         OutputFilename = outdir+'experiment_log.csv',
