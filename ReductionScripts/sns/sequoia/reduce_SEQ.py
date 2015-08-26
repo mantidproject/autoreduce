@@ -242,7 +242,7 @@ if __name__ == "__main__":
         savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
         
         if NXSPE_flag:    
-            angle="__OWS".run()['phi'].getStatistics().mean      
+            angle=mtd["__OWS"].run()['phi'].getStatistics().mean      
             SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
             GenerateGroupingPowder(InputWorkspace="__OWS",AngleStep=0.5, GroupingFilename=outdir+'powdergroupfile.xml')
             GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
