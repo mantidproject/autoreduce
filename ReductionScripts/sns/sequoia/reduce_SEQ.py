@@ -74,23 +74,21 @@ if __name__ == "__main__":
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
-    #short packs around beam stop, and uninstalled packs at far left
-    #MaskBTPParameters.append({'Bank':"99-102,114,115,75,76,38,39"})
  
-    
+    #uninstalled packs at far left
+    #MaskBTPParameters.append({'Bank':"114,115,75,76,38,39"})
+ 
+    #examples of how to mask, but these should be done with the web interface.
     #MaskBTPParameters.append({'Bank':"62,92"})
     #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
     #MaskBTPParameters.append({'Bank':"108",'Tube':"4"})
     #MaskBTPParameters.append({'Bank':"141"})
     #MaskBTPParameters.append({'Bank':"70"})
-    
-    MaskBTPParameters.append({'Pixel': '1-8,121-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
-    MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
 
+    #MaskBTPParameters.append({'Pixel': '1-8,121-128'})
+    #MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
+    #MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
 
- # only for the runs in IPTS-11831
- #   MaskBTPParameters.append({'Bank':"61-74,98-113,137-150"})
     
     clean=True
     NXSPE_flag=True
@@ -110,12 +108,6 @@ if __name__ == "__main__":
         if filename.endswith('.nxs'):
             outdir+='LEGACY/'
 
-    elog=ExperimentLog()
-    elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
-    elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
-    elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot, phi')
-    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340 ')
-    elog.setFilename(outdir+'experiment_log.csv')
 
     processed_van_file = ProcessedVanadium
     if not os.path.isabs(processed_van_file):
@@ -126,6 +118,37 @@ if __name__ == "__main__":
     #Preprocess data to get Ei and T0
     #--------------------------------------
     [EGuess,Ei,T0]=preprocessData(filename)
+
+
+
+    if os.isfile(outdir+'experiment_log.csv'):
+        fm='fastappend'
+    else:
+        fm='new'
+        
+    snames=
+    
+    ExportExperimentLog(InputWorkspace = '__IWS',
+                        OutputFilename = outdir+'experiment_log.csv',
+                        FileMode = fm,
+                        SampleLogNames = snames,
+                        SampleLogTitles = stitles,
+                        SampleLogOperation = soperations,
+                        FileFormat = "comma",
+                        TimeZone = "America/New_York")
+
+
+
+    elog=ExperimentLog()
+    elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
+    elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
+    elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot, phi')
+    elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorA340 ')
+    elog.setFilename(outdir+'experiment_log.csv')
+    
+    
+    
+    
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)    #If angles not saved to file, put them by hand here and re-run reduction one by one.
     #angle= 99.99 #This is where you can manually set the rotation angle
     outpre='SEQ'
