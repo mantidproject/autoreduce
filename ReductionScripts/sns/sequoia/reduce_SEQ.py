@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 import sys,os,math
 sys.path.append("/opt/Mantid/bin")
-#sys.path.insert(0,"/SNS/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg")
-from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
 from matplotlib import *
-
 use("agg")
 from matplotlib.pyplot import *
 # Logs at: /var/log/SNS_applications/autoreduce.log
@@ -17,7 +14,8 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'UseProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN'}
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
-        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) # adjust time for pack B15 wired strangely
+        # adjust time for pack B15 wired strangely
+        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) 
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
@@ -33,73 +31,22 @@ def preprocessData(filename):
     #    LoadNexusLogs(__MonWS,"/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
     #
     
-    
+    #Example of filtering by a logvalue
     #FilterByLogValue("__MonWS",OutputWorkspace="__MonWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
+
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
-    ###########################
-    #Temporary workaround for IPTS-9145  GEG
-    #if Eguess<5:
-    #  Eguess=120.
-    ###################  
-    
-    #if (runnum >= 46951 and runnum <= 46994):
-#	
-#        Efixed = 119.37
-#        T0 = 25.84
-#
-#        LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-#        #Fix that all time series log values start at the same time as the proton_charge
-#        CorrectLogTimes('__IWS')
-#
-#        #Filter chopper 3 bad events
-#        valC3=__MonWS.getRun()['Phase3'].getStatistics().median
-#
-#        MaskBTP(workspace='__IWS', Bank='38-57,75-94')
-#
-#        return [Eguess,Efixed,T0]
-   
-    try:   
-             sp1=-1
-             sp2=-1
-             nsp=__MonWS.getNumberHistograms()                
-             if nsp < 2:
-                 raise ValueError("There are less than 2 monitors")
-             for sp in range(nsp):
-                 if __MonWS.getSpectrum(sp).getDetectorIDs()[0]==-1:
-                     sp1=sp
-                 if __MonWS.getSpectrum(sp).getDetectorIDs()[0]==-2:
-                     sp2=sp
-             if sp1==-1:
-                 raise RuntimeError("Could not find spectrum for the first monitor")
-             if sp2==-1:
-                 raise RuntimeError("Could not find spectrum for the second monitor")       
-             so=__MonWS.getInstrument().getSource().getPos()
-             m1=__MonWS.getDetector(sp1).getPos()
-             m2=__MonWS.getDetector(sp2).getPos()
-             v=437.4*numpy.sqrt(__MonWS.getRun()['EnergyRequest'].getStatistics().mean)
-             t1=m1.distance(so)*1e6/v
-             t2=m2.distance(so)*1e6/v
-             t1f=int(t1*60e-6) #frame number for monitor 1
-             t2f=int(t2*60e-6) #frame number for monitor 2
-             wtemp=ChangeBinOffset(__MonWS,t1f*16667,sp1,sp1)
-             wtemp=ChangeBinOffset(wtemp,t2f*16667,sp2,sp2)
-             wtemp=Rebin(InputWorkspace=wtemp,Params="1",PreserveEvents=True)
-             
-             #check whether the fermi chopper is in the beam
-             fermi=__MonWS.run().getProperty('vChTrans').value[0]
+    #check whether the fermi chopper is in the beam
+    fermi=__MonWS.run().getProperty('vChTrans').value[0]
 
-             if fermi == 2 :
-                 Efixed = nan
-                 T0 = nan
-                 DeleteWorkspace(wtemp)
+    if fermi == 2 :
+        Efixed = nan
+        T0 = nan
+        
+    else:
+        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
-             if fermi != 2:
-                 alg=GetEi(InputWorkspace=wtemp,Monitor1Spec=sp1+1,Monitor2Spec=sp2+1,EnergyEstimate=Eguess)   #Run GetEi algorithm
-                 Efixed=alg[0]
-                 T0=alg[3]                                        #Extract incident energy and T0
-                 DeleteWorkspace(wtemp)
-    except e:    
-            [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+
+ 
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
