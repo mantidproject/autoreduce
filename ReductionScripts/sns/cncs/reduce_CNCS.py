@@ -108,7 +108,7 @@ DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
 #DGSdict['TimeIndepBackgroundSub']=False
 DGSdict['IncidentEnergyGuess']=EGuess
-DGSdict['TimeZeroGuess']=t0
+DGSdict['TimeZeroGuess']=-t0
 DGSdict['UseIncidentEnergyGuess']=True
 
 DgsReduction(**DGSdict)
