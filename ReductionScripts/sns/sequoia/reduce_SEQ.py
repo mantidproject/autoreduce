@@ -157,8 +157,7 @@ if __name__ == "__main__":
     'SampleTemperatureOrangeCryomin,SampleTemperatureOrangeCryomax,SampleTemperatureOrangeCryoavg,CalculatedEi,CalculatedT0'
     
     
-    soperations = '0,'*len(snames.split(','))
-    soperations = soperations.rstrip(',')
+    soperations = ['0']*len(snames.split(','))
     
     for i,name in enumerate(stitles.split(',')):
         name=name.strip()
@@ -175,7 +174,7 @@ if __name__ == "__main__":
                         FileMode = fm,
                         SampleLogNames = snames,
                         SampleLogTitles = stitles,
-                        SampleLogOperation = soperations,
+                        SampleLogOperation = ','.join(soperations),
                         FileFormat = "comma",
                         TimeZone = "America/New_York")
 
