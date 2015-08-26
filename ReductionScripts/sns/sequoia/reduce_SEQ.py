@@ -175,7 +175,7 @@ if __name__ == "__main__":
                         SampleLogNames = snames,
                         SampleLogTitles = stitles,
                         SampleLogOperation = ','.join(soperations),
-                        FileFormat = "comma",
+                        FileFormat = "comma (csv)",
                         TimeZone = "America/New_York")
 
     outpre='SEQ'
