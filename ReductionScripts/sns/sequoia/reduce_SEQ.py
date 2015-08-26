@@ -39,14 +39,11 @@ def preprocessData(filename):
     fermi=__MonWS.run().getProperty('vChTrans').value[0]
 
     if fermi == 2 :
-        Efixed = nan
-        T0 = nan
+        Efixed = numpy.nan
+        T0 = numpy.nan
         
     else:
         [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-
-
- 
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
