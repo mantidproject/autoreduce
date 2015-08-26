@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
 
 
-    if os.isfile(outdir+'experiment_log.csv'):
+    if os.path.isfile(outdir+'experiment_log.csv'):
         fm='fastappend'
     else:
         fm='new'
