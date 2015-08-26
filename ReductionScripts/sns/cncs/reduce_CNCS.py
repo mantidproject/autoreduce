@@ -16,6 +16,37 @@ from matplotlib.pyplot import *
  
 #os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
+import numpy as np
+def GetT0FromDet(ws):
+    minAngle=40.
+    maxAngle=90.
+    alpha=437.37 #v=alpha*sqrt(Ei)
+    __tempws=CloneWorkspace(ws)
+    MaskBTP(__tempws,Bank="35-50")
+    MaskBTP(__tempws,Pixel="1-8,121-128")
+    MaskAngle(__tempws,0,minAngle)
+    MaskAngle(__tempws,maxAngle,180)
+    __sumws=SumSpectra(__tempws)
+    __sumws=Rebin(__sumws,10,PreserveEvents="1")
+    detIDs=__sumws.getSpectrum(0).getDetectorIDs()
+    inst=__sumws.getInstrument()
+    sample=inst.getSample()
+    distances=[inst.getDetector(i).getDistance(sample) for i in detIDs]
+    d=np.array(distances).mean()+sample.getDistance(inst.getSource())
+    tofs=0.5*(__sumws.readX(0)[:-1]+__sumws.readX(0)[1:])
+    ints=__sumws.readY(0)
+    #restrict the range to use only elastic line
+    length=len(tofs)
+    tofs=tofs[int(length*.45):int(length*.55)]
+    ints=ints[int(length*.45):int(length*.55)]
+    #print tofs
+    TOF=tofs[ints.argmax()]
+    #TOF=(tofs*ints*ints).sum()/(ints*ints).sum()
+    Ei=__sumws.run()['EnergyRequest'].timeAverageValue()
+    T0=TOF-1e6*d/alpha/np.sqrt(Ei)
+    DeleteWorkspace(__sumws)
+    DeleteWorkspace(__tempws)
+    return T0
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
@@ -58,6 +89,8 @@ tib=SuggestTibCNCS(EGuess)
 #if (abs(EGuess-12)<0.1):
 #    tib=[20500.0,21500.0]
 #tib=[24000,29000]
+
+t0=GetT0FromDet(w)
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
