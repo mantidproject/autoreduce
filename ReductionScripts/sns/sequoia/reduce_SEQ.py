@@ -126,7 +126,10 @@ if __name__ == "__main__":
     else:
         fm='new'
         
-    snames='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge
+    snames='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+
+    'vChTrans,Speed1,Speed1,Speed1,Phase1,Phase1,Phase1,Speed2,Speed2,Speed2,'+
+    'Phase2,Phase2,Phase2,Speed3,Speed3,Speed3,Phase3,Phase3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,'+
+    'vAttenuator2,vAttenuator1,svpressure,svpressure,svpressure,dvpressure,dvpressure,dvpressure'
     
     ExportExperimentLog(InputWorkspace = '__IWS',
                         OutputFilename = outdir+'experiment_log.csv',
