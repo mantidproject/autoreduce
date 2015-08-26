@@ -159,20 +159,14 @@ if __name__ == "__main__":
     soperations = '0,'*len(snames.split(','))
     soperations = soperations.rstrip(',')
     
-    'RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,'+\
-    'vChTrans,Speed1,Speed1,Speed1,Phase1,Phase1,Phase1,Speed2,Speed2,Speed2,'+\
-    'Phase2,Phase2,Phase2,Speed3,Speed3,Speed3,Phase3,Phase3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,'+\
-    'vAttenuator2,vAttenuator1,svpressure,svpressure,svpressure,dvpressure,dvpressure,dvpressure'+\
-    'phi,phi,phi,Lakeshore1SensorA,Lakeshore1SensorA,Lakeshore1SensorA,'+\
-    'Lakeshore1SensorB,Lakeshore1SensorB,Lakeshore1SensorB,'+\
-    'Lakeshore1SensorC,Lakeshore1SensorC,Lakeshore1SensorC,'+\
-    'Lakeshore1SensorD,Lakeshore1SensorD,Lakeshore1SensorD,'+\
-    'Lakeshore2SensorA,Lakeshore2SensorA,Lakeshore2SensorA,'+\
-    'Lakeshore2SensorB,Lakeshore2SensorB,Lakeshore2SensorB,'+\
-    'Lakeshore2SensorC,Lakeshore2SensorC,Lakeshore2SensorC,'+\
-    'Lakeshore2SensorD,Lakeshore2SensorD,Lakeshore2SensorD,'+\
-    'SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo,SampleTemperatureOrangeCryo'
-    
+    for i,name in enumerate(stitles.split(',')):
+        if name.find('min') != -1:
+            soperations[i] = 'min'
+        if name.find('max') != -1:
+            soperations[i] = 'max'
+        if name.find('avg') != -1:
+            soperations[i] = 'average'
+                           
     
     ExportExperimentLog(InputWorkspace = '__IWS',
                         OutputFilename = outdir+'experiment_log.csv',
