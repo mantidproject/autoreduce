@@ -45,24 +45,17 @@ def preprocessData(filename):
     else:
         [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
-    #if Efixed!='N/A':
-    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) #Load an event Nexus file
-    #if (runnum >= 55959 and runnum <= 55960):
-    #    LoadNexusLogs("__IWS","/SNS/SEQ/IPTS-10531/nexus/SEQ_55954.nxs.h5")
+    #Load an event Nexus file
+    LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) 
+
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
-    #adjust data times for addl frames
-#    td=25.5*1e6/v
-#    if (td > 16666.7):
-#        tdf=int(td*60e-6)
-#        ChangeBinOffset(InputWorkspace='__IWS', OutputWorkspace='__IWS', Offset=16667*tdf)
-
-    #FilterByLogValue("__IWS",OutputWorkspace="__IWS",LogName="CCR22Rot",MinimumValue=52.2,MaximumValue=52.4)
-    #Filter chopper 3 bad events
-    valC3=__MonWS.getRun()['Phase3'].getStatistics().median
+    
+    # adjust time for pack B15 wired strangely
     ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
-    #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
-    #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
+
+    #delete all bad pulses below   10% of the average of the file.
+    FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
     return [Eguess,Efixed,T0]
   
     
