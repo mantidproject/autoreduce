@@ -126,7 +126,7 @@ if __name__ == "__main__":
     else:
         fm='new'
         
-    snames=
+    snames='RunNumber,Title,Comment,StartTime,EndTime,Duration,ProtonCharge
     
     ExportExperimentLog(InputWorkspace = '__IWS',
                         OutputFilename = outdir+'experiment_log.csv',
