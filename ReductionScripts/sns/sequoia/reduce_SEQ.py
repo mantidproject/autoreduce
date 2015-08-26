@@ -7,6 +7,7 @@ use("agg")
 from matplotlib.pyplot import *
 # Logs at: /var/log/SNS_applications/autoreduce.log
 import numpy
+from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
@@ -119,9 +120,7 @@ if __name__ == "__main__":
     #Preprocess data to get Ei and T0
     #--------------------------------------
     [EGuess,Ei,T0]=preprocessData(filename)
-
-
-"""
+    """
 
     if os.path.isfile(outdir+'experiment_log.csv'):
         fm='fastappend'
@@ -180,7 +179,7 @@ if __name__ == "__main__":
                         SampleLogOperation = ','.join(soperations),
                         FileFormat = "comma (csv)",
                         TimeZone = "America/New_York")
-"""
+    """
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,vAttenuator2,vAttenuator1,svpressure,dvpressure')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, vAttenuator2, vAttenuator1")
