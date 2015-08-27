@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil 
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
@@ -33,7 +33,7 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    BackgroundNumber=sam_back, VanadiumNumber=van,
                    VanadiumBackgroundNumber=van_back, RemovePromptPulseWidth=50,
-                   ResampleX=-3000, BinInDspace=True, FilterBadPulses=True,
+                   ResampleX=-3000, BinInDspace=True, FilterBadPulses=25.,
                    SaveAs="gsas and fullprof and pdfgetn", OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
