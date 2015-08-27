@@ -82,9 +82,9 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Bank': '52'})
     MaskBTPParameters.append({'Bank': '99-102'})
  
-    
+    #uninstalled packs at far left
+    #MaskBTPParameters.append({'Bank':"114,115,75,76,38,39"})
  
-
     #examples of how to mask, but these should be done with the web interface.
     #MaskBTPParameters.append({'Bank':"62,92"})
     #MaskBTPParameters.append({'Bank':"98",'Tube':"6-8"})
@@ -205,7 +205,7 @@ if __name__ == "__main__":
         DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_1x1_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
