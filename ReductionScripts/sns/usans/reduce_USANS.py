@@ -143,6 +143,7 @@ if __name__ == "__main__":
         plt.xlabel(short_name)
         plt.ylabel('')
         plt.yscale('log')
-        plt.xlim(xmin=x_min, xmax=x_max)
+        if x_max > x_min:
+            plt.xlim(xmin=x_min, xmax=x_max)
         plt.savefig(str(image_path))
     
