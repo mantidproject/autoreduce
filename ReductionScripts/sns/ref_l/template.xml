@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Mon Aug 31 15:17:37 2015</timestamp>
+  <timestamp>Mon Aug 31 15:22:14 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -41,7 +41,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -50,7 +50,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -87,7 +87,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -96,7 +96,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -133,7 +133,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -142,7 +142,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -179,7 +179,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -188,7 +188,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -225,7 +225,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -234,7 +234,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -271,7 +271,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -280,7 +280,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -317,7 +317,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.016</angle_offset>
+<angle_offset>0.0016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_aug15_v3.cfg</scaling_factor_file>
@@ -326,7 +326,7 @@
 <incident_medium_list>air</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 </DataSeries>
