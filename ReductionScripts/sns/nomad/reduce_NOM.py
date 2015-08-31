@@ -8,9 +8,9 @@ import mantid
 cal_dir = "/SNS/NOM/IPTS-14341/shared"
 cal_file  = os.path.join(cal_dir, "NOM_calibrate_d49573_2015_08_31.cal")
 char_file = "/SNS/NOM/shared/NOM_characterizations.txt" #os.path.join(cal_dir, "NOM_characterizations.txt")
-sam_back =     49580
-van      =     49576
-van_back =     49578
+sam_back =     49577
+van      =     49575
+van_back =     49576
 
 #from mantidsimple import *
 
