@@ -131,7 +131,10 @@ class AutoReduction():
          AddSampleLog('out3','Ei',24.,'Number')
       # Save files
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
-      SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
+      SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1')
+ 
+      SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
+      SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
 
       minvals,maxvals=ConvertToMDMinMaxLocal('out1','|Q|','Direct')
       xmin=minvals[0]
@@ -162,8 +165,7 @@ class AutoReduction():
 
       savefig(processed_filename1+'.png',bbox_inches='tight')
       
-      SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
-      SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
+      
       
     except Exception, e:
       raise e
