@@ -186,6 +186,9 @@ if __name__ == "__main__":
                         TimeZone = "America/New_York")
     """
     elog=ExperimentLog()
+    #Anything in simpleloglist, must be in loglist
+    #simple log list is the average value
+    #loglist is the min, max, std. dev. and average
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t, s2r, s2l, s2b,  vAttenuator2,vAttenuator1,svpressure,dvpressure,Lakeshore1SensorA, Lakeshore1SensorB, Lakeshore2SensorB')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b, s2t, s2r, s2l, s2b, vAttenuator2, vAttenuator1, Lakeshore1SensorA, Lakeshore1SensorB, Lakeshore2SensorB")
     elog.setSERotOptions('CCR13VRot, SEOCRot, CCR16Rot, CCR22Rot,phi')
