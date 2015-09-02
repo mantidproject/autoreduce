@@ -105,8 +105,7 @@ except:
     first_run_of_set = int(runNumber)
 
 if sequence_number == -1:
-    logger.error("Could not identify sequence number. Make sure the run title ends with -n where 1 < n < 7")
-    sys.exit(0)
+    raise RuntimeError, "Could not identify sequence number. Make sure the run title ends with -n where 1 < n < 7"
     
 # Save selection plots
 selection_plots(meta_data, outputDir, runNumber)
