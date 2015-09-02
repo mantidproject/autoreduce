@@ -98,10 +98,10 @@ try:
             sequence_number = int(m.group(1))
             first_run_of_set = int(runNumber)-int(sequence_number)+1
         else:
-            sequence_number = 7
+            sequence_number = -1
             first_run_of_set = int(runNumber)
 except:
-    sequence_number = 7
+    sequence_number = -1
     first_run_of_set = int(runNumber)
 
 if sequence_number == -1:
