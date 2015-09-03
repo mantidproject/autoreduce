@@ -91,9 +91,8 @@ tib=SuggestTibCNCS(EGuess)
 #    tib=[20500.0,21500.0]
 #tib=[24000,29000]
 
-#t0=GetT0FromDet(w)
-t0=110  #Ei=3.0 meV
-EGuess=3.0
+t0=GetT0FromDet(w)
+#t0=110  #Ei=3.0 meV
 #t0=116  #Ei=2.5 meV
 
 
