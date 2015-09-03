@@ -93,6 +93,9 @@ tib=SuggestTibCNCS(EGuess)
 
 #t0=GetT0FromDet(w)
 t0=110  #Ei=3.0 meV
+#t0=116  #Ei=2.5 meV
+
+
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
