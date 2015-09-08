@@ -253,7 +253,8 @@ for item in result_list:
     #CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
     #                OutputWorkspace=item, UnitX="MomentumTransfer")
     #group_ws.append(item)       
-    plot_data.append([item, clean_x, clean_y, clean_e])
+    if len(clean_y)>0:
+        plot_data.append([item, clean_x, clean_y, clean_e])
 
     # Update json data file for interactive plotting
     if is_absolute and item == "output_auto":
