@@ -234,6 +234,9 @@ qmax = 0.2
 for item in result_list:
     if not AnalysisDataService.doesExist(item):
         continue
+    ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
+                         NaNValue=0.0, NaNError=0.0,
+                         InfinityValue=0.0, InfinityError=0.0)    
     x_data = mtd[item].dataX(0)
     y_data = mtd[item].dataY(0)
     e_data = mtd[item].dataE(0)
