@@ -288,6 +288,7 @@ if len(plot_data)>1:
     #    plt.yscale('log')
     #if max(plot_data[0][1])>0:
     #    plt.xscale('log')
+    logger.notice(str(plot_data[0]))
     plt.xlim(xmin=qmin, xmax=qmax)
     plt.ylim(ymax=2.0)
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
