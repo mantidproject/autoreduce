@@ -227,7 +227,7 @@ if AnalysisDataService.doesExist('reflectivity_auto'):
 result_list = ['output_auto']
 if compare:
     result_list.append('output_%s' % comparison_ending)
-group_ws = []
+#group_ws = []
 plot_data = []
 qmin = 0
 qmax = 0.2
@@ -247,9 +247,9 @@ for item in result_list:
             clean_y.append(y_data[i])
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
-    CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
-                    OutputWorkspace=item, UnitX="MomentumTransfer")
-    group_ws.append(item)       
+    #CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
+    #                OutputWorkspace=item, UnitX="MomentumTransfer")
+    #group_ws.append(item)       
     plot_data.append([item, clean_x, clean_y, clean_e])
 
     # Update json data file for interactive plotting
