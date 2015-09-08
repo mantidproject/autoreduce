@@ -286,7 +286,8 @@ if len(plot_data)>1:
     plt.ylabel('Reflectivity')
     if max(plot_data[0][2])>0:
         plt.yscale('log')
-    plt.xscale('log')
+    if max(plot_data[0][1])>0:
+        plt.xscale('log')
     plt.xlim(xmin=qmin, xmax=qmax)
     plt.ylim(ymax=2.0)
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
