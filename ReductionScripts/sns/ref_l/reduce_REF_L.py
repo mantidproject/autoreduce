@@ -284,7 +284,8 @@ if len(plot_data)>1:
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
-    plt.yscale('log')
+    if max(plot_data[0][2])>0:
+        plt.yscale('log')
     plt.xscale('log')
     plt.xlim(xmin=qmin, xmax=qmax)
     plt.ylim(ymax=2.0)
