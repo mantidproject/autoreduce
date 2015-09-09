@@ -18,7 +18,7 @@ from matplotlib.pyplot import *
 
 import numpy as np
 def GetT0FromDet(ws):
-    minAngle=10.
+    minAngle=30.
     maxAngle=60.
     alpha=437.37 #v=alpha*sqrt(Ei)
     __tempws=CloneWorkspace(ws)
