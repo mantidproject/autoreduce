@@ -18,34 +18,42 @@ from matplotlib.pyplot import *
 
 import numpy as np
 def GetT0FromDet(ws):
-    minAngle=40.
-    maxAngle=90.
+    minAngle=10.
+    maxAngle=60.
     alpha=437.37 #v=alpha*sqrt(Ei)
     __tempws=CloneWorkspace(ws)
     MaskBTP(__tempws,Bank="35-50")
     MaskBTP(__tempws,Pixel="1-8,121-128")
     MaskAngle(__tempws,0,minAngle)
     MaskAngle(__tempws,maxAngle,180)
-    __sumws=SumSpectra(__tempws)
-    __sumws=Rebin(__sumws,10,PreserveEvents="1")
-    detIDs=__sumws.getSpectrum(0).getDetectorIDs()
-    inst=__sumws.getInstrument()
+    inst=__tempws.getInstrument()
     sample=inst.getSample()
-    distances=[inst.getDetector(i).getDistance(sample) for i in detIDs]
-    d=np.array(distances).mean()+sample.getDistance(inst.getSource())
-    tofs=0.5*(__sumws.readX(0)[:-1]+__sumws.readX(0)[1:])
-    ints=__sumws.readY(0)
-    #restrict the range to use only elastic line
-    length=len(tofs)
-    tofs=tofs[int(length*.45):int(length*.55)]
-    ints=ints[int(length*.45):int(length*.55)]
-    #print tofs
-    TOF=tofs[ints.argmax()]
-    #TOF=(tofs*ints*ints).sum()/(ints*ints).sum()
-    Ei=__sumws.run()['EnergyRequest'].timeAverageValue()
-    T0=TOF-1e6*d/alpha/np.sqrt(Ei)
-    DeleteWorkspace(__sumws)
+    dss=sample.getDistance(inst.getSource())
+    Ei=__tempws.run()['EnergyRequest'].timeAverageValue()
+    v=alpha*np.sqrt(Ei)
+    for i in range(__tempws.getNumberHistograms()):
+        detID=__tempws.getSpectrum(i).getDetectorIDs()[0]
+        d=inst.getDetector(detID).getDistance(sample)+dss
+        offset=-1e6*d/v
+        el=__tempws.getEventList(i)
+        el.convertTof(1.,offset)
+    __binned=Rebin(__tempws,"-100,10,300",PreserveEvents=0)
+    __summed=SumSpectra(__binned)
+    y=__summed.readY(0)
+    x=__summed.readX(0)
+    bk=y[0]
+    height=y.max()
+    center=x[y.argmax()]
+    sigma=50.
+    Function='name=FlatBackground,A0={0};name=Gaussian,Height={1},PeakCentre={2},Sigma={3}'.format(bk,height,center,sigma)
+    res=Fit(Function=Function,InputWorkspace=__summed, Output='__fit')
+    DeleteWorkspace(__summed)
     DeleteWorkspace(__tempws)
+    DeleteWorkspace(__binned)
+    T0=res[3].cell(2,1)
+    DeleteWorkspace( '__fit_NormalisedCovarianceMatrix')
+    DeleteWorkspace('__fit_Parameters')
+    DeleteWorkspace('__fit_Workspace')
     return T0
 
 def preprocessVanadium(Raw,Processed,Parameters):
