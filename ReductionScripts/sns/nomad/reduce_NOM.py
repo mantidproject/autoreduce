@@ -16,7 +16,7 @@ van_back =     49890
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
-maxChunkSize=0.
+maxChunkSize=8.
 if len(sys.argv)>3:
     maxChunkSize=float(sys.argv[3])
 
