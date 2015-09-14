@@ -104,6 +104,12 @@ class AutoReduction():
       tofmax=tel+1e6/120+470
       CropWorkspace(InputWorkspace=autows,OutputWorkspace=autows,XMin=tofmin,XMax=tofmax)
       
+      # Rotate instrument for polarized operations.
+      psda=run['psda'].getStatistics().mean
+      psr=run['psr'].getStatistics().mean
+      offset=psda*(1.-psr/4200.)
+      RotateInstrumentComponent(Workspace=autows,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
+      
       # Overwrite the parameters - will cause TIB to be calculated as histogram, so the output from DgsReduction is histogram
       #LoadParameterFile(Workspace=autows, Filename='/SNS/HYS/shared/autoreduce/HYSPEC_TIBasHist_Parameters.xml')
  
