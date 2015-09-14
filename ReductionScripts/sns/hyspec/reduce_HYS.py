@@ -46,13 +46,13 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
       elog=ExperimentLog()
-      elog.setLogList('s2')
-      elog.setSimpleLogList('s2')
+      elog.setLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
+      elog.setSimpleLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
       elog.setSERotOptions('s1')
       #elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
