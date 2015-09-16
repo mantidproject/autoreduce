@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Sep 16 17:34:28 2015</timestamp>
+  <timestamp>Wed Sep 16 18:11:49 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -20,12 +20,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>50348.0</from_tof_range>
 <to_tof_range>62668.0</to_tof_range>
-<data_sets>129644</data_sets>
+<data_sets>130352</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
+<tthd_value>-5.20</tthd_value>
+<ths_value>-4.60</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>161</norm_x_max>
@@ -66,12 +66,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>40762.0</from_tof_range>
 <to_tof_range>53473.0</to_tof_range>
-<data_sets>129645</data_sets>
+<data_sets>130353</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
+<tthd_value>-5.20</tthd_value>
+<ths_value>-4.60</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>161</norm_x_max>
@@ -112,7 +112,7 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>29567.0</from_tof_range>
 <to_tof_range>42468.0</to_tof_range>
-<data_sets>129646</data_sets>
+<data_sets>130354</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -158,12 +158,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>18430.0</from_tof_range>
 <to_tof_range>31035.0</to_tof_range>
-<data_sets>129647</data_sets>
+<data_sets>130355</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
+<tthd_value>-5.20</tthd_value>
+<ths_value>-4.60</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>143</norm_x_max>
@@ -204,12 +204,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>9800.0</from_tof_range>
 <to_tof_range>22000.0</to_tof_range>
-<data_sets>129648</data_sets>
+<data_sets>130356</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>-2.62</tthd_value>
-<ths_value>-3.31</ths_value>
+<tthd_value>-5.38</tthd_value>
+<ths_value>-4.69</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>147</norm_x_max>
@@ -250,12 +250,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>9800.0</from_tof_range>
 <to_tof_range>22000.0</to_tof_range>
-<data_sets>129649</data_sets>
+<data_sets>130357</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>-1.26</tthd_value>
-<ths_value>-2.63</ths_value>
+<tthd_value>-6.74</tthd_value>
+<ths_value>-5.37</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>147</norm_x_max>
@@ -296,12 +296,12 @@
 <tof_range_flag>True</tof_range_flag>
 <from_tof_range>9800.0</from_tof_range>
 <to_tof_range>22000.0</to_tof_range>
-<data_sets>129650</data_sets>
+<data_sets>130358</data_sets>
 <x_min_pixel>93</x_min_pixel>
 <x_max_pixel>161</x_max_pixel>
 <x_range_flag>True</x_range_flag>
-<tthd_value>1.42</tthd_value>
-<ths_value>-1.29</ths_value>
+<tthd_value>-9.42</tthd_value>
+<ths_value>-6.71</ths_value>
 <norm_flag>True</norm_flag>
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>147</norm_x_max>
