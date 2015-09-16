@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Sep 16 12:12:46 2015</timestamp>
+  <timestamp>Wed Sep 16 17:34:28 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>144</norm_from_back_pixels>
 <norm_to_back_pixels>162</norm_to_back_pixels>
-<norm_dataset>130232</norm_dataset>
+<norm_dataset>130324</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -48,7 +48,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>144</norm_from_back_pixels>
 <norm_to_back_pixels>163</norm_to_back_pixels>
-<norm_dataset>130233</norm_dataset>
+<norm_dataset>130325</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -94,7 +94,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>130234</norm_dataset>
+<norm_dataset>130326</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -140,7 +140,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -173,7 +173,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>143</norm_from_back_pixels>
 <norm_to_back_pixels>162</norm_to_back_pixels>
-<norm_dataset>130235</norm_dataset>
+<norm_dataset>130327</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -186,7 +186,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -219,7 +219,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>144</norm_from_back_pixels>
 <norm_to_back_pixels>163</norm_to_back_pixels>
-<norm_dataset>130236</norm_dataset>
+<norm_dataset>130328</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -232,7 +232,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -265,7 +265,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>144</norm_from_back_pixels>
 <norm_to_back_pixels>163</norm_to_back_pixels>
-<norm_dataset>130236</norm_dataset>
+<norm_dataset>130328</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -278,7 +278,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -311,7 +311,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>144</norm_from_back_pixels>
 <norm_to_back_pixels>163</norm_to_back_pixels>
-<norm_dataset>130236</norm_dataset>
+<norm_dataset>130328</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -324,7 +324,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>Si7cmBrick,air</incident_medium_list>
-<incident_medium_index_selected>1</incident_medium_index_selected>
+<incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0002</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
