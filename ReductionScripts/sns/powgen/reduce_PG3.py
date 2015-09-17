@@ -7,7 +7,7 @@ import mantid
 from matplotlib import *
 cal_dir = "/SNS/PG3/IPTS-2767/shared/2015_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_ILL_d25156_2015_09_09.cal")
-char_file = os.path.join(cal_dir, "PG3_char_2015_08_14-HR-ILL-10mm.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2015_08_14-HR-ILL-6mm.txt")
 #MODE = 0664
 
 #from mantidsimple import *
