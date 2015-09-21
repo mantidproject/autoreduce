@@ -71,8 +71,8 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_80033.nxs.h5"
-    ProcessedVanadium="van80033D.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_81531.nxs.h5"
+    ProcessedVanadium="van81531A.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
