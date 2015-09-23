@@ -21,7 +21,7 @@ configService.setDataSearchDirs(";".join(dataSearchPath))
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
                    CalibrationFile="%(cal_file)s",
-                   CharacterizationRunsFile="%(char_file)s"
+                   CharacterizationRunsFile="%(char_file)s",
                    ExpIniFilename="%(expini_file)s",
                    BackgroundNumber=sam_back, VanadiumNumber=van,
                    VanadiumBackgroundNumber=van_back, RemovePromptPulseWidth=50,
