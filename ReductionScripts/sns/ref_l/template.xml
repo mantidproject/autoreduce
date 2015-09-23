@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Sep 23 18:33:58 2015</timestamp>
+  <timestamp>Wed Sep 23 18:36:06 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -168,12 +168,12 @@
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>145</norm_x_max>
 <norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>145</norm_from_peak_pixels>
-<norm_to_peak_pixels>162</norm_to_peak_pixels>
+<norm_from_peak_pixels>150</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
 <norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>142</norm_from_back_pixels>
-<norm_to_back_pixels>165</norm_to_back_pixels>
-<norm_dataset>130968</norm_dataset>
+<norm_from_back_pixels>147</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>131043</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -214,12 +214,12 @@
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>144</norm_x_max>
 <norm_x_min>125</norm_x_min>
-<norm_from_peak_pixels>145</norm_from_peak_pixels>
-<norm_to_peak_pixels>162</norm_to_peak_pixels>
+<norm_from_peak_pixels>150</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
 <norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>142</norm_from_back_pixels>
-<norm_to_back_pixels>165</norm_to_back_pixels>
-<norm_dataset>130969</norm_dataset>
+<norm_from_back_pixels>147</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>131044</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -260,12 +260,12 @@
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>144</norm_x_max>
 <norm_x_min>124</norm_x_min>
-<norm_from_peak_pixels>145</norm_from_peak_pixels>
-<norm_to_peak_pixels>162</norm_to_peak_pixels>
+<norm_from_peak_pixels>150</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
 <norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>142</norm_from_back_pixels>
-<norm_to_back_pixels>165</norm_to_back_pixels>
-<norm_dataset>130969</norm_dataset>
+<norm_from_back_pixels>147</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>131044</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -306,12 +306,12 @@
 <norm_x_range_flag>True</norm_x_range_flag>
 <norm_x_max>144</norm_x_max>
 <norm_x_min>124</norm_x_min>
-<norm_from_peak_pixels>145</norm_from_peak_pixels>
-<norm_to_peak_pixels>162</norm_to_peak_pixels>
+<norm_from_peak_pixels>150</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
 <norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>142</norm_from_back_pixels>
-<norm_to_back_pixels>165</norm_to_back_pixels>
-<norm_dataset>130969</norm_dataset>
+<norm_from_back_pixels>147</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>131044</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
