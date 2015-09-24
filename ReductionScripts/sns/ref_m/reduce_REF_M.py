@@ -53,11 +53,11 @@ def kill_autorefl():
 
 def check_autorefl():
   from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
-  if os.file.exists(ReflectivityBuilder.PID_FILE):
+  if os.path.exists(ReflectivityBuilder.PID_FILE):
     f = open(ReflectivityBuilder.PID_FILE,'r')
     proc = u'/proc/%d'%int(f.read())
     f.close()
-    if os.file.exists(proc):
+    if os.path.exists(proc):
       logging.info('pid file and daemon are synchronized *** autoreduction is OK')
     else:
       logging.error('pid file exists but daemon does not *** delete PID file')
