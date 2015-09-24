@@ -51,6 +51,20 @@ def kill_autorefl():
   from quicknxs.auto_reflectivity import FileCom
   FileCom.kill_daemon()
 
+def check_autorefl():
+  from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
+  if os.file.exists(ReflectivityBuilder.PID_FILE):
+    f = open(ReflectivityBuilder.PID_FILE,'r')
+    proc = u'/proc/%d'%int(f.read())
+    f.close()
+    if os.file.exists(proc):
+      logging.info('pid file and daemon are synchronized *** autoreduction is OK')
+    else:
+      logging.error('pid file exists but daemon does not *** delete PID file')
+      os.remove(ReflectivityBuilder.PID_FILE)
+  else:
+    logging.error('pid does not exist *** daemon should start on next autoreflectivity')
+
 def wait_image(ofile):
   '''
   Wait a maximum of 10min for the plot to be created.
@@ -74,6 +88,8 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
+  elif len(sys.argv)==3 and sys.argv[1]=='check':
+    check_autorefl()
   elif (len(sys.argv)!=3):
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
