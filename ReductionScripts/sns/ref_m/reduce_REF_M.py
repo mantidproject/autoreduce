@@ -78,7 +78,7 @@ def check_autorefl():
       logging.info('no pid file and daemon is not running *** daemon should start on next autoreflectivity')
     else:
       logging.error('no pid file but daemon is running *** kill process %d'%pid)
-      os.kill(pid,1) # SIGHUP(1), SIGKILL(9)
+      #os.kill(pid,1) # SIGHUP(1), SIGKILL(9)
 
 def wait_image(ofile):
   '''
