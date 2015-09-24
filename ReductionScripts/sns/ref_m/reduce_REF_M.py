@@ -118,6 +118,7 @@ if __name__=="__main__":
     if result[0]:
       logging.info('Trigger autorefl script for index %i'%result[1].number)
       ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
+      #check_autorefl()
       trigger_autorefl(result[1].number, filename, ofile)
       logging.info('Wait for image to be generated.')
       img_result=wait_image(ofile)
