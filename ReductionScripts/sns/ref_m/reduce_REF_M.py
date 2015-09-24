@@ -56,7 +56,7 @@ def _pid_of_python_process(name):
   p = subprocess.Popen(['ps','-ax'],stdout=subprocess.PIPE)
   out,err = p.communicate()
   for line in out.splitlines():
-    if 'python' in line and name in line:
+    if 'python' in line and name in line and not sys.argv[0] in line:
       pid = int(line.split(None,1)[0])
       return pid,name,line
   return None,None,None
