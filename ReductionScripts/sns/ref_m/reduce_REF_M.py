@@ -51,6 +51,16 @@ def kill_autorefl():
   from quicknxs.auto_reflectivity import FileCom
   FileCom.kill_daemon()
 
+def _pid_of_python_process(name):
+  import subprocess
+  p = subprocess.Popen(['ps','-ax'],stdout=subprocess.PIPE)
+  out,err = p.communicate()
+  for line in out.splitlines():
+    if 'python' in line and name in line:
+      pid = int(line.split(None,1)[0])
+      return pid
+  return None
+
 def check_autorefl():
   from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
   if os.path.exists(ReflectivityBuilder.PID_FILE):
@@ -63,7 +73,12 @@ def check_autorefl():
       logging.error('pid file exists but daemon does not *** delete PID file')
       os.remove(ReflectivityBuilder.PID_FILE)
   else:
-    logging.error('pid does not exist *** daemon should start on next autoreflectivity')
+    pid = _pid_of_python_process(sys.argv[0])
+    if pid is None:
+      logging.info('no pid file and daemon is not running *** daemon should start on next autoreflectivity')
+    else:
+      logging.error('no pid file but daemon is running *** kill process %d'%pid)
+      os.kill(pid,1) # SIGHUP(1), SIGKILL(9)
 
 def wait_image(ofile):
   '''
