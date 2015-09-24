@@ -88,7 +88,7 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
-  elif len(sys.argv)==3 and sys.argv[1]=='check':
+  elif len(sys.argv)==2 and sys.argv[1]=='check':
     check_autorefl()
   elif (len(sys.argv)!=3):
     logging.error("autoreduction code requires a filename and an output directory")
