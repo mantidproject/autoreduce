@@ -141,13 +141,13 @@ def makePlot(mdws,plotConfig,normalize):
     ystop=0
     xstop=0
     if arrayToPlot_where.size>0:
-        (ystart, xstart), (ystop,xstop) = arrayToPlot_where.min(0), arrayToPlot_where.max(0)+1
+        (xstart, ystart), (xstop,ystop) = arrayToPlot_where.min(0), arrayToPlot_where.max(0)+1
     if ystart==ystop or xstart==xstop:
         X,Y=np.meshgrid(xvals,yvals)
         plt.pcolormesh(X,Y,arrayToPlot,shading='gouraud')
     else:
-        arrayToPlot_trim = arrayToPlot[ystart:ystop, xstart:xstop]
-        X,Y=np.meshgrid(xvals[xstart:xstop],yvals[ystart:ystop])
+        arrayToPlot_trim = arrayToPlot[xstart:xstop, ystart:ystop]
+        Y,X=np.meshgrid(yvals[ystart:ystop],xvals[xstart:xstop])
         normmasked=np.ma.masked_where(arrayToPlot_trim==0,arrayToPlot_trim)
         plt.pcolormesh(X,Y,normmasked,shading='gouraud')
     plt.xlabel(dim0.getName())
