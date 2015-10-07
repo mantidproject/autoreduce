@@ -156,7 +156,7 @@ class AutoReduction():
       ystep=(ymax-ymin)*0.01
       x=arange(xmin,xmax,xstep)
       y=arange(ymin,ymax,ystep)
-      X,Y=meshgrid(x,y)
+      Y,X=meshgrid(y,x)
 
 
       MD=ConvertToMD('out1',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
