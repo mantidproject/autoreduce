@@ -20,7 +20,8 @@ class AutoReduction():
   def __init__(self, nexus_file, output_directory):
     print nexus_file, output_directory
     self._nexus_file = nexus_file
-    self._output_directory = output_directory 
+    self._output_directory = output_directory
+    self._norm_file='/SNS/HYS/shared/autoreduce/TiZr_09_2015.nxs' 
 
   def execute(self):
     try:
@@ -105,11 +106,15 @@ class AutoReduction():
       CropWorkspace(InputWorkspace=autows,OutputWorkspace=autows,XMin=tofmin,XMax=tofmax)
       
       # Rotate instrument for polarized operations.
+      additional_pars={}
       psda=run['psda'].getStatistics().mean
       psr=run['psr'].getStatistics().mean
       offset=psda*(1.-psr/4200.)
-      RotateInstrumentComponent(Workspace=autows,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
-      
+      if offset!=0:
+        RotateInstrumentComponent(Workspace=autows,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
+        IntegratedTiZr=Load(self._norm_file)
+        additional_pars['UseProcessedDetVan']=1 
+        additional_pars['DetectorVanadiumInputWorkspace']=IntegratedTiZr    
       # Overwrite the parameters - will cause TIB to be calculated as histogram, so the output from DgsReduction is histogram
       #LoadParameterFile(Workspace=autows, Filename='/SNS/HYS/shared/autoreduce/HYSPEC_TIBasHist_Parameters.xml')
  
@@ -118,18 +123,18 @@ class AutoReduction():
       #tib = self.SpurionPromptPulse2()
       #reduction command
       DgsReduction(SampleInputWorkspace=autows, IncidentEnergyGuess=Ei, EnergyTransferRange=energy_bins,
-		SampleInputMonitorWorkspace=autows,
-		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
-		IncidentBeamNormalisation='ByCurrent', 
-                HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
-              TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1")
+            SampleInputMonitorWorkspace=autows,
+		    GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
+		    IncidentBeamNormalisation='ByCurrent', 
+            HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
+            TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1",**additional_pars)
       
       DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-		SampleInputMonitorWorkspace=autows,
-		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
-		IncidentBeamNormalisation='ByCurrent',
-                #HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
-		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
+            SampleInputMonitorWorkspace=autows,
+		    GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
+		    IncidentBeamNormalisation='ByCurrent',
+            #HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
+		    TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3",**additional_pars)
 
 
       if run_number>38844 and run_number<38904:
