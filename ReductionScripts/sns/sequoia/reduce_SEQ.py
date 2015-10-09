@@ -50,10 +50,10 @@ def preprocessData(filename):
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS",Precount=0) 
 
     #Fix that all time series log values start at the same time as the proton_charge
-    #CorrectLogTimes('__IWS')
+    CorrectLogTimes('__IWS')
     
     # adjust time for pack B15 wired strangely
-    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
+    #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
 
     #delete all bad pulses below   10% of the average of the file.
     FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
