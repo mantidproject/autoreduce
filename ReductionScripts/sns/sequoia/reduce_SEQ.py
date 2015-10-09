@@ -106,7 +106,7 @@ if __name__ == "__main__":
     #MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
 
     
-    clean=True
+    clean=False#True
     NXSPE_flag=True
 
     NormalizedVanadiumEqualToOne = True
