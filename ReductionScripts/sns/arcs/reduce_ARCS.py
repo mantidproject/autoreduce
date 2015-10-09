@@ -30,7 +30,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
-    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    #[Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
 
 
     #if Efixed!='N/A':
@@ -40,12 +40,15 @@ def preprocessData(filename):
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
 
+    #use detectors and first monitor to get Ei
+    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    return [Eguess,result[0],result[3]]
     #Add other Filters here
     #Filter chopper 3 bad events
     #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
     #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
     #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
-    return [Eguess,Efixed,T0]
+    #return [Eguess,Efixed,T0]
 
 def CheckPacks(inputWorkspace,outdir) :
     #check here for bad packs - added 2014-2-14 by JLN
