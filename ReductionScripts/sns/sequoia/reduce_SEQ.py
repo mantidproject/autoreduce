@@ -2,7 +2,6 @@
 import sys,os
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
-from mantid.kernel import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
@@ -72,8 +71,8 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_81531.nxs.h5"
-    ProcessedVanadium="van81531A.nxs"
+    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_81711.nxs.h5"
+    ProcessedVanadium="van81711.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -107,7 +106,7 @@ if __name__ == "__main__":
     #MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
 
     
-    clean=False#True
+    clean=True
     NXSPE_flag=True
 
     NormalizedVanadiumEqualToOne = True
@@ -212,7 +211,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
@@ -263,7 +262,6 @@ if __name__ == "__main__":
             GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
             SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",
                       Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par') 
-        mantid.kernel.logger.warning("Autoreduction done")
         if clean:
             WS_clean()
     else:
