@@ -2,6 +2,7 @@
 import sys,os
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
+from mantid.kernel import *
 from matplotlib import *
 use("agg")
 from matplotlib.pyplot import *
@@ -262,6 +263,7 @@ if __name__ == "__main__":
             GroupDetectors(InputWorkspace="__OWS", OutputWorkspace="powdergroupdata", MapFile=outdir+'powdergroupfile.xml',Behaviour='Average')
             SaveNXSPE(InputWorkspace="powdergroupdata", Filename= outdir+"/powder/"+outfile+"_powder.nxspe",
                       Efixed=Ei,Psi=angle,KiOverKfScaling=True,ParFile=outdir+'powdergroupfile.par') 
+        mantid.kernel.logger.warning("Autoreduction done")
         if clean:
             WS_clean()
     else:
