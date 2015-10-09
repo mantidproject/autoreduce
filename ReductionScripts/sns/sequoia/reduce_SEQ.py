@@ -53,10 +53,10 @@ def preprocessData(filename):
     CorrectLogTimes('__IWS')
     
     # adjust time for pack B15 wired strangely
-    #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
+    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
 
     #delete all bad pulses below   10% of the average of the file.
-    FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
+    #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
     AddSampleLogMultiple("__IWS","CalculatedEi,CalculatedT0",str(Efixed)+','+str(T0))
     return [Eguess,Efixed,T0]
   
