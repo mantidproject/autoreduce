@@ -157,7 +157,8 @@ elog.setFilename(output_directory+'experiment_log.csv')
 s1=elog.save_line('reduce')
 
 # Get Angle
-s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
+#s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 #s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
