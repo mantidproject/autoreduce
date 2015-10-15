@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Thu Oct 15 10:31:02 2015</timestamp>
+  <timestamp>Thu Oct 15 12:22:46 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -41,7 +41,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -87,7 +87,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -133,7 +133,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -179,7 +179,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -225,7 +225,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -271,7 +271,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
@@ -317,7 +317,7 @@
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.024</angle_offset>
+<angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v2.cfg</scaling_factor_file>
