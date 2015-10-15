@@ -13,7 +13,7 @@ numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
 
-peaks = [[10235,12460], [13230,14610], [8825,9450], [6700,7025]]
+peaks = [[10570,11170], [13640,13810], [9080,9220], [6820,6920]]
 
 if __name__ == "__main__":    
     #check number of arguments
