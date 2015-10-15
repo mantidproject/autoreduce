@@ -226,9 +226,9 @@ if __name__ == "__main__":
     # Save normalized MDs, if possible
     if config.can_do_norm:
         if config.can_do_HKL:
-            AlignedDim0='[H,0,0],'+str(minn[0])+','+str(maxx[0])+',300'
-            AlignedDim1='[0,K,0],'+str(minn[1])+','+str(maxx[1])+',300'
-            AlignedDim2='[0,0,L],'+str(minn[2])+','+str(maxx[2])+',300'
+            AlignedDim0='[H,H,0],'+str(minn[0])+','+str(maxx[0])+',300'
+            AlignedDim1='[0,0,L],'+str(minn[1])+','+str(maxx[1])+',300'
+            AlignedDim2='[K,-K,0],'+str(minn[2])+','+str(maxx[2])+',300'
         else:
             AlignedDim0='Q_sample_x,'+str(minn[0])+','+str(maxx[0])+',300'
             AlignedDim1='Q_sample_y,'+str(minn[1])+','+str(maxx[1])+',300'
