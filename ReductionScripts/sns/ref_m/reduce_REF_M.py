@@ -12,9 +12,9 @@ import sys, os
 import time
 
 # for testing use latest quicknxs test version instead of the installed one
-sys.path.insert(0, u'/SNS/users/agf/software/QuickNXS/')
-for path in "/SNS/software/lib/python2.6/site-packages:/SNS/software/lib/python2.6/site-packages/HLRedux:/SNS/software/lib64/python2.6/site-packages/DOM:/SNS/software/lib/python2.6/site-packages/sns_common_libs:/SNS/software/lib/python2.6/site-packages:/SNS/users/agf/python/lib64/python2.6/site-packages:/SNS/users/agf/python/lib/python2.6/site-packages".split(":"):
-    sys.path.append(path)
+#sys.path.insert(0, u'/SNS/users/agf/software/QuickNXS/')
+#for path in "/SNS/software/lib/python2.6/site-packages:/SNS/software/lib/python2.6/site-packages/HLRedux:/SNS/software/lib64/python2.6/site-packages/DOM:/SNS/software/lib/python2.6/site-#packages/sns_common_libs:/SNS/software/lib/python2.6/site-packages:/SNS/users/agf/python/lib64/python2.6/site-packages:/SNS/users/agf/python/lib/python2.6/site-packages".split(":"):
+#    sys.path.append(path)
 #sys.path.insert(0, u'/home/agf/Software/Scripte/QuickNXS/')
 
 from quicknxs.console_logging import setup_logging
