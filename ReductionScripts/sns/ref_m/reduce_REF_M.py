@@ -51,35 +51,6 @@ def kill_autorefl():
   from quicknxs.auto_reflectivity import FileCom
   FileCom.kill_daemon()
 
-def _pid_of_python_process(name):
-  import subprocess
-  p = subprocess.Popen(['ps','-ax'],stdout=subprocess.PIPE)
-  out,err = p.communicate()
-  for line in out.splitlines():
-    if 'python' in line and name in line and not sys.argv[0] in line:
-      pid = int(line.split(None,1)[0])
-      return pid,name,line
-  return None,None,None
-
-def check_autorefl():
-  from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
-  if os.path.exists(ReflectivityBuilder.PID_FILE):
-    f = open(ReflectivityBuilder.PID_FILE,'r')
-    proc = u'/proc/%d'%int(f.read())
-    f.close()
-    if os.path.exists(proc):
-      logging.info('pid file and daemon are synchronized *** autoreduction is OK')
-    else:
-      logging.error('pid file exists but daemon does not *** delete PID file')
-      os.remove(ReflectivityBuilder.PID_FILE)
-  else:
-    pid,name,line = _pid_of_python_process(sys.argv[0])
-    if pid is None:
-      logging.info('no pid file and daemon is not running *** daemon should start on next autoreflectivity')
-    else:
-      logging.error('no pid file but daemon is running *** kill process %d (%s,%s)'%(pid,name,line))
-      #os.kill(pid,1) # SIGHUP(1), SIGKILL(9)
-
 def wait_image(ofile):
   '''
   Wait a maximum of 10min for the plot to be created.
@@ -103,8 +74,6 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
-  elif len(sys.argv)==2 and sys.argv[1]=='check':
-    check_autorefl()
   elif (len(sys.argv)!=3):
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
@@ -118,7 +87,6 @@ if __name__=="__main__":
     if result[0]:
       logging.info('Trigger autorefl script for index %i'%result[1].number)
       ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
-      #check_autorefl()
       trigger_autorefl(result[1].number, filename, ofile)
       logging.info('Wait for image to be generated.')
       img_result=wait_image(ofile)
