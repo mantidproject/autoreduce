@@ -29,7 +29,7 @@ wavelengthMax=0.
 # determine information for vanadium caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
 PDLoadCharacterizations(Filename="/SNS/NOM/shared/NOM_characterizations.txt",
-                        ExpIniFilename="/SNS/NOM/IPTS-14883/shared/autoNOM2/exp.ini",
+                        ExpIniFilename="/SNS/NOM/IPTS-14098/shared/autoNOM2/exp.ini",
                         OutputWorkspace="characterizations")
 PDDetermineCharacterizations(InputWorkspace=wksp,
                              Characterizations="characterizations")
@@ -63,9 +63,9 @@ if os.path.exists(vanCacheName):
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-14883/shared/NOM_calibrate_d59380_2015_10_16.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-14098/shared/NOM_calibrate_d59380_2015_10_16.h5",
                    CharacterizationRunsFile="/SNS/NOM/shared/NOM_characterizations.txt",
-                   ExpIniFilename="/SNS/NOM/IPTS-14883/shared/autoNOM2/exp.ini",
+                   ExpIniFilename="/SNS/NOM/IPTS-14098/shared/autoNOM2/exp.ini",
                    RemovePromptPulseWidth=50,
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
                    CropWavelengthMin=wavelengthMin,
