@@ -98,7 +98,7 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
                    CalibrationFile="/SNS/NOM/IPTS-14108/shared/NOM_calibrate_d59530_2015_10_20.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
-                   ExpIniFilename="/SNS/NOM/IPTS-14108/shared/autoNOM2/exp.ini",
+                   ExpIniFilename="/SNS/NOM/IPTS-14108/shared/autoNOM/exp.ini",
                    RemovePromptPulseWidth=50,
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
                    CropWavelengthMin=wavelengthMin,
