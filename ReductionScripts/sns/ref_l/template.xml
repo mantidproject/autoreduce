@@ -1,11 +1,11 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Oct 21 10:35:55 2015</timestamp>
+  <timestamp>Wed Oct 21 14:26:59 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
   <architecture>('64bit', 'ELF')</architecture>
-  <mantid_version>3.5.0</mantid_version>
+  <mantid_version>3.4.1</mantid_version>
 <DataSeries>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
