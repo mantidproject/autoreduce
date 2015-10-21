@@ -36,7 +36,7 @@ else:
 # determine information for caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
 PDLoadCharacterizations(Filename="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
-                        ExpIniFilename="/SNS/NOM/IPTS-14108/shared/autoNOM2/exp.ini",
+                        ExpIniFilename="/SNS/NOM/IPTS-14108/shared/autoNOM/exp.ini",
                         OutputWorkspace="characterizations")
 PDDetermineCharacterizations(InputWorkspace=wksp,
                              Characterizations="characterizations")
