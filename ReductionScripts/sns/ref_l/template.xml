@@ -1,11 +1,11 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Thu Oct 22 15:04:50 2015</timestamp>
+  <timestamp>Mon Oct 26 18:11:21 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
   <architecture>('64bit', 'ELF')</architecture>
-  <mantid_version>3.4.1</mantid_version>
+  <mantid_version>3.5.0</mantid_version>
 <DataSeries>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131978</norm_dataset>
+<norm_dataset>132279</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -48,7 +48,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131979</norm_dataset>
+<norm_dataset>132280</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -94,7 +94,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131980</norm_dataset>
+<norm_dataset>132281</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -140,7 +140,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -173,7 +173,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131981</norm_dataset>
+<norm_dataset>132282</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -186,7 +186,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -219,7 +219,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131982</norm_dataset>
+<norm_dataset>132283</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -232,7 +232,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -265,7 +265,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131982</norm_dataset>
+<norm_dataset>132283</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -278,7 +278,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
@@ -311,7 +311,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>131982</norm_dataset>
+<norm_dataset>132283</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -324,7 +324,7 @@
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
+<incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
 <fourth_column_dq0>0.0004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
