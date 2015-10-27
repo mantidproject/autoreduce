@@ -82,7 +82,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Tube': '7', 'Pixel': '104-110', 'Bank': '46'})
     MaskBTPParameters.append({'Tube': '2', 'Pixel': '53-55', 'Bank': '81'})
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '30-35', 'Bank': '88'})
-    MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '104-128', 'Bank': '127'})
+    MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '99-128', 'Bank': '127'})
     MaskBTPParameters.append({'Tube': '7', 'Pixel': '23-25', 'Bank': '139'})
     MaskBTPParameters.append({'Tube': '5', 'Bank': '45'})
     MaskBTPParameters.append({'Tube': '8', 'Bank': '70'})
