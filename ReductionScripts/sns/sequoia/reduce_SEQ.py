@@ -8,6 +8,8 @@ from matplotlib.pyplot import *
 # Logs at: /var/log/SNS_applications/autoreduce.log
 import numpy
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
+import warnings
+warnings.simplefilter('ignore')
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
