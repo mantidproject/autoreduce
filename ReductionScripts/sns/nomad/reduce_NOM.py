@@ -5,6 +5,8 @@ import shutil
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
+import warnings
+warnings.simplefilter('ignore')
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
