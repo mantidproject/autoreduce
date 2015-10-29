@@ -94,9 +94,11 @@ MaskBTPParameters.append({'Bank': '36-50'})
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
-tib=SuggestTibCNCS(EGuess)
-#if (abs(EGuess-12)<0.1):
-#    tib=[20500.0,21500.0]
+#tib=SuggestTibCNCS(EGuess)
+if (abs(EGuess-12)<0.1):
+    tib=[20500.0,21500.0]
+if (abs(EGuess-55)<0.1):
+    tib=[5000.0,15000.0]
 #tib=[24000,29000]
 
 #t0=GetT0FromDet(w)
