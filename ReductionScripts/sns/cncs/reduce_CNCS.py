@@ -112,8 +112,7 @@ if (abs(EGuess-12)<0.1):
 if (abs(EGuess-25)<0.1):
 	t0=30
 if (abs(EGuess-55)<0.1):
-	t0=15
-print t0
+	t0=50
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
@@ -133,7 +132,6 @@ DGSdict['TimeIndepBackgroundSub']=True
 DGSdict['IncidentEnergyGuess']=EGuess
 DGSdict['TimeZeroGuess']=t0
 #DGSdict['UseIncidentEnergyGuess']=True
-print DGSdict['TimeZeroGuess']
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
