@@ -131,7 +131,7 @@ DGSdict['TimeIndepBackgroundSub']=True
 #DGSdict['TimeIndepBackgroundSub']=False
 DGSdict['IncidentEnergyGuess']=EGuess
 DGSdict['TimeZeroGuess']=t0
-#DGSdict['UseIncidentEnergyGuess']=True
+DGSdict['UseIncidentEnergyGuess']=True
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
