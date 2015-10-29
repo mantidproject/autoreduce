@@ -156,7 +156,7 @@ elog.setSERotOptions('CCR10G2Rot')
 #elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
-elog.setSETempOptions('SensorB')
+elog.setSETempOptions('SensorD')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
