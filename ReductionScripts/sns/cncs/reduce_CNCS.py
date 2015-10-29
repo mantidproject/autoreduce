@@ -103,16 +103,16 @@ if (abs(EGuess-55)<0.1):
     tib=[5000.0,15000.0]
 #tib=[24000,29000]
 
-#t0=GetT0FromDet(w)
+t0=GetT0FromDet(w)
 #t0=110  #Ei=3.0 meV
 #t0=116  #Ei=2.5 meV
 
-if (abs(EGuess-12)<0.1):
-	t0=65
-if (abs(EGuess-25)<0.1):
-	t0=30
-if (abs(EGuess-55)<0.1):
-	t0=10
+#if (abs(EGuess-12)<0.1):
+#	t0=65
+#if (abs(EGuess-25)<0.1):
+#	t0=30
+#if (abs(EGuess-55)<0.1):
+#	t0=10
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
