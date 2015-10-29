@@ -112,7 +112,7 @@ if (abs(EGuess-12)<0.1):
 if (abs(EGuess-25)<0.1):
 	t0=30
 if (abs(EGuess-55)<0.1):
-	t0=50
+	t0=10
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
