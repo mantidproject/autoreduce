@@ -98,6 +98,8 @@ if EGuess<50:
     tib=SuggestTibCNCS(EGuess)
 if (abs(EGuess-12)<0.1):
     tib=[20500.0,21500.0]
+#if (abs(EGuess-15)<0.1):
+#    tib=[15200.0,16500.0]
 if (abs(EGuess-25)<0.1):
     tib=[11000.0,15000.0]
 if (abs(EGuess-55)<0.1):
