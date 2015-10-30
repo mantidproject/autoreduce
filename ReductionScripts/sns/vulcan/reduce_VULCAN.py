@@ -221,6 +221,12 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
     vulcanheaderlist.append( ("FurnacePower"        , "furnace.power") )
     vulcanheaderlist.append( ("VacT"                , "partlow1.temp") )
     vulcanheaderlist.append( ("VacOT"               , "partlow2.temp") )
+    vulcanheaderlist.append( ('EuroTherm1Powder'    , 'eurotherm1.power') )
+    vulcanheaderlist.append( ('EuroTherm1SP'        , 'eurotherm1.sp') )
+    vulcanheaderlist.append( ('EuroTherm1Temp'      , 'eurotherm1.temp') )
+    vulcanheaderlist.append( ('EuroTherm2Powder'    , 'eurotherm2.power') )
+    vulcanheaderlist.append( ('EuroTherm2SP'        , 'eurotherm2.sp') )
+    vulcanheaderlist.append( ('EuroTherm2Temp'      , 'eurotherm2.temp') )
 
     # Format to lists for input
     samplelognames = []
