@@ -315,7 +315,13 @@ RecordBase = [
         ("FurnaceOT",       "furnace.temp2", "0"),
         ("FurnacePower",    "furnace.power", "0"),
         ("VacT",            "partlow1.temp", "0"),
-        ("VacOT",           "partlow2.temp", "0") 
+        ("VacOT",           "partlow2.temp", "0"),
+        ('EuroTherm1Powder', 'eurotherm1.power', '0'),
+        ('EuroTherm1SP',     'eurotherm1.sp', '0'),
+        ('EuroTherm1Temp',   'eurotherm1.temp', '0'),
+        ('EuroTherm2Powder', 'eurotherm2.power', '0'),
+        ('EuroTherm2SP',     'eurotherm2.sp', '0'),
+        ('EuroTherm2Temp',   'eurotherm2.temp', '0'),
         ]
         
     
