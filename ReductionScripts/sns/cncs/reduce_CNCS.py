@@ -170,7 +170,7 @@ elog.setFilename(output_directory+'experiment_log.csv')
 s1=elog.save_line('reduce')
 
 # Get Angle
-#s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
+s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
 #s1=mtd["reduce"].getRun()['huber'].value[0]
 #s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
 #s1=mtd["reduce"].getRun()['SERotator2'].value[0]
