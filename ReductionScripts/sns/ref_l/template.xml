@@ -1,752 +1,333 @@
 <Reduction>
- <instrument_name>REFL</instrument_name>
- <timestamp>Saturday, 31. October 2015 11:23AM</timestamp>
- <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
+  <instrument_name>REFL</instrument_name>
+  <timestamp>Sat Oct 31 15:48:47 2015</timestamp>
+  <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
- <platform>Linux</platform>
- <architecture>x86_64</architecture>
- <mantid_version>3.5.0</mantid_version>
-<generator>RefRed</generator>
- <DataSeries>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>158</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>161</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>50348.0</from_tof_range>
-   <to_tof_range>62668.0</to_tof_range>
-   <from_q_range>0.00791265097214</from_q_range>
-   <to_q_range>0.00984935521457</to_q_range>
-   <from_lambda_range>13.36</from_lambda_range>
-   <to_lambda_range>16.63</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131163</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>158</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>14.5</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>95</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>14.5</norm_lambda_requested>
-   <norm_dataset>132478</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>40762.0</from_tof_range>
-   <to_tof_range>53473.0</to_tof_range>
-   <from_q_range>0.00927324775664</from_q_range>
-   <to_q_range>0.0121727461301</to_q_range>
-   <from_lambda_range>10.81</from_lambda_range>
-   <to_lambda_range>14.19</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131164</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>157</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>12.01</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>95</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>12.01</norm_lambda_requested>
-   <norm_dataset>132479</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>150</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>147</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>29567.0</from_tof_range>
-   <to_tof_range>42468.0</to_tof_range>
-   <from_q_range>0.0116758993493</from_q_range>
-   <to_q_range>0.0167841053146</to_q_range>
-   <from_lambda_range>7.84</from_lambda_range>
-   <to_lambda_range>11.27</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131165</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>156</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>9.06</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>113</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>9.06</norm_lambda_requested>
-   <norm_dataset>132480</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>18430.0</from_tof_range>
-   <to_tof_range>31035.0</to_tof_range>
-   <from_q_range>0.0159887467396</from_q_range>
-   <to_q_range>0.0269094858214</to_q_range>
-   <from_lambda_range>4.89</from_lambda_range>
-   <to_lambda_range>8.23</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131166</data_sets>
-   <x_min_pixel>96</x_min_pixel>
-   <x_max_pixel>158</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>6.07</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>152</norm_x_max>
-   <norm_x_min>125</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>6.07</norm_lambda_requested>
-   <norm_dataset>132481</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>150</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>147</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.0259132442715</from_q_range>
-   <to_q_range>0.0582051332868</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>1.380028</incident_angle>
-   <data_sets>131167</data_sets>
-   <x_min_pixel>96</x_min_pixel>
-   <x_max_pixel>157</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>158</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>161</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.0514485216816</from_q_range>
-   <to_q_range>0.115561294854</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>2.740122</incident_angle>
-   <data_sets>131168</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>161</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>147</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>144</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.101739551895</from_q_range>
-   <to_q_range>0.228522685794</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>5.420101</incident_angle>
-   <data_sets>131169</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>161</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>1</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  </DataSeries>
-</Reduction>
-<Reduction>
- <instrument_name>REFL</instrument_name>
- <timestamp>Saturday, 31. October 2015 11:25AM</timestamp>
- <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
-[GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
- <platform>Linux</platform>
- <architecture>x86_64</architecture>
- <mantid_version>3.5.0</mantid_version>
-<generator>RefRed</generator>
- <DataSeries>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>158</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>161</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>50348.0</from_tof_range>
-   <to_tof_range>62668.0</to_tof_range>
-   <from_q_range>0.00791265097214</from_q_range>
-   <to_q_range>0.00984935521457</to_q_range>
-   <from_lambda_range>13.36</from_lambda_range>
-   <to_lambda_range>16.63</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131163</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>158</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>14.5</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>95</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>14.5</norm_lambda_requested>
-   <norm_dataset>132478</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>40762.0</from_tof_range>
-   <to_tof_range>53473.0</to_tof_range>
-   <from_q_range>0.00927324775664</from_q_range>
-   <to_q_range>0.0121727461301</to_q_range>
-   <from_lambda_range>10.81</from_lambda_range>
-   <to_lambda_range>14.19</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131164</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>157</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>12.01</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>95</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>12.01</norm_lambda_requested>
-   <norm_dataset>132479</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>150</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>147</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>29567.0</from_tof_range>
-   <to_tof_range>42468.0</to_tof_range>
-   <from_q_range>0.0116758993493</from_q_range>
-   <to_q_range>0.0167841053146</to_q_range>
-   <from_lambda_range>7.84</from_lambda_range>
-   <to_lambda_range>11.27</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131165</data_sets>
-   <x_min_pixel>97</x_min_pixel>
-   <x_max_pixel>156</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>9.06</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>163</norm_x_max>
-   <norm_x_min>113</norm_x_min>
-   <norm_from_peak_pixels>150</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>147</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>9.06</norm_lambda_requested>
-   <norm_dataset>132480</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>18430.0</from_tof_range>
-   <to_tof_range>31035.0</to_tof_range>
-   <from_q_range>0.0159887467396</from_q_range>
-   <to_q_range>0.0269094858214</to_q_range>
-   <from_lambda_range>4.89</from_lambda_range>
-   <to_lambda_range>8.23</to_lambda_range>
-   <incident_angle>1.199955</incident_angle>
-   <data_sets>131166</data_sets>
-   <x_min_pixel>96</x_min_pixel>
-   <x_max_pixel>158</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>6.07</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>152</norm_x_max>
-   <norm_x_min>125</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>6.07</norm_lambda_requested>
-   <norm_dataset>132481</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>150</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>147</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.0259132442715</from_q_range>
-   <to_q_range>0.0582051332868</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>1.380028</incident_angle>
-   <data_sets>131167</data_sets>
-   <x_min_pixel>96</x_min_pixel>
-   <x_max_pixel>157</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>149</from_peak_pixels>
-   <to_peak_pixels>158</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>146</back_roi1_from>
-   <back_roi1_to>161</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.0514485216816</from_q_range>
-   <to_q_range>0.115561294854</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>2.740122</incident_angle>
-   <data_sets>131168</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>161</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>147</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>144</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>123</clocking_from>
-   <clocking_to>187</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9800.0</from_tof_range>
-   <to_tof_range>22000.0</to_tof_range>
-   <from_q_range>0.101739551895</from_q_range>
-   <to_q_range>0.228522685794</to_q_range>
-   <from_lambda_range>2.60</from_lambda_range>
-   <to_lambda_range>5.84</to_lambda_range>
-   <incident_angle>5.420101</incident_angle>
-   <data_sets>131169</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>161</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
-   <data_lambda_requested>3.75</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>151</norm_x_max>
-   <norm_x_min>127</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>158</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>161</norm_to_back_pixels>
-   <norm_lambda_requested>3.75</norm_lambda_requested>
-   <norm_dataset>132482</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.016</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.01</q_step>
-   <q_min>0.001</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
-   <incident_medium_list>Si,air,airLongCount,air_98-16,quartz2in,quartz2inDiamDisk,quartz3inDiamDisk</incident_medium_list>
-   <incident_medium_index_selected>2</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-  </RefLData>
-  </DataSeries>
+  <platform>Linux</platform>
+  <architecture>('64bit', 'ELF')</architecture>
+  <mantid_version>3.5.0</mantid_version>
+<DataSeries>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>160</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>163</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>50348.0</from_tof_range>
+<to_tof_range>62668.0</to_tof_range>
+<data_sets>132483</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>161</norm_x_max>
+<norm_x_min>95</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>132478</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>149</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>146</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>40762.0</from_tof_range>
+<to_tof_range>53473.0</to_tof_range>
+<data_sets>132484</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>160</norm_x_max>
+<norm_x_min>94</norm_x_min>
+<norm_from_peak_pixels>150</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>147</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>132479</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>148</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>145</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>29567.0</from_tof_range>
+<to_tof_range>42468.0</to_tof_range>
+<data_sets>132485</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>160</norm_x_max>
+<norm_x_min>111</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>158</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>161</norm_to_back_pixels>
+<norm_dataset>132480</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>160</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>163</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>18430.0</from_tof_range>
+<to_tof_range>31035.0</to_tof_range>
+<data_sets>132486</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>145</norm_x_max>
+<norm_x_min>123</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>132481</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>160</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>163</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22000.0</to_tof_range>
+<data_sets>132487</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.62</tthd_value>
+<ths_value>-3.31</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>144</norm_x_max>
+<norm_x_min>125</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>132482</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>160</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>163</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22000.0</to_tof_range>
+<data_sets>132488</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-1.26</tthd_value>
+<ths_value>-2.63</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>144</norm_x_max>
+<norm_x_min>125</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>132482</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>160</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>163</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22000.0</to_tof_range>
+<data_sets>132489</data_sets>
+<x_min_pixel>93</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>1.42</tthd_value>
+<ths_value>-1.29</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>144</norm_x_max>
+<norm_x_min>125</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>132482</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/shared/scaling_factors_JFA_151028.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>2</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+</DataSeries>
 </Reduction>
