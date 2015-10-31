@@ -175,7 +175,7 @@ s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
 #s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
 #s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 #s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
-s1=0
+#s1=0
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
