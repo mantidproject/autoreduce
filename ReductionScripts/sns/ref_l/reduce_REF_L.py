@@ -44,3 +44,6 @@ sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
+print "This goes in the log"
+
+raise RuntimeError, "this goes in the error log"
