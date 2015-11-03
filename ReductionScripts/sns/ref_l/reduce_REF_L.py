@@ -160,38 +160,6 @@ _list = _incident_medium_str.split(',')
 # Set the following to True to compare the old and new reduction algorithms
 compare = False
 comparison_ending = 'no_clocking'
-if compare:
-    LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
-                  NormalizationRunNumber=str(data_set.norm_file),
-                  SignalPeakPixelRange=data_set.DataPeakPixels,
-                  SubtractSignalBackground=data_set.DataBackgroundFlag,
-                  SignalBackgroundPixelRange=data_set.DataBackgroundRoi[:2],
-                  NormFlag=data_set.NormFlag,
-                  NormPeakPixelRange=data_set.NormPeakPixels,
-                  NormBackgroundPixelRange=data_set.NormBackgroundRoi,
-                  SubtractNormBackground=data_set.NormBackgroundFlag,
-                  LowResDataAxisPixelRangeFlag=data_set.data_x_range_flag,
-                  LowResDataAxisPixelRange=data_set.data_x_range,
-                  LowResNormAxisPixelRangeFlag=data_set.norm_x_range_flag,
-                  LowResNormAxisPixelRange=data_set.norm_x_range,
-                  TOFRange=data_set.DataTofRange,
-                  IncidentMediumSelected=_list[data_set.incident_medium_index_selected],
-                  GeometryCorrectionFlag=False,
-                  QMin=data_set.q_min,
-                  QStep=data_set.q_step,
-                  AngleOffset=data_set.angle_offset,
-                  AngleOffsetError=data_set.angle_offset_error,
-                  ScalingFactorFile=str(data_set.scaling_factor_file),
-                  SlitsWidthFlag=data_set.slits_width_flag,
-                  OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
-
-    is_absolute_new = save_partial_output(endswith=comparison_ending, to_file=False, scale_to_unity=NORMALIZE_TO_UNITY)
-
-    for item in AnalysisDataService.getObjectNames():
-        if not item == "reflectivity_%s" % comparison_ending:
-            AnalysisDataService.remove(item)
-    if AnalysisDataService.doesExist('reflectivity_%s' % comparison_ending):
-        RenameWorkspace(InputWorkspace="reflectivity_%s" % comparison_ending, OutputWorkspace="output_%s" % comparison_ending)
 
 LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
