@@ -230,18 +230,11 @@ for item in result_list:
             fd = open(file_path, 'w')
             fd.write(json_data)
             fd.close()
-
-y_label = "Reflectivity "
-if is_absolute:
-    y_label += "(absolute)"
-else:
-    y_label += "(stitched)"
-    
+  
 if len(plot_data)>1: 
     plt.cla()
     plt.plot(plot_data[0][1], plot_data[0][2], '-')
-    plt.legend(["Standard (absolute=%s)" % is_absolute])
-    plt.title(y_label)
+    plt.title('Reflectivity')
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
     plt.yscale('log')
