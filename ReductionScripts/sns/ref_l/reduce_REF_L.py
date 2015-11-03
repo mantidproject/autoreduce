@@ -244,5 +244,6 @@ else:
     
 
 print "This goes in the log"
+logger.information("this is logger info")
 
 raise RuntimeError, "this goes in the error log"
