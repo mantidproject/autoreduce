@@ -189,46 +189,43 @@ if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
 # Clean up the output and produce a nice plot for the web monitor
-result_list = ['output_auto']
+item = 'output_auto'
 
 plot_data = []
 qmin = 0
 qmax = 0.2
-for item in result_list:
-    if not AnalysisDataService.doesExist(item):
-        continue
-    ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
-                         NaNValue=0.0, NaNError=0.0,
-                         InfinityValue=0.0, InfinityError=0.0)    
-    x_data = mtd[item].dataX(0)
-    y_data = mtd[item].dataY(0)
-    e_data = mtd[item].dataE(0)
-    clean_x = []
-    clean_y = []
-    clean_e = []
-    qmin = min(x_data)*0.95
-    qmax = max(x_data)*1.1
-    for i in range(len(y_data)):
-        if y_data[i]>0:
-            clean_y.append(y_data[i])
-            clean_x.append(x_data[i])
-            clean_e.append(e_data[i])
-    #if len(clean_y)>0:
-    #    plot_data.append([item, clean_x, clean_y, clean_e])
 
-    # Update json data file for interactive plotting
-    if item == "output_auto":
-        file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
-        if os.path.isfile(file_path):
-            fd = open(file_path, 'r')
-            json_data = fd.read()
-            fd.close()
-            data = json.loads(json_data)
-            data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-            json_data = json.dumps(data)
-            fd = open(file_path, 'w')
-            fd.write(json_data)
-            fd.close()
+ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
+                     NaNValue=0.0, NaNError=0.0,
+                     InfinityValue=0.0, InfinityError=0.0)    
+x_data = mtd[item].dataX(0)
+y_data = mtd[item].dataY(0)
+e_data = mtd[item].dataE(0)
+clean_x = []
+clean_y = []
+clean_e = []
+qmin = min(x_data)*0.95
+qmax = max(x_data)*1.1
+for i in range(len(y_data)):
+    if y_data[i]>0:
+        clean_y.append(y_data[i])
+        clean_x.append(x_data[i])
+        clean_e.append(e_data[i])
+if len(clean_y)>0:
+    plot_data.append([item, clean_x, clean_y, clean_e])
+
+# Update json data file for interactive plotting
+file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+if os.path.isfile(file_path):
+    fd = open(file_path, 'r')
+    json_data = fd.read()
+    fd.close()
+    data = json.loads(json_data)
+    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+    json_data = json.dumps(data)
+    fd = open(file_path, 'w')
+    fd.write(json_data)
+    fd.close()
   
 if len(plot_data)>1: 
     plt.cla()
