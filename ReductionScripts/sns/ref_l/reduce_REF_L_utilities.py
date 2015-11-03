@@ -183,9 +183,10 @@ def create_single_reflectivity(workspace_list, scale_to_unity=True,
 
     # Set the reference data (index of the data set in the workspace list)
     s.set_reference(0)
-    if normalization_available == False:
-        logger.notice("Absolute normalization not available: stitching")
-        s.compute()
+    # Turn off the stitching
+    #if normalization_available == False:
+    #    logger.notice("Absolute normalization not available: stitching")
+    #    s.compute()
 
     # Now that we have the scaling factors computed, simply apply them
     scaled_ws_list = []
