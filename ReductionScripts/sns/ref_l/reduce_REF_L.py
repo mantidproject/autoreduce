@@ -29,7 +29,6 @@ runNumber = eventFile.split('_')[2]
 import mantid
 from mantid.simpleapi import *
 
-from LargeScaleStructures.data_stitching import DataSet, Stitcher
 
 #-------------------------------------
 # Reduction options
