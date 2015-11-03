@@ -200,46 +200,5 @@ if os.path.isfile(file_path):
     fd = open(file_path, 'w')
     fd.write(json_data)
     fd.close()
-# Clean up the output and produce a nice plot for the web monitor
-result_list = ['output_auto']
-
-plot_data = []
-qmin = 0
-qmax = 0.2
-for item in result_list:
-    if not AnalysisDataService.doesExist(item):
-        continue
-    ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
-                         NaNValue=0.0, NaNError=0.0,
-                         InfinityValue=0.0, InfinityError=0.0)    
-    x_data = mtd[item].dataX(0)
-    y_data = mtd[item].dataY(0)
-    e_data = mtd[item].dataE(0)
-    clean_x = []
-    clean_y = []
-    clean_e = []
-    qmin = min(x_data)*0.95
-    qmax = max(x_data)*1.1
-    for i in range(len(y_data)):
-        if y_data[i]>0:
-            clean_y.append(y_data[i])
-            clean_x.append(x_data[i])
-            clean_e.append(e_data[i])
-    #if len(clean_y)>0:
-    #    plot_data.append([item, clean_x, clean_y, clean_e])
 
 
-  
-if len(plot_data)>1: 
-    plt.cla()
-    plt.plot(plot_data[0][1], plot_data[0][2], '-')
-    plt.title('Reflectivity')
-    plt.xlabel('Q')
-    plt.ylabel('Reflectivity')
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.xlim(xmin=qmin, xmax=qmax)
-    plt.ylim(ymax=2.0)
-    plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
-else:
-    logger.notice("Nothing to plot")
