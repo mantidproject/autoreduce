@@ -156,8 +156,7 @@ template_file.close()
 _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
 
-if False:
-    LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
+LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
               SubtractSignalBackground=data_set.DataBackgroundFlag,
