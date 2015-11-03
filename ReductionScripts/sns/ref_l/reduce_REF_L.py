@@ -213,22 +213,21 @@ for item in result_list:
             clean_y.append(y_data[i])
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
-    if len(clean_y)>0:
-        plot_data.append([item, clean_x, clean_y, clean_e])
+    #if len(clean_y)>0:
+    #    plot_data.append([item, clean_x, clean_y, clean_e])
 
-    # Update json data file for interactive plotting
-    if item == "output_auto":
-        file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
-        if os.path.isfile(file_path):
-            fd = open(file_path, 'r')
-            json_data = fd.read()
-            fd.close()
-            data = json.loads(json_data)
-            data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-            json_data = json.dumps(data)
-            fd = open(file_path, 'w')
-            fd.write(json_data)
-            fd.close()
+# Update json data file for interactive plotting
+file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+if os.path.isfile(file_path):
+    fd = open(file_path, 'r')
+    json_data = fd.read()
+    fd.close()
+    data = json.loads(json_data)
+    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+    json_data = json.dumps(data)
+    fd = open(file_path, 'w')
+    fd.write(json_data)
+    fd.close()
   
 if len(plot_data)>1: 
     plt.cla()
