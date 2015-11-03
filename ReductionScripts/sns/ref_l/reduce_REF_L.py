@@ -157,10 +157,6 @@ template_file.close()
 _incident_medium_str = str(data_set.incident_medium_list[0])
 _list = _incident_medium_str.split(',')
 
-# Set the following to True to compare the old and new reduction algorithms
-compare = False
-comparison_ending = 'no_clocking'
-
 LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               NormalizationRunNumber=str(data_set.norm_file),
               SignalPeakPixelRange=data_set.DataPeakPixels,
@@ -195,9 +191,7 @@ if AnalysisDataService.doesExist('reflectivity_auto'):
 
 # Clean up the output and produce a nice plot for the web monitor
 result_list = ['output_auto']
-if compare:
-    result_list.append('output_%s' % comparison_ending)
-#group_ws = []
+
 plot_data = []
 qmin = 0
 qmax = 0.2
