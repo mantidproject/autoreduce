@@ -277,35 +277,31 @@ def selection_plots(workspace, output_dir, run_number):
     fd.write(json_data)
     fd.close()
 
-def produce_image(workspace):
-        
-    # Clean up the output and produce a nice plot for the web monitor
-    result_list = ['output_auto']
-
+def produce_image(item='output_auto'):
     plot_data = []
     qmin = 0
     qmax = 0.2
-    for item in result_list:
-        if not AnalysisDataService.doesExist(item):
-            continue
-        ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
-                             NaNValue=0.0, NaNError=0.0,
-                             InfinityValue=0.0, InfinityError=0.0)    
-        x_data = mtd[item].dataX(0)
-        y_data = mtd[item].dataY(0)
-        e_data = mtd[item].dataE(0)
-        clean_x = []
-        clean_y = []
-        clean_e = []
-        qmin = min(x_data)*0.95
-        qmax = max(x_data)*1.1
-        for i in range(len(y_data)):
-            if y_data[i]>0:
-                clean_y.append(y_data[i])
-                clean_x.append(x_data[i])
-                clean_e.append(e_data[i])
-        if len(clean_y)>0:
-            plot_data.append([item, clean_x, clean_y, clean_e])
+
+    if not AnalysisDataService.doesExist(item):
+        continue
+    ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
+                         NaNValue=0.0, NaNError=0.0,
+                         InfinityValue=0.0, InfinityError=0.0)    
+    x_data = mtd[item].dataX(0)
+    y_data = mtd[item].dataY(0)
+    e_data = mtd[item].dataE(0)
+    clean_x = []
+    clean_y = []
+    clean_e = []
+    qmin = min(x_data)*0.95
+    qmax = max(x_data)*1.1
+    for i in range(len(y_data)):
+        if y_data[i]>0:
+            clean_y.append(y_data[i])
+            clean_x.append(x_data[i])
+            clean_e.append(e_data[i])
+    if len(clean_y)>0:
+        plot_data.append([item, clean_x, clean_y, clean_e])
   
     if len(plot_data)>1: 
         plt.cla()
