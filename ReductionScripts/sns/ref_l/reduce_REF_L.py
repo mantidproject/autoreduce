@@ -214,9 +214,6 @@ for item in result_list:
             clean_y.append(y_data[i])
             clean_x.append(x_data[i])
             clean_e.append(e_data[i])
-    #CreateWorkspace(DataX=clean_x, DataY=clean_y, DataE=clean_e, NSpec=1,
-    #                OutputWorkspace=item, UnitX="MomentumTransfer")
-    #group_ws.append(item)       
     if len(clean_y)>0:
         plot_data.append([item, clean_x, clean_y, clean_e])
 
@@ -241,14 +238,9 @@ else:
     y_label += "(stitched)"
     
 if len(plot_data)>1: 
-
     plt.cla()
-    if len(plot_data)==2:
-        plt.plot(plot_data[0][1], plot_data[0][2], '-', plot_data[1][1], plot_data[1][2])
-        plt.legend(["Standard (absolute=%s)" % is_absolute, "No clocking (absolute=%s)" % is_absolute_new])
-    else:
-        plt.plot(plot_data[0][1], plot_data[0][2], '-')
-        plt.legend(["Standard (absolute=%s)" % is_absolute])
+    plt.plot(plot_data[0][1], plot_data[0][2], '-')
+    plt.legend(["Standard (absolute=%s)" % is_absolute])
     plt.title(y_label)
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
