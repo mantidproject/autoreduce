@@ -240,10 +240,4 @@ if len(plot_data)>1:
     plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
 else:
     logger.notice("Nothing to plot")
-    
-    
 
-print "This goes in the log"
-logger.information("this is logger info")
-
-raise RuntimeError, "this goes in the error log"
