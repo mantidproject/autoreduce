@@ -283,7 +283,7 @@ def produce_image(item='output_auto'):
     qmax = 0.2
 
     if not AnalysisDataService.doesExist(item):
-        continue
+        return
     ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
                          NaNValue=0.0, NaNError=0.0,
                          InfinityValue=0.0, InfinityError=0.0)    
