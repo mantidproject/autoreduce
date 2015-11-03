@@ -227,7 +227,7 @@ if os.path.isfile(file_path):
     fd.write(json_data)
     fd.close()
   
-if len(plot_data)>1: 
+if len(plot_data)>0: 
     plt.cla()
     plt.plot(plot_data[0][1], plot_data[0][2], '-')
     plt.title('Reflectivity')
