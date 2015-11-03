@@ -188,6 +188,18 @@ is_absolute = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_U
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
+# Update json data file for interactive plotting
+file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+if os.path.isfile(file_path):
+    fd = open(file_path, 'r')
+    json_data = fd.read()
+    fd.close()
+    data = json.loads(json_data)
+    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+    json_data = json.dumps(data)
+    fd = open(file_path, 'w')
+    fd.write(json_data)
+    fd.close()
 # Clean up the output and produce a nice plot for the web monitor
 result_list = ['output_auto']
 
@@ -216,18 +228,7 @@ for item in result_list:
     #if len(clean_y)>0:
     #    plot_data.append([item, clean_x, clean_y, clean_e])
 
-# Update json data file for interactive plotting
-file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
-if os.path.isfile(file_path):
-    fd = open(file_path, 'r')
-    json_data = fd.read()
-    fd.close()
-    data = json.loads(json_data)
-    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-    json_data = json.dumps(data)
-    fd = open(file_path, 'w')
-    fd.write(json_data)
-    fd.close()
+
   
 if len(plot_data)>1: 
     plt.cla()
