@@ -121,6 +121,54 @@ if mpiRank == 0:
 
     # save a picture of the normalized ritveld data
     wksp_name="NOM_"+runNumber
-    SavePlot1D(InputWorkspace=wksp_name,
-               OutputFilename=os.path.join(outputDir,wksp_name+'.png'),
-               YLabel='Intensity')
+    imgfilename=os.path.join(outputDir,wksp_name+'.png')
+
+    NUM_HIST = mtd[wksp_name].getNumberHistograms()
+    if NUM_HIST == 6:
+        print "customized plotting"
+
+        # setup matplotlib to have the correct backend
+        import matplotlib
+        matplotlib=sys.modules['matplotlib']
+        matplotlib.use("agg")
+        import matplotlib.pyplot as plt
+
+        from numpy import ma
+        gridloc=[]
+        for i in xrange(NUM_HIST):
+            irow = i/2
+            icol = i%2
+            gridloc.append((irow,icol))
+
+        fig = plt.gcf() # get current figure
+        #fig.set_size_inches(8.0,16.0)
+
+        wksp = mtd[wksp_name]
+        for (i, loc) in enumerate(gridloc):
+            y = wksp.readY(i)
+            y_van = mtd["NOM_"+str(van_run)].readY(i)
+            (y_min, y_max) = (y_van.min(), y_van.max())
+
+            # detect singularities
+            van_cutoff = .2
+            van_cutoff = van_cutoff*y_van.max() + (1.-van_cutoff)*y_van.min()
+            sam_cutoff = .05*y.mean()
+            mask = ma.masked_where(y_van<van_cutoff, y)
+            mask = ma.masked_where(y<sam_cutoff, mask)
+
+            ax = plt.subplot2grid((wksp.getNumberHistograms()/2, 2), loc)
+            plt.plot(wksp.readX(i)[1:],mask)
+            plt.xlabel('Q ($\AA^{-1}$)')
+            plt.ylabel('Intensity')
+            plt.title('bank {0} '.format(i+1))
+
+        plt.tight_layout(1.08)
+        plt.show()
+        #plt.close()
+        print "saving", imgfilename
+        fig.savefig(imgfilename)#, bbox_inches='tight')
+
+    else:
+        SavePlot1D(InputWorkspace=wksp,
+                   OutputFilename=imgfilename,
+                   YLabel='Intensity')
