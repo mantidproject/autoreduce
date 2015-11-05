@@ -34,7 +34,7 @@ from mantid.simpleapi import *
 # Reduction options
 WL_CUTOFF = 10.0  # Wavelength below which we don't need the absolute normalization
 PRIMARY_FRACTION_RANGE = [118, 197] #[121,195] #[82,154]
-NORMALIZE_TO_UNITY = True #False #True
+NORMALIZE_TO_UNITY = True #False
 #-------------------------------------
 
 
@@ -175,25 +175,18 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
 file_path = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
-if AnalysisDataService.doesExist('reflectivity_auto'):
-    RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
+
 
 # Clean up the output and produce a nice plot for the web monitor
-item = 'output_auto'
+output_ws = 'output_auto'
 
-plot_data = []
-qmin = 0
-qmax = 0.2
-
-
-Load(Filename=file_path, OutputWorkspace='output_auto')
-
-ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
+Load(Filename=file_path, OutputWorkspace=output_ws)
+ReplaceSpecialValues(InputWorkspace=output_ws, OutputWorkspace=output_ws,
                      NaNValue=0.0, NaNError=0.0,
                      InfinityValue=0.0, InfinityError=0.0)    
-x_data = mtd[item].dataX(0)
-y_data = mtd[item].dataY(0)
-e_data = mtd[item].dataE(0)
+x_data = mtd[output_ws].dataX(0)
+y_data = mtd[output_ws].dataY(0)
+e_data = mtd[output_ws].dataE(0)
 clean_x = []
 clean_y = []
 clean_e = []
@@ -204,25 +197,24 @@ for i in range(len(y_data)):
         clean_y.append(y_data[i])
         clean_x.append(x_data[i])
         clean_e.append(e_data[i])
+        
 if len(clean_y)>0:
-    plot_data.append([item, clean_x, clean_y, clean_e])
-
-# Update json data file for interactive plotting
-file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
-if os.path.isfile(file_path):
-    fd = open(file_path, 'r')
-    json_data = fd.read()
-    fd.close()
-    data = json.loads(json_data)
-    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-    json_data = json.dumps(data)
-    fd = open(file_path, 'w')
-    fd.write(json_data)
-    fd.close()
+    # Update json data file for interactive plotting
+    file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+    if os.path.isfile(file_path):
+        fd = open(file_path, 'r')
+        json_data = fd.read()
+        fd.close()
+        data = json.loads(json_data)
+        data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+        json_data = json.dumps(data)
+        fd = open(file_path, 'w')
+        fd.write(json_data)
+        fd.close()
   
-if len(plot_data)>0: 
+    # Create image
     plt.cla()
-    plt.plot(plot_data[0][1], plot_data[0][2], '-')
+    plt.plot(clean_x, clean_y, '-')
     plt.title('Reflectivity')
     plt.xlabel('Q')
     plt.ylabel('Reflectivity')
