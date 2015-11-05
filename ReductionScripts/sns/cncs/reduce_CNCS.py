@@ -56,6 +56,15 @@ def GetT0FromDet(ws):
     DeleteWorkspace('__fit_Workspace')
     return T0
 
+def GetT0FromDet_GeorgNov2015(ws):
+    Ei=ws.run()['EnergyRequest'].timeAverageValue()
+    mode=ws.run()['DoubleDiskMode'].timeAverageValue()
+    lnEi=np.log(Ei)
+    T0=157.539+lnEi*(-33.04593+lnEi*(-8.07523+lnEi*(2.2143-0.109521767*lnEi)))
+    if (mode!=1):
+        T0-=5.91
+    return T0
+
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
         LoadNexus(Filename=Processed,OutputWorkspace="__VAN")
