@@ -10,7 +10,7 @@ sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
 
-def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_file=True, scale_to_unity=True, wl_cutoff=10.0):
+def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', scale_to_unity=True, wl_cutoff=10.0):
     """
         Utility function used by the automated reduction to load 
         partial results and stitched them together.
