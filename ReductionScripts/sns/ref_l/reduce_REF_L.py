@@ -16,8 +16,8 @@ numpy.seterr(all='ignore')
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
-sys.path.insert(0,'/opt/Mantid/bin')
-#sys.path.insert(0,'/opt/mantidnightly/bin')
+#sys.path.insert(0,'/opt/Mantid/bin')
+sys.path.insert(0,'/opt/mantidnightly/bin')
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -38,13 +38,11 @@ NORMALIZE_TO_UNITY = True #False #True
 #-------------------------------------
 
 
-
-#sys.path.append("/opt/mantidnightly/scripts/Interface/")
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
 from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
-def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
+def save_partial_output(endswith='auto', scale_to_unity=True):
     """
         Stitch and save the full reflectivity curve, or as much as we have at the moment.
     """
@@ -61,12 +59,12 @@ def save_partial_output(endswith='auto', to_file=True, scale_to_unity=True):
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
     _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, 
-                                           to_file=to_file, scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
-    if to_file:
-        default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
-        new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
-        os.system("mv %s %s" % (os.path.join(outputDir, default_file_name),
-                                os.path.join(outputDir, new_file_name)))
+                                           scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
+                                           
+    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
+    new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
+    os.system("mv %s %s" % (os.path.join(outputDir, default_file_name),
+                            os.path.join(outputDir, new_file_name)))
 
     return _is_absolute
 
@@ -79,9 +77,6 @@ title = meta_data_run.getProperty("run_title").value
 if "direct beam" in title.lower():
     logger.notice("Direct beam run: skip")
     sys.exit(0)
-is_silicon = "on si" in title.lower() or "[Si]" in title.lower()
-is_air = "in air" in title.lower() or "[air]" in title.lower()
-
 
 thi = meta_data_run.getProperty('thi').value[0]
 tthd = meta_data_run.getProperty('tthd').value[0]
@@ -112,11 +107,10 @@ if sequence_number == -1:
 selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
+# If there is a local template.xml, use it
 s = DataSeries()
-if is_silicon and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_si.xml"):
-    fd = open("/SNS/REF_L/shared/autoreduce/template_si.xml", "r")
-elif is_air and os.path.isfile("/SNS/REF_L/shared/autoreduce/template_air.xml"):
-    fd = open("/SNS/REF_L/shared/autoreduce/template_air.xml", "r")
+if os.path.isfile("template.xml"):
+    fd = open("template.xml", "r")
 else:
     fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
@@ -184,7 +178,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-is_absolute = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
+save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 

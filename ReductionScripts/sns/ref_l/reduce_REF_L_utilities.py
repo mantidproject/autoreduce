@@ -5,8 +5,8 @@
 import os
 import sys
 import json
-sys.path.insert(0,'/opt/Mantid/bin')
-#sys.path.insert(0,'/opt/mantidnightly/bin')
+#sys.path.insert(0,'/opt/Mantid/bin')
+sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
 
@@ -230,6 +230,15 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', to_fi
     
     if to_file:
         create_ascii_file(first_run_of_set, scaled_ws_list, output_dir)
+    
+    
+    _from_q = 0.005
+    _bin_size = 0.01
+    _bin_max = 2
+    binning_parameters = "%g,-%g,%g" % (_from_q, _bin_size, _bin_max)
+    LRReflectivityOutput(ReducedWorkspaces=input_ws_list, ScaleToUnity=scale_to_unity, ScalingWavelengthCutoff=wl_cutoff,
+                         OutputBinning=binning_parameters, DQConstant=0.0004, DQSlope=0.025,
+                         OutputFilename="REFL_%s_combined.txt" % first_run_of_set)
     
     # Remove workspaces we created
     for item in scaled_ws_list:
