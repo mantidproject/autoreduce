@@ -117,7 +117,10 @@ if (abs(EGuess-55)<0.1):
     
 #tib=[24000,29000]
 
-t0=GetT0FromDet(w)
+t0=GetT0FromDet_GeorgNov2015(w)
+#print 'for Ei=',EGuess,'use T0=',t0
+#t0=GetT0FromDet(w)
+
 #t0=110  #Ei=3.0 meV
 #t0=116  #Ei=2.5 meV
 
