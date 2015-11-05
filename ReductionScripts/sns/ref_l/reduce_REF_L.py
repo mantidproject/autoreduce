@@ -58,15 +58,11 @@ def save_partial_output(endswith='auto', scale_to_unity=True):
     file_path = os.path.join(outputDir, "REFL_%s_%s_%s_%s.nxs" % (first_run_of_set, sequence_number, runNumber, endswith))
     SaveNexus(Filename=file_path, InputWorkspace=output_ws)
 
-    _is_absolute = autoreduction_stitching(outputDir, first_run_of_set, endswith, 
-                                           scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
+    file_path = autoreduction_stitching(outputDir, first_run_of_set, endswith, 
+                                        scale_to_unity=scale_to_unity, wl_cutoff=WL_CUTOFF)
                                            
-    default_file_name = 'REFL_%s_combined_data.txt' % first_run_of_set
-    new_file_name = 'REFL_%s_combined_data_%s.txt' % (first_run_of_set, endswith)
-    os.system("mv %s %s" % (os.path.join(outputDir, default_file_name),
-                            os.path.join(outputDir, new_file_name)))
-
-    return _is_absolute
+    return file_path
+    
 
 # Load meta data to decide what to do
 meta_data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=False)
@@ -178,7 +174,7 @@ LiquidsReflectometryReduction(RunNumbers=[int(runNumber)],
               PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
               OutputWorkspace='reflectivity_%s_%s_%s' % (first_run_of_set, sequence_number, runNumber))
 
-save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
+file_path = save_partial_output(endswith='auto', scale_to_unity=NORMALIZE_TO_UNITY)
 if AnalysisDataService.doesExist('reflectivity_auto'):
     RenameWorkspace(InputWorkspace="reflectivity_auto", OutputWorkspace="output_auto")
 
@@ -188,6 +184,9 @@ item = 'output_auto'
 plot_data = []
 qmin = 0
 qmax = 0.2
+
+
+Load(Filename=file_path, OutputWorkspace='output_auto')
 
 ReplaceSpecialValues(InputWorkspace=item, OutputWorkspace=item,
                      NaNValue=0.0, NaNError=0.0,
