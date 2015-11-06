@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-14374/shared/UB_190K.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.ub_matrix_file='/SNS/CORELLI/IPTS-14374/shared/UB_PSN_3rd3.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': '[H,-H,0]', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
         self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
@@ -221,18 +221,18 @@ if __name__ == "__main__":
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-2.5,-2.5,-2.5',MaxValues='6.5,9.5,2.5',
-                        Uproj='1,1,0',Vproj='0,0,1',Wproj='1,-1,0')
+                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
     mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-2.5,-2.5,-2.5',MaxValues='6.5,9.5,2.5',
-                        Uproj='1,1,0',Vproj='0,0,1',Wproj='1,-1,0')   
+                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
 
     # Save normalized MDs, if possible
     if config.can_do_norm:
         if config.can_do_HKL:
-            AlignedDim0='[H,H,0],'+str(minn[0])+','+str(maxx[0])+',300'
-            AlignedDim1='[0,0,L],'+str(minn[1])+','+str(maxx[1])+',300'
-            AlignedDim2='[H,-H,0],'+str(minn[2])+','+str(maxx[2])+',300'
+            AlignedDim0='[H,0,0],'+str(minn[0])+','+str(maxx[0])+',300'
+            AlignedDim1='[0,K,0],'+str(minn[1])+','+str(maxx[1])+',300'
+            AlignedDim2='[0,0,L],'+str(minn[2])+','+str(maxx[2])+',300'
         else:
             AlignedDim0='Q_sample_x,'+str(minn[0])+','+str(maxx[0])+',300'
             AlignedDim1='Q_sample_y,'+str(minn[1])+','+str(maxx[1])+',300'
