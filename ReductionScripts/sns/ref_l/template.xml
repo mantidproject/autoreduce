@@ -1,11 +1,11 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Fri Nov  6 17:24:10 2015</timestamp>
+  <timestamp>Sat Nov  7 14:36:49 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
   <architecture>('64bit', 'ELF')</architecture>
-  <mantid_version>3.5.0</mantid_version>
+  <mantid_version>3.4.1</mantid_version>
 <DataSeries>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132723</norm_dataset>
+<norm_dataset>132757</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132723</norm_dataset>
+<norm_dataset>132757</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132723</norm_dataset>
+<norm_dataset>132757</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
