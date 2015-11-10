@@ -35,6 +35,7 @@ if __name__ == "__main__":
         load_monitors = False
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
+    main_wl = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
     # Get ROI from logs
     roi_min = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Min").value[0]
     roi_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Size").value[0]
@@ -89,7 +90,7 @@ if __name__ == "__main__":
                     SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                     
                     if i == 0:
-                        file_path = os.path.join(outdir, "%s_detector_main_peak.txt" % (file_prefix, short_name, i))
+                        file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
 
                         x_data = mtd["USANS_scan_detector"].readX(0)
@@ -115,7 +116,7 @@ if __name__ == "__main__":
                     SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
                     if i == 0:
-                        file_path = os.path.join(outdir, "%s_trans_main_peak.txt" % (file_prefix, short_name, i))
+                        file_path = os.path.join(outdir, "%s_trans_%s.txt" % (file_prefix, main_wl))
                         SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                         x_data = mtd["USANS_scan_trans"].readX(0)
                         y_data = mtd["USANS_scan_trans"].readY(0)
