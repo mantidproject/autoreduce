@@ -114,7 +114,7 @@ if __name__ == "__main__":
                         if len(y)>0:
                             # Update json data file for interactive plotting
                             file_path = os.path.join(outdir, "%s_plot_data.dat" % file_prefix)
-                            data = {"main_output": {"x":x, "y":y, "e": e}}
+                            data = {"main_output": {"x":x, "y":y, "e": e, "x_label":short_name, "y_label":"Counts"}}
                             json_data = json.dumps(data)
                             fd = open(file_path, 'w')
                             fd.write(json_data)
