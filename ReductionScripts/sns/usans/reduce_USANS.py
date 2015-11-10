@@ -35,7 +35,10 @@ if __name__ == "__main__":
         load_monitors = False
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
-    main_wl = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
+    if mtd['USANS'].getRun().hasProperty("BL1A:CS:Scan:USANS:Wavelength"):
+        main_wl = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
+    else:
+        main_wl = "main_peak"
     # Get ROI from logs
     roi_min = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Min").value[0]
     roi_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Size").value[0]
