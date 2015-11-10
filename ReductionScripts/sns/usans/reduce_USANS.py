@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys,os
+import math
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
@@ -97,10 +98,12 @@ if __name__ == "__main__":
                         y_data = mtd["USANS_scan_detector"].readY(0)
                         x = []
                         y = []
+                        e = []
                         for item in x_data:
                             x.append(float(item))
                         for item in y_data:
                             y.append(float(item))
+                            e.append(math.sqrt(float(item)))
                         if x_min is None or x_min>min(x):
                             x_min = min(x)
                         if x_max is None or x_max<max(x):
@@ -109,12 +112,12 @@ if __name__ == "__main__":
                         if len(y)>0:
                             # Update json data file for interactive plotting
                             file_path = os.path.join(outputDir, "%s_plot_data.dat" % file_prefix)
-                            if os.path.isfile(file_path):
+                            if True:
                                 fd = open(file_path, 'r')
                                 json_data = fd.read()
                                 fd.close()
                                 data = json.loads(json_data)
-                                data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+                                data["main_output"] = {"x":x, "y":y, "e": e}
                                 json_data = json.dumps(data)
                                 fd = open(file_path, 'w')
                                 fd.write(json_data)
