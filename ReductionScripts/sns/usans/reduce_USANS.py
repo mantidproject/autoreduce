@@ -101,7 +101,9 @@ if __name__ == "__main__":
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
-
+                        json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
+                        SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
+                        
                         x_data = mtd["USANS_scan_detector"].readX(0)
                         y_data = mtd["USANS_scan_detector"].readY(0)
                         x = []
