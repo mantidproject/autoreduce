@@ -13,7 +13,7 @@ numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
 
-peaks = [[10570,11170], [13640,13810], [9080,9220], [6820,6920]]
+peaks = []
 
 if __name__ == "__main__":    
     #check number of arguments
@@ -33,9 +33,19 @@ if __name__ == "__main__":
     except:
         LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
         load_monitors = False
-    LoadNexusLogs(Workspace="USANS", Filename=filename, OverwriteLogs=True)
-    w=mtd["USANS"]
     file_prefix = os.path.split(filename)[1].split('.')[0]
+
+    # Get ROI from logs
+    main_peak = 0
+    roi_min = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Min").value[0]
+    roi_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Size").value[0]
+    for i in range(2,8):
+        lower_bound = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Min" % i).value[0]
+        tof_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Size" % i).value[0]
+        if roi_min == lower_bound:
+            main_peak = i-2
+        
+        peaks.append([lower_bound, lower_bound+tof_step])
 
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
@@ -80,22 +90,26 @@ if __name__ == "__main__":
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
                     file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
-
-                    x_data = mtd["USANS_scan_detector"].readX(0)
-                    y_data = mtd["USANS_scan_detector"].readY(0)
-                    x = []
-                    y = []
-                    for item in x_data:
-                        x.append(float(item))
-                    for item in y_data:
-                        y.append(float(item))
-                    if x_min is None or x_min>min(x):
-                        x_min = min(x)
-                    if x_max is None or x_max<max(x):
-                        x_max = max(x)
                     
-                    plot_data.append([x,y])
-                    twoD = False
+                    if i == main_peak:
+                        file_path = os.path.join(outdir, "%s_detector_main_peak.txt" % (file_prefix, short_name, i))
+                        SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
+
+                        x_data = mtd["USANS_scan_detector"].readX(0)
+                        y_data = mtd["USANS_scan_detector"].readY(0)
+                        x = []
+                        y = []
+                        for item in x_data:
+                            x.append(float(item))
+                        for item in y_data:
+                            y.append(float(item))
+                        if x_min is None or x_min>min(x):
+                            x_min = min(x)
+                        if x_max is None or x_max<max(x):
+                            x_max = max(x)
+                        
+                        plot_data.append([x,y])
+                        twoD = False
                     
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
@@ -103,20 +117,23 @@ if __name__ == "__main__":
                     file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                     SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
-                    x_data = mtd["USANS_scan_trans"].readX(0)
-                    y_data = mtd["USANS_scan_trans"].readY(0)
-                    x = []
-                    y = []
-                    for item in x_data:
-                        x.append(float(item))
-                    for item in y_data:
-                        y.append(float(item))
-                    if x_min is None or x_min>min(x):
-                        x_min = min(x)
-                    if x_max is None or x_max<max(x):
-                        x_max = max(x)
-                    
-                    plot_trans.append([x,y])
+                    if i == main_peak:
+                        file_path = os.path.join(outdir, "%s_trans_main_peak.txt" % (file_prefix, short_name, i))
+                        SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
+                        x_data = mtd["USANS_scan_trans"].readX(0)
+                        y_data = mtd["USANS_scan_trans"].readY(0)
+                        x = []
+                        y = []
+                        for item in x_data:
+                            x.append(float(item))
+                        for item in y_data:
+                            y.append(float(item))
+                        if x_min is None or x_min>min(x):
+                            x_min = min(x)
+                        if x_max is None or x_max<max(x):
+                            x_max = max(x)
+                        
+                        plot_trans.append([x,y])
                    
 
 
