@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys,os
 import math
+import json
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
@@ -112,7 +113,7 @@ if __name__ == "__main__":
                         if len(y)>0:
                             # Update json data file for interactive plotting
                             file_path = os.path.join(outdir, "%s_plot_data.dat" % file_prefix)
-                            data["main_output"] = {"x":x, "y":y, "e": e}
+                            data = {"main_output": {"x":x, "y":y, "e": e}}
                             json_data = json.dumps(data)
                             fd = open(file_path, 'w')
                             fd.write(json_data)
