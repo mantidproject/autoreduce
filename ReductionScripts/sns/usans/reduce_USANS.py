@@ -89,9 +89,6 @@ if __name__ == "__main__":
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
-                    file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
-                    SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
-                    
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
@@ -111,12 +108,15 @@ if __name__ == "__main__":
                         
                         plot_data.append([x,y])
                         twoD = False
+                    else:
+                        file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
+                        SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
+                    
+
                     
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
-                    file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
-                    SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
 
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_trans_%s.txt" % (file_prefix, main_wl))
@@ -135,6 +135,9 @@ if __name__ == "__main__":
                             x_max = max(x)
                         
                         plot_trans.append([x,y])
+                    else:
+                        file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
+                        SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                    
 
 
