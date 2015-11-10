@@ -106,6 +106,7 @@ if __name__ == "__main__":
                         
                         x_data = mtd["USANS_scan_detector"].readX(0)
                         y_data = mtd["USANS_scan_detector"].readY(0)
+                        #TODO: add error, which is not part of the scan table
                         x = []
                         y = []
                         e = []
