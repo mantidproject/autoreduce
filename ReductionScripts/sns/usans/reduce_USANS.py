@@ -119,7 +119,6 @@ if __name__ == "__main__":
                             fd = open(file_path, 'w')
                             fd.write(json_data)
                             fd.close()
-                        twoD = False
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
