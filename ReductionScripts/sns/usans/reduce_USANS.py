@@ -49,7 +49,7 @@ if __name__ == "__main__":
         lower_bound = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Min" % i).value[0]
         tof_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Size" % i).value[0]
         
-        peaks.append([lower_bound, lower_bound+tof_step])
+        peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
 
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
