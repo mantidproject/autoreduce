@@ -240,7 +240,9 @@ if __name__ == "__main__":
         SaveMD(mdrawgrid,Filename=os.path.join(output_directory,output_file+"_data_MD.nxs"))
         SaveMD(mdccgrid,Filename=os.path.join(output_directory,output_file+"_datacc_MD.nxs"))
         SaveMD(mdnorm,Filename=os.path.join(output_directory,output_file+"_norm_MD.nxs"))
-
+        SaveMD(mdraw,Filename=os.path.join(output_directory,output_file+"_data_MDE.nxs"))
+        SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
+        
     # do some plots
     fig = plt.gcf()
     numfig=len(config.plots)
