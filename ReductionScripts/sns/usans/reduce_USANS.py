@@ -97,6 +97,8 @@ if __name__ == "__main__":
                     StepScan(InputWorkspace="USANS_monitors", OutputWorkspace="mon_scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="mon_scan_table", ColumnX=scan_var,
                                                   ColumnY="Counts", OutputWorkspace="USANS_scan_monitor")
+                    file_path = os.path.join(outdir, "%s_monitor_scan_%s.txt" % (file_prefix, short_name))                
+                    SaveAscii(InputWorkspace="USANS_scan_monitor",Filename=file_path, WriteSpectrumID=False)
 
                 for i in range(len(peaks)):
                     peak = peaks[i]
