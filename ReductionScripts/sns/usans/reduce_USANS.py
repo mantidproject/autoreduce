@@ -92,7 +92,12 @@ if __name__ == "__main__":
             if abs(stats.mean)>0 and abs(stats.standard_deviation/item.getStatistics().mean)>0.01:
                 scan_var = item.name
                 short_name = item.name.replace("BL1A:Mot:","")
-            
+
+                if load_monitors:
+                    StepScan(InputWorkspace="USANS_monitors", OutputWorkspace="mon_scan_table")
+                    ConvertTableToMatrixWorkspace(InputWorkspace="mon_scan_table", ColumnX=scan_var,
+                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_monitor")
+
                 for i in range(len(peaks)):
                     peak = peaks[i]
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
