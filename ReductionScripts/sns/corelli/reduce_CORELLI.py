@@ -221,11 +221,11 @@ if __name__ == "__main__":
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-6.1,-7.1,-1.5',MaxValues='-0.9,7.1,1.5',
-                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
+                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
     mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-6.1,-7.1,-1.5',MaxValues='-0.9,7.1,1.5',
-                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
+                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
 
     # Save normalized MDs, if possible
     if config.can_do_norm:
