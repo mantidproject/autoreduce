@@ -98,6 +98,7 @@ if __name__ == "__main__":
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                    mtd["USANS_scan_detector"].setYUnitLabel("Counts")
                     y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].dataE(0)
                     for i_bin in range(len(y_data)):
