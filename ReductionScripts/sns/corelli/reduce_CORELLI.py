@@ -218,11 +218,11 @@ if __name__ == "__main__":
         Q3DFrames="Q_sample"
         QConversionScales="Q in A^-1"
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
-    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-6.1,-1.5,-6.5',MaxValues='-0.9,1.5,6.5',
                         Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
-    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
                         MinValues='-6.1,-1.5,-6.5',MaxValues='-0.9,1.5,6.5',
                         Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
