@@ -30,15 +30,15 @@ if __name__ == "__main__":
         outdir = sys.argv[2]
 
     # Don't load monitors unless we really need them
-    #try:
-    #    LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
-    #    load_monitors = True
-    #except:
-    #    LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
-    #    load_monitors = False
+    try:
+        LoadEventNexus(filename, LoadMonitors=True, OutputWorkspace="USANS")
+        load_monitors = True
+    except:
+        LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
+        load_monitors = False
 
-    LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
-    load_monitors = False
+    #LoadEventNexus(filename, LoadMonitors=False, OutputWorkspace="USANS")
+    #load_monitors = False
 
 
     file_prefix = os.path.split(filename)[1].split('.')[0]
