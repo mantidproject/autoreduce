@@ -19,7 +19,7 @@ class processInputs(object):
         self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.plot_requests=[{'Minimum': '-0.10', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.10'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
         self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
@@ -72,10 +72,10 @@ class processInputs(object):
             if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]','[H,-H,0]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
-            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,H,0]','[0,0,L]','[H,-H,0]']:
+            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,0,L]','[0,K,0]']:
                 logger.warning("Will not be able to convert to HKL")
                 continue
-            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,H,0]','[0,0,L]','[H,-H,0]']:
+            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,0,L]','[0,K,0]']:
                 logger.warning("Data will be in HKL - picture not created")
                 continue
             self.plots.append(pl)
