@@ -110,11 +110,10 @@ if __name__ == "__main__":
                         x = []
                         y = []
                         e = []
-                        for item in x_data:
-                            x.append(float(item))
-                        for item in y_data:
-                            y.append(float(item))
-                            e.append(math.sqrt(float(item)))
+                        for i in range(len(y_data)):
+                            x.append(float(x_data[i]))
+                            y.append(float(y_data[i]))
+                            e.append(math.sqrt(float(y_data[i])))
                         if x_min is None or x_min>min(x):
                             x_min = min(x)
                         if x_max is None or x_max<max(x):
