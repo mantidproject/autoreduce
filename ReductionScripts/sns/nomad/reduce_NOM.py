@@ -36,7 +36,7 @@ else:
 # determine information for caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
 PDLoadCharacterizations(Filename="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
-                        ExpIniFilename="/SNS/lustre/NOM/IPTS-14006/shared/autoNOM/exp.ini",
+                        ExpIniFilename="/SNS/lustre/NOM/IPTS-13950/shared/autoNOM/exp.ini",
                         OutputWorkspace="characterizations")
 PDDetermineCharacterizations(InputWorkspace=wksp,
                              Characterizations="characterizations")
@@ -96,9 +96,9 @@ if van_run > 0:
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-14006/shared/NOM_calibrate_d61122_2015_11_11.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-13950/shared/NOM_calibrate_d61122_2015_11_11.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
-                   ExpIniFilename="/SNS/lustre/NOM/IPTS-14006/shared/autoNOM/exp.ini",
+                   ExpIniFilename="/SNS/lustre/NOM/IPTS-13950/shared/autoNOM/exp.ini",
                    RemovePromptPulseWidth=50,
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
                    CropWavelengthMin=wavelengthMin,
