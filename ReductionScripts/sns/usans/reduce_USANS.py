@@ -130,9 +130,9 @@ if __name__ == "__main__":
                             file_path = os.path.join(outdir, "%s_plot_data.dat" % file_prefix)
                             data = {"main_output": {"x":x, "y":y, "e": e, "x_label":short_name, "y_label":"Counts"}}
                             json_data = json.dumps(data)
-                            fd = open(file_path, 'w')
-                            fd.write(json_data)
-                            fd.close()
+                            #fd = open(file_path, 'w')
+                            #fd.write(json_data)
+                            #fd.close()
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
