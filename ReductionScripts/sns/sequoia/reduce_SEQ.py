@@ -256,8 +256,8 @@ if __name__ == "__main__":
         yscale('log')
         show()
         savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
-        json_file_path = os.path.join(outdir, "SEQ_%s_plot_data.json" % runnum)
-        SavePlot1DAsJson(InputWorkspace="__OWS", JsonFilename=json_file_path, PlotName="main_output")
+        #json_file_path = os.path.join(outdir, "SEQ_%s_plot_data.json" % runnum)
+        #SavePlot1DAsJson(InputWorkspace="__OWS", JsonFilename=json_file_path, PlotName="main_output")
         
         if NXSPE_flag:    
             angle=mtd["__OWS"].run()['phi'].getStatistics().mean      
