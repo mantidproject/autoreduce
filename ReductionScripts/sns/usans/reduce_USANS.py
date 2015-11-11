@@ -96,7 +96,7 @@ if __name__ == "__main__":
                 if load_monitors:
                     StepScan(InputWorkspace="USANS_monitors", OutputWorkspace="mon_scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="mon_scan_table", ColumnX=scan_var,
-                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_monitor")
+                                                  ColumnY="Counts", ColumnE="Error", OutputWorkspace="USANS_scan_monitor")
                     file_path = os.path.join(outdir, "%s_monitor_scan_%s.txt" % (file_prefix, short_name))                
                     SaveAscii(InputWorkspace="USANS_scan_monitor",Filename=file_path, WriteSpectrumID=False)
 
@@ -105,12 +105,10 @@ if __name__ == "__main__":
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
-                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                                                  ColumnY="Counts", ColumnE="Error", OutputWorkspace="USANS_scan_detector")
                     mtd['USANS_scan_detector'].getAxis(1).getUnit().setLabel("Counts", "Counts")
                     y_data = mtd["USANS_scan_detector"].readY(0)
-                    e_data = mtd["USANS_scan_detector"].dataE(0)
-                    for i_bin in range(len(y_data)):
-                        e_data[i_bin] = math.sqrt(y_data[i_bin])
+                    e_data = mtd["USANS_scan_detector"].readE(0)
 
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
