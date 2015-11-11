@@ -77,7 +77,6 @@ if __name__ == "__main__":
         Rebin(InputWorkspace="USANS_monitors", Params="0,10,17000", OutputWorkspace="USANS_monitors")
         file_path = os.path.join(outdir, "%s_monitor.txt" % file_prefix)
         SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
-        StepScan(InputWorkspace="USANS_monitors", OutputWorkspace="mon_scan_table")
 
     # Find whether we have a motor turning
     plt.cla()
