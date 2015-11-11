@@ -98,10 +98,7 @@ if __name__ == "__main__":
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
-                    #mtd["USANS_scan_detector"].setYUnitLabel("Counts")
-                    #mtd["USANS_scan_detector"].setYUnit("Counts")
-                    unit=mtd['USANS_scan_detector'].getAxis(1).getUnit()
-                    unit.setLabel("Counts", "Counts")
+                    mtd['USANS_scan_detector'].getAxis(1).getUnit().setLabel("Counts", "Counts")
                     y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].dataE(0)
                     for i_bin in range(len(y_data)):
@@ -112,30 +109,6 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
-                        
-                        x_data = mtd["USANS_scan_detector"].readX(0)
-                        
-                        #TODO: add error, which is not part of the scan table
-                        x = []
-                        y = []
-                        e = []
-                        for i in range(len(y_data)):
-                            x.append(float(x_data[i]))
-                            y.append(float(y_data[i]))
-                            e.append(float(e_data[i]))
-                        if x_min is None or x_min>min(x):
-                            x_min = min(x)
-                        if x_max is None or x_max<max(x):
-                            x_max = max(x)
-                        
-                        if len(y)>0:
-                            # Update json data file for interactive plotting
-                            file_path = os.path.join(outdir, "%s_plot_data.dat" % file_prefix)
-                            data = {"main_output": {"x":x, "y":y, "e": e, "x_label":short_name, "y_label":"Counts"}}
-                            json_data = json.dumps(data)
-                            #fd = open(file_path, 'w')
-                            #fd.write(json_data)
-                            #fd.close()
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
