@@ -100,8 +100,8 @@ if __name__ == "__main__":
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
                     y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].dataE(0)
-                    for i in range(len(y_data)):
-                        e_data[i] = math.sqrt(y_data[i])
+                    for i_bin in range(len(y_data)):
+                        e_data[i_bin] = math.sqrt(y_data[i_bin])
 
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
