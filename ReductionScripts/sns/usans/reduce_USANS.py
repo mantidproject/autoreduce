@@ -98,6 +98,7 @@ if __name__ == "__main__":
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                    y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].dataE(0)
                     for i in range(len(y_data)):
                         e_data[i] = math.sqrt(y_data[i])
@@ -109,7 +110,7 @@ if __name__ == "__main__":
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
                         
                         x_data = mtd["USANS_scan_detector"].readX(0)
-                        y_data = mtd["USANS_scan_detector"].readY(0)
+                        
                         #TODO: add error, which is not part of the scan table
                         x = []
                         y = []
