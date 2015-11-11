@@ -97,7 +97,8 @@ if __name__ == "__main__":
                     peak = peaks[i]
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
                     StepScan(InputWorkspace="peak_detector", OutputWorkspace="scan_table")
-                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
+                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
+                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_detector")
                     mtd['USANS_scan_detector'].getAxis(1).getUnit().setLabel("Counts", "Counts")
                     y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].dataE(0)
@@ -115,7 +116,8 @@ if __name__ == "__main__":
                     
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
-                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var, ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
+                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
+                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
 
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_trans_%s.txt" % (file_prefix, main_wl))
