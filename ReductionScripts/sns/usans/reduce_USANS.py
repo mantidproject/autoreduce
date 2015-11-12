@@ -166,7 +166,7 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                        
                 # Sort the q values
-                iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
+                #iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
                 for item in iq_data:
                     if item[1]>0:
                         iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
