@@ -55,8 +55,8 @@ if __name__ == "__main__":
     for i in range(1,8):
         lower_bound = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Min" % i).value[0]
         tof_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Size" % i).value[0]
-        if lower_bound == roi_min:
-            main_index = i-1
+        if i>1 and lower_bound == roi_min:
+            main_index = i-2
         peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
 
     # Produce ASCII data
@@ -156,10 +156,11 @@ if __name__ == "__main__":
                             if q<=0:
                                 continue
                             
-                            # Write I(q) file
+                            # Write complete I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
                             iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]))
+
 
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
