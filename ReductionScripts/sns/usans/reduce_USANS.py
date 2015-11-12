@@ -101,6 +101,15 @@ if __name__ == "__main__":
                 
                 iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
                 iq_fd = open(iq_file_path, 'w')
+
+                start_time = mtd['USANS'].getRun().getProperty("start_time").value
+                experiment = mtd['USANS'].getRun().getProperty("experiment_identifier").value
+                run_number = mtd['USANS'].getRun().getProperty("run_number").value
+                run_title = mtd['USANS'].getRun().getProperty("run_title").value
+
+                iq_fd.append('# Experiment %s Run %s\n' % (experiment, run_number))
+                iq_fd.append('# Run start time: %s\n' % start_time)
+                iq_fd.append("# Title: %s\n" % run_title)
                 iq_fd.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
                 for i in range(len(peaks)):
                     peak = peaks[i]
@@ -127,15 +136,12 @@ if __name__ == "__main__":
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            #iq_fd_simple.write("%-10.6g %-10.6g %-10.6g %-10.6g\n" % (q, x_data[i_theta], i_q, di_q))
                             iq_fd_simple.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
-
-
 
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
-                        q_data = []
+                        iq_data = []
                         for i_theta in range(len(x_data)):
                             q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[i-1]
                             q_data.append(q)
@@ -145,7 +151,13 @@ if __name__ == "__main__":
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]))
+                            iq_data.append([q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]])
+                            
+                            
+                        # Sort the q values
+                        iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
+                        for item in iq_data:
+                            iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
                             
                     
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
