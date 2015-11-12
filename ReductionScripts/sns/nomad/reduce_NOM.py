@@ -107,7 +107,7 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    VanadiumRadius=vanradius,
-                   NormalizeByCurrent=True, FinalDataUnits="dSpacing")
+                   NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
 
 # only write out thing on control job
 if mpiRank == 0:
