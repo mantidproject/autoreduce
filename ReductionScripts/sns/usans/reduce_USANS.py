@@ -107,9 +107,9 @@ if __name__ == "__main__":
                 run_number = mtd['USANS'].getRun().getProperty("run_number").value
                 run_title = mtd['USANS'].getRun().getProperty("run_title").value
 
-                iq_fd.append('# Experiment %s Run %s\n' % (experiment, run_number))
-                iq_fd.append('# Run start time: %s\n' % start_time)
-                iq_fd.append("# Title: %s\n" % run_title)
+                iq_fd.write('# Experiment %s Run %s\n' % (experiment, run_number))
+                iq_fd.write('# Run start time: %s\n' % start_time)
+                iq_fd.write("# Title: %s\n" % run_title)
                 iq_fd.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
                 for i in range(len(peaks)):
                     peak = peaks[i]
