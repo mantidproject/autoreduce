@@ -98,9 +98,8 @@ if __name__ == "__main__":
                     SaveAscii(InputWorkspace="USANS_scan_monitor",Filename=file_path, WriteSpectrumID=False)
                     y_monitor = mtd["USANS_scan_monitor"].readY(0)
 
-                iq_file_path_simple = os.path.join(outdir, "%s_iq_%s_simple.txt" % (file_prefix, short_name))
+                iq_file_path_simple = os.path.join(outdir, "%s_iq_%s_%s.txt" % (file_prefix, short_name, main_wl))
                 iq_fd_simple = open(iq_file_path_simple, 'w')
-                iq_fd_simple.write("# %-8s %-10s %-10s\n" % ("Q", "I(Q)", "dI(Q)"))     
                 
                 iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
                 iq_fd = open(iq_file_path, 'w')
@@ -119,8 +118,8 @@ if __name__ == "__main__":
                 iq_fd_simple.write('# Run start time: %s\n' % start_time)
                 iq_fd_simple.write("# Title: %s\n" % run_title)
                 iq_fd_simple.write("# Selected wavelength: %s\n" % wavelength[main_index])
-                iq_fd_simple.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
-                    
+                iq_fd_simple.write("# %-8s %-10s %-10s\n" % ("Q", "I(Q)", "dI(Q)"))  
+
                 for i in range(len(peaks)):
                     peak = peaks[i]
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
@@ -146,7 +145,7 @@ if __name__ == "__main__":
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_fd_simple.write("%-10.6g %-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q,wavelength[main_index]))
+                            iq_fd_simple.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
 
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
