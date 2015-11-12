@@ -120,14 +120,14 @@ if __name__ == "__main__":
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
 
                         for i_theta in range(len(x_data)):
-                            q = 2.0*math.pi**2*math.sin(x_data[i_theta])/180.0/3600.0/wavelength[i-1]
+                            q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[i-1]
                             if q<=0:
                                 continue
                             
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_fd_simple.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
+                            iq_fd_simple.write("%-10.6g %-10.6g %-10.6g %-10.6g\n" % (q, x_data[i_theta], i_q, di_q))
 
 
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         q_data = []
                         for i_theta in range(len(x_data)):
-                            q = 2.0*math.pi**2*math.sin(x_data[i_theta])/180.0/3600.0/wavelength[i-1]
+                            q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[i-1]
                             q_data.append(q)
                             if q<=0:
                                 continue
