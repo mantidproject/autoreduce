@@ -119,7 +119,7 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         q_data = []
                         for i_theta in range(len(x_data)):
-                            q = 6.28*math.sin(x_data[i_theta])/wavelength[i-1]
+                            q = 2.0*math.pi**2*math.sin(x_data[i_theta])/180.0/3600.0/wavelength[i-1]
                             q_data.append(q)
                             if q<=0:
                                 continue
