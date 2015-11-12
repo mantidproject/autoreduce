@@ -79,13 +79,7 @@ if __name__ == "__main__":
         SaveAscii(InputWorkspace="USANS_monitors",Filename=file_path, WriteSpectrumID=False)
 
     # Find whether we have a motor turning
-    plt.cla()
-    twoD = True
     short_name = ''
-    plot_data = []
-    plot_trans = []
-    x_min = None
-    x_max = None
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
