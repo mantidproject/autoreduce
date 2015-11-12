@@ -49,10 +49,12 @@ if __name__ == "__main__":
     # Get ROI from logs
     roi_min = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Min").value[0]
     roi_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Size").value[0]
+    main_index = 1
     for i in range(1,8):
         lower_bound = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Min" % i).value[0]
         tof_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Size" % i).value[0]
-        
+        if lower_bound == roi_min:
+            main_index = i
         peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
 
     # Produce ASCII data
@@ -131,7 +133,7 @@ if __name__ == "__main__":
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
 
                         for i_theta in range(len(x_data)):
-                            q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[i-1]
+                            q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[main_index]
                             if q<=0:
                                 continue
                             
@@ -151,7 +153,7 @@ if __name__ == "__main__":
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_data.append([q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]])
+                            iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]))
 
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
@@ -165,12 +167,7 @@ if __name__ == "__main__":
                         file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                        
-                # Sort the q values
-                #iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
-                for item in iq_data:
-                    if item[1]>0:
-                        iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
-
+ 
                 iq_fd.close()
                 iq_fd_simple.close()
     
