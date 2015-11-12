@@ -168,7 +168,8 @@ if __name__ == "__main__":
                 # Sort the q values
                 iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
                 for item in iq_data:
-                    iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
+                    if item[1]>0:
+                        iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
 
                 iq_fd.close()
                 iq_fd_simple.close()
