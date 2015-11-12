@@ -95,6 +95,11 @@ if __name__ == "__main__":
                     SaveAscii(InputWorkspace="USANS_scan_monitor",Filename=file_path, WriteSpectrumID=False)
                     y_monitor = mtd["USANS_scan_monitor"].readY(0)
 
+                iq_file_path_simple = os.path.join(outdir, "%s_iq_%s_simple.txt" % (file_prefix, short_name))
+                iq_fd_simple = open(iq_file_path_simple, 'w')
+                iq_fd_simple = open(iq_file_path, 'w')
+                iq_fd_simple.write("# %-8s %-10s %-10s\n" % ("Q", "I(Q)", "dI(Q)"))     
+                
                 iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
                 iq_fd = open(iq_file_path, 'w')
                 iq_fd.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
@@ -114,6 +119,20 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
+
+                        for i_theta in range(len(x_data)):
+                            q = 2.0*math.pi**2*math.sin(x_data[i_theta])/180.0/3600.0/wavelength[i-1]
+                            q_data.append(q)
+                            if q<=0:
+                                continue
+                            
+                            # Write I(q) file
+                            i_q = y_data[i_theta]/y_monitor[i_theta]
+                            di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
+                            iq_fd.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
+
+
+
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
@@ -144,4 +163,5 @@ if __name__ == "__main__":
                    
                    
                 iq_fd.close()
+                iq_fd_simple.close()
     
