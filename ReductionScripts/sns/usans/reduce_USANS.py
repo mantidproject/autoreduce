@@ -113,8 +113,13 @@ if __name__ == "__main__":
                 iq_fd.write('# Experiment %s Run %s\n' % (experiment, run_number))
                 iq_fd.write('# Run start time: %s\n' % start_time)
                 iq_fd.write("# Title: %s\n" % run_title)
+                iq_fd.write("# Selected wavelength: %s\n" % wavelength[main_index])
                 iq_fd.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
-                iq_data = []
+                iq_fd_simple.write('# Experiment %s Run %s\n' % (experiment, run_number))
+                iq_fd_simple.write('# Run start time: %s\n' % start_time)
+                iq_fd_simple.write("# Title: %s\n" % run_title)
+                iq_fd_simple.write("# Selected wavelength: %s\n" % wavelength[main_index])
+                iq_fd_simple.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
                     
                 for i in range(len(peaks)):
                     peak = peaks[i]
