@@ -47,14 +47,16 @@ if __name__ == "__main__":
         main_wl = "main_peak"
         
     # Get ROI from logs
+    wavelength=[3.6,1.8,1.2,0.9,0.72,0.6]
     roi_min = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Min").value[0]
     roi_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:1:Size").value[0]
-    main_index = 1
+    # Reference to the item in the wavelength array
+    main_index = 1  
     for i in range(1,8):
         lower_bound = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Min" % i).value[0]
         tof_step = mtd['USANS'].getRun().getProperty("BL1A:Det:N1:Det1:TOF:ROI:%s:Size" % i).value[0]
         if lower_bound == roi_min:
-            main_index = i
+            main_index = i-1
         peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
 
     # Produce ASCII data
@@ -80,7 +82,6 @@ if __name__ == "__main__":
 
     # Find whether we have a motor turning
     short_name = ''
-    wavelength=[3.6,1.8,1.2,0.9,0.72,0.6]
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
