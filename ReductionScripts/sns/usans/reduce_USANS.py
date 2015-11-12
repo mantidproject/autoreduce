@@ -127,7 +127,7 @@ if __name__ == "__main__":
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_fd.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
+                            iq_fd_simple.write("%-10.6g %-10.6g %-10.6g\n" % (q, i_q, di_q))
 
 
 
