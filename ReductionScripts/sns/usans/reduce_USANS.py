@@ -78,6 +78,7 @@ if __name__ == "__main__":
 
     # Find whether we have a motor turning
     short_name = ''
+    wavelength=[3.6,1.8,1.2,0.9,0.72,0.6]
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
@@ -85,13 +86,18 @@ if __name__ == "__main__":
                 scan_var = item.name
                 short_name = item.name.replace("BL1A:Mot:","")
 
+                y_monitor = None
                 if load_monitors:
                     StepScan(InputWorkspace="USANS_monitors", OutputWorkspace="mon_scan_table")
                     ConvertTableToMatrixWorkspace(InputWorkspace="mon_scan_table", ColumnX=scan_var,
                                                   ColumnY="Counts", ColumnE="Error", OutputWorkspace="USANS_scan_monitor")
                     file_path = os.path.join(outdir, "%s_monitor_scan_%s.txt" % (file_prefix, short_name))                
                     SaveAscii(InputWorkspace="USANS_scan_monitor",Filename=file_path, WriteSpectrumID=False)
+                    y_monitor = mtd["USANS_scan_monitor"].readY(0)
 
+                iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
+                iq_fd = open(iq_file_path, 'w')
+                iq_fd.write("# %8s %10s %10s %10s %10s %10s %10s %5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
                 for i in range(len(peaks)):
                     peak = peaks[i]
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
@@ -99,6 +105,7 @@ if __name__ == "__main__":
                     ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
                                                   ColumnY="Counts", ColumnE="Error", OutputWorkspace="USANS_scan_detector")
                     mtd['USANS_scan_detector'].getAxis(1).getUnit().setLabel("Counts", "Counts")
+                    x_data = mtd["USANS_scan_detector"].readX(0)
                     y_data = mtd["USANS_scan_detector"].readY(0)
                     e_data = mtd["USANS_scan_detector"].readE(0)
 
@@ -110,6 +117,16 @@ if __name__ == "__main__":
                     else:
                         file_path = os.path.join(outdir, "%s_detector_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
+                        q_data = []
+                        for i_theta in range(len(x_data)):
+                            q = 6.28*math.sin(x_data[i_theta])/wavelength[i-1]
+                            q_data.append(q)
+                            
+                            # Write I(q) file
+                            i_q = y_data[i_theta]/y_monitor[i_theta]
+                            di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + e_data[i_theta]**2/y_monitor[i_theta]**3)
+                            iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_value[i_theta], e_value[i_theta], y_monitor[i_theta], wavelength[i-1]))
+                            
                     
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
                     StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
@@ -123,5 +140,6 @@ if __name__ == "__main__":
                         file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
                         SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                    
-
+                   
+                iq_fd.close()
     
