@@ -7,8 +7,6 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
-from matplotlib.pyplot import *
-import matplotlib.pyplot as plt
 from numpy import *
 numpy.seterr(all='ignore')
 
