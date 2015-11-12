@@ -158,7 +158,8 @@ if __name__ == "__main__":
                             # Write complete I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
                             di_q = math.sqrt( (e_data[i_theta]/y_monitor[i_theta])**2 + y_data[i_theta]**2/y_monitor[i_theta]**3)
-                            iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]))
+                            if i_q>0:
+                                iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % (q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]))
 
 
                     CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
