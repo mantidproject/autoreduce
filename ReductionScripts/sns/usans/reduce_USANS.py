@@ -153,25 +153,25 @@ if __name__ == "__main__":
                             iq_data.append([q, i_q, di_q, 0, y_data[i_theta], e_data[i_theta], y_monitor[i_theta], wavelength[i-1]])
                             
                             
-                # Sort the q values
-                iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
-                for item in iq_data:
-                    iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
+               # Sort the q values
+               iq_data.sort(cmp=lambda x,y: cmp(x[0],y[0]))
+               for item in iq_data:
+                   iq_fd.write("%-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-10.6g %-5.4g\n" % tuple(item))
                             
                     
-                    CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
-                    StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
-                    ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
-                                                  ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
+                   CropWorkspace(InputWorkspace="USANS_trans", OutputWorkspace="peak_trans", XMin=peak[0], XMax=peak[1]) 
+                   StepScan(InputWorkspace="peak_trans", OutputWorkspace="scan_table")
+                   ConvertTableToMatrixWorkspace(InputWorkspace="scan_table", ColumnX=scan_var,
+                                                 ColumnY="Counts", OutputWorkspace="USANS_scan_trans")
 
-                    if i == 0:
-                        file_path = os.path.join(outdir, "%s_trans_%s.txt" % (file_prefix, main_wl))
-                        SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
-                    else:
-                        file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
-                        SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
+                   if i == 0:
+                       file_path = os.path.join(outdir, "%s_trans_%s.txt" % (file_prefix, main_wl))
+                       SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
+                   else:
+                       file_path = os.path.join(outdir, "%s_trans_scan_%s_peak_%s.txt" % (file_prefix, short_name, i))
+                       SaveAscii(InputWorkspace="USANS_scan_trans",Filename=file_path, WriteSpectrumID=False)
                    
                    
-                iq_fd.close()
-                iq_fd_simple.close()
+               iq_fd.close()
+               iq_fd_simple.close()
     
