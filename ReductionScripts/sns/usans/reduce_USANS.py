@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
                 iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
                 iq_fd = open(iq_file_path, 'w')
-                iq_fd.write("# %8s %10s %10s %10s %10s %10s %10s %5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
+                iq_fd.write("# %-8s %-10s %-10s %-10s %-10s %-10s %-10s %-5s\n" % ("Q", "I(Q)", "dI(Q)", "dQ", "N(Q)", "dN(Q)", "Mon(Q)", "Lambda"))     
                 for i in range(len(peaks)):
                     peak = peaks[i]
                     CropWorkspace(InputWorkspace="USANS_detector", OutputWorkspace="peak_detector", XMin=peak[0], XMax=peak[1])
@@ -121,6 +121,8 @@ if __name__ == "__main__":
                         for i_theta in range(len(x_data)):
                             q = 6.28*math.sin(x_data[i_theta])/wavelength[i-1]
                             q_data.append(q)
+                            if q<=0:
+                                continue
                             
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
