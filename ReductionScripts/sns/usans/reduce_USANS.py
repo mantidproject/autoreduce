@@ -97,7 +97,6 @@ if __name__ == "__main__":
 
                 iq_file_path_simple = os.path.join(outdir, "%s_iq_%s_simple.txt" % (file_prefix, short_name))
                 iq_fd_simple = open(iq_file_path_simple, 'w')
-                iq_fd_simple = open(iq_file_path, 'w')
                 iq_fd_simple.write("# %-8s %-10s %-10s\n" % ("Q", "I(Q)", "dI(Q)"))     
                 
                 iq_file_path = os.path.join(outdir, "%s_iq_%s.txt" % (file_prefix, short_name))
