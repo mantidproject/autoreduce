@@ -15,13 +15,16 @@ urlpatterns = patterns('',
 
     url(r'^runs/$', reduction_viewer_views.run_list, name='run_list'),   
     url(r'^runs/queue/$', reduction_viewer_views.run_queue, name='run_queue'), 
-    url(r'^runs/(?P<run_number>[0-9]+)(?:/(?P<run_version>[0-9]+))?/$', reduction_viewer_views.run_summary, name='run_summary'),  
-    url(r'^runs/(?P<run_number>[0-9]+)(?:/(?P<run_version>[0-9]+))?/confirmation/$', reduction_variables_views.run_confirmation, name='run_confirmation'),  
+    url(r'^runs/(?P<run_number>[0-9]+)(?:/(?P<run_version>[0-9]+))?/$', reduction_viewer_views.run_summary, name='run_summary'),
+    url(r'^runs/(?P<instrument>\w+)/confirmation/$', reduction_variables_views.run_confirmation, name='run_confirmation'),
 
     url(r'^instrument/(?P<instrument>\w+)/$', reduction_viewer_views.instrument_summary, name='instrument_summary'),
+    url(r'^instrument/(?P<instrument>\w+)/pause$', reduction_viewer_views.instrument_pause, name='instrument_pause'),
     url(r'^instrument/(?P<instrument>\w+)/submit_runs/$', reduction_variables_views.submit_runs, name='instrument_submit_runs'),
-    url(r'^instrument/(?P<instrument>\w+)/variables(?:/(?P<start>[0-9]+))?(?:/(?P<end>[0-9]+))?/$', reduction_variables_views.instrument_variables, name='instrument_variables'),       
+    url(r'^instrument/(?P<instrument>\w+)/variables(?:/(?P<start>[0-9]+))?(?:/(?P<end>[0-9]+))?/$', reduction_variables_views.instrument_variables, name='instrument_variables'),
+    url(r'^instrument/(?P<instrument>\w+)/variables(?:/(?P<start>[0-9]+))?(?:/(?P<end>[0-9]+))?/delete$', reduction_variables_views.delete_instrument_variables, name='delete_instrument_variables'),
     url(r'^instrument/(?P<instrument>\w+)/variables/experiment/(?P<experiment_reference>[0-9]+)/$', reduction_variables_views.instrument_variables, name='instrument_variables_by_experiment'),
+    url(r'^instrument/(?P<instrument>\w+)/variables/experiment/(?P<experiment_reference>[0-9]+)/delete$', reduction_variables_views.delete_instrument_variables, name='delete_instrument_variables_by_experiment'),
 
     url(r'^instrument/(?P<instrument>\w+)/default_variables/$', reduction_variables_views.current_default_variables, name='current_default_variables'),
 

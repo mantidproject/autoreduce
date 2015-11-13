@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-14159/shared/UB_300K.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
-        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
-        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
-        self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.10', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.10'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='True' #"True"
+        self.ub_matrix_file='${ub_matrix_file}' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.vanadium_SA_file='${vanadium_SA_file}' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
+        self.vanadium_flux_file='${vanadium_flux_file}' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
+        self.mask=${mask} #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
+        self.plot_requests=${plot_requests} #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.useCC='${useCC}' #"True"
         #other
         self.can_do_HKL=False
         self.can_do_norm=False
@@ -69,13 +69,13 @@ class processInputs(object):
             if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
-            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]','[H,-H,0]']:
+            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
-            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,0,L]','[0,K,0]']:
+            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Will not be able to convert to HKL")
                 continue
-            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,0,L]','[0,K,0]']:
+            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Data will be in HKL - picture not created")
                 continue
             self.plots.append(pl)
@@ -218,14 +218,10 @@ if __name__ == "__main__":
         Q3DFrames="Q_sample"
         QConversionScales="Q in A^-1"
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
-    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
-                        LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-6.1,-6.5,-1.5',MaxValues='-0.9,6.5,1.5',
-                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
-    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
-                        LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-6.1,-6.5,-1.5',MaxValues='-0.9,6.5,1.5',
-                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
+    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)
+    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
 
     # Save normalized MDs, if possible
     if config.can_do_norm:
@@ -246,7 +242,7 @@ if __name__ == "__main__":
         SaveMD(mdnorm,Filename=os.path.join(output_directory,output_file+"_norm_MD.nxs"))
         SaveMD(mdraw,Filename=os.path.join(output_directory,output_file+"_data_MDE.nxs"))
         SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
-
+        
     # do some plots
     fig = plt.gcf()
     numfig=len(config.plots)
@@ -262,5 +258,8 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
+
+
+
 
 

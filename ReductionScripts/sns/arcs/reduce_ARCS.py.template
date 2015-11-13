@@ -88,8 +88,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/CAL/2015-B/data/ARCS_67625_event.nxs"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van67625.nxs"
+    RawVanadium="${raw_vanadium}"
+    ProcessedVanadium="${processed_vanadium}"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -98,16 +98,11 @@ if __name__ == "__main__":
     #MaskBTPParameters.append({'Bank':"71",'Pixel':"1-14,115-128"})
     #MaskBTPParameters.append({'Bank':"10",'Tube':"6"}) # mask for bad tube 2014-10-20 - DLA
     #MaskBTPParameters.append({'Bank':"27"}) # mask for bad pack (HV problem) 2014-10-20 - DLA
-    MaskBTPParameters.append({'Pixel': '1-7,122-128'})
-    MaskBTPParameters.append({'Pixel': '1-12,117-128', 'Bank': '70'})
-    MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
-    MaskBTPParameters.append({'Tube': '3', 'Bank': '3'})
-    MaskBTPParameters.append({'Bank': '80'})
-
+${mask}
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #this worked for smaller files DLA
-    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml"
+    groupingFile="${grouping}"
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
@@ -155,7 +150,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
+        DGSdict['EnergyTransferRange']=[${e_min}*EGuess,${e_step}*EGuess,${e_max}*EGuess] #Energy Binning
         #DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
         DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
         DGSdict['HardMaskFile']=HardMaskFile
@@ -212,7 +207,7 @@ if __name__ == "__main__":
         Zm=ma.masked_where(ne==0,dne)
         pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
         colorbar(pcm)
-        xlabel('|Q| ($\AA^{-1}$)')
+        xlabel('|Q| ($$\AA^{-1}$$)')
         ylabel('E (meV)')
         title("Run "+outfile)
 

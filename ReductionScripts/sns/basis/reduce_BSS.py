@@ -3,8 +3,7 @@ import sys
 import shutil
 import numpy
 
-mantid_root = "/opt/mantidnightly"
-mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
+sys.path.append("/opt/mantidnightly/bin")
 
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 from matplotlib import *                                                                                      
@@ -33,7 +32,7 @@ data=mtd[autows].extractY()[0:2520*4]
 LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile='/SNS/BSS/shared/autoreduce/BASIS_Mask.xml')
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
-LoadParameterFile(Workspace=autows, Filename=os.path.join(mantid_root, 'instrument', 'BASIS_silicon_111_Parameters.xml'))
+LoadParameterFile(Workspace=autows, Filename='BASIS_silicon_111_Parameters.xml')
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
 MonTemp=CloneWorkspace(autows_monitor)
 ModeratorTzeroLinear(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor)
@@ -108,6 +107,8 @@ autows_sqw=mtd[autows+'_sqw']
 Qm,dQ,QM = [float(x) for x in QAxisBinning.split(',')]
 nQ = int( (QM-Qm)/dQ )
 for i in range(nQ):
+    if max(autows_sqw.readY(i))<=0:
+        continue
     irow=(i+1)/2+2
     icol=(i+1)%2
     ax1 = plt.subplot2grid((7,2), (irow,icol) )

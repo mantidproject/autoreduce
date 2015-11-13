@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_staff
 from reduction_variables.models import InstrumentVariable, RunVariable, ScriptFile
-from reduction_variables.utils import InstrumentVariablesUtils, VariableUtils, MessagingUtils, ScriptUtils
+from reduction_variables.utils import InstrumentVariablesUtils, VariableUtils, MessagingUtils, ScriptUtils, DataTooLong
 from reduction_viewer.models import Instrument, ReductionRun, DataLocation
 from reduction_viewer.utils import StatusUtils
 
@@ -87,7 +87,19 @@ def instrument_summary(request, instrument):
         'upcoming_variables_by_experiment': upcoming_variables_by_experiment_ordered,
     }
 
+    context_dictionary.update(csrf(request))
+
     return render_to_response('snippets/instrument_summary_variables.html', context_dictionary, RequestContext(request))
+
+@login_and_uows_valid
+def delete_instrument_variables(request, instrument, start=0, end=0, experiment_reference=None):
+    instrument = Instrument.objects.get(name=instrument)
+    if experiment_reference is None:
+        InstrumentVariable.objects.filter(instrument=instrument, start_run=start).delete()
+    else:
+        InstrumentVariable.objects.filter(instrument=instrument, experiment_reference=experiment_reference).delete()
+
+    return redirect('instrument_summary', instrument=instrument.name)
 
 #@require_staff
 @login_and_uows_valid
@@ -247,7 +259,7 @@ def instrument_variables(request, instrument, start=0, end=0, experiment_referen
 
         context_dictionary = {
             'instrument' : instrument,
-            'last_instrument_run' : ReductionRun.objects.filter(instrument=instrument).order_by('-run_number')[0],
+            'last_instrument_run' : ReductionRun.objects.filter(instrument=instrument).exclude(status=StatusUtils().get_skipped()).order_by('-run_number')[0],
             'processing' : ReductionRun.objects.filter(instrument=instrument, status=processing_status),
             'queued' : ReductionRun.objects.filter(instrument=instrument, status=queued_status),
             'standard_variables' : standard_vars,
@@ -276,100 +288,12 @@ def submit_runs(request, instrument):
 
     instrument = Instrument.objects.get(name=instrument)
 
-    if request.method == 'POST':
-        # TODO: Need to check ICAT credentials
-        start = int(request.POST.get("run_start", 1))
-        end = int(request.POST.get("run_end", start))
-
-        for run_number in range(start, end):
-            old_reduction_run = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version').first()
-            if not old_reduction_run:
-                continue
-            queued_status = StatusUtils().get_queued()
-            new_job = ReductionRun(
-                instrument=instrument,
-                run_number=run_number,
-                run_name=request.POST.get('run_description'),
-                run_version=old_reduction_run.run_version+1,
-                experiment=old_reduction_run.experiment, #TODO: Get from ICAT
-                started_by=request.user.username,
-                status=queued_status,
-                )
-            new_job.save()
-
-            for data_location in old_reduction_run.data_location.all(): #TODO: If old run get from there otherwise should be able to create (maybe by assuming same format as old data locs)
-                new_data_location = DataLocation(file_path=data_location.file_path, reduction_run=new_job)
-                new_data_location.save()
-                new_job.data_location.add(new_data_location)
-
-            script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
-            default_variables = InstrumentVariablesUtils().get_variables_from_current_script(instrument.name)
-
-            script = ScriptFile(script=script_binary, file_name='reduce.py')
-            script.save()
-            script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
-            script_vars.save()
-
-            new_variables = []
-
-            for key,value in request.POST.iteritems():
-                if 'var-' in key:
-                    name = None
-                    if 'var-advanced-' in key:
-                        name = key.replace('var-advanced-', '').replace('-', ' ')
-                        is_advanced = True
-                    if 'var-standard-' in key:
-                        name = key.replace('var-standard-', '').replace('-', ' ')
-                        is_advanced = False
-
-                    if name is not None:
-                        default_var = next((x for x in default_variables if x.name == name), None)
-                        if not default_var:
-                            continue
-                        variable = RunVariable(
-                            reduction_run=new_job,
-                            name=default_var.name,
-                            value=value,
-                            is_advanced=is_advanced,
-                            type=default_var.type,
-                            help_text=default_var.help_text
-                        )
-                        variable.save()
-                        variable.scripts.add(script)
-                        variable.scripts.add(script_vars)
-                        variable.save()
-                        new_variables.append(variable)
-
-            queue_count = ReductionRun.objects.filter(instrument=instrument, status=queued_status).count()
-
-            context_dictionary = {
-                'run' : None,
-                'variables' : None,
-                'queued' : queue_count,
-            }
-
-            if len(new_variables) == 0:
-                new_job.delete()
-                script.delete()
-                script_vars.delete()
-                context_dictionary['error'] = 'No variables were found to be submitted.'
-            else:
-                try:
-                    MessagingUtils().send_pending(new_job)
-                    context_dictionary['run'] = new_job
-                    context_dictionary['variables'] = new_variables
-                except Exception, e:
-                    new_job.delete()
-                    script.delete()
-                    script_vars.delete()
-                    context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e)
-
-        return redirect('instrument_summary', instrument=instrument.name)
-    else:
+    if request.method == 'GET':
         processing_status = StatusUtils().get_processing()
         queued_status = StatusUtils().get_queued()
+        skipped_status = StatusUtils().get_skipped()
 
-        last_run = ReductionRun.objects.filter(instrument=instrument).order_by('-run_number')[0]
+        last_run = ReductionRun.objects.filter(instrument=instrument).exclude(status=skipped_status).order_by('-run_number')[0]
 
         standard_vars = {}
         advanced_vars = {}
@@ -461,96 +385,110 @@ def run_summary(request, run_number, run_version=0):
 #@require_staff
 @login_and_uows_valid
 @render_with('run_confirmation.html')
-def run_confirmation(request, run_number, run_version=0):
-    reduction_run = ReductionRun.objects.get(run_number=run_number, run_version=run_version)
-    instrument = reduction_run.instrument
-
+def run_confirmation(request, instrument):
     if request.method == 'POST':
-        highest_version = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version').first().run_version
-        queued_status = StatusUtils().get_queued()
-        new_job = ReductionRun(
-            instrument=instrument,
-            run_number=run_number,
-            run_name=request.POST.get('run_description'),
-            run_version=(highest_version+1),
-            experiment=reduction_run.experiment,
-            started_by=request.user.username,
-            status=queued_status,
-            )
-        new_job.save()
-        for data_location in reduction_run.data_location.all():
-            new_data_location = DataLocation(file_path=data_location.file_path, reduction_run=new_job)
-            new_data_location.save()
-            new_job.data_location.add(new_data_location)
+        instrument = Instrument.objects.get(name=instrument)
 
-        use_current_script = request.POST.get('use_current_script', u"false").lower() == u"true"
-        run_variables = reduction_run.run_variables.all()
-
-        if use_current_script:
-            script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
-            default_variables = InstrumentVariablesUtils().get_variables_from_current_script(reduction_run.instrument.name)
+        if 'run_number' in request.POST:
+            start = int(request.POST.get('run_number'))
+            end = int(request.POST.get('run_number'))
         else:
-            script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
-            default_variables = run_variables
+            # TODO: Check ICAT credentials
+            start = int(request.POST.get('run_start'))
+            end = int(request.POST.get('run_end'))
 
-        script = ScriptFile(script=script_binary, file_name='reduce.py')
-        script.save()
-        script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
-        script_vars.save()
-
-        new_variables = []
-
-        for key,value in request.POST.iteritems():
-            if 'var-' in key:
-                name = None
-                if 'var-advanced-' in key:
-                    name = key.replace('var-advanced-', '').replace('-', ' ')
-                    is_advanced = True
-                if 'var-standard-' in key:
-                    name = key.replace('var-standard-', '').replace('-', ' ')
-                    is_advanced = False
-                    
-                if name is not None:
-                    default_var = next((x for x in run_variables if x.name == name), next((x for x in default_variables if x.name == name), None))
-                    if not default_var:
-                        continue
-                    variable = RunVariable(
-                        reduction_run=new_job,
-                        name=default_var.name,
-                        value=value,
-                        is_advanced=is_advanced,
-                        type=default_var.type,
-                        help_text=default_var.help_text
-                    )
-                    variable.save()
-                    variable.scripts.add(script)
-                    variable.scripts.add(script_vars)
-                    variable.save()
-                    new_variables.append(variable)
-
-        queue_count = ReductionRun.objects.filter(instrument=reduction_run.instrument, status=queued_status).count()
+        queued_status = StatusUtils().get_queued()
+        queue_count = ReductionRun.objects.filter(instrument=instrument, status=queued_status).count()
 
         context_dictionary = {
-            'run' : None,
+            'runs' : [],
             'variables' : None,
             'queued' : queue_count,
         }
 
-        if len(new_variables) == 0:
-            new_job.delete()
-            script.delete()
-            script_vars.delete()
-            context_dictionary['error'] = 'No variables were found to be submitted.'
-        else:
-            try:
-                MessagingUtils().send_pending(new_job)
-                context_dictionary['run'] = new_job
-                context_dictionary['variables'] = new_variables
-            except Exception, e:
+        for run_number in range(start, end+1):
+            old_reduction_run = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version').first()
+
+            new_job = ReductionRun(
+                instrument=instrument,
+                run_number=run_number,
+                run_name=request.POST.get('run_description'),
+                run_version=(old_reduction_run.run_version+1),
+                experiment=old_reduction_run.experiment,
+                started_by=request.user.username,
+                status=queued_status,
+                )
+            new_job.save()
+            for data_location in old_reduction_run.data_location.all():
+                new_data_location = DataLocation(file_path=data_location.file_path, reduction_run=new_job)
+                new_data_location.save()
+                new_job.data_location.add(new_data_location)
+
+            use_current_script = request.POST.get('use_current_script', u"true").lower() == u"true"
+
+            if use_current_script:
+                script_binary, script_vars_binary = InstrumentVariablesUtils().get_current_script_text(instrument.name)
+                default_variables = InstrumentVariablesUtils().get_variables_from_current_script(instrument.name)
+            else:
+                run_variables = old_reduction_run.run_variables.all()
+                script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
+                default_variables = run_variables
+
+            script = ScriptFile(script=script_binary, file_name='reduce.py')
+            script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
+
+            new_variables = []
+
+            for key,value in request.POST.iteritems():
+                if 'var-' in key:
+                    name = None
+                    if 'var-advanced-' in key:
+                        name = key.replace('var-advanced-', '').replace('-', ' ')
+                        is_advanced = True
+                    if 'var-standard-' in key:
+                        name = key.replace('var-standard-', '').replace('-', ' ')
+                        is_advanced = False
+
+                    if name is not None:
+                        default_var = next((x for x in default_variables if x.name == name), None)
+                        if not default_var:
+                            continue
+                        if len(value) > InstrumentVariable._meta.get_field('value').max_length:
+                            context_dictionary['error'] = 'Value given in ' + str(name) + ' is too long.'
+                        variable = RunVariable(
+                            reduction_run=new_job,
+                            name=default_var.name,
+                            value=value,
+                            is_advanced=is_advanced,
+                            type=default_var.type,
+                            help_text=default_var.help_text
+                        )
+                        new_variables.append(variable)
+
+            if len(new_variables) == 0:
+                context_dictionary['error'] = 'No variables were found to be submitted.'
+
+            if 'error' not in context_dictionary:
+                script.save()
+                script_vars.save()
+                for variable in new_variables:
+                    variable.save()
+                    variable.scripts.add(script)
+                    variable.scripts.add(script_vars)
+                    variable.save()
+
+                try:
+                    MessagingUtils().send_pending(new_job)
+                    context_dictionary['runs'].append(new_job)
+                    context_dictionary['variables'] = new_variables
+                except Exception, e:
+                    new_job.delete()
+                    script.delete()
+                    script_vars.delete()
+                    context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e)
+            else:
                 new_job.delete()
-                script.delete()
-                script_vars.delete()
-                context_dictionary['error'] = 'Failed to send new job. (%s)' % str(e),
+                return context_dictionary
 
         return context_dictionary
     else:
@@ -567,8 +505,8 @@ def preview_script(request, instrument, run_number=0, experiment_reference=0):
         %s is later replaced with the variable name
         A live example can be found at: https://regex101.com/r/oJ7iY5/3
     '''
-    standard_pattern = "(?P<before>(\s)standard_vars\s*=\s*\{(([\s\S])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
-    advanced_pattern = "(?P<before>(\s)advanced_vars\s*=\s*\{(([\s\S])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
+    standard_pattern = "(?P<before>(\s*)standard_vars\s*=\s*\{(([^}])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
+    advanced_pattern = "(?P<before>(\s*)advanced_vars\s*=\s*\{(([^}])+)['|\"]%s['|\"]\s*:\s*)(?P<value>((?!,(\s+)\n|\n)[\S\s])+)"
 
     instrument_object = Instrument.objects.get(name=instrument)
 
@@ -595,7 +533,7 @@ def preview_script(request, instrument, run_number=0, experiment_reference=0):
             script_vars_file = re.sub(pattern, value, script_vars_file)
 
     elif request.method == 'POST':
-        experiment_reference = request.POST.get('experiment_reference_number', None)
+        experiment_reference = request.POST.get('experiment_reference_number', 0)
         start_run = request.POST.get('run_start', None)
         lookup_run_number = request.POST.get('run_number', None)
         lookup_run_version = request.POST.get('run_version', None)

@@ -22,23 +22,22 @@ out_prefix = instrument + "_" + run_number
 
 
 #in the final version folder should be obtained from the outputdir
-folder = outputDir.replace('autoreduce/','')
+#folder = outputDir.replace('autoreduce/','')
 
-#folder = '/SNS/SNAP/IPTS-9109/shared/'
+folder = '/SNS/SNAP/IPTS-9109/shared/'
 
 #Masking should be one of the following strings :
 # 'None' ## 'Horizontal' 
 # 'Vertical' ## 'Custom mask - xml file'
 
-Masking = "Vertical"
+Masking = "Horizontal"
 
 
 #Calibration  should be one of the following strings :
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Convert Units'
-calib_file = 'dummy' # use when convert units
-#calib_File = '/SNS/SNAP/IPTS-11439/shared/SNAP_calibrate_d19311_2014_11_30.cal'
+calib_File = 'SNAP_calibrate_d17963_2014_06_24.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
@@ -53,13 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.65,-0.002,3.0'
-
-#Output should be one of the following strings :
-# 'None' # 'All' outputs both Fullprof and GSAS 
-
-Output = 'All'
-
+binning='0.4,-0.003,5.2'
 
 #######################################33
 
@@ -69,17 +62,17 @@ iws=LoadEventNexus(Filename=nexus_file)
 ## Making Detector Image for Diagnostic
 ##############################################################3
 
-#MaskBTP(iws,Bank="2,3,14,13")
-#iws=Integration(iws,10000,12000)
+##MaskBTP(iws,Bank="2,3,14,13")
+##iws=Integration(iws,10000,12000)
 
-dets=iws.extractY()
-banks=[11,14,17,2,5,8,10,13,16,1,4,7,9,12,15,0,3,6]
-pix=256
-d=dets.reshape(18,-1)[banks,:].reshape(3,-1,pix).swapaxes(1,2)[::-1,:,:].reshape(3*pix,-1)[::-1,:]
-d[d<0.1]=0.1
-imshow(log(d))
-axis('off')
-savefig(str(outputDir+'SNAP_'+str(iws.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
+#dets=iws.extractY()
+#banks=[11,14,17,2,5,8,10,13,16,1,4,7,9,12,15,0,3,6]
+#pix=256
+#d=dets.reshape(18,-1)[banks,:].reshape(3,-1,pix).swapaxes(1,2)[::-1,:,:].reshape(3*pix,-1)[::-1,:]
+#d[d<0.1]=0.1
+#imshow(log(d))
+#axis('off')
+#savefig(str(outputDir+'SNAP_'+str(iws.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
 ##############################################################3
 
 
@@ -90,7 +83,7 @@ iws = CompressEvents(InputWorkspace='iws')
 if Calibration == 'Convert Units':
     ows = ConvertUnits(InputWorkspace='iws',Target='dSpacing')
 if Calibration == 'Calibration File':
-    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = calib_File)
+    ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = folder + calib_File)
 
 if Masking != 'None':
 	
@@ -119,8 +112,8 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 13 
-	smooth_range = 5
+	window = 8 
+	smooth_range = 10
 				
 	peak_clip_WS = CloneWorkspace('ows')
 	n_histo = peak_clip_WS.getNumberHistograms()
@@ -139,25 +132,16 @@ if Normalization == "Extract from Data" :
 
 
 
-SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_inst.nxs')
-SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/'+out_prefix+'_nor.nxs')
+SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/NEXUS/'+out_prefix+'_inst.nxs')
+SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/NEXUS/'+out_prefix+'_nor.nxs')
 
-if Output!= 'None':
+ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
 
-    ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
+print 
 
+SaveFocusedXYE(InputWorkspace = 'ows_tof', Filename = outputDir+'/Fullprof/'+out_prefix+'.dat' , SplitFiles = True, Append=False)
 
-    SaveFocusedXYE(InputWorkspace = 'ows_tof', 
-                   Filename = outputDir+'/fullprof/'+out_prefix+'.dat',
-                   SplitFiles = True, 
-                   Append=False)
-
-    SaveGSS (InputWorkspace='ows_tof', 
-                 Filename = outputDir+'/gsas/'+out_prefix+'.gsa',
-                 Format='SLOG', 
-                 SplitFiles = False, 
-                 Append=False, 
-                 MultiplyByBinWidth='1')
+SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/GSAS/'+out_prefix+'.gsa', Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
 
 
 ##############################################################3

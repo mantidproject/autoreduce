@@ -221,6 +221,12 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
     vulcanheaderlist.append( ("FurnacePower"        , "furnace.power") )
     vulcanheaderlist.append( ("VacT"                , "partlow1.temp") )
     vulcanheaderlist.append( ("VacOT"               , "partlow2.temp") )
+    vulcanheaderlist.append( ('EuroTherm1Powder'    , 'eurotherm1.power') )
+    vulcanheaderlist.append( ('EuroTherm1SP'        , 'eurotherm1.sp') )
+    vulcanheaderlist.append( ('EuroTherm1Temp'      , 'eurotherm1.temp') )
+    vulcanheaderlist.append( ('EuroTherm2Powder'    , 'eurotherm2.power') )
+    vulcanheaderlist.append( ('EuroTherm2SP'        , 'eurotherm2.sp') )
+    vulcanheaderlist.append( ('EuroTherm2Temp'      , 'eurotherm2.temp') )
 
     # Format to lists for input
     samplelognames = []
@@ -315,7 +321,13 @@ RecordBase = [
         ("FurnaceOT",       "furnace.temp2", "0"),
         ("FurnacePower",    "furnace.power", "0"),
         ("VacT",            "partlow1.temp", "0"),
-        ("VacOT",           "partlow2.temp", "0") 
+        ("VacOT",           "partlow2.temp", "0"),
+        ('EuroTherm1Powder', 'eurotherm1.power', '0'),
+        ('EuroTherm1SP',     'eurotherm1.sp', '0'),
+        ('EuroTherm1Temp',   'eurotherm1.temp', '0'),
+        ('EuroTherm2Powder', 'eurotherm2.power', '0'),
+        ('EuroTherm2SP',     'eurotherm2.sp', '0'),
+        ('EuroTherm2Temp',   'eurotherm2.temp', '0'),
         ]
         
     

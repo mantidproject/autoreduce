@@ -7,7 +7,7 @@ from numpy import *
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 
 import sys,os
-sys.path.append("/opt/mantid34/bin")
+sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 
 from matplotlib import *
@@ -16,6 +16,54 @@ from matplotlib.pyplot import *
  
 #os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
+import numpy as np
+def GetT0FromDet(ws):
+    minAngle=30.
+    maxAngle=60.
+    alpha=437.37 #v=alpha*sqrt(Ei)
+    __tempws=CloneWorkspace(ws)
+    MaskBTP(__tempws,Bank="35-50")
+    MaskBTP(__tempws,Pixel="1-8,121-128")
+    MaskAngle(__tempws,0,minAngle)
+    MaskAngle(__tempws,maxAngle,180)
+    inst=__tempws.getInstrument()
+    sample=inst.getSample()
+    dss=sample.getDistance(inst.getSource())
+    Ei=__tempws.run()['EnergyRequest'].timeAverageValue()
+    v=alpha*np.sqrt(Ei)
+    for i in range(__tempws.getNumberHistograms()):
+        detID=__tempws.getSpectrum(i).getDetectorIDs()[0]
+        d=inst.getDetector(detID).getDistance(sample)+dss
+        offset=-1e6*d/v
+        el=__tempws.getEventList(i)
+        el.convertTof(1.,offset)
+    __binned=Rebin(__tempws,"-100,10,300",PreserveEvents=0)
+    __summed=SumSpectra(__binned)
+    y=__summed.readY(0)
+    x=__summed.readX(0)
+    bk=y[0]
+    height=y.max()
+    center=x[y.argmax()]
+    sigma=50.
+    Function='name=FlatBackground,A0={0};name=Gaussian,Height={1},PeakCentre={2},Sigma={3}'.format(bk,height,center,sigma)
+    res=Fit(Function=Function,InputWorkspace=__summed, Output='__fit')
+    DeleteWorkspace(__summed)
+    DeleteWorkspace(__tempws)
+    DeleteWorkspace(__binned)
+    T0=res[3].cell(2,1)
+    DeleteWorkspace( '__fit_NormalisedCovarianceMatrix')
+    DeleteWorkspace('__fit_Parameters')
+    DeleteWorkspace('__fit_Workspace')
+    return T0
+
+def GetT0FromDet_GeorgNov2015(ws):
+    Ei=ws.run()['EnergyRequest'].timeAverageValue()
+    mode=ws.run()['DoubleDiskMode'].timeAverageValue()
+    lnEi=np.log(Ei)
+    T0=157.539+lnEi*(-33.04593+lnEi*(-8.07523+lnEi*(2.2143-0.109521767*lnEi)))
+    if (mode!=1):
+        T0-=5.91
+    return T0
 
 def preprocessVanadium(Raw,Processed,Parameters):
     if os.path.isfile(Processed):
@@ -36,30 +84,56 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-4654/29/151026/NeXus/CNCS_151026_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-14518/0/140450/NeXus/CNCS_140450_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/25/137573/NeXus/CNCS_137573_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-4654/24/123012/NeXus/CNCS_123012_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-13623/0/115557/NeXus/CNCS_115557_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/23/109039/NeXus/CNCS_109039_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 #ProcessedVanadium="van101708both.nxs"
-ProcessedVanadium="van123012.nxs"
+#ProcessedVanadium="van123012.nxs"
+ProcessedVanadium="van.nxs"
 HardMaskFile=''
 IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-#MaskBTPParameters.append({'Bank': '37-50'})
+MaskBTPParameters.append({'Bank': '36-50'})
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
 
-tib=SuggestTibCNCS(EGuess)
-#if (abs(EGuess-12)<0.1):
-#    tib=[20500.0,21500.0]
+if EGuess<50:
+    tib=SuggestTibCNCS(EGuess)
+if (abs(EGuess-12)<0.1):
+    tib=[20500.0,21500.0]
+#if (abs(EGuess-15)<0.1):
+#    tib=[15200.0,16500.0]
+if (abs(EGuess-25)<0.1):
+    tib=[11000.0,15000.0]
+if (abs(EGuess-55)<0.1):
+    tib=[5000.0,15000.0]
+    
 #tib=[24000,29000]
+
+t0=GetT0FromDet_GeorgNov2015(w)
+#print 'for Ei=',EGuess,'use T0=',t0
+#t0=GetT0FromDet(w)
+
+#t0=110  #Ei=3.0 meV
+#t0=116  #Ei=2.5 meV
+
+#if (abs(EGuess-12)<0.1):
+#	t0=65
+#if (abs(EGuess-25)<0.1):
+#	t0=30
+#if (abs(EGuess-55)<0.1):
+#	t0=10
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
-DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.001666667*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
 DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
 DGSdict['IncidentBeamNormalisation']='ByCurrent'  
@@ -72,6 +146,9 @@ DGSdict['TibTofRangeStart']=tib[0]
 DGSdict['TibTofRangeEnd']=tib[1]
 DGSdict['TimeIndepBackgroundSub']=True
 #DGSdict['TimeIndepBackgroundSub']=False
+DGSdict['IncidentEnergyGuess']=EGuess
+DGSdict['TimeZeroGuess']=t0
+DGSdict['UseIncidentEnergyGuess']=True
 
 DgsReduction(**DGSdict)
 NormalizedVanadiumEqualToOne = True
@@ -95,19 +172,23 @@ filename = os.path.split(nexus_file)[-1]
 elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
-#elog.setSERotOptions('Ox2WeldRot')
+#elog.setSERotOptions('CCR10G2Rot')
 elog.setSERotOptions('SERotator2')
 #elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
-elog.setSETempOptions('SensorB')
+elog.setSETempOptions('SensorD')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
 
 # Get Angle
+#s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
+#s1=mtd["reduce"].getRun()['huber'].value[0]
+#s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
 s1=mtd["reduce"].getRun()['SERotator2'].value[0]
 #s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
+#s1=0
 roundedvalue = "%.1f" % s1
 valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
 
