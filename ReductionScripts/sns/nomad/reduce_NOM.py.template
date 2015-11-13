@@ -107,16 +107,18 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    VanadiumRadius=vanradius,
-                   NormalizeByCurrent=True, FinalDataUnits="MomentumTransfer")
+                   NormalizeByCurrent=True, FinalDataUnits="dSpacing")
 
 # only write out thing on control job
 if mpiRank == 0:
     # save out the container cache file
     if can_run > 0 and not os.path.exists(canCacheName):
+        ConvertUnits(InputWorkspace=canWkspName, OutputWorkspace=canWkspName, Target="TOF")
         SaveNexusProcessed(InputWorkspace=canWkspName, Filename=canCacheName)
 
     # save out the vanadium cache file
     if van_run > 0 and not os.path.exists(vanCacheName):
+        ConvertUnits(InputWorkspace=vanWkspName, OutputWorkspace=vanWkspName, Target="TOF")
         SaveNexusProcessed(InputWorkspace=vanWkspName, Filename=vanCacheName)
 
     # save a picture of the normalized ritveld data
@@ -158,7 +160,7 @@ if mpiRank == 0:
 
             ax = plt.subplot2grid((wksp.getNumberHistograms()/2, 2), loc)
             plt.plot(wksp.readX(i)[1:],mask)
-            plt.xlabel('Q ($\AA^{-1}$)')
+            plt.xlabel('d ($\AA$)')
             plt.ylabel('Intensity')
             plt.title('bank {0} '.format(i+1))
 
