@@ -47,7 +47,7 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda, Sample:Axis1') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
