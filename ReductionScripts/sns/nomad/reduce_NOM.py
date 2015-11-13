@@ -103,7 +103,7 @@ SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs"
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
                    CropWavelengthMin=wavelengthMin,
                    CropWavelengthMax=wavelengthMax,
-                   SaveAs="gsas fullprof topas pdfgetn",
+                   SaveAs="gsas fullprof topas",
                    OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
                    VanadiumRadius=vanradius,
