@@ -54,7 +54,8 @@ class AutoReduction():
       elog=ExperimentLog()
       elog.setLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
       elog.setSimpleLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
-      elog.setSERotOptions('s1')
+      #elog.setSERotOptions('s1')
+      elog.setSERotOptions('Sample:Axis1')
       #elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSERotOptions('s1')
@@ -70,7 +71,8 @@ class AutoReduction():
 
   
       # Get Angle
-      s1 = run['s1'].getStatistics().mean
+      #s1 = run['s1'].getStatistics().mean
+      s1 = run['Sample:Axis1'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
