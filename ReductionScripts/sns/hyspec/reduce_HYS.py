@@ -47,7 +47,7 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda, Sample:Axis1') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda, BL14B:Mot:Sample:Axis1') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
@@ -55,7 +55,7 @@ class AutoReduction():
       elog.setLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
       elog.setSimpleLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
       #elog.setSERotOptions('s1')
-      elog.setSERotOptions('Sample:Axis1')
+      elog.setSERotOptions('BL14B:Mot:Sample:Axis1')
       #elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSERotOptions('s1')
@@ -72,7 +72,7 @@ class AutoReduction():
   
       # Get Angle
       #s1 = run['s1'].getStatistics().mean
-      s1 = run['Sample:Axis1'].getStatistics().mean
+      s1 = run['BL14B:Mot:Sample:Axis1'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
