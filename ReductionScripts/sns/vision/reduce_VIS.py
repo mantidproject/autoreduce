@@ -8,12 +8,14 @@ import csv
 import string
 import subprocess
 
-sys.path.append("/opt/mantidnightly/bin")
-from mantid.simpleapi import *
-import mantid
+#sys.path.append("/opt/mantidnightly/bin")
+sys.path.insert(0,'/opt/Mantid/bin')
 
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
+
+import mantid
+from mantid.simpleapi import *
 
 filename = os.path.split(nexus_file)[-1]
 nexus_directory = nexus_file.replace(filename, '')
