@@ -33,9 +33,9 @@ dataSearchPath.append(nexus_directory)
 configService.setDataSearchDirs(";".join(dataSearchPath))
 
 # Actually do the reduction
-output_ws = VisionReduction(nexus_file)
+ws = VisionReduction(nexus_file)
 
-SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
+SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 
 
 #total_ws = ExtractSingleSpectrum(InputWorkspace=output_ws, WorkspaceIndex=0)
@@ -46,20 +46,35 @@ SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 # Plotting 
 import matplotlib
 matplotlib=sys.modules['matplotlib']
-matplotlib.use("agg")                                                                                                    
-import matplotlib.pyplot as plt  
+matplotlib.use("agg")                                                                                                import matplotlib.pyplot as plt  
 
-fig = plt.gcf() # get current figure
+plt.figure(1)
+plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
+plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Backwards")
+plt.set_xlim(2.0, 200.0)
+plt.xlabel('Energy (meV)')
+plt.ylabel('Intensity')
+plt.legend()
+plt.title(out_prefix)
 
+plt.figure(2)
+plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
+plt.plot(ws.readX(2)[1:], ws.readY(2), "b-", label="Backwards")
+plt.set_xlim(200.0, 450.0)
+plt.xlabel('Energy (meV)')
+plt.ylabel('Intensity')
+plt.show()
 
+plt.savefig(img_filename, bbox_inches='tight')
+plt.close()
 
 # Crop the workspace for a better looking plot
-low_energy_ws=ExtractSpectra(output_ws, Xmin=4.0, XMax=200.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
-high_energy_ws=ExtractSpectra(output_ws, Xmin=200.0, XMax=450.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
+#low_energy_ws=ExtractSpectra(ws, Xmin=4.0, XMax=200.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
+#high_energy_ws=ExtractSpectra(ws, Xmin=200.0, XMax=450.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
 
-plot_ws=GroupWorkspaces(low_energy_ws,high_energy_ws)
+#plot_ws=GroupWorkspaces(low_energy_ws,high_energy_ws)
 
-SavePlot1D(InputWorkspace=plot_ws, 
-       	   OutputFilename=img_filename,
-       	   YLabel='Intensity')
+#SavePlot1D(InputWorkspace=plot_ws, 
+#       	   OutputFilename=img_filename,
+#       	   YLabel='Intensity')
 
