@@ -37,8 +37,7 @@ ws = VisionReduction(nexus_file)
 
 SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 
-
-# Plotting 
+########## Plotting 
 
 # Let's get rid of the elastic line for plotting purposes
 ws=CropWorkspace(ws, XMin=5.0, XMax=450.0)
