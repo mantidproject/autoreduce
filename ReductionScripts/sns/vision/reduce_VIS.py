@@ -52,7 +52,7 @@ import matplotlib.pyplot as plt
 plt.figure(1)
 plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
 plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Backwards")
-plt.set_xlim(2.0, 200.0)
+plt.xlim(2.0, 200.0)
 plt.xlabel('Energy (meV)')
 plt.ylabel('Intensity')
 plt.legend()
