@@ -50,8 +50,8 @@ import matplotlib.pyplot as plt
 
 fig = plt.gcf() # get current figure
 plt.subplot(2,1,1)
-plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
-plt.plot(ws.readX(2)[1:], ws.readY(2), "b-", label="Backwards")
+plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
+plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
 plt.xlim(2.0, 200.0)
 #plt.xlabel('Energy (meV)')
 plt.ylabel('Intensity')
@@ -59,8 +59,8 @@ plt.legend()
 plt.title(out_prefix)
 
 plt.subplot(2,1,2)
-plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
-plt.plot(ws.readX(2)[1:], ws.readY(2), "b-", label="Backwards")
+plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
+plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
 plt.xlim(200.0, 450.0)
 plt.xlabel('Energy (meV)')
 plt.ylabel('Intensity')
