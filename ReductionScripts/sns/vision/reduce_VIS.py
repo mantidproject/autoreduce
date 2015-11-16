@@ -24,6 +24,7 @@ run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
 out_prefix = instrument + "_" + run_number
 
 img_filename = os.path.join(output_directory, out_prefix + ".png")
+json_filename = os.path.join(output_directory, out_prefix + ".json")
 output_nexus = os.path.join(output_directory, "testing/" + out_prefix + "_inelastic-testing.nxs")
 
 configService = mantid.config
@@ -36,8 +37,14 @@ output_ws = VisionReduction(nexus_file)
 
 SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 
+
+total_ws = ExtractSingleSpectrum(InputWorkspace=output_ws, WorkspaceIndex=0)
+
+SavePlot1DAsJson(InputWorkspace=total_ws, OutputFilename=json_filename, PlotName=out_prefix)
+
+
 # Crop the workspace for a better looking plot
-CropWorkspace(InputWorkspace=output_ws, OutputWorkspace=output_ws, XMin=4.0, XMax=400.0)
+cropped_ws=CropWorkspace(output_ws, XMin=4.0, XMax=400.0)
 
 SavePlot1D(InputWorkspace=output_ws, 
            OutputFilename=img_filename,
