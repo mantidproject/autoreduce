@@ -24,7 +24,7 @@ run_number = os.path.splitext(os.path.splitext(filename.split('_')[1])[0])[0]
 out_prefix = instrument + "_" + run_number
 
 img_filename = os.path.join(output_directory, out_prefix + ".png")
-json_filename = os.path.join(output_directory, out_prefix + ".json")
+json_filename = os.path.join(output_directory, out_prefix + "_plot_data.json")
 output_nexus = os.path.join(output_directory, "testing/" + out_prefix + "_inelastic-testing.nxs")
 
 configService = mantid.config
@@ -40,7 +40,7 @@ SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 
 total_ws = ExtractSingleSpectrum(InputWorkspace=output_ws, WorkspaceIndex=0)
 
-SavePlot1DAsJson(InputWorkspace=total_ws, JsonFilename=json_filename, PlotName=out_prefix)
+SavePlot1DAsJson(InputWorkspace=total_ws, JsonFilename=json_filename, PlotName='main_output')
 
 
 # Crop the workspace for a better looking plot
