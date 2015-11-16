@@ -43,6 +43,16 @@ SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 #                 PlotName=out_prefix + ' - Total Inelastic')
 
 
+# Plotting 
+import matplotlib
+matplotlib=sys.modules['matplotlib']
+matplotlib.use("agg")                                                                                                    
+import matplotlib.pyplot as plt  
+
+fig = plt.gcf() # get current figure
+
+
+
 # Crop the workspace for a better looking plot
 low_energy_ws=ExtractSpectra(output_ws, Xmin=4.0, XMax=200.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
 high_energy_ws=ExtractSpectra(output_ws, Xmin=200.0, XMax=450.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
