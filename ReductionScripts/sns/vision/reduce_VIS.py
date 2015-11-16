@@ -44,9 +44,12 @@ SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 
 
 # Crop the workspace for a better looking plot
-cropped_ws=CropWorkspace(output_ws, XMin=4.0, XMax=400.0)
+low_energy_ws=ExtractSpectra(output_ws, Xmin=4.0, XMax=200.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
+high_energy_ws=ExtractSpectra(output_ws, Xmin=200.0, XMax=450.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
 
-SavePlot1D(InputWorkspace=cropped_ws, 
+plot_ws=GroupWorkspaces(low_energy_ws,high_energy_ws)
+
+SavePlot1D(InputWorkspace=plot_ws, 
        	   OutputFilename=img_filename,
        	   YLabel='Intensity')
 
