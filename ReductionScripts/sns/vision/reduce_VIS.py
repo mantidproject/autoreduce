@@ -41,7 +41,7 @@ SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 # Plotting 
 
 # Let's get rid of the elastic line for plotting purposes
-ws=CropWorkspace(ws, XMin=5.0)
+ws=CropWorkspace(ws, XMin=5.0, XMax=450.0)
 
 import matplotlib
 matplotlib=sys.modules['matplotlib']
@@ -53,7 +53,7 @@ plt.subplot(2,1,1)
 plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
 plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
 plt.xlim(5.0, 200.0)
-plt.ylim(0.0, ws.readY(1).max())
+#plt.ylim(0.0, ws.readY(1).max())
 #plt.xlabel('Energy (meV)')
 plt.ylabel('Intensity')
 plt.legend()
