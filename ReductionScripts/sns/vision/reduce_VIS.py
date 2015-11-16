@@ -47,6 +47,6 @@ SaveNexusProcessed(InputWorkspace=output_ws,Filename=output_nexus)
 cropped_ws=CropWorkspace(output_ws, XMin=4.0, XMax=400.0)
 
 SavePlot1D(InputWorkspace=cropped_ws, 
-           OutputFilename=img_filename,
-           YLabel='Intensity')
+       	   OutputFilename=img_filename,
+       	   YLabel='Intensity')
 
