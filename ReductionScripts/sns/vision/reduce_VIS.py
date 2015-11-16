@@ -46,7 +46,8 @@ SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 # Plotting 
 import matplotlib
 matplotlib=sys.modules['matplotlib']
-matplotlib.use("agg")                                                                                                import matplotlib.pyplot as plt  
+matplotlib.use("agg")
+import matplotlib.pyplot as plt  
 
 plt.figure(1)
 plt.plot(ws.readX(1)[1:], ws.readY(1), "r-", label="Forwards")
