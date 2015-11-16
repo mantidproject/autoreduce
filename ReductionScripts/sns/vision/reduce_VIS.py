@@ -38,12 +38,11 @@ ws = VisionReduction(nexus_file)
 SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 
 
-#total_ws = ExtractSingleSpectrum(InputWorkspace=output_ws, WorkspaceIndex=0)
-#SavePlot1DAsJson(InputWorkspace=total_ws, JsonFilename=json_filename, 
-#                 PlotName=out_prefix + ' - Total Inelastic')
-
-
 # Plotting 
+
+# Let's get rid of the elastic line for plotting purposes
+ws=CropWorkspace(ws, XMin=2)
+
 import matplotlib
 matplotlib=sys.modules['matplotlib']
 matplotlib.use("agg")
@@ -69,14 +68,4 @@ plt.show()
 
 plt.savefig(img_filename, bbox_inches='tight')
 plt.close()
-
-# Crop the workspace for a better looking plot
-#low_energy_ws=ExtractSpectra(ws, Xmin=4.0, XMax=200.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
-#high_energy_ws=ExtractSpectra(ws, Xmin=200.0, XMax=450.0, StartWorkspaceIndex=1, EndWorkspaceIndex=2)
-
-#plot_ws=GroupWorkspaces(low_energy_ws,high_energy_ws)
-
-#SavePlot1D(InputWorkspace=plot_ws, 
-#       	   OutputFilename=img_filename,
-#       	   YLabel='Intensity')
 
