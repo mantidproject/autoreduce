@@ -46,7 +46,7 @@ SavePlot1DAsJson(InputWorkspace=total_ws, JsonFilename=json_filename, PlotName=o
 # Crop the workspace for a better looking plot
 cropped_ws=CropWorkspace(output_ws, XMin=4.0, XMax=400.0)
 
-SavePlot1D(InputWorkspace=output_ws, 
+SavePlot1D(InputWorkspace=cropped_ws, 
            OutputFilename=img_filename,
            YLabel='Intensity')
 
