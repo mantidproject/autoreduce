@@ -104,11 +104,12 @@ selection_plots(meta_data, outputDir, runNumber)
 
 # Read in the configuration for this run in the set
 # If there is a local template.xml, use it
+template_dir = outputDir.replace('/autoreduce','')
 s = DataSeries()
 if os.path.isfile("template.xml"):
     fd = open("template.xml", "r")
 else:
-    fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
+    fd = open(os.path.join(template_dir, "template.xml"), "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
 
