@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Nov 18 09:04:49 2015</timestamp>
+  <timestamp>Wed Nov 18 09:05:34 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -67,8 +67,8 @@
 <from_tof_range>40762.0</from_tof_range>
 <to_tof_range>53473.0</to_tof_range>
 <data_sets>133239</data_sets>
-<x_min_pixel>93</x_min_pixel>
-<x_max_pixel>161</x_max_pixel>
+<x_min_pixel>97</x_min_pixel>
+<x_max_pixel>159</x_max_pixel>
 <x_range_flag>True</x_range_flag>
 <tthd_value>-2.80</tthd_value>
 <ths_value>-3.40</ths_value>
