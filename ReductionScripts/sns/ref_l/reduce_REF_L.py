@@ -108,8 +108,10 @@ template_dir = outputDir.replace('/autoreduce','')
 s = DataSeries()
 if os.path.isfile("template.xml"):
     fd = open("template.xml", "r")
-else:
+elif os.path.isfile(os.path.join(template_dir, "template.xml")):
     fd = open(os.path.join(template_dir, "template.xml"), "r")
+else:
+    fd = open("/SNS/REF_L/shared/autoreduce/template.xml", "r")
 xml_str = fd.read()
 s.from_xml(xml_str)
 
