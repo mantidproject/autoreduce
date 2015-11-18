@@ -196,7 +196,7 @@ clean_e = []
 qmin = min(x_data)*0.95
 qmax = max(x_data)*1.1
 for i in range(len(y_data)):
-    if y_data[i]>0:
+    if y_data[i]>0 and y_data[i]>e_data[i]:
         clean_y.append(y_data[i])
         clean_x.append(x_data[i])
         clean_e.append(e_data[i])
