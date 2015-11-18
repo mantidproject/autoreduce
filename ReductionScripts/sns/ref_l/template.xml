@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Nov 18 08:33:02 2015</timestamp>
+  <timestamp>Wed Nov 18 08:38:38 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132757</norm_dataset>
+<norm_dataset>130737</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>132758</norm_dataset>
+<norm_dataset>130738</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>132759</norm_dataset>
+<norm_dataset>130739</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -173,7 +173,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132760</norm_dataset>
+<norm_dataset>130740</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -219,7 +219,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132761</norm_dataset>
+<norm_dataset>130741</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -265,7 +265,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132761</norm_dataset>
+<norm_dataset>130741</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -311,7 +311,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132761</norm_dataset>
+<norm_dataset>130741</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -357,7 +357,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>160</norm_to_back_pixels>
-<norm_dataset>132761</norm_dataset>
+<norm_dataset>130741</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
