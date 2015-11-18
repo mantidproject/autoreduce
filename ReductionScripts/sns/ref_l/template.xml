@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Nov 18 12:20:47 2015</timestamp>
+  <timestamp>Wed Nov 18 14:22:23 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -37,7 +37,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133267</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -83,7 +83,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133268</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -129,7 +129,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133269</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -175,7 +175,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133270</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -221,7 +221,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133271</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -267,7 +267,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133271</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
@@ -313,7 +313,7 @@
 <norm_to_back_pixels>161</norm_to_back_pixels>
 <norm_dataset>133271</norm_dataset>
 <q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_step>0.01</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
