@@ -73,8 +73,6 @@ import matplotlib.pyplot as plt
 plot1_limits=[5.0,200.0]
 plot2_limits=[200.0,450.0]
 
-
-
 back_x = ws.readX(1)[1:]
 back_y = ws.readY(1)
 front_x = ws.readX(2)[1:]
@@ -85,10 +83,12 @@ fig.subplots_adjust(bottom=0.1)
 fig.set_size_inches(8.0,10.0)
 plt.figtext(0.5,0.99,out_prefix,horizontalalignment='center')
 plot1=plt.subplot(2,1,1)
+plot1.xaxis.set_ticks(numpy.arange(0.0,201,25.0))
 plot_dualenergy(plot1,back_x,back_y,front_x,front_y,plot1_limits)
 plot1.legend()
 
 plot2=plt.subplot(2,1,2)
+plot2.xaxis.set_ticks(numpy.arange(200,451,25.0))
 plot_dualenergy(plot2,back_x,back_y,front_x,front_y,plot2_limits)
 
 plt.subplots_adjust(hspace=0.4)
