@@ -54,7 +54,7 @@ plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
 ax2=plt.twiny()
 #x2ticks=plt.get_xticks())*8.065
 plt.xlim(5.0, 200.0)
-ax2.xlim(5.0*8.065, 200*8.065)
+ax2.set_xlim([5.0*8.065, 200*8.065])
 #plt.ylim(0.0, ws.readY(1).max())
 plt.xlabel('Energy (meV)')
 ax2.xlabel('Energy (cm^{-1})')
