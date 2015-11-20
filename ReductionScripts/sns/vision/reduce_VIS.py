@@ -8,6 +8,26 @@ import csv
 import string
 import subprocess
 
+def mev2invcm(E):
+    """convert energy in meV to Energy in cm^-1"""
+    return E*8.065
+
+def plot_dualenergy(ax,x1,y1,x2,y2,xlim):
+   """ """
+   ax.plot(x1,y1,"b-",label="Backwards")
+   ax.plot(x2,y2,"r-",label="Forwards")
+   ax2=ax.twiny()
+   ax.set_xlim(xlim)
+   ax2xlim=mev2invcm(numpy.array(xlim))
+   x2tcks=mev2invcm(ax.get_xticks())
+   ax2.set_xticks(x2tcks)
+   ax2xlim=mev2invcm(numpy.array(xlim))
+   ax2.set_xlim(list(ax2xlim))
+   ax.set_xlabel('$\omega(meV)$')
+   ax2.set_xlabel('$\omega(cm^{-1})$')
+   ax.set_ylabel('Intensity')
+   #ax.legend()
+
 #sys.path.append("/opt/mantidnightly/bin")
 sys.path.insert(0,'/opt/Mantid/bin')
 
@@ -50,39 +70,31 @@ matplotlib=sys.modules['matplotlib']
 matplotlib.use("agg")
 import matplotlib.pyplot as plt  
 
+plot1_limits=[5.0,200.0]
+plot2_limits=[200.0,450.0]
+
+
+
+back_x = ws.readX(1)[1:]
+back_y = ws.readY(1)
+front_x = ws.readX(2)[1:]
+front_y = ws.readY(2)
+
 fig = plt.gcf() # get current figure
-
-plt.subplot(2,1,1)
-plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
-plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
-plt.xlim(5.0, 200.0)
-plt.ylabel('Intensity')
-plt.legend()
-plt.title(out_prefix)
-
-ax1 = plt.subplot(2,1,2)
-ax2 = ax1.twiny()
 fig.subplots_adjust(bottom=0.1)
+plt.figtext(0.5,0.99,out_prefix,horizontalalignment='center')
+plot1=plt.subplot(2,1,1)
+plot_dualenergy(plot1,back_x,back_y,front_x,front_y,plot1_limits)
+plot1.legend()
 
-ax1.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
-ax1.set_xlim([200.0, 450.0])
-ax1.set_xlabel('Energy Transfer (meV)')
-ax1.set_ylabel('Intensity')
+plot2=plt.subplot(2,1,2)
+plot_dualenergy(plot2,back_x,back_y,front_x,front_y,plot2_limits)
 
-ax2.set_frame_on(True)
-ax2.patch.set_visible(False)
-# Move twinned axis ticks and label from top to bottom
-ax2.xaxis.set_ticks_position("bottom")
-ax2.xaxis.set_label_position("bottom")
-ax2.spines["bottom"].set_position(("outward", 40))
-
-ax2.plot(8.065*ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
-ax2.set_xlim([200.0*8.065, 450.0*8.065])
-ax2.set_xlabel('Energy Transfer (cm-1)')
+plt.subplots_adjust(hspace=0.4)
 
 plt.tight_layout()
 plt.show()
 
-plt.savefig(img_filename)
+plt.savefig(img_filename, bbox_inches='tight')
 plt.close()
 
