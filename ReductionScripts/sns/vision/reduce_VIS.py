@@ -39,6 +39,9 @@ SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 
 ########## Plotting 
 
+# Just for testing
+#ws=Load("/SNS/VIS/IPTS-14560/shared/autoreduce/testing/VIS_20942_inelastic-testing.nxs")
+
 # Let's get rid of the elastic line for plotting purposes
 ws=CropWorkspace(ws, XMin=5.0, XMax=450.0)
 
@@ -48,28 +51,38 @@ matplotlib.use("agg")
 import matplotlib.pyplot as plt  
 
 fig = plt.gcf() # get current figure
+
 plt.subplot(2,1,1)
 plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
 plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
-#ax2=plt.twiny()
-#x2ticks=plt.get_xticks())*8.065
 plt.xlim(5.0, 200.0)
-#ax2.set_xlim([5.0*8.065, 200*8.065])
-#plt.ylim(0.0, ws.readY(1).max())
-#plt.xlabel('Energy (meV)')
-#ax2.set_xlabel('Energy (cm^{-1})')
 plt.ylabel('Intensity')
 plt.legend()
 plt.title(out_prefix)
 
-plt.subplot(2,1,2)
-plt.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
-plt.plot(ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
-plt.xlim(200.0, 450.0)
-plt.xlabel('Energy (meV)')
-plt.ylabel('Intensity')
+ax1 = plt.subplot(2,1,2)
+ax2 = ax1.twiny()
+fig.subplots_adjust(bottom=0.1)
+
+ax1.plot(ws.readX(1)[1:], ws.readY(1), "b-", label="Backwards")
+ax1.set_xlim([200.0, 450.0])
+ax1.set_xlabel('Energy Transfer (meV)')
+ax1.set_ylabel('Intensity')
+
+ax2.set_frame_on(True)
+ax2.patch.set_visible(False)
+# Move twinned axis ticks and label from top to bottom
+ax2.xaxis.set_ticks_position("bottom")
+ax2.xaxis.set_label_position("bottom")
+ax2.spines["bottom"].set_position(("outward", 40))
+
+ax2.plot(8.065*ws.readX(2)[1:], ws.readY(2), "r-", label="Forwards")
+ax2.set_xlim([200.0*8.065, 450.0*8.065])
+ax2.set_xlabel('Energy Transfer (cm-1)')
+
+plt.tight_layout()
 plt.show()
 
-plt.savefig(img_filename, bbox_inches='tight')
+plt.savefig(img_filename)
 plt.close()
 
