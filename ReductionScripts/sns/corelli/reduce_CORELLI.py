@@ -262,5 +262,3 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
-
-
