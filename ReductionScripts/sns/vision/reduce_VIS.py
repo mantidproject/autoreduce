@@ -82,6 +82,7 @@ front_y = ws.readY(2)
 
 fig = plt.gcf() # get current figure
 fig.subplots_adjust(bottom=0.1)
+fig.set_size_inches(8.0,10.0)
 plt.figtext(0.5,0.99,out_prefix,horizontalalignment='center')
 plot1=plt.subplot(2,1,1)
 plot_dualenergy(plot1,back_x,back_y,front_x,front_y,plot1_limits)
