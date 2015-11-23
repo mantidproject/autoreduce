@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import nxs, os, numpy, sys, posixpath, logging, csv
-import xml.utils.iso8601, ConfigParser
+#import xml.utils.iso8601, ConfigParser
+import ConfigParser
 from datetime import datetime
 
 class RunInfo:
