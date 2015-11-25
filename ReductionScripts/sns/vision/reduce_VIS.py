@@ -37,6 +37,8 @@ output_directory=sys.argv[2]
 import mantid
 from mantid.simpleapi import *
 
+MonFile = '/SNS/VIS/shared/autoreduce/VIS_5447-5450_MonitorL-corrected-hist.nxs'
+
 filename = os.path.split(nexus_file)[-1]
 nexus_directory = nexus_file.replace(filename, '')
 instrument = filename.split('_')[0]
@@ -46,21 +48,51 @@ out_prefix = instrument + "_" + run_number
 img_filename = os.path.join(output_directory, out_prefix + ".png")
 #json_filename = os.path.join(output_directory, out_prefix + ".json")
 output_nexus = os.path.join(output_directory, "testing/" + out_prefix + "_inelastic-testing.nxs")
+output_nexus_diffraction = os.path.join(output_directory, out_prefix + "_diffraction.nxs")
+output_fullprof = os.path.join(output_directory, out_prefix + "_diffraction.dat")
+output_gsas = os.path.join(output_directory, out_prefix + "_diffraction.gsa")
 
 configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
 dataSearchPath.append(nexus_directory)
 configService.setDataSearchDirs(";".join(dataSearchPath))
 
-# Actually do the reduction
+# Actually do the inelastic reduction
 ws = VisionReduction(nexus_file)
-
+# Save the Inelastic results
 SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
-
-########## Plotting 
-
 # Just for testing
 #ws=Load("/SNS/VIS/IPTS-14560/shared/autoreduce/testing/VIS_20942_inelastic-testing.nxs")
+
+## Diffraction
+dspace_binning = '0.15,-0.001,3.0'
+monitor = Load(MonFile)
+wd = LoadVisionElasticBS(nexus_file)
+# Just for testing
+#wd = LoadVisionElasticBS(nexus_file, banks='bank15')
+AlignAndFocusPowder(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
+Rebin(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
+SumSpectra(InputWorkspace='wd', OutputWorkspace='wd', IncludeMonitors=False)
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='Wavelength')
+
+# Divide to put on flat background
+Load(Filename=MonFile, OutputWorkspace='monitor')
+RebinToWorkspace(WorkspaceToRebin='monitor', WorkspaceToMatch='wd', OutputWorkspace='monitor', PreserveEvents=False)
+Divide(LHSWorkspace='wd', RHSWorkspace='monitor', OutputWorkspace='wd')
+
+# Put final output in d-spacing
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
+SaveNexusProcessed(InputWorkspace='wd',Filename=output_nexus_diffraction)
+
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='TOF')
+SaveGSS(InputWorkspace='wd', Filename=output_gsas, SplitFiles=False, Append=False,\
+        Format="SLOG", ExtendedHeader=True)
+SaveFocusedXYE(InputWorkspace='wd', Filename=output_fullprof)
+
+wd=mtd['wd']
+
+########## Plotting 
 
 # Let's get rid of the elastic line for plotting purposes
 ws=CropWorkspace(ws, XMin=5.0, XMax=450.0)
@@ -72,6 +104,7 @@ import matplotlib.pyplot as plt
 
 plot1_limits=[5.0,200.0]
 plot2_limits=[200.0,450.0]
+plot3_limits=[0.0, 3.0]
 
 back_x = ws.readX(1)[1:]
 back_y = ws.readY(1)
@@ -82,14 +115,20 @@ fig = plt.gcf() # get current figure
 fig.subplots_adjust(bottom=0.1)
 fig.set_size_inches(8.0,10.0)
 plt.figtext(0.5,0.99,out_prefix,horizontalalignment='center')
-plot1=plt.subplot(2,1,1)
+plot1=plt.subplot(3,1,1)
 plot1.xaxis.set_ticks(numpy.arange(0.0,201,25.0))
 plot_dualenergy(plot1,back_x,back_y,front_x,front_y,plot1_limits)
 plot1.legend()
 
-plot2=plt.subplot(2,1,2)
+plot2=plt.subplot(3,1,2)
 plot2.xaxis.set_ticks(numpy.arange(200,451,25.0))
 plot_dualenergy(plot2,back_x,back_y,front_x,front_y,plot2_limits)
+
+plot3=plt.subplot(3,1,3)
+plot3.plot(wd.readX(0)[1:], wd.readY(0), "g-",label="Backscattering")
+plot3.set_xlabel('d-spacing (A)')
+plot3.set_ylabel('Intensity')
+plot3.set_xlim(plot3_limits)
 
 plt.subplots_adjust(hspace=0.4)
 
