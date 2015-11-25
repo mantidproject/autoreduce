@@ -81,14 +81,14 @@ Load(Filename=MonFile, OutputWorkspace='monitor')
 RebinToWorkspace(WorkspaceToRebin='monitor', WorkspaceToMatch='wd', OutputWorkspace='monitor', PreserveEvents=False)
 Divide(LHSWorkspace='wd', RHSWorkspace='monitor', OutputWorkspace='wd')
 
-# Put final output in d-spacing
-ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
-SaveNexusProcessed(InputWorkspace='wd',Filename=output_nexus_diffraction)
-
 ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='TOF')
 SaveGSS(InputWorkspace='wd', Filename=output_gsas, SplitFiles=False, Append=False,\
         Format="SLOG", ExtendedHeader=True)
 SaveFocusedXYE(InputWorkspace='wd', Filename=output_fullprof)
+
+# Put final output in d-spacing
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
+SaveNexusProcessed(InputWorkspace='wd',Filename=output_nexus_diffraction)
 
 wd=mtd['wd']
 
@@ -106,10 +106,10 @@ plot1_limits=[5.0,200.0]
 plot2_limits=[200.0,450.0]
 plot3_limits=[0.0, 3.0]
 
-back_x = ws.readX(1)[1:]
-back_y = ws.readY(1)
-front_x = ws.readX(2)[1:]
-front_y = ws.readY(2)
+back_x = ws.readX(0)[1:]
+back_y = ws.readY(0)
+front_x = ws.readX(1)[1:]
+front_y = ws.readY(1)
 
 fig = plt.gcf() # get current figure
 fig.subplots_adjust(bottom=0.1)
