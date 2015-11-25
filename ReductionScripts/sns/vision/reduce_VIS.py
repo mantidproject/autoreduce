@@ -64,35 +64,8 @@ SaveNexusProcessed(InputWorkspace=ws,Filename=output_nexus)
 # Just for testing
 #ws=Load("/SNS/VIS/IPTS-14560/shared/autoreduce/testing/VIS_20942_inelastic-testing.nxs")
 
-## Diffraction
-dspace_binning = '0.15,-0.001,3.0'
-monitor = Load(MonFile)
-wd = LoadVisionElasticBS(nexus_file)
-# Just for testing
-#wd = LoadVisionElasticBS(nexus_file, banks='bank15')
-AlignAndFocusPowder(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
-ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
-Rebin(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
-SumSpectra(InputWorkspace='wd', OutputWorkspace='wd', IncludeMonitors=False)
-ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='Wavelength')
 
-# Divide to put on flat background
-Load(Filename=MonFile, OutputWorkspace='monitor')
-RebinToWorkspace(WorkspaceToRebin='monitor', WorkspaceToMatch='wd', OutputWorkspace='monitor', PreserveEvents=False)
-Divide(LHSWorkspace='wd', RHSWorkspace='monitor', OutputWorkspace='wd')
-
-ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='TOF')
-SaveGSS(InputWorkspace='wd', Filename=output_gsas, SplitFiles=False, Append=False,\
-        Format="SLOG", ExtendedHeader=True)
-SaveFocusedXYE(InputWorkspace='wd', Filename=output_fullprof)
-
-# Put final output in d-spacing
-ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
-SaveNexusProcessed(InputWorkspace='wd',Filename=output_nexus_diffraction)
-
-wd=mtd['wd']
-
-########## Plotting 
+### Plotting 
 
 # Let's get rid of the elastic line for plotting purposes
 ws=CropWorkspace(ws, XMin=5.0, XMax=450.0)
@@ -123,6 +96,44 @@ plot1.legend()
 plot2=plt.subplot(3,1,2)
 plot2.xaxis.set_ticks(numpy.arange(200,451,25.0))
 plot_dualenergy(plot2,back_x,back_y,front_x,front_y,plot2_limits)
+
+
+plt.subplots_adjust(hspace=0.4)
+
+plt.tight_layout()
+plt.show()
+
+plt.savefig(img_filename, bbox_inches='tight')
+
+### Diffraction Processing
+
+dspace_binning = '0.15,-0.001,3.0'
+monitor = Load(MonFile)
+wd = LoadVisionElasticBS(nexus_file)
+# Just for testing
+#wd = LoadVisionElasticBS(nexus_file, banks='bank15')
+AlignAndFocusPowder(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
+Rebin(InputWorkspace='wd', OutputWorkspace='wd', Params=dspace_binning, PreserveEvents=False)
+SumSpectra(InputWorkspace='wd', OutputWorkspace='wd', IncludeMonitors=False)
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='Wavelength')
+
+# Divide to put on flat background
+Load(Filename=MonFile, OutputWorkspace='monitor')
+RebinToWorkspace(WorkspaceToRebin='monitor', WorkspaceToMatch='wd', OutputWorkspace='monitor', PreserveEvents=False)
+Divide(LHSWorkspace='wd', RHSWorkspace='monitor', OutputWorkspace='wd')
+
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='TOF')
+SaveGSS(InputWorkspace='wd', Filename=output_gsas, SplitFiles=False, Append=False,\
+        Format="SLOG", ExtendedHeader=True)
+SaveFocusedXYE(InputWorkspace='wd', Filename=output_fullprof)
+
+# Put final output in d-spacing
+ConvertUnits(InputWorkspace='wd', OutputWorkspace='wd', Target='dSpacing')
+SaveNexusProcessed(InputWorkspace='wd',Filename=output_nexus_diffraction)
+wd=mtd['wd']
+
+### Plot the Diffraction
 
 plot3=plt.subplot(3,1,3)
 plot3.plot(wd.readX(0)[1:], wd.readY(0), "g-",label="Backscattering")
