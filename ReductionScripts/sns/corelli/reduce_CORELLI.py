@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-12310/shared/20151121-Na2IrO3/UB_quick.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.ub_matrix_file='/SNS/CORELLI/IPTS-14003/shared/UB_quick2.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20151119.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20151119.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
@@ -200,8 +200,8 @@ if __name__ == "__main__":
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
     cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
-    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis6,0,1,0,1")
+    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis6,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
