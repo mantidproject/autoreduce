@@ -220,12 +220,12 @@ if __name__ == "__main__":
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-8.1,-8.1,-1.5',MaxValues='8.1,8.1,1.5',
-                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
+                        MinValues='-7.1,-6.1,-1.5',MaxValues='2.1,1.1,1.5',
+                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
     mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-8.1,-8.1,-1.5',MaxValues='8.1,8.1,1.5',
-                        Uproj='1,0,0',Vproj='0,1,0',Wproj='0,0,1')
+                        MinValues='-7.1,-6.1,-1.5',MaxValues='2.1,1.1,1.5',
+                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
 
     # Save normalized MDs, if possible
     if config.can_do_norm:
