@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Wed Dec  2 16:20:02 2015</timestamp>
+  <timestamp>Wed Dec  2 16:20:56 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -105,7 +105,7 @@
 <to_peak_pixels>159</to_peak_pixels>
 <peak_discrete_selection>N/A</peak_discrete_selection>
 <background_flag>True</background_flag>
-<back_roi1_from>148</back_roi1_from>
+<back_roi1_from>145</back_roi1_from>
 <back_roi1_to>162</back_roi1_to>
 <back_roi2_from>0</back_roi2_from>
 <back_roi2_to>0</back_roi2_to>
@@ -151,7 +151,7 @@
 <to_peak_pixels>160</to_peak_pixels>
 <peak_discrete_selection>N/A</peak_discrete_selection>
 <background_flag>True</background_flag>
-<back_roi1_from>147</back_roi1_from>
+<back_roi1_from>143</back_roi1_from>
 <back_roi1_to>163</back_roi1_to>
 <back_roi2_from>0</back_roi2_from>
 <back_roi2_to>0</back_roi2_to>
