@@ -77,7 +77,6 @@ import matplotlib.pyplot as plt
 
 plot1_limits=[5.0,200.0]
 plot2_limits=[200.0,450.0]
-plot3_limits=[0.0, 3.0]
 
 back_x = ws.readX(0)[1:]
 back_y = ws.readY(0)
@@ -107,7 +106,8 @@ plt.savefig(img_filename, bbox_inches='tight')
 
 ### Diffraction Processing
 
-dspace_binning = '0.15,-0.001,3.0'
+dspace_binning = '0.15,-0.001,4.0'
+plot3_limits=[0.15, 4.0]
 monitor = Load(MonFile)
 wd = LoadVisionElasticBS(nexus_file)
 # Just for testing
