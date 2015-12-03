@@ -216,6 +216,7 @@ def exportMTSLog(logwsname, outputDir, ipts, runnumber):
     vulcanheaderlist.append( ("MTS2"                , "loadframe.furnace2") )
     vulcanheaderlist.append( ("MTS3"                , "loadframe.extTC3") )
     vulcanheaderlist.append( ("MTS4"                , "loadframe.extTC4") )
+    vulcanheaderlist.append( ("MTSHighTempStrain"   , "loadframe.strain_hightemp") ) 
     vulcanheaderlist.append( ("FurnaceT"            , "furnace.temp1") )
     vulcanheaderlist.append( ("FurnaceOT"           , "furnace.temp2") )
     vulcanheaderlist.append( ("FurnacePower"        , "furnace.power") )
@@ -317,11 +318,12 @@ RecordBase = [
         ("MTST2",           "loadframe.furnace2", "0"),
         ("MTST3",           "loadframe.extTC3", "0"),
         ("MTST4",           "loadframe.extTC4", "0"),
-        ("FurnaceT",        "furnace.temp1", "0"),
-        ("FurnaceOT",       "furnace.temp2", "0"),
-        ("FurnacePower",    "furnace.power", "0"),
-        ("VacT",            "partlow1.temp", "0"),
-        ("VacOT",           "partlow2.temp", "0"),
+        ("MTSHighTempStrain", "loadframe.strain_hightemp", "0"),
+        ("FurnaceT",          "furnace.temp1", "0"),
+        ("FurnaceOT",         "furnace.temp2", "0"),
+        ("FurnacePower",      "furnace.power", "0"),
+        ("VacT",              "partlow1.temp", "0"),
+        ("VacOT",             "partlow2.temp", "0"),
         ('EuroTherm1Powder', 'eurotherm1.power', '0'),
         ('EuroTherm1SP',     'eurotherm1.sp', '0'),
         ('EuroTherm1Temp',   'eurotherm1.temp', '0'),
