@@ -29,6 +29,12 @@
 # 2. reduce_VULCAN.py /SNS/VULCAN/IPTS-11090/0/41739/NeXus/VULCAN_41739_event.nxs 
 #                     /SNS/users/wzz/Projects/VULCAN/AutoReduction/autoreduce/Temp
 #
+# Notes:
+# * 15.12.04: 
+#   1. Modify 'FileMode' of ExportExperimentLog to 'append' mode.
+#   2. items.id (ITEM) to AutoRecord.txt
+#   3. Operations to all loadframe logs are changed to 'average'
+#
 ################################################################################
 
 import sys
@@ -298,38 +304,39 @@ RecordBase = [
         ("BandWidth",       "bandwidth", "0"),
         ("Frequency",       "skf1.speed", "0"),
         ("Guide",           "Guide", "0"),
-        ("IX",              "IX", "0"),
-        ("IY",              "IY", "0"),
-        ("IZ",              "IZ", "0"),
-        ("IHA",             "IHA", "0"),
-        ("IVA",             "IVA", "0"),
+        ("IX",              "IX",   "average"),
+        ("IY",              "IY",   "average"),
+        ("IZ",              "IZ",   "average"),
+        ("IHA",             "IHA",  "average"),
+        ("IVA",             "IVA",  "average"),
         ("Collimator",      "Vcollimator", None),
-        ("MTSDisplacement", "loadframe.displacement", "0"),
-        ("MTSForce",        "loadframe.force", "0"),
-        ("MTSStrain",       "loadframe.strain", "0"),
-        ("MTSStress",       "loadframe.stress", "0"),
-        ("MTSAngle",        "loadframe.rot_angle", "0"),
-        ("MTSTorque",       "loadframe.torque", "0"),
-        ("MTSLaser",        "loadframe.laser", "0"),
-        ("MTSlaserstrain",  "loadframe.laserstrain", "0"),
-        ("MTSDisplaceoffset","loadframe.x_offset", "0"),
-        ("MTSAngleceoffset", "loadframe.rot_offset", "0"),
-        ("MTST1",           "loadframe.furnace1", "0"),
-        ("MTST2",           "loadframe.furnace2", "0"),
-        ("MTST3",           "loadframe.extTC3", "0"),
-        ("MTST4",           "loadframe.extTC4", "0"),
-        ("MTSHighTempStrain", "loadframe.strain_hightemp", "0"),
-        ("FurnaceT",          "furnace.temp1", "0"),
-        ("FurnaceOT",         "furnace.temp2", "0"),
-        ("FurnacePower",      "furnace.power", "0"),
-        ("VacT",              "partlow1.temp", "0"),
-        ("VacOT",             "partlow2.temp", "0"),
-        ('EuroTherm1Powder', 'eurotherm1.power', '0'),
-        ('EuroTherm1SP',     'eurotherm1.sp', '0'),
-        ('EuroTherm1Temp',   'eurotherm1.temp', '0'),
-        ('EuroTherm2Powder', 'eurotherm2.power', '0'),
-        ('EuroTherm2SP',     'eurotherm2.sp', '0'),
-        ('EuroTherm2Temp',   'eurotherm2.temp', '0'),
+        ("MTSDisplacement", "loadframe.displacement",   "average"),
+        ("MTSForce",        "loadframe.force",          "average"),
+        ("MTSStrain",       "loadframe.strain",         "average"),
+        ("MTSStress",       "loadframe.stress",         "average"),
+        ("MTSAngle",        "loadframe.rot_angle",      "average"),
+        ("MTSTorque",       "loadframe.torque",         "average"),
+        ("MTSLaser",        "loadframe.laser",          "average"),
+        ("MTSlaserstrain",  "loadframe.laserstrain",    "average"),
+        ("MTSDisplaceoffset","loadframe.x_offset",      "average"),
+        ("MTSAngleceoffset", "loadframe.rot_offset",    "average"),
+        ("MTST1",           "loadframe.furnace1",       "average"),
+        ("MTST2",           "loadframe.furnace2",       "average"),
+        ("MTST3",           "loadframe.extTC3",         "average"),
+        ("MTST4",           "loadframe.extTC4",         "average"),
+        ("MTSHighTempStrain", "loadframe.strain_hightemp", "average"),
+        ("FurnaceT",          "furnace.temp1",  "average"),
+        ("FurnaceOT",         "furnace.temp2",  "average"),
+        ("FurnacePower",      "furnace.power",  "average"),
+        ("VacT",              "partlow1.temp",  "average"),
+        ("VacOT",             "partlow2.temp",  "average"),
+        ('EuroTherm1Powder', 'eurotherm1.power', 'average'),
+        ('EuroTherm1SP',     'eurotherm1.sp',    'average'),
+        ('EuroTherm1Temp',   'eurotherm1.temp',  'average'),
+        ('EuroTherm2Powder', 'eurotherm2.power', 'average'),
+        ('EuroTherm2SP',     'eurotherm2.sp',    'average'),
+        ('EuroTherm2Temp',   'eurotherm2.temp',  'average'),
+        ('ITEM',            'items.id', '0'),
         ]
         
     
@@ -631,10 +638,12 @@ def writeRecord(wsname, instrument, ipts, run, rfilename1, rfilename2, mode):
     patchlist = testclass.exportPatch()
 
     # Auto reduction and manual reduction
-    # Determine mode
     if os.path.exists(rfilename2) is True:
-        filemode = "fastappend"
+        # Determine mode: append is safer, as the list of titles changes, the old record
+        # will be written to the a new file.
+        filemode = "append"
     else:
+        # New a file
         filemode = "new"
 
     # Export
