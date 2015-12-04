@@ -102,7 +102,7 @@ if van_run > 0:
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-14478/shared/NOM_calibrate_d62508_2015_12_03.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-14478/shared/NOM_calibrate_d62508_2015_12_04.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
