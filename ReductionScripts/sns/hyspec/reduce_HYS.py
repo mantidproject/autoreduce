@@ -72,8 +72,8 @@ class AutoReduction():
 
   
       # Get Angle
-      s1 = run['s1'].getStatistics().mean
-      #s1 = run['BL14B:Mot:Sample:Axis1'].getStatistics().mean
+      #s1 = run['s1'].getStatistics().mean
+      s1 = run['BL14B:Mot:Sample:Axis2'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
