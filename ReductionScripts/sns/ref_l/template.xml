@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Mon Dec  7 12:08:00 2015</timestamp>
+  <timestamp>Mon Dec  7 19:32:35 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134391</norm_dataset>
+<norm_dataset>134424</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -50,8 +50,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134392</norm_dataset>
+<norm_dataset>134425</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -96,8 +96,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134393</norm_dataset>
+<norm_dataset>134426</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -142,8 +142,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -173,7 +173,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134394</norm_dataset>
+<norm_dataset>134427</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -188,8 +188,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -219,7 +219,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134395</norm_dataset>
+<norm_dataset>134428</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -234,8 +234,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -265,7 +265,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134395</norm_dataset>
+<norm_dataset>134428</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -280,8 +280,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
 <peak_selection_type>narrow</peak_selection_type>
@@ -311,7 +311,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>147</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134395</norm_dataset>
+<norm_dataset>134428</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -326,8 +326,8 @@
 <incident_medium_list>quartz2in,quartz3inDiamDisk,air,Si,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
 <incident_medium_index_selected>2</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+<fourth_column_dq0>0.004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 </DataSeries>
 </Reduction>
