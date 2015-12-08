@@ -156,7 +156,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-1.0*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
         #DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
         DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
         DGSdict['HardMaskFile']=HardMaskFile
