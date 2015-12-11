@@ -6,6 +6,9 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 
+from datetime import datetime
+print datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 maxChunkSize=8.
