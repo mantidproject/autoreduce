@@ -7,7 +7,8 @@ from mantid.simpleapi import *
 import mantid
 
 from datetime import datetime
-print datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+print "running on", os.environ['HOSTNAME'], "starting", \
+    datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
