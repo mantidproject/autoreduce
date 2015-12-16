@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Tue Dec 15 16:10:41 2015</timestamp>
+  <timestamp>Wed Dec 16 11:47:25 2015</timestamp>
   <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134214</norm_dataset>
+<norm_dataset>135134</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -44,13 +44,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -64,7 +64,7 @@
 <back_roi2_from>0</back_roi2_from>
 <back_roi2_to>0</back_roi2_to>
 <tof_range_flag>True</tof_range_flag>
-<from_tof_range>40762.0</from_tof_range>
+<from_tof_range>40918.0</from_tof_range>
 <to_tof_range>53473.0</to_tof_range>
 <data_sets>134220</data_sets>
 <x_min_pixel>93</x_min_pixel>
@@ -81,7 +81,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134215</norm_dataset>
+<norm_dataset>135135</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -90,13 +90,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -110,7 +110,7 @@
 <back_roi2_from>0</back_roi2_from>
 <back_roi2_to>0</back_roi2_to>
 <tof_range_flag>True</tof_range_flag>
-<from_tof_range>29567.0</from_tof_range>
+<from_tof_range>29784.0</from_tof_range>
 <to_tof_range>42468.0</to_tof_range>
 <data_sets>134221</data_sets>
 <x_min_pixel>93</x_min_pixel>
@@ -127,7 +127,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134216</norm_dataset>
+<norm_dataset>135136</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -136,13 +136,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -173,7 +173,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134217</norm_dataset>
+<norm_dataset>135137</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -182,13 +182,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -219,7 +219,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134218</norm_dataset>
+<norm_dataset>135138</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -228,13 +228,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -265,7 +265,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134218</norm_dataset>
+<norm_dataset>135138</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -274,13 +274,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 <RefLData>
@@ -311,7 +311,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>146</norm_from_back_pixels>
 <norm_to_back_pixels>161</norm_to_back_pixels>
-<norm_dataset>134218</norm_dataset>
+<norm_dataset>135138</norm_dataset>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -320,13 +320,13 @@
 <angle_offset>0.016</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/IPTS-14316/shared/sf_ipts_14316.cfg</scaling_factor_file>
+<scaling_factor_file>/SNS/REF_L/shared/sf_RC2015-B_v5.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>Si</incident_medium_list>
-<incident_medium_index_selected>0</incident_medium_index_selected>
+<incident_medium_list>smallHumidityCell,quartz3inDiamDisk,quartz2in,Si,air_43-21,air-NarrowSlit,quartz2inDiamDisk,air_98-16,airLongCount</incident_medium_list>
+<incident_medium_index_selected>4</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq0>0.004</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
  </RefLData>
 </DataSeries>
