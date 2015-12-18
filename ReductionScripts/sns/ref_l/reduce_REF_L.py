@@ -90,14 +90,13 @@ try:
             sequence_number = int(m.group(1))
             first_run_of_set = int(runNumber)-int(sequence_number)+1
         else:
-            sequence_number = -1
+            sequence_number = 7#-1
             first_run_of_set = int(runNumber)-int(sequence_number)+1
 except:
     sequence_number = -1
     first_run_of_set = int(runNumber)-int(sequence_number)+1
 
 if sequence_number == -1:
-    #sequence_number=7
     raise RuntimeError, "Could not identify sequence number. Make sure the run title ends with -n where 1 < n < 7"
     
 # Save selection plots
