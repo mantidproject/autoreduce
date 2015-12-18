@@ -97,7 +97,8 @@ except:
     first_run_of_set = int(runNumber)-int(sequence_number)+1
 
 if sequence_number == -1:
-    raise RuntimeError, "Could not identify sequence number. Make sure the run title ends with -n where 1 < n < 7"
+    sequence_number=7
+    #raise RuntimeError, "Could not identify sequence number. Make sure the run title ends with -n where 1 < n < 7"
     
 # Save selection plots
 selection_plots(meta_data, outputDir, runNumber)
