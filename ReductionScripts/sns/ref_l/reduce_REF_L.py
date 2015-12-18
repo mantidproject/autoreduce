@@ -90,7 +90,9 @@ try:
             sequence_number = int(m.group(1))
             first_run_of_set = int(runNumber)-int(sequence_number)+1
         else:
-            sequence_number = -1
+            # The legacy DAS often forgets to put the sequence
+            # number for the seventh run. Just assume 7.
+            sequence_number = 7 # -1
             first_run_of_set = int(runNumber)-int(sequence_number)+1
 except:
     sequence_number = -1
