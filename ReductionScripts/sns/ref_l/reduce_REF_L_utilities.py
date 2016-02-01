@@ -37,7 +37,7 @@ def autoreduction_stitching(output_dir, first_run_of_set, endswith='auto', scale
     
     default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
     file_path = os.path.join(output_dir, default_file_name)
-    _from_q = 0.005
+    _from_q = 0.001
     _bin_size = 0.02
     _bin_max = 2
     binning_parameters = "%g,-%g,%g" % (_from_q, _bin_size, _bin_max)
