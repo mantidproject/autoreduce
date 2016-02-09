@@ -309,7 +309,7 @@ def exportMTSLog(logwsname, outputDir, ipts, run_number):
 def exportVulcanSampleEnvLog(log_ws_name, output_dir, ipts, run_number):
     """ Export Vulcan sample environment log
     Requirements
-    Guarantees: export the file name as 'Vulcan-IPTSXXXX-SEnv-RRRR.txt'
+    Guarantees: export the file name as 'Vulcan-IPTS-XXXX-SEnv-RRRR.txt'
     """
     # Check inputs
     assert isinstance(ipts, int)
