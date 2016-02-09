@@ -409,6 +409,7 @@ RecordBase = [
     ("Title",           "run_title", None),
     ("Notes",           "file_notes", None),
     ("Sample",          "Sample", None),  # stored on sample object
+    ('ITEM',            'items.id', '0'),
     ("StartTime",       "run_start", "time"),
     ("Duration",        "duration", None),
     ("ProtonCharge",    "proton_charge", "sum"),
@@ -457,7 +458,6 @@ RecordBase = [
     ('EuroTherm2Powder', 'eurotherm2.power', 'average'),
     ('EuroTherm2SP',     'eurotherm2.sp',    'average'),
     ('EuroTherm2Temp',   'eurotherm2.temp',  'average'),
-    ('ITEM',            'items.id', '0'),
 ]
 
 
