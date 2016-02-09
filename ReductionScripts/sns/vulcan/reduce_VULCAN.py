@@ -379,9 +379,9 @@ def exportVulcanSampleEnvLog(log_ws_name, output_dir, ipts, run_number):
     while is_new_file_name is False and num_attempt < max_attempts:
         # create file name
         if num_attempt == 0:
-            output_file_name = 'Vulcan-IPTS%d-SEnv-%d.txt' % (ipts, run_number)
+            output_file_name = 'Vulcan-IPTS-%d-SEnv-%d.txt' % (ipts, run_number)
         else:
-            output_file_name = 'Vulcan-IPTS%d-SEnv-%d-%d.txt' % (ipts, run_number, num_attempt)
+            output_file_name = 'Vulcan-IPTS-%d-SEnv-%d-%d.txt' % (ipts, run_number, num_attempt)
         output_file_name = os.path.join(output_dir, output_file_name)
 
         # check whether it is a new file such that no old file will be overwritten
