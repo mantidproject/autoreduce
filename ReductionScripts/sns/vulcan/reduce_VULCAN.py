@@ -794,7 +794,7 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
         title = log_ws.getTitle()
         record_file_path = os.path.dirname(logs_record_file_name)
         if title.startswith('Align:'):
-            categorized_record_file = os.path.join(record_file_path, 'AutoRecodeAlign.txt')
+            categorized_record_file = os.path.join(record_file_path, 'AutoRecordAlign.txt')
         else:
             categorized_record_file = os.path.join(record_file_path, 'AutoRecordData.txt')
         if os.path.exists(categorized_record_file) is False:
