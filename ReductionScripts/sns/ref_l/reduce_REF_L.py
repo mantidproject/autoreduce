@@ -24,6 +24,9 @@ outputDir=sys.argv[2]
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
+# The legacy format is REF_L_xyz_event.nxs
+# The new format is REF_L_xyz.nxs.h5
+eventFile.replace('.nxs.h5', '')
 runNumber = eventFile.split('_')[2]
 
 import mantid
