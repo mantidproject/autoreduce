@@ -397,6 +397,7 @@ def exportVulcanSampleEnvLog(log_ws_name, output_dir, ipts, run_number):
                               SampleLogNames=sample_log_name_list,
                               WriteHeaderFile=True,
                               SeparateHeaderFile=False,
+                              DateTitleInHeader=False,
                               TimeZone=TIMEZONE2,
                               Header=header_str)
 
@@ -510,61 +511,61 @@ class PatchRecord:
 
         return patchlist
 
-
     def patchRecord(self, recordfilename):
         """ Patch record, including ITPS, ...
         """
         raise NotImplementedError("Invalid!")
-        # Get last line
-        titleline, lastline = self.get_last_line_in_binary_file(recordfilename)
 
-        # print "First line: ", titleline
-        # print "Last line: ", lastline
+        # # Get last line
+        # titleline, lastline = self.get_last_line_in_binary_file(recordfilename)
 
-        # Parse last line and first line
-        rtitles = titleline.split("\t")
-        titles = []
-        for title in rtitles:
-            title = title.strip()
-            titles.append(title)
+        # # print "First line: ", titleline
+        # # print "Last line: ", lastline
 
-        values = lastline.split("\t")
+        # # Parse last line and first line
+        # rtitles = titleline.split("\t")
+        # titles = []
+        # for title in rtitles:
+        #     title = title.strip()
+        #     titles.append(title)
 
-        valuedict = {}
-        if len(titles) != len(values):
-            raise NotImplementedError("Number of tiles are different than number of values.")
-        for itit in xrange(len(titles)):
-            valuedict[titles[itit]] = values[itit]
+        # values = lastline.split("\t")
 
-        # Substitute
-        ipts = self._getIPTS()
-        cvdict = self._readCvInfoFile()
-        rundict = self._readRunInfoFile()
+        # valuedict = {}
+        # if len(titles) != len(values):
+        #     raise NotImplementedError("Number of tiles are different than number of values.")
+        # for itit in xrange(len(titles)):
+        #     valuedict[titles[itit]] = values[itit]
 
-        valuedict["IPTS"] = "%s" % (str(ipts))
-        for title in cvdict.keys():
-            valuedict[title] = cvdict[title]
+        # # Substitute
+        # ipts = self._getIPTS()
+        # cvdict = self._readCvInfoFile()
+        # rundict = self._readRunInfoFile()
 
-        # print valuedict.keys()
+        # valuedict["IPTS"] = "%s" % (str(ipts))
+        # for title in cvdict.keys():
+        #     valuedict[title] = cvdict[title]
 
-        for title in rundict.keys():
-            valuedict[title] = rundict[title]
+        # # print valuedict.keys()
 
-        # Form the line again: with 7 spaces in front
-        newline = "       "
-        for i in xrange(len(titles)):
-            title = titles[i]
-            if i > 0:
-                newline += "\t"
-            newline += "%s" % (str(valuedict[title]))
+        # for title in rundict.keys():
+        #     valuedict[title] = rundict[title]
 
-        # Remove last line and append the patched line
-        self.remove_last_line_in_text(recordfilename)
+        # # Form the line again: with 7 spaces in front
+        # newline = "       "
+        # for i in xrange(len(titles)):
+        #     title = titles[i]
+        #     if i > 0:
+        #         newline += "\t"
+        #     newline += "%s" % (str(valuedict[title]))
 
-        with open(recordfilename, "a") as myfile:
-            myfile.write("\n"+newline)
+        # # Remove last line and append the patched line
+        # self.remove_last_line_in_text(recordfilename)
 
-        return
+        # with open(recordfilename, "a") as myfile:
+        #     myfile.write("\n"+newline)
+
+        # return
 
     @staticmethod
     def get_last_line_in_binary_file(filename):
@@ -788,6 +789,13 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
                         OrderByTitle='RUN',
                         RemoveDuplicateRecord=True)
 
+    # Set up the mode for global access
+    file_access_mode = oct(os.stat(logs_record_file_name)[stat.ST_MODE])
+    file_access_mode = file_access_mode[-3:]
+    if file_access_mode != '666' and file_access_mode != '676':
+        print "Current file %s's mode is %s." % (logs_record_file_name, file_access_mode)
+        os.chmod(logs_record_file_name, 0666)
+
     # Export to either data or align
     try:
         log_ws = mantid.AnalysisDataService.retrieve(log_ws_name)
@@ -811,15 +819,12 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
                             OverrideLogValue=patch_list,
                             OrderByTitle='RUN',
                             RemoveDuplicateRecord=True)
+
+        # Change file  mode
+        if file_access_mode != '666' and file_access_mode != '676':
+            os.chmod(categorized_record_file, 0666)
     except NameError as e:
         print '[Error] %s.' % str(e)
-
-    # Set up the mode for global access
-    mode = oct(os.stat(logs_record_file_name)[stat.ST_MODE])
-    mode = mode[-3:]
-    if mode != '666' and mode != '676':
-        print "Current file %s's mode is %s." % (logs_record_file_name, mode)
-        os.chmod(logs_record_file_name, 0666)
 
     # Auto reduction only
     if export_mode == "auto":
