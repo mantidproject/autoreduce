@@ -73,26 +73,21 @@ def WS_clean():
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
-    RawVanadium="/SNS/SEQ/IPTS-14730/nexus/SEQ_81711.nxs.h5"
+    RawVanadium="/SNS/SEQ/IPTS-16076/nexus/SEQ_89042.nxs.h5"
     ProcessedVanadium="van81711_d.nxs"
     HardMaskFile=''
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
-    MaskBTPParameters.append({'Pixel': '1-8,119-128'})
+    MaskBTPParameters.append({'Pixel': '1-7,122-128'})
     MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
-    MaskBTPParameters.append({'Tube': '1', 'Bank': '116'})
-    MaskBTPParameters.append({'Tube': '7', 'Pixel': '104-110', 'Bank': '46'})
-    MaskBTPParameters.append({'Tube': '2', 'Pixel': '53-55', 'Bank': '81'})
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '30-35', 'Bank': '88'})
     MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '99-128', 'Bank': '127'})
-    MaskBTPParameters.append({'Tube': '7', 'Pixel': '23-25', 'Bank': '139'})
-    MaskBTPParameters.append({'Tube': '5', 'Bank': '45'})
+    MaskBTPParameters.append({'Tube': '5,8', 'Bank': '45'})
     MaskBTPParameters.append({'Tube': '8', 'Bank': '70'})
     MaskBTPParameters.append({'Tube': '4', 'Bank': '148'})
-    MaskBTPParameters.append({'Bank': '52'})
     MaskBTPParameters.append({'Bank': '99-102'})
     MaskBTPParameters.append({'Bank': '59'})
-    MaskBTPParameters.append({'Bank': '150'})
+    MaskBTPParameters.append({'Tube': '8', 'Bank': '43'})
  
     #uninstalled packs at far left
     #MaskBTPParameters.append({'Bank':"114,115,75,76,38,39"})
@@ -214,10 +209,10 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.01*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
-        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x1_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
         DGSdict['IncidentBeamNormalisation']='None'  #NEXUS file does not have any normaliztion, but the nxspe IS normalized later in code by charge
         DGSdict['UseBoundsForDetVan']='1'
         DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
