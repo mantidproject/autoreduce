@@ -47,7 +47,7 @@ out_prefix = instrument + "_" + run_number
 
 img_filename = os.path.join(output_directory, out_prefix + ".png")
 #json_filename = os.path.join(output_directory, out_prefix + ".json")
-output_nexus = os.path.join(output_directory, "testing/" + out_prefix + "_inelastic-testing.nxs")
+output_nexus = os.path.join(output_directory, out_prefix + "_inelastic.nxs")
 output_nexus_diffraction = os.path.join(output_directory, out_prefix + "_diffraction.nxs")
 output_fullprof = os.path.join(output_directory, out_prefix + "_diffraction.dat")
 output_gsas = os.path.join(output_directory, out_prefix + "_diffraction.gsa")
