@@ -133,7 +133,7 @@ t0=GetT0FromDet_GeorgNov2015(w)
 
 DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBTPParameters)
 DGSdict['SampleInputFile']=nexus_file
-DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.001666667*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
 DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
 DGSdict['IncidentBeamNormalisation']='ByCurrent'  
@@ -177,7 +177,7 @@ elog.setSERotOptions('SERotator2')
 #elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
-elog.setSETempOptions('SensorD')
+elog.setSETempOptions('SensorC')
 elog.setFilename(output_directory+'experiment_log.csv')
 
 s1=elog.save_line('reduce')
