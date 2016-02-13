@@ -40,7 +40,7 @@ else:
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-16054/shared/autoNOM/exp.ini"
+    expiniFilename="/SNS/lustre/NOM/IPTS-15927/shared/autoNOM/exp.ini"
 print "Using", expiniFilename
 
 # determine information for caching
@@ -106,7 +106,7 @@ if van_run > 0:
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-16054/shared/NOM_calibrate_d63300_2016_02_13.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-15927/shared/NOM_calibrate_d63300_2016_02_13.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
