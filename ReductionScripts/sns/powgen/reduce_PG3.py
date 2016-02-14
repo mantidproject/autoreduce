@@ -6,8 +6,8 @@ from mantid.simpleapi import *
 import mantid
 from matplotlib import *
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_1_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d24830_2015_08_08.cal")
-char_file = os.path.join(cal_dir, "PG3_char_2016_02_16-HR-PAC-8mm.txt")
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d27021_2016_02_12.h5")
+char_file = os.path.join(cal_dir, "PG3_char_2016_02_15-HR-PAC-6mm.txt")
 #MODE = 0664
 
 #from mantidsimple import *
