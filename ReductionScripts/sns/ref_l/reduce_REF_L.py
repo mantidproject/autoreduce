@@ -70,12 +70,11 @@ LRAutoReduction(Filename=eventFileAbs,
 # Clean up the output and produce a nice plot for the web monitor
 
 # Load data and save selection plots
-data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)    
+data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+#from reduce_REF_L_utilities import selection_plots 
 #selection_plots(data, outputDir, runNumber)
 
-
-
-meta_data_run = meta_data.getRun()
+meta_data_run = data.getRun()
 first_run_of_set = int(runNumber)
 sequence_number = 1
 title = meta_data_run.getProperty("run_title").value
