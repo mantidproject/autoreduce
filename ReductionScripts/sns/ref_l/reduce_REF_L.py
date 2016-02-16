@@ -120,31 +120,17 @@ for i in range(len(y_data)):
         clean_x.append(x_data[i])
         clean_e.append(e_data[i])
         
-if len(clean_y)>0:
-    # Update json data file for interactive plotting
-    file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
-    if os.path.isfile(file_path):
-        fd = open(file_path, 'r')
-        json_data = fd.read()
-        fd.close()
-        data = json.loads(json_data)
-        data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-        json_data = json.dumps(data)
-        fd = open(file_path, 'w')
-        fd.write(json_data)
-        fd.close()
-  
-    # Create image
-    plt.cla()
-    plt.plot(clean_x, clean_y, '-')
-    plt.title('Reflectivity')
-    plt.xlabel('Q')
-    plt.ylabel('Reflectivity')
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.xlim(xmin=qmin, xmax=qmax)
-    plt.ylim(ymax=2.0)
-    plt.savefig(os.path.join(outputDir,"REF_L_"+runNumber+'.png'))
-else:
-    logger.notice("Nothing to plot")
+# Update json data file for interactive plotting
+file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+if os.path.isfile(file_path):
+    fd = open(file_path, 'r')
+    json_data = fd.read()
+    fd.close()
+    data = json.loads(json_data)
+    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
+    json_data = json.dumps(data)
+    fd = open(file_path, 'w')
+    fd.write(json_data)
+    fd.close()
+
 
