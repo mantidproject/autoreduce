@@ -18,6 +18,8 @@ if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
 #sys.path.insert(0,'/opt/Mantid/bin')
 sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.append("/SNS/REF_L/shared/autoreduce/")
+
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -33,17 +35,17 @@ import mantid
 from mantid.simpleapi import *
 
 
-#-------------------------------------
 # Reduction options
-WL_CUTOFF = 10.0  # Wavelength below which we don't need the absolute normalization
+#-------------------------------------------------------------------------
+# Wavelength below which we don't need the absolute normalization
+WL_CUTOFF = 10.0  
 
 # Default primary fraction range to be used if it is not defined in the template
 PRIMARY_FRACTION_RANGE = [118, 197] #[121,195] #[82,154]
+
 NORMALIZE_TO_UNITY = True #False
-#-------------------------------------
+#-------------------------------------------------------------------------
 
-
-sys.path.append("/SNS/REF_L/shared/autoreduce/")
 
 
 # Locate the template file
@@ -66,7 +68,7 @@ LRAutoReduction(Filename=eventFileAbs,
 
 
 
-
+#-------------------------------------------------------------------------
 # Clean up the output and produce a nice plot for the web monitor
 
 # Load data and save selection plots
