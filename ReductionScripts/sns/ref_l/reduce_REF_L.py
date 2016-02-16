@@ -44,13 +44,7 @@ NORMALIZE_TO_UNITY = True #False
 
 
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
-from reduction_gui.reduction.reflectometer.refl_data_series import DataSeries
-from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
-
-# Load data and save selection plots
-data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)    
-#selection_plots(data, outputDir, runNumber)
 
 # Locate the template file
 # If no template file is available, the automated reduction will generate one
@@ -74,6 +68,17 @@ LRAutoReduction(Filename=eventFileAbs,
 
 
 # Clean up the output and produce a nice plot for the web monitor
+
+# Load data and save selection plots
+data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)    
+#selection_plots(data, outputDir, runNumber)
+
+
+
+meta_data_run = meta_data.getRun()
+first_run_of_set = int(runNumber)
+sequence_number = 1
+title = meta_data_run.getProperty("run_title").value
 try:
     m=re.search("Run:(\d+)-(\d+)\.",title)
     if m is not None:
