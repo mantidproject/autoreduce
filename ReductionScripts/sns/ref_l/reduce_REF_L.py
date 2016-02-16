@@ -2,17 +2,10 @@ import sys
 import os
 import re
 import math
-import time
+
 import json
-import platform
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
-from matplotlib import *
-use("agg")
-import warnings
-warnings.filterwarnings('ignore',module='matplotlib')
-import matplotlib.pyplot as plt
-import numpy
-numpy.seterr(all='ignore')
+
+
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
@@ -33,7 +26,6 @@ runNumber = runNumber.replace('.nxs.h5', '')
 
 import mantid
 from mantid.simpleapi import *
-
 
 # Reduction options
 #-------------------------------------------------------------------------
