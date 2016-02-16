@@ -1,18 +1,13 @@
 import sys
 import os
 import re
-import math
-
 import json
-
-
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
 #sys.path.insert(0,'/opt/Mantid/bin')
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
-
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -39,7 +34,6 @@ NORMALIZE_TO_UNITY = True #False
 #-------------------------------------------------------------------------
 
 
-
 # Locate the template file
 # If no template file is available, the automated reduction will generate one
 template_dir = outputDir.replace('/autoreduce','')
@@ -50,14 +44,14 @@ elif os.path.isfile(os.path.join(template_dir, "template.xml")):
     template_file = os.path.join(template_dir, "template.xml")
 elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
-    
+
+
 LRAutoReduction(Filename=eventFileAbs,
                 ScaleToUnity=NORMALIZE_TO_UNITY,
                 ScalingWavelengthCutoff=WL_CUTOFF,
                 PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                 OutputDirectory=outputDir,
                 TemplateFile=template_file, FindPeaks=False)
-
 
 
 #-------------------------------------------------------------------------
