@@ -28,9 +28,9 @@ from mantid.simpleapi import *
 WL_CUTOFF = 10.0  
 
 # Default primary fraction range to be used if it is not defined in the template
-PRIMARY_FRACTION_RANGE = [118, 197] #[121,195] #[82,154]
+PRIMARY_FRACTION_RANGE = [116, 197]
 
-NORMALIZE_TO_UNITY = True #False
+NORMALIZE_TO_UNITY = True
 #-------------------------------------------------------------------------
 
 
