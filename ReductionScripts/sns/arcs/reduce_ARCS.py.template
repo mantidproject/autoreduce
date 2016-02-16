@@ -31,7 +31,7 @@ def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-
+    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
