@@ -49,7 +49,7 @@ from reduce_REF_L_utilities import autoreduction_stitching, selection_plots
 
 
 # Load data and save selection plots
-#data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=False)    
+data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)    
 #selection_plots(data, outputDir, runNumber)
 
 # Locate the template file
