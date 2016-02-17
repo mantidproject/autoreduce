@@ -56,8 +56,9 @@ first_run_of_set=output[1]
 #-------------------------------------------------------------------------
 # Produce plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
-reflectivity = Load(Filename=os.path.join(output_dir, default_file_name))
+if os.path.isfile(default_file_name):
+    reflectivity = Load(Filename=os.path.join(output_dir, default_file_name))
 
-json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
-SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
+    json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
+    SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
 
