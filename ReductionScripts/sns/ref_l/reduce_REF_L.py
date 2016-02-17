@@ -59,23 +59,8 @@ first_run_of_set=output[1]
 # Produce a nice plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(output_dir, default_file_name)
+reflectivity = Load(Filename=file_path)
 
-output_ws = Load(Filename=file_path)
-clean_x = output_ws.readX(0).tolist()
-clean_y = output_ws.readY(0).tolist()
-clean_e = output_ws.readE(0).tolist()
-        
-# Update json data file for interactive plotting
-file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
-if os.path.isfile(file_path):
-    fd = open(file_path, 'r')
-    json_data = fd.read()
-    fd.close()
-    data = json.loads(json_data)
-    data["main_output"] = {"x":clean_x, "y":clean_y, "e": clean_e}
-    json_data = json.dumps(data)
-    fd = open(file_path, 'w')
-    fd.write(json_data)
-    fd.close()
-
+json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
+SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
 
