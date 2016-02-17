@@ -83,85 +83,7 @@ def WS_clean():
     DeleteWorkspace('__MonWS')
     
     
-
-def reduceMono(
-        DGSdict, Ei, T0, EnergyTransferRange, 
-        HardMaskFile, groupingFile, IntegrationRange,
-        NormalizedVanadiumEqualToOne, angle,
-        outdir, outfile, clean):
-    DGSdict['SampleInputWorkspace']='__IWS'
-    DGSdict['SampleInputMonitorWorkspace']='__MonWS'
-    DGSdict['IncidentEnergyGuess']=Ei
-    DGSdict['UseIncidentEnergyGuess']='1'
-    DGSdict['TimeZeroGuess']=T0
-    DGSdict['EnergyTransferRange']=EnergyTransferRange
-    #DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
-    DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
-    DGSdict['HardMaskFile']=HardMaskFile
-    DGSdict['GroupingFile']=groupingFile #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
-    DGSdict['IncidentBeamNormalisation']='ByCurrent'
-    DGSdict['UseBoundsForDetVan']='1'
-    DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
-    DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
-    DGSdict['DetVanIntRangeUnits']='Wavelength'
-    DGSdict['MedianTestLevelsUp']='1'
-    DGSdict['OutputWorkspace']='__OWS'
-    DgsReduction(**DGSdict)
-    #Do normalization of vanadum to 1
-    # This step only runs ONCE if the processed vanadium file is not already present.
-    if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
-          filename=DGSdict['SaveProcDetVanFilename']
-          LoadNexus(Filename=filename,OutputWorkspace="__VAN")
-          datay = mtd['__VAN'].extractY()
-          meanval = float(datay[datay>0].mean())
-          CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
-          Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN')  #Divide the vanadium by the mean
-          Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
-          SaveNexus(InputWorkspace="__VAN", Filename= filename)
-    AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")  
-    SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
-    RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
-    ConvertToDistribution(Workspace="__OWS") 	                           #Divide by bin width
-
-    if NXSPE_flag:            
-        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
-
-    #plots  
-    #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
-    #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
-    minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
-    xmin=minvals[0]
-    xmax=maxvals[0]
-    xstep=(xmax-xmin)*0.01
-    ymin=minvals[1]
-    ymax=maxvals[1]
-    ystep=(ymax-ymin)*0.01
-    x=arange(xmin,xmax,xstep)[0:100]
-    y=arange(ymin,ymax,ystep)[0:100]
-    Y,X=meshgrid(y,x)
-
-    MD=ConvertToMD('__OWS',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
-    ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
-    ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
-    MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
-    d=MDH.getSignalArray()
-    ne=MDH.getNumEventsArray()
-    dne=d/ne
-
-    # make a plot
-    Zm=ma.masked_where(ne==0,dne)
-    pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
-    colorbar(pcm)
-    xlabel('|Q| ($\AA^{-1}$)')
-    ylabel('E (meV)')
-    title("Run "+outfile)
-    savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
-
-    if clean:
-        WS_clean()
-    return
-
-   
+          
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
@@ -187,6 +109,8 @@ if __name__ == "__main__":
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
+
+
 
     #check number of arguments
     if (len(sys.argv) != 3): 
@@ -224,16 +148,80 @@ if __name__ == "__main__":
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'  
     if not math.isnan(Ei):
-        # normal reduction here
-        EnergyTransferRange = [-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
-        reduceMono(
-            DGSdict, Ei, T0, EnergyTransferRange, 
-            HardMaskFile, groupingFile, IntegrationRange,
-            NormalizedVanadiumEqualToOne, angle,
-            outdir, outfile, clean)
+        DGSdict['SampleInputWorkspace']='__IWS'
+        DGSdict['SampleInputMonitorWorkspace']='__MonWS'
+        DGSdict['IncidentEnergyGuess']=Ei
+        DGSdict['UseIncidentEnergyGuess']='1'
+        DGSdict['TimeZeroGuess']=T0
+        DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        #DGSdict['EnergyTransferRange']=[-0.5*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
+        DGSdict['SofPhiEIsDistribution']='0' # keep events (need to then run RebinToWorkspace and ConvertToDistribution)
+        DGSdict['HardMaskFile']=HardMaskFile
+        DGSdict['GroupingFile']=groupingFile #choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
+        DGSdict['IncidentBeamNormalisation']='ByCurrent'
+        DGSdict['UseBoundsForDetVan']='1'
+        DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
+        DGSdict['DetVanIntRangeLow']=IntegrationRange[0]
+        DGSdict['DetVanIntRangeUnits']='Wavelength'
+        DGSdict['MedianTestLevelsUp']='1'
+        DGSdict['OutputWorkspace']='__OWS'
+        DgsReduction(**DGSdict)
+        #Do normalization of vanadum to 1
+        # This step only runs ONCE if the processed vanadium file is not already present.
+        if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+              filename=DGSdict['SaveProcDetVanFilename']
+              LoadNexus(Filename=filename,OutputWorkspace="__VAN")
+              datay = mtd['__VAN'].extractY()
+              meanval = float(datay[datay>0].mean())
+              CreateSingleValuedWorkspace(OutputWorkspace='__meanval',DataValue=meanval)
+              Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN')  #Divide the vanadium by the mean
+              Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
+              SaveNexus(InputWorkspace="__VAN", Filename= filename)
+        AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")  
+        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
+        RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
+        ConvertToDistribution(Workspace="__OWS") 		                                                                #Divide by bin width
 
+        if NXSPE_flag:            
+            SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+                    
+        #plots  
+        #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
+        #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
+        minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
+        xmin=minvals[0]
+        xmax=maxvals[0]
+        xstep=(xmax-xmin)*0.01
+        ymin=minvals[1]
+        ymax=maxvals[1]
+        ystep=(ymax-ymin)*0.01
+        x=arange(xmin,xmax,xstep)[0:100]
+        y=arange(ymin,ymax,ystep)[0:100]
+        Y,X=meshgrid(y,x)
+
+        MD=ConvertToMD('__OWS',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
+        ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
+        ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
+        MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
+        d=MDH.getSignalArray()
+        ne=MDH.getNumEventsArray()
+        dne=d/ne
+
+        Zm=ma.masked_where(ne==0,dne)
+        pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
+        colorbar(pcm)
+        xlabel('|Q| ($\AA^{-1}$)')
+        ylabel('E (meV)')
+        title("Run "+outfile)
+
+        savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
+
+
+        if clean:
+            WS_clean()
+   
     else:  #Do this if it is whitebeam
-        ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
-        Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.1,0.005,5',PreserveEvents='0')
-        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
+       ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
+       Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.1,0.005,5',PreserveEvents='0')
+       SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
 
