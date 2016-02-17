@@ -9,6 +9,9 @@ if (os.environ.has_key("MANTIDPATH")):
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 
+import mantid
+from mantid.simpleapi import *
+
 event_file_path=sys.argv[1]
 output_dir=sys.argv[2]
 
@@ -18,8 +21,6 @@ event_file = os.path.split(event_file_path)[-1]
 run_number = event_file.split('_')[2]
 run_number = run_number.replace('.nxs.h5', '')
 
-import mantid
-from mantid.simpleapi import *
 
 # Reduction options
 #-------------------------------------------------------------------------
@@ -44,7 +45,7 @@ elif os.path.isfile(os.path.join(template_dir, "template.xml")):
 elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
 
-
+# Run the auto-reduction
 output = LRAutoReduction(Filename=event_file_path,
                          ScaleToUnity=NORMALIZE_TO_UNITY,
                          ScalingWavelengthCutoff=WL_CUTOFF,
@@ -57,11 +58,6 @@ first_run_of_set=output[1]
 #-------------------------------------------------------------------------
 # Clean up the output and produce a nice plot for the web monitor
 
-# Load data and save selection plots
-#data = LoadEventNexus(Filename=event_file_path, MetaDataOnly=True)
-#from reduce_REF_L_utilities import selection_plots 
-#selection_plots(data, output_dir, run_number)
-    
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(output_dir, default_file_name)
 
