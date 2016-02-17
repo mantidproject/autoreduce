@@ -1,7 +1,5 @@
 import sys
 import os
-import re
-import json
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
