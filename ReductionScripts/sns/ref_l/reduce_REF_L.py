@@ -56,16 +56,14 @@ first_run_of_set=output[1]
 
 
 #-------------------------------------------------------------------------
-# Clean up the output and produce a nice plot for the web monitor
-
+# Produce a nice plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(output_dir, default_file_name)
 
-output_ws = 'output_auto'
-Load(Filename=file_path, OutputWorkspace=output_ws)
-clean_x = mtd[output_ws].readX(0).tolist()
-clean_y = mtd[output_ws].readY(0).tolist()
-clean_e = mtd[output_ws].readE(0).tolist()
+output_ws = Load(Filename=file_path)
+clean_x = output_ws.readX(0).tolist()
+clean_y = output_ws.readY(0).tolist()
+clean_e = output_ws.readE(0).tolist()
         
 # Update json data file for interactive plotting
 file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
