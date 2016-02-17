@@ -69,9 +69,9 @@ Load(Filename=file_path, OutputWorkspace=output_ws)
 #x_data = mtd[output_ws].dataX(0)
 #y_data = mtd[output_ws].dataY(0)
 #e_data = mtd[output_ws].dataE(0)
-clean_x = mtd[output_ws].dataX(0)
-clean_y = mtd[output_ws].dataY(0)
-clean_e = mtd[output_ws].dataE(0)
+clean_x = mtd[output_ws].readX(0)
+clean_y = mtd[output_ws].readY(0)
+clean_e = mtd[output_ws].readE(0)
 #qmin = min(x_data)*0.95
 #qmax = max(x_data)*1.1
 #for i in range(len(y_data)):
