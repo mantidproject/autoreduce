@@ -46,12 +46,13 @@ elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
 
 
-[_, first_run_of_set, sequence_number] = LRAutoReduction(Filename=eventFileAbs,
-                                                       ScaleToUnity=NORMALIZE_TO_UNITY,
-                                                       ScalingWavelengthCutoff=WL_CUTOFF,
-                                                       PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
-                                                       OutputDirectory=outputDir,
-                                                       TemplateFile=template_file, FindPeaks=False)
+output = LRAutoReduction(Filename=eventFileAbs,
+                         ScaleToUnity=NORMALIZE_TO_UNITY,
+                         ScalingWavelengthCutoff=WL_CUTOFF,
+                         PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
+                         OutputDirectory=outputDir,
+                         TemplateFile=template_file, FindPeaks=False)
+first_run_of_set=output[1]
 
 
 #-------------------------------------------------------------------------
