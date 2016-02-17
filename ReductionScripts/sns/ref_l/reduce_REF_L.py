@@ -63,22 +63,9 @@ file_path = os.path.join(output_dir, default_file_name)
 
 output_ws = 'output_auto'
 Load(Filename=file_path, OutputWorkspace=output_ws)
-#ReplaceSpecialValues(InputWorkspace=output_ws, OutputWorkspace=output_ws,
-#                     NaNValue=0.0, NaNError=0.0,
-#                     InfinityValue=0.0, InfinityError=0.0)    
-#x_data = mtd[output_ws].dataX(0)
-#y_data = mtd[output_ws].dataY(0)
-#e_data = mtd[output_ws].dataE(0)
 clean_x = mtd[output_ws].readX(0).tolist()
 clean_y = mtd[output_ws].readY(0).tolist()
 clean_e = mtd[output_ws].readE(0).tolist()
-#qmin = min(x_data)*0.95
-#qmax = max(x_data)*1.1
-#for i in range(len(y_data)):
-#    if y_data[i]>0 and y_data[i]>e_data[i]:
-#        clean_y.append(y_data[i])
-#        clean_x.append(x_data[i])
-#        clean_e.append(e_data[i])
         
 # Update json data file for interactive plotting
 file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
