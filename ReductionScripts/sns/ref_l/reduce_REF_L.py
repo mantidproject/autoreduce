@@ -9,11 +9,11 @@ if (os.environ.has_key("MANTIDPATH")):
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 
-eventFileAbs=sys.argv[1]
-outputDir=sys.argv[2]
+event_file_path=sys.argv[1]
+output_dir=sys.argv[2]
 
-eventFile = os.path.split(eventFileAbs)[-1]
-nexusDir = eventFileAbs.replace(eventFile, '')
+eventFile = os.path.split(event_file_path)[-1]
+nexusDir = event_file_path.replace(eventFile, '')
 # The legacy format is REF_L_xyz_event.nxs
 # The new format is REF_L_xyz.nxs.h5
 runNumber = eventFile.split('_')[2]
@@ -36,7 +36,7 @@ NORMALIZE_TO_UNITY = True
 
 # Locate the template file
 # If no template file is available, the automated reduction will generate one
-template_dir = outputDir.replace('/autoreduce','')
+template_dir = output_dir.replace('/autoreduce','')
 template_file = ""
 if os.path.isfile("template.xml"):
     template_file = "template.xml"
@@ -46,11 +46,11 @@ elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
 
 
-output = LRAutoReduction(Filename=eventFileAbs,
+output = LRAutoReduction(Filename=event_file_path,
                          ScaleToUnity=NORMALIZE_TO_UNITY,
                          ScalingWavelengthCutoff=WL_CUTOFF,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
-                         OutputDirectory=outputDir,
+                         OutputDirectory=output_dir,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=output[1]
 
@@ -59,12 +59,12 @@ first_run_of_set=output[1]
 # Clean up the output and produce a nice plot for the web monitor
 
 # Load data and save selection plots
-#data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+#data = LoadEventNexus(Filename=event_file_path, MetaDataOnly=True)
 #from reduce_REF_L_utilities import selection_plots 
-#selection_plots(data, outputDir, runNumber)
+#selection_plots(data, output_dir, runNumber)
     
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
-file_path = os.path.join(outputDir, default_file_name)
+file_path = os.path.join(output_dir, default_file_name)
 
 output_ws = 'output_auto'
 
@@ -87,7 +87,7 @@ for i in range(len(y_data)):
         clean_e.append(e_data[i])
         
 # Update json data file for interactive plotting
-file_path = os.path.join(outputDir, "REF_L_%s_plot_data.dat" % runNumber)
+file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % runNumber)
 if os.path.isfile(file_path):
     fd = open(file_path, 'r')
     json_data = fd.read()
