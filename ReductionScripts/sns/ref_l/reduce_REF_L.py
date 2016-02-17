@@ -46,44 +46,21 @@ elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
 
 
-LRAutoReduction(Filename=eventFileAbs,
-                ScaleToUnity=NORMALIZE_TO_UNITY,
-                ScalingWavelengthCutoff=WL_CUTOFF,
-                PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
-                OutputDirectory=outputDir,
-                TemplateFile=template_file, FindPeaks=False)
+_, first_run_of_set, sequence_number = LRAutoReduction(Filename=eventFileAbs,
+                                                       ScaleToUnity=NORMALIZE_TO_UNITY,
+                                                       ScalingWavelengthCutoff=WL_CUTOFF,
+                                                       PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
+                                                       OutputDirectory=outputDir,
+                                                       TemplateFile=template_file, FindPeaks=False)
 
 
 #-------------------------------------------------------------------------
 # Clean up the output and produce a nice plot for the web monitor
 
 # Load data and save selection plots
-data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+#data = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
 #from reduce_REF_L_utilities import selection_plots 
 #selection_plots(data, outputDir, runNumber)
-
-meta_data_run = data.getRun()
-first_run_of_set = int(runNumber)
-sequence_number = 1
-title = meta_data_run.getProperty("run_title").value
-try:
-    m=re.search("Run:(\d+)-(\d+)\.",title)
-    if m is not None:
-        first_run_of_set = m.group(1)
-        sequence_number = int(m.group(2))
-    else:
-        m=re.search("-(\d+)\.",title)
-        if m is not None:
-            sequence_number = int(m.group(1))
-            first_run_of_set = int(runNumber)-int(sequence_number)+1
-        else:
-            # The legacy DAS often forgets to put the sequence
-            # number for the seventh run. Just assume 7.
-            sequence_number = 7 # -1
-            first_run_of_set = int(runNumber)-int(sequence_number)+1
-except:
-    sequence_number = -1
-    first_run_of_set = int(runNumber)-int(sequence_number)+1
     
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(outputDir, default_file_name)
