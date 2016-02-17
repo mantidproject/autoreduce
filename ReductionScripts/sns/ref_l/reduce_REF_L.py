@@ -62,7 +62,6 @@ default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(output_dir, default_file_name)
 
 output_ws = 'output_auto'
-
 Load(Filename=file_path, OutputWorkspace=output_ws)
 ReplaceSpecialValues(InputWorkspace=output_ws, OutputWorkspace=output_ws,
                      NaNValue=0.0, NaNError=0.0,
