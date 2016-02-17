@@ -12,11 +12,10 @@ sys.path.append("/SNS/REF_L/shared/autoreduce/")
 event_file_path=sys.argv[1]
 output_dir=sys.argv[2]
 
-eventFile = os.path.split(event_file_path)[-1]
-nexusDir = event_file_path.replace(eventFile, '')
+event_file = os.path.split(event_file_path)[-1]
 # The legacy format is REF_L_xyz_event.nxs
 # The new format is REF_L_xyz.nxs.h5
-runNumber = eventFile.split('_')[2]
+runNumber = event_file.split('_')[2]
 runNumber = runNumber.replace('.nxs.h5', '')
 
 import mantid
