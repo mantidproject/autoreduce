@@ -56,7 +56,7 @@ first_run_of_set=output[1]
 
 
 #-------------------------------------------------------------------------
-# Produce a nice plot for the web monitor
+# Produce plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 file_path = os.path.join(output_dir, default_file_name)
 reflectivity = Load(Filename=file_path)
