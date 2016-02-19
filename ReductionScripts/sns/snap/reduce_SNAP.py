@@ -24,25 +24,25 @@ out_prefix = instrument + "_" + run_number
 #in the final version folder should be obtained from the outputdir
 #folder = outputDir.replace('autoreduce/','')
 
-folder = '/SNS/SNAP/IPTS-9109/shared/'
+folder = '/SNS/SNAP/IPTS-15429/shared/'
 
 #Masking should be one of the following strings :
 # 'None' ## 'Horizontal' 
 # 'Vertical' ## 'Custom mask - xml file'
 
-Masking = "Horizontal"
+Masking = "None"
 
 
 #Calibration  should be one of the following strings :
 # 'Convert Units' or  'Calibration File' 
 
 Calibration = 'Convert Units'
-calib_File = 'SNAP_calibrate_d17963_2014_06_24.cal'
+calib_File = 'SNAP_calibrate_d30628_2016_02_19.cal'
 
 #Grouping  should be one of the following strings :
 # '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
 
-Grouping = 'All'
+Grouping = '2_4 Grouping' 
 
 #Normalization  should be one of the following strings :
 # 'None' # 'Processed Nexus' # 'Extract from Data' 
@@ -52,7 +52,7 @@ norm_file = 'nor_nexus.nxs'
 
 
 
-binning='0.4,-0.003,5.2'
+binning='1.0,-0.002,16.0'
 
 #######################################33
 
@@ -112,8 +112,8 @@ if Normalization == "Processed Nexus" :
 
 if Normalization == "Extract from Data" : 
 		
-	window = 8 
-	smooth_range = 10
+	window = 10 
+	smooth_range = 5
 				
 	peak_clip_WS = CloneWorkspace('ows')
 	n_histo = peak_clip_WS.getNumberHistograms()
