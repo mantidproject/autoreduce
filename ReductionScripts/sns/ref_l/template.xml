@@ -1,6 +1,6 @@
 <Reduction>
   <instrument_name>REFL</instrument_name>
-  <timestamp>Fri Feb 19 18:20:14 2016</timestamp>
+  <timestamp>Fri Feb 19 18:31:30 2016</timestamp>
   <python_version>2.7.5 (default, Oct 11 2015, 17:47:16) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
   <platform>Linux</platform>
@@ -36,13 +36,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137261</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -50,7 +50,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -82,13 +82,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137262</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -96,7 +96,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -128,13 +128,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137263</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -142,7 +142,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -174,13 +174,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137264</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -188,7 +188,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -220,13 +220,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137265</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -234,7 +234,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -266,13 +266,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137265</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -280,7 +280,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 <RefLData>
@@ -312,13 +312,13 @@
 <norm_from_back_pixels>145</norm_from_back_pixels>
 <norm_to_back_pixels>165</norm_to_back_pixels>
 <norm_dataset>137265</norm_dataset>
-<q_min>0.001</q_min>
-<q_step>0.001</q_step>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
 <overlap_lowest_error>True</overlap_lowest_error>
 <overlap_mean_value>False</overlap_mean_value>
 <angle_offset>0.0016</angle_offset>
-<angle_offset_error>0.0</angle_offset_error>
+<angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
 <scaling_factor_file></scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
@@ -326,7 +326,7 @@
 <incident_medium_list>H2O</incident_medium_list>
 <incident_medium_index_selected>0</incident_medium_index_selected>
 <fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.009</fourth_column_dq0>
+<fourth_column_dq0>0.006</fourth_column_dq0>
 <fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
 </RefLData>
 </DataSeries>
