@@ -79,6 +79,7 @@ iws=LoadEventNexus(Filename=nexus_file)
 
 iws = NormaliseByCurrent(InputWorkspace='iws')
 iws = CompressEvents(InputWorkspace='iws')
+iws = CropWorkspace(InputWorkspace='iws', XMax=50000)
 
 if Calibration == 'Convert Units':
     ows = ConvertUnits(InputWorkspace='iws',Target='dSpacing')
