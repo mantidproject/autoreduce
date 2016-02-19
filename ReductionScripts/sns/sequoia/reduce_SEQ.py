@@ -18,7 +18,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
     else:
         LoadEventNexus(Filename=Raw,OutputWorkspace="__VAN",Precount=0)
         # adjust time for pack B15 wired strangely
-        #ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) 
+        ChangeBinOffset(InputWorkspace="__VAN",OutputWorkspace="__VAN",Offset=500,IndexMin=14336,IndexMax=15359) 
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
@@ -55,7 +55,7 @@ def preprocessData(filename):
     CorrectLogTimes('__IWS')
     
     # adjust time for pack B15 wired strangely
-    #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
+    ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
 
     #delete all bad pulses below   10% of the average of the file.
     FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 10)
@@ -209,7 +209,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.01*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder
