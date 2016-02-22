@@ -37,33 +37,31 @@ if __name__ == "__main__":
     else:
         filename = sys.argv[1]
         outdir = sys.argv[2]+'/'
+        if not os.path.exists(outdir): os.makedirs(outdir)
 
-
+    [EGuess,Ei,T0]=preprocessData(filename)
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
     elog.setSERotOptions('CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot')
     elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorB, SensorC, SensorD')
     elog.setFilename(outdir+'experiment_log.csv')
-
-   
-    processed_van_file = ProcessedVanadium
-    if not os.path.isabs(processed_van_file):
-        processed_van_file = os.path.join(outdir, ProcessedVanadium)
-
-    DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
-    [EGuess,Ei,T0]=preprocessData(filename)
+    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
 
     #added to check the file for zero-summed packs in the event of a detector failure.
     # JLN 2014-2-14
     CheckPacks(mtd['__IWS'],outdir)
 
-    angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
     outpre='ARCS'
     runnum=str(mtd['__IWS'].getRunNumber()) 
     outfile=outpre+'_'+runnum+'_autoreduced'  
     if not math.isnan(Ei):
-        # normal reduction here
+        # monochromatic reduction
+        processed_van_file = ProcessedVanadium
+        if not os.path.isabs(processed_van_file):
+            processed_van_file = os.path.join(outdir, ProcessedVanadium)
+        DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
+
         EnergyTransferRange = [-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
         reduceMono(
             DGSdict, Ei, T0, EnergyTransferRange, 
