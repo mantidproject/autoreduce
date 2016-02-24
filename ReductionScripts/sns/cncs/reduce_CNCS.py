@@ -95,7 +95,8 @@ RawVanadium="/SNS/CNCS/IPTS-16111/1/161063/NeXus/CNCS_161063_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 #ProcessedVanadium="van101708both.nxs"
 #ProcessedVanadium="van123012.nxs"
-ProcessedVanadium="van.nxs"
+#ProcessedVanadium="van.nxs"
+ProcessedVanadium="van161063.nxs"
 HardMaskFile=''
 #IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 3.32 meV
 IntegrationRange=[90600.0,91600.0]#integration range for Vanadium in TOF at 1.0 meV
@@ -176,7 +177,8 @@ elog=ExperimentLog()
 elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
 #elog.setSERotOptions('CCR10G2Rot')
-elog.setSERotOptions('SERotator2')
+#elog.setSERotOptions('SERotator2')
+elog.setSERotOptions('Ox2WeldRot')
 #elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
