@@ -84,7 +84,8 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-16111/1/161063/NeXus/CNCS_161063_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/29/151026/NeXus/CNCS_151026_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-14518/0/140450/NeXus/CNCS_140450_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/25/137573/NeXus/CNCS_137573_event.nxs"
@@ -96,7 +97,8 @@ RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
 #ProcessedVanadium="van123012.nxs"
 ProcessedVanadium="van.nxs"
 HardMaskFile=''
-IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
+#IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 3.32 meV
+IntegrationRange=[90600.0,91600.0]#integration range for Vanadium in TOF at 1.0 meV
 
 MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
@@ -187,7 +189,8 @@ s1=elog.save_line('reduce')
 #s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
 #s1=mtd["reduce"].getRun()['huber'].value[0]
 #s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
-s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+#s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+s1=mtd["reduce"].getRun()['Ox2WeldRot'].value[0]
 #s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
 #s1=0
 roundedvalue = "%.1f" % s1
