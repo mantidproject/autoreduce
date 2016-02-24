@@ -102,7 +102,7 @@ HardMaskFile=''
 IntegrationRange=[90600.0,91600.0]#integration range for Vanadium in TOF at 1.0 meV
 
 #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-MaskBTPParameters=[{'Pixel':"1-40,91-128"}]
+MaskBTPParameters=[{'Pixel':"1-40,95-128"}]
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
 #MaskBTPParameters.append({'Bank': '36-50'})
 
