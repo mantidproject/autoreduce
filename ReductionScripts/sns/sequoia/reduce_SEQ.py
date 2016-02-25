@@ -54,6 +54,10 @@ def preprocessData(filename):
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
     
+    #fix strange TOF offset for runs 89527 to 89535
+    if (runnum >= 89527 and runnum <= 89535):
+        ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace = "__IWS",Offset=-9241)
+    
     # adjust time for pack B15 wired strangely
     #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
 
