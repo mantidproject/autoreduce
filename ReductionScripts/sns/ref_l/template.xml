@@ -48,7 +48,7 @@
    <norm_dataset>137261</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -101,7 +101,7 @@
    <norm_dataset>137262</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -154,7 +154,7 @@
    <norm_dataset>137263</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -207,7 +207,7 @@
    <norm_dataset>137266</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -260,7 +260,7 @@
    <norm_dataset>137271</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -313,7 +313,7 @@
    <norm_dataset>137271</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
@@ -366,7 +366,7 @@
    <norm_dataset>137271</norm_dataset>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0016</angle_offset>
+   <angle_offset>0.016</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
    <q_step>0.02</q_step>
    <q_min>0.005</q_min>
