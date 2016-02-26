@@ -85,7 +85,7 @@ output_directory=sys.argv[2]
 seterr("ignore") #ignore division by 0 warning in plots
 
 #RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
-RawVanadium="/SNS/CNCS/IPTS-16111/1/161063/NeXus/CNCS_161063_event.nxs"#8T magnet
+RawVanadium="/SNS/CNCS/IPTS-16111/1/161099/NeXus/CNCS_161099_event.nxs"#8T magnet
 #RawVanadium="/SNS/CNCS/IPTS-4654/29/151026/NeXus/CNCS_151026_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-14518/0/140450/NeXus/CNCS_140450_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/25/137573/NeXus/CNCS_137573_event.nxs"
@@ -96,7 +96,7 @@ RawVanadium="/SNS/CNCS/IPTS-16111/1/161063/NeXus/CNCS_161063_event.nxs"#8T magne
 #ProcessedVanadium="van101708both.nxs"
 #ProcessedVanadium="van123012.nxs"
 #ProcessedVanadium="van.nxs"
-ProcessedVanadium="van161063.nxs"#8T magnet
+ProcessedVanadium="van161099.nxs"#8T magnet
 HardMaskFile=''
 #IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 3.32 meV
 IntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
