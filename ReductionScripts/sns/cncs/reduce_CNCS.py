@@ -99,10 +99,10 @@ RawVanadium="/SNS/CNCS/IPTS-16111/1/161063/NeXus/CNCS_161063_event.nxs"#8T magne
 ProcessedVanadium="van161063.nxs"#8T magnet
 HardMaskFile=''
 #IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 3.32 meV
-IntegrationRange=[90600.0,91600.0]#integration range for Vanadium in TOF at 1.0 meV
+IntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
 
 #MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
-MaskBTPParameters=[{'Pixel':"1-40,95-128"}]#8T magnet
+MaskBTPParameters=[{'Pixel':"1-43,95-128"}]#8T magnet
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
 #MaskBTPParameters.append({'Bank': '36-50'})
 
