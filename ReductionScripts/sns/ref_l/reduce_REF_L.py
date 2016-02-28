@@ -1,7 +1,7 @@
 import sys
 import os
 import warnings
-warnings.simplefilter('ignore', 'RuntimeWarning')
+warnings.simplefilter('ignore', RuntimeWarning)
 
 
 if (os.environ.has_key("MANTIDPATH")):
