@@ -1,5 +1,8 @@
 import sys
 import os
+import warnings
+warnings.filterwarnings('ignore',module='numpy')
+
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
