@@ -129,6 +129,8 @@ if mpiRank == 0:
     wksp_name="NOM_"+runNumber
     imgfilename=os.path.join(outputDir,wksp_name+'.png')
 
+    ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
+
     NUM_HIST = mtd[wksp_name].getNumberHistograms()
     if NUM_HIST == 6:
         print "customized plotting"
