@@ -39,7 +39,7 @@ else:
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-15125/shared/autoNOM/exp.ini"
+    expiniFilename="/SNS/lustre/NOM/IPTS-15201/shared/autoNOM/exp.ini"
 print "Using", expiniFilename
 
 # determine information for caching
@@ -63,7 +63,7 @@ if can_run > 0:
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
                                     "BackgroundSmoothParams="+str(''),
-                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_02_26.h5"]
+                                    "CalibrationFile=/SNS/NOM/IPTS-15201/shared/NOM_calibrate_d65850_2016_03_01.h5"]
 
     (canCacheName, _) = CreateCacheFilename(Prefix=canWkspName, CacheDir=cacheDir,
                                             PropertyManager='__pd_reduction_properties',
@@ -85,7 +85,7 @@ if van_run > 0:
                                     "VanadiumRadius="+str(vanradius),
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
-                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_02_26.h5"]
+                                    "CalibrationFile=/SNS/NOM/IPTS-15201/shared/NOM_calibrate_d65850_2016_03_01.h5"]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
                                              PropertyManager='__pd_reduction_properties',
@@ -100,7 +100,7 @@ if van_run > 0:
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_02_26.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-15201/shared/NOM_calibrate_d65850_2016_03_01.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
