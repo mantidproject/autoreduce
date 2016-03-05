@@ -54,10 +54,6 @@ def preprocessData(filename):
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
     
-    #fix strange TOF offset for runs 89527 to 89535
-    if (runnum >= 89527 and runnum <= 89535):
-        ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace = "__IWS",Offset=-9244)
-    
     # adjust time for pack B15 wired strangely
     #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS",Offset=500,IndexMin=14336,IndexMax=15359)
 
@@ -83,7 +79,7 @@ if __name__ == "__main__":
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
     MaskBTPParameters.append({'Pixel': '1-7,122-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39,54,55,56,57,92,93,94'})
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '30-35', 'Bank': '88'})
     MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '99-128', 'Bank': '127'})
     MaskBTPParameters.append({'Tube': '5,8', 'Bank': '45'})
