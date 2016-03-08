@@ -178,7 +178,7 @@ filename = os.path.split(nexus_file)[-1]
 
 #added Feb 10, 2014 AS GE
 elog=ExperimentLog()
-elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
+elog.setLogList('EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
 #elog.setSERotOptions('CCR10G2Rot')
 #elog.setSERotOptions('SERotator2')
