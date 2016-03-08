@@ -16,6 +16,7 @@ from matplotlib.pyplot import *
  
 #os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
+##-------------------------------------------------------------------------
 import numpy as np
 def GetT0FromDet(ws):
     minAngle=30.
@@ -77,6 +78,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
 
+##-------------------------------------------------------------------------
 
 config['default.facility']="SNS"
 nexus_file=sys.argv[1]
