@@ -30,8 +30,9 @@ def preprocessVanadium(Raw,Processed,Parameters):
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
-    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
+    # uncomment the following if using two monitors
+    # [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    # logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
@@ -40,6 +41,10 @@ def preprocessData(filename):
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
 
+    #use detectors and first monitor to get Ei
+    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
+    return [Eguess,result[0],result[3]]
     #Add other Filters here
     #Filter chopper 3 bad events
     #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
