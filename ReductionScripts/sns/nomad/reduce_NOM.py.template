@@ -33,6 +33,9 @@ if AlgorithmFactory.exists('GatherWorkspaces'):
 else:
      mpiRank = 0
 
+# uncomment next line to delete cache files
+#if mpiRank == 0: CleanFileCache(CacheDir=cacheDir, AgeInDays=0)
+
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
@@ -59,7 +62,8 @@ if can_run > 0:
     canProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
-                                    "BackgroundSmoothParams="+str('')]
+                                    "BackgroundSmoothParams="+str(''),
+                                    "CalibrationFile=%(cal_file)s"]
 
     (canCacheName, _) = CreateCacheFilename(Prefix=canWkspName, CacheDir=cacheDir,
                                             PropertyManager='__pd_reduction_properties',
@@ -80,7 +84,8 @@ if van_run > 0:
     vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "VanadiumRadius="+str(vanradius),
                                     "CropWavelengthMin="+str(wavelengthMin),
-                                    "CropWavelengthMax="+str(wavelengthMax)]
+                                    "CropWavelengthMax="+str(wavelengthMax),
+                                    "CalibrationFile=%(cal_file)s"]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
                                              PropertyManager='__pd_reduction_properties',
@@ -123,6 +128,8 @@ if mpiRank == 0:
     # save a picture of the normalized ritveld data
     wksp_name="NOM_"+runNumber
     imgfilename=os.path.join(outputDir,wksp_name+'.png')
+
+    ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
 
     NUM_HIST = mtd[wksp_name].getNumberHistograms()
     if NUM_HIST == 6:

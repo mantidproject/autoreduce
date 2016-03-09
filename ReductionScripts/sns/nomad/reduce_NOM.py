@@ -1,14 +1,9 @@
-import hashlib
 import os
 import sys
 import shutil
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-
-from datetime import datetime
-print "running on", os.environ['HOSTNAME'], "starting", \
-    datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -18,6 +13,7 @@ if len(sys.argv)>3:
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
+cacheDir = "/tmp" # local disk to (hopefully) reduce issues
 runNumber = eventFile.split('_')[1]
 configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
@@ -37,10 +33,13 @@ if AlgorithmFactory.exists('GatherWorkspaces'):
 else:
      mpiRank = 0
 
+# uncomment next line to delete cache files
+#if mpiRank == 0: CleanFileCache(CacheDir=cacheDir, AgeInDays=0)
+
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-15273/shared/autoNOM/exp.ini"
+    expiniFilename="/SNS/lustre/NOM/IPTS-15523/shared/autoNOM/exp.ini"
 print "Using", expiniFilename
 
 # determine information for caching
@@ -57,22 +56,20 @@ charPM = mantid.PropertyManagerDataService.retrieve('__pd_reduction_properties')
 # work on container cache file
 can_run = charPM['container'].value[0]
 if can_run > 0:
-    canProcessingProperties=['container',
-                             'd_min',
-                             'd_max',
-                             'tof_min',
-                             'tof_max']
-    canProcessingProperties=[key+"="+charPM[key].valueAsStr for key in canProcessingProperties]
-    canProcessingProperties.append("ResampleX="+str(resamplex))
-    canProcessingProperties.append("CropWavelengthMin="+str(wavelengthMin))
-    canProcessingProperties.append("CropWavelengthMax="+str(wavelengthMax))
-    canProcessingProperties.append("BackgroundSmoothParams="+str(''))
-    canProcessingProperties=','.join(canProcessingProperties)
-    print canProcessingProperties
-    canProcessingProperties=hashlib.sha1(canProcessingProperties).hexdigest()
-    canCacheName="NOM_%d_%s.nxs" % (can_run, canProcessingProperties)
-    canCacheName=os.path.join(outputDir,canCacheName)
     canWkspName="NOM_"+str(can_run)
+    canProcessingProperties = ['container', 'd_min', 'd_max',
+                               'tof_min', 'tof_max']
+    canProcessingOtherProperties = ["ResampleX="+str(resamplex),
+                                    "CropWavelengthMin="+str(wavelengthMin),
+                                    "CropWavelengthMax="+str(wavelengthMax),
+                                    "BackgroundSmoothParams="+str(''),
+                                    "CalibrationFile=/SNS/NOM/IPTS-15523/shared/NOM_calibrate_d65850_2016_03_04.h5"]
+
+    (canCacheName, _) = CreateCacheFilename(Prefix=canWkspName, CacheDir=cacheDir,
+                                            PropertyManager='__pd_reduction_properties',
+                                            Properties=canProcessingProperties,
+                                            OtherProperties=canProcessingOtherProperties)
+    print "Container cache file:", canCacheName
 
     if os.path.exists(canCacheName):
         print "Loading container cache file '%s'" % canCacheName
@@ -81,23 +78,20 @@ if can_run > 0:
 # work on vanadium cache file
 van_run=charPM['vanadium'].value[0]
 if van_run > 0:
-    vanProcessingProperties=['vanadium',
-                             'empty',
-                             'd_min',
-                             'd_max',
-                             'tof_min',
-                             'tof_max']
-    vanProcessingProperties=[key+"="+charPM[key].valueAsStr for key in vanProcessingProperties]
-    vanProcessingProperties.append("ResampleX="+str(resamplex))
-    vanProcessingProperties.append("VanadiumRadius="+str(vanradius))
-    vanProcessingProperties.append("CropWavelengthMin="+str(wavelengthMin))
-    vanProcessingProperties.append("CropWavelengthMax="+str(wavelengthMax))
-    vanProcessingProperties=','.join(vanProcessingProperties)
-    print vanProcessingProperties
-    vanProcessingProperties=hashlib.sha1(vanProcessingProperties).hexdigest()
-    vanCacheName="NOM_%d_%s.nxs" % (van_run, vanProcessingProperties)
-    vanCacheName=os.path.join(outputDir,vanCacheName)
     vanWkspName="NOM_"+str(van_run)
+    vanProcessingProperties = ['vanadium', 'empty', 'd_min', 'd_max',
+                               'tof_min', 'tof_max']
+    vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
+                                    "VanadiumRadius="+str(vanradius),
+                                    "CropWavelengthMin="+str(wavelengthMin),
+                                    "CropWavelengthMax="+str(wavelengthMax),
+                                    "CalibrationFile=/SNS/NOM/IPTS-15523/shared/NOM_calibrate_d65850_2016_03_04.h5"]
+
+    (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
+                                             PropertyManager='__pd_reduction_properties',
+                                             Properties=vanProcessingProperties,
+                                             OtherProperties=vanProcessingOtherProperties)
+    print "Vanadium cache file:", vanCacheName
 
     if os.path.exists(vanCacheName):
         print "Loading vanadium cache file '%s'" % vanCacheName
@@ -106,7 +100,7 @@ if van_run > 0:
 # process the run
 SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-15273/shared/NOM_calibrate_d64333_2016_02_17.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-15523/shared/NOM_calibrate_d65850_2016_03_04.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
@@ -134,6 +128,8 @@ if mpiRank == 0:
     # save a picture of the normalized ritveld data
     wksp_name="NOM_"+runNumber
     imgfilename=os.path.join(outputDir,wksp_name+'.png')
+
+    ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
 
     NUM_HIST = mtd[wksp_name].getNumberHistograms()
     if NUM_HIST == 6:

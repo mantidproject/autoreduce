@@ -7,7 +7,7 @@ import mantid
 from matplotlib import *
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_1_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_PAC_d27021_2016_02_12.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2016_02_15-HR-PAC-8mm.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2016_02_15-HR-PAC-6mm.txt")
 #MODE = 0664
 
 #from mantidsimple import *
@@ -24,7 +24,7 @@ dataSearchPath.append(nexusDir)
 configService.setDataSearchDirs(";".join(dataSearchPath))
 
 SNSPowderReduction(Instrument="PG3", RunNumber=runNumber, Extension="_event.nxs",
-                   PreserveEvents=True,PushDataPositive="None",
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=-0.0008, BinInDspace=True, 

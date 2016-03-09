@@ -79,7 +79,7 @@ if __name__ == "__main__":
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
     MaskBTPParameters.append({'Pixel': '1-7,122-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39,54,55,56,57,92,93,94'})
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '30-35', 'Bank': '88'})
     MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '99-128', 'Bank': '127'})
     MaskBTPParameters.append({'Tube': '5,8', 'Bank': '45'})
@@ -209,7 +209,7 @@ if __name__ == "__main__":
         DGSdict['IncidentEnergyGuess']=Ei
         DGSdict['UseIncidentEnergyGuess']='1'
         DGSdict['TimeZeroGuess']=T0
-        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.01*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
+        DGSdict['EnergyTransferRange']=[-0.6*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
         DGSdict['SofPhiEIsDistribution']='0' # keep events
         DGSdict['HardMaskFile']=HardMaskFile
         DGSdict['GroupingFile']="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml"#'/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml' #Typically an empty string '', choose 2x1 or some other grouping file created by GenerateGroupingSNSInelastic or GenerateGroupingPowder

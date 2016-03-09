@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-12310/shared/20151129-Na2IrO3/UB_quick.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
-        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20151119.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
-        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20151119.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
+        self.ub_matrix_file='/SNS/CORELLI/IPTS-15796/shared/20160304-BaIrO3/BaIrO3_UB_Mono6K.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20160217.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
+        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20160217.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.10', 'PerpendicularTo': '[H,0,0]', 'Maximum': '0.10'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='True' #"True"
+        self.plot_requests=[{'Minimum': '-0.10', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.10'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.useCC='False' #"True"
         #other
         self.can_do_HKL=False
         self.can_do_norm=False
@@ -69,13 +69,13 @@ class processInputs(object):
             if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
-            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]','[H,-H,0]']:
+            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]','[H,H,0]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
-            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,0,L]','[0,K,0]']:
+            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Will not be able to convert to HKL")
                 continue
-            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,0,L]','[0,K,0]']:
+            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Data will be in HKL - picture not created")
                 continue
             self.plots.append(pl)
@@ -200,8 +200,8 @@ if __name__ == "__main__":
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
     cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
-    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis6,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis6,0,1,0,1")
+    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
@@ -220,12 +220,12 @@ if __name__ == "__main__":
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-7.1,-6.1,-1.5',MaxValues='2.1,1.1,1.5',
-                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
+                        MinValues='-0.5,-0.5,-0.5',MaxValues='0.5,2.5,0.5',
+                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
     mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
                         LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-7.1,-6.1,-1.5',MaxValues='2.1,1.1,1.5',
-                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
+                        MinValues='-0.5,-0.5,-0.5',MaxValues='0.5,2.5,0.5',
+                        Uproj='1,0,0',Vproj='0,0,1',Wproj='0,1,0')
 
     # Save normalized MDs, if possible
     if config.can_do_norm:

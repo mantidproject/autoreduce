@@ -1,5 +1,8 @@
 import sys
 import os
+import warnings
+warnings.simplefilter('ignore', RuntimeWarning)
+
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
@@ -57,7 +60,8 @@ first_run_of_set=output[1]
 # Produce plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 if os.path.isfile(default_file_name):
-    reflectivity = Load(Filename=os.path.join(output_dir, default_file_name))
+    reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
+    reflectivity.getAxis(1).getUnit().setLabel('Reflectivity', 'Reflectivity')
 
     json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
     SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")

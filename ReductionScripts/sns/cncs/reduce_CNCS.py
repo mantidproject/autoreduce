@@ -16,6 +16,7 @@ from matplotlib.pyplot import *
  
 #os.remove('/SNS/CNCS/IPTS-11820/shared/autoreduce/van101708.nxs')
 
+##-------------------------------------------------------------------------
 import numpy as np
 def GetT0FromDet(ws):
     minAngle=30.
@@ -77,6 +78,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
 
+##-------------------------------------------------------------------------
 
 config['default.facility']="SNS"
 nexus_file=sys.argv[1]
@@ -84,7 +86,8 @@ output_directory=sys.argv[2]
 
 seterr("ignore") #ignore division by 0 warning in plots
 
-RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
+#RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
+RawVanadium="/SNS/CNCS/IPTS-16111/1/161099/NeXus/CNCS_161099_event.nxs"#8T magnet
 #RawVanadium="/SNS/CNCS/IPTS-4654/29/151026/NeXus/CNCS_151026_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-14518/0/140450/NeXus/CNCS_140450_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/25/137573/NeXus/CNCS_137573_event.nxs"
@@ -94,13 +97,16 @@ RawVanadium="/SNS/CNCS/IPTS-14518/1/159854/NeXus/CNCS_159854_event.nxs"
 #RawVanadium="/SNS/CNCS/IPTS-4654/22/101708/NeXus/CNCS_101708_event.nxs"
 #ProcessedVanadium="van101708both.nxs"
 #ProcessedVanadium="van123012.nxs"
-ProcessedVanadium="van.nxs"
+#ProcessedVanadium="van.nxs"
+ProcessedVanadium="van161099.nxs"#8T magnet
 HardMaskFile=''
-IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF
+#IntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 3.32 meV
+IntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
 
-MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+#MaskBTPParameters=[{'Pixel':"1-8,121-128"}]
+MaskBTPParameters=[{'Pixel':"1-43,95-128"}]#8T magnet
 #MaskBTPParameters.append({'Tube': '7,8', 'Bank': '50'})
-#MaskBTPParameters.append({'Bank': '36-50'})
+MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 
 w=Load(nexus_file)
 EGuess=w.getRun()['EnergyRequest'].firstValue()
@@ -136,7 +142,8 @@ DGSdict=preprocessVanadium(RawVanadium,output_directory+ProcessedVanadium,MaskBT
 DGSdict['SampleInputFile']=nexus_file
 DGSdict['EnergyTransferRange']=[-0.95*EGuess,0.005*EGuess,0.95*EGuess]  #Typical values are -0.5*EGuess, 0.005*EGuess, 0.95*EGuess
 DGSdict['HardMaskFile']=HardMaskFile
-DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
+DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_2x1.xml"
+#DGSdict['GroupingFile']="/SNS/CNCS/shared/autoreduce/CNCS_8x1.xml"
 DGSdict['IncidentBeamNormalisation']='ByCurrent'  
 DGSdict['UseBoundsForDetVan']='1'
 DGSdict['DetVanIntRangeHigh']=IntegrationRange[1]
@@ -171,10 +178,11 @@ filename = os.path.split(nexus_file)[-1]
 
 #added Feb 10, 2014 AS GE
 elog=ExperimentLog()
-elog.setLogList('Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,Speed4,Phase4,Speed5,Phase5,EnergyRequest')
+elog.setLogList('EnergyRequest')
 elog.setSimpleLogList("EnergyRequest")
 #elog.setSERotOptions('CCR10G2Rot')
-elog.setSERotOptions('SERotator2')
+#elog.setSERotOptions('SERotator2')
+elog.setSERotOptions('Ox2WeldRot')
 #elog.setSERotOptions('ThreeSampleRot')
 #elog.setSERotOptions('SERotator2,OxDilRot,CCR13VRot,FatSamVRot,SEOCRot,huber,CCR10G2Rot')
 #elog.setSETempOptions('SampleTemp,sampletemp,SensorC,SensorB,SensorA')
@@ -187,7 +195,8 @@ s1=elog.save_line('reduce')
 #s1=mtd["reduce"].getRun()['CCR10G2Rot'].value[0]
 #s1=mtd["reduce"].getRun()['huber'].value[0]
 #s1=mtd["reduce"].getRun()['FatSamVRot'].value[0]
-s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+#s1=mtd["reduce"].getRun()['SERotator2'].value[0]
+s1=mtd["reduce"].getRun()['Ox2WeldRot'].value[0]
 #s1=mtd["reduce"].getRun()['ThreeSampleRot'].value[0]
 #s1=0
 roundedvalue = "%.1f" % s1
