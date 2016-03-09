@@ -79,15 +79,10 @@ if __name__ == "__main__":
     IntegrationRange=[0.3,1.2] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
     MaskBTPParameters.append({'Pixel': '1-7,122-128'})
-    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39,54,55,56,57,92,93,94'})
+    MaskBTPParameters.append({'Bank': '114,115,75,76,38,39,57'})
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '30-35', 'Bank': '88'})
     MaskBTPParameters.append({'Tube': '7-8', 'Pixel': '99-128', 'Bank': '127'})
-    MaskBTPParameters.append({'Tube': '5,8', 'Bank': '45'})
-    MaskBTPParameters.append({'Tube': '8', 'Bank': '70'})
-    MaskBTPParameters.append({'Tube': '4', 'Bank': '148'})
     MaskBTPParameters.append({'Bank': '99-102'})
-    MaskBTPParameters.append({'Bank': '59'})
-    MaskBTPParameters.append({'Tube': '8', 'Bank': '43'})
  
     #uninstalled packs at far left
     #MaskBTPParameters.append({'Bank':"114,115,75,76,38,39"})
