@@ -101,9 +101,9 @@ def makePlot(mdws,plotConfig,normalize):
     d0=(d2+1)%3
     d1=(d2+2)%3
     dim0=mdws.getDimension(d0)
-    AlignedDim0=dim0.getName()+','+str(dim0.getMinimum())+','+str(dim0.getMaximum())+',500'
+    AlignedDim0=dim0.getName()+','+str(dim0.getMinimum())+','+str(dim0.getMaximum())+',400'
     dim1=mdws.getDimension(d1)
-    AlignedDim1=dim1.getName()+','+str(dim1.getMinimum())+','+str(dim1.getMaximum())+',500'
+    AlignedDim1=dim1.getName()+','+str(dim1.getMinimum())+','+str(dim1.getMaximum())+',400'
     dim2=mdws.getDimension(d2)
     if plotConfig['Minimum']=='':
         d2min=dim2.getMinimum()
@@ -130,8 +130,8 @@ def makePlot(mdws,plotConfig,normalize):
                      AlignedDim0=AlignedDim0,
                      AlignedDim1=AlignedDim1,
                      AlignedDim2=AlignedDim2)
-    xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/500.)
-    yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/500.)
+    xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/400.)
+    yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/400.)
     arrayToPlot=np.log(wsToPlot.getSignalArray()[:,:,0]) #this is for next mantid release, or nightly
     #arrayToPlot=np.log(wsToPlot.getSignalArray())
     arrayToPlot[np.where(np.logical_not(np.isfinite(arrayToPlot)))]=0.
