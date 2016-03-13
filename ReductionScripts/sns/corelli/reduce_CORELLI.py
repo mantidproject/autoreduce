@@ -201,8 +201,8 @@ if __name__ == "__main__":
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
     cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
-    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
+    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
