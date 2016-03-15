@@ -251,4 +251,4 @@ if __name__ == "__main__":
             SaveMD(Filename=filename, InputWorkspace="md")
             os.chmod(filename,0664)
         except:
-            pass
+            mantid.kernel.logger.information("Problems converting to MD")
