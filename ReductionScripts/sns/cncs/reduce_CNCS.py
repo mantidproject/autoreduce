@@ -123,10 +123,9 @@ def preprocesst0(Eguess,ws):
         t0=float(T0)
     except ValueError:
         mode=ws.run()['DoubleDiskMode'].timeAverageValue()
-        if (mode==1):
-            _Ei,_FMP,_FMI,t0=GetEi(ws)
-        else:
-            t0=-5.91
+        _Ei,_FMP,_FMI,t0=GetEi(ws)
+        if (mode!=1):
+            t0-=5.91
     AddSampleLog(Workspace=ws,LogName="CalculatedT0",LogText=str(t0),LogType="Number")
     return t0
 
