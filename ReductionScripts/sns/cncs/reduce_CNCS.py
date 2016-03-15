@@ -6,7 +6,7 @@ sys.path.append("/SNS/CNCS/shared/autoreduce")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
-
+from numpy import *
 
 #parameters section
 #this part changes with web input
