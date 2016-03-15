@@ -2,7 +2,6 @@
 
 #imports section
 import sys, os, glob, filecmp, datetime, shutil
-from numpy import *
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
@@ -105,6 +104,7 @@ def preprocessData(filename):
     dictdata['IncidentBeamNormalisation']='ByCurrent'
     return dictdata
 
+import numpy as np
 def preprocesst0(Eguess,ws):
     try:
         t0=float(T0)
