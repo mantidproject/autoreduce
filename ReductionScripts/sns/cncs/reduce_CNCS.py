@@ -104,31 +104,31 @@ def preprocessData(filename):
     dictdata['IncidentBeamNormalisation']='ByCurrent'
     return dictdata
 
-import numpy as np
-def preprocesst0(Eguess,ws):
-    try:
-        t0=float(T0)
-    except ValueError:
-        mode=ws.run()['DoubleDiskMode'].timeAverageValue()
-        Ei=ws.run()['EnergyRequest'].timeAverageValue()
-        lnEi=np.log(Ei)
-        t0=157.539+lnEi*(-33.04593+lnEi*(-8.07523+lnEi*(2.2143-0.109521767*lnEi)))
-        if (mode!=1):
-            t0-=5.91
-    AddSampleLog(Workspace=ws,LogName="CalculatedT0",LogText=str(t0),LogType="Number")
-    return t0
-
+#import numpy as np
 #def preprocesst0(Eguess,ws):
 #    try:
 #        t0=float(T0)
 #    except ValueError:
 #        mode=ws.run()['DoubleDiskMode'].timeAverageValue()
-#        if (mode==1):
-#            _Ei,_FMP,_FMI,t0=GetEi(ws)
-#        else:
+#        Ei=ws.run()['EnergyRequest'].timeAverageValue()
+#        lnEi=np.log(Ei)
+#        t0=157.539+lnEi*(-33.04593+lnEi*(-8.07523+lnEi*(2.2143-0.109521767*lnEi)))
+#        if (mode!=1):
 #            t0-=5.91
 #    AddSampleLog(Workspace=ws,LogName="CalculatedT0",LogText=str(t0),LogType="Number")
 #    return t0
+
+def preprocesst0(Eguess,ws):
+    try:
+        t0=float(T0)
+    except ValueError:
+        mode=ws.run()['DoubleDiskMode'].timeAverageValue()
+        if (mode==1):
+            _Ei,_FMP,_FMI,t0=GetEi(ws)
+        else:
+            t0=-5.91
+    AddSampleLog(Workspace=ws,LogName="CalculatedT0",LogText=str(t0),LogType="Number")
+    return t0
 
 def preprocessTIB(EGuess,ws):
     try:
@@ -198,6 +198,7 @@ if __name__ == "__main__":
 
     if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
         filename=DGSdict['SaveProcDetVanFilename']
+        os.chmod(filename,0664)
         LoadNexus(Filename=filename,OutputWorkspace="__VAN")
         datay = mtd['__VAN'].extractY()
         meanval = float(datay[datay>0].mean())
@@ -205,7 +206,7 @@ if __name__ == "__main__":
         Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
         Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
         SaveNexus(InputWorkspace="__VAN", Filename= filename) 
-        os.chmod(filename,0444)
+        os.chmod(filename,0664)
 
     if create_elastic_nxspe:
         DGSdict['OutputWorkspace']='reduce_elastic'
