@@ -27,14 +27,14 @@ Motor_names='huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,T
 Temperature_names='SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8'
 create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=True
-a=""
-b=""
-c=""
-alpha=""
-beta=""
-gamma=""
-uVector=""
-vVector=""
+a="10"
+b="10"
+c="10"
+alpha="90"
+beta="90"
+gamma="90"
+uVector="1,0,0"
+vVector="0,1,0"
 
 #parameters not on the webpage
 #below remains unchanged
