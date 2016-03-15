@@ -241,4 +241,14 @@ if __name__ == "__main__":
             nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + "_" + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1')
             os.chmod(nxspe_filename,0664)
-
+            
+    if create_MDnxs:
+        try:
+            SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
+            SetGoniometer("reduce",Axis0=str(s1)+",0,1,0,1")
+            ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
+            filename=os.path.join(output_directory, "MD/CNCS_" + run_number + "_" + valuestringwithoutdot + "_MD.nxs")
+            SaveMD(Filename=filename, InputWorkspace="md")
+            os.chmod(filename,0664)
+        except:
+            pass
