@@ -54,7 +54,7 @@ def check_newer_script(instrument,folder):
     in folder.
     """
     master_filename="/SNS/"+instrument+"/shared/autoreduce/reduce_"+instrument+".py"
-    master_filename='/SNS/users/3y9/Desktop/reduce_CNCS.py'
+    #master_filename='/SNS/users/3y9/Desktop/reduce_CNCS.py'
     search_pattern=os.path.join(folder,"reduce_"+instrument+"*.py")
     result=glob.glob(search_pattern)
     newer_file_exists=True
