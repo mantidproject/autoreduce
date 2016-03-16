@@ -1,6 +1,6 @@
 <Reduction>
  <instrument_name>REFL</instrument_name>
- <timestamp>Wednesday, 16. March 2016 05:12PM</timestamp>
+ <timestamp>Wednesday, 16. March 2016 05:21PM</timestamp>
  <python_version>2.7.5 (default, Oct 11 2015, 17:47:16) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
  <platform>Linux</platform>
@@ -32,8 +32,8 @@
    <x_min_pixel>91</x_min_pixel>
    <x_max_pixel>164</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>15.0</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -85,8 +85,8 @@
    <x_min_pixel>91</x_min_pixel>
    <x_max_pixel>164</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>12.51</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -138,8 +138,8 @@
    <x_min_pixel>90</x_min_pixel>
    <x_max_pixel>169</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>9.56</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -191,8 +191,8 @@
    <x_min_pixel>91</x_min_pixel>
    <x_max_pixel>164</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>6.57</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -244,8 +244,8 @@
    <x_min_pixel>90</x_min_pixel>
    <x_max_pixel>164</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>4.25</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -297,8 +297,8 @@
    <x_min_pixel>84</x_min_pixel>
    <x_max_pixel>168</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>4.25</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
@@ -328,12 +328,12 @@
   </RefLData>
   <RefLData>
    <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>127</from_peak_pixels>
-   <to_peak_pixels>184</to_peak_pixels>
+   <from_peak_pixels>151</from_peak_pixels>
+   <to_peak_pixels>160</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
    <background_flag>True</background_flag>
-   <back_roi1_from>124</back_roi1_from>
-   <back_roi1_to>187</back_roi1_to>
+   <back_roi1_from>148</back_roi1_from>
+   <back_roi1_to>163</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <clocking_from>121</clocking_from>
@@ -350,8 +350,8 @@
    <x_min_pixel>85</x_min_pixel>
    <x_max_pixel>170</x_max_pixel>
    <x_range_flag>True</x_range_flag>
-   <tthd_value>N/A</tthd_value>
-   <ths_value>N/A</ths_value>
+   <tthd_value>-9.42</tthd_value>
+   <ths_value>-6.71</ths_value>
    <data_lambda_requested>4.25</data_lambda_requested>
    <norm_flag>True</norm_flag>
    <norm_x_range_flag>True</norm_x_range_flag>
