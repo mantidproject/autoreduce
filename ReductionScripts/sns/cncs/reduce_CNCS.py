@@ -239,7 +239,7 @@ if __name__ == "__main__":
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
             nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + "_" + valuestringwithoutdot + "_elastic.nxspe")
-            SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1')
+            SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             os.chmod(nxspe_filename,0664)
             
     if create_MDnxs:
