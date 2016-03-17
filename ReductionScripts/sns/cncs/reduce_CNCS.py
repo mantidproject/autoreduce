@@ -185,6 +185,7 @@ if __name__ == "__main__":
     output_directory=sys.argv[2]
     
     check_newer_script("CNCS",output_directory)
+    DownloadInstrument(ForceUpdate=True)
     
     DGSdict=preprocessVanadium(raw_vanadium,output_directory+processed_vanadium,MaskBTPParameters)
     datadict=preprocessData(nexus_file)
