@@ -1,383 +1,333 @@
 <Reduction>
- <instrument_name>REFL</instrument_name>
- <timestamp>Monday, 14. March 2016 04:40PM</timestamp>
- <python_version>2.7.5 (default, Oct 11 2015, 17:47:16) 
+  <instrument_name>REFL</instrument_name>
+  <timestamp>Sun Aug 23 21:22:52 2015</timestamp>
+  <python_version>2.7.5 (default, Apr  9 2015, 11:03:32) 
 [GCC 4.8.3 20140911 (Red Hat 4.8.3-9)]</python_version>
- <platform>Linux</platform>
- <architecture>x86_64</architecture>
- <mantid_version>3.6.20160312.440</mantid_version>
-<generator>RefRed</generator>
- <DataSeries>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>159</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>162</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>50129.7737386</from_tof_range>
-   <to_tof_range>62944.9038672</to_tof_range>
-   <from_q_range>0.00787075674112</from_q_range>
-   <to_q_range>0.00988282989299</to_q_range>
-   <from_lambda_range>13.30</from_lambda_range>
-   <to_lambda_range>16.70</to_lambda_range>
-   <incident_angle>1.198625864</incident_angle>
-   <data_sets>138429</data_sets>
-   <x_min_pixel>92</x_min_pixel>
-   <x_max_pixel>164</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>15.0</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>164</norm_x_max>
-   <norm_x_min>90</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>159</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>162</norm_to_back_pixels>
-   <norm_lambda_requested>15.0</norm_lambda_requested>
-   <norm_dataset>138380</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>40744.5754973</from_tof_range>
-   <to_tof_range>53559.705626</to_tof_range>
-   <from_q_range>0.00925573897549</from_q_range>
-   <to_q_range>0.0121668872194</to_q_range>
-   <from_lambda_range>10.81</from_lambda_range>
-   <to_lambda_range>14.21</to_lambda_range>
-   <incident_angle>1.199377424</incident_angle>
-   <data_sets>138430</data_sets>
-   <x_min_pixel>91</x_min_pixel>
-   <x_max_pixel>162</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>12.51</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>164</norm_x_max>
-   <norm_x_min>90</norm_x_min>
-   <norm_from_peak_pixels>151</norm_from_peak_pixels>
-   <norm_to_peak_pixels>159</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>148</norm_from_back_pixels>
-   <norm_to_back_pixels>162</norm_to_back_pixels>
-   <norm_lambda_requested>12.51</norm_lambda_requested>
-   <norm_dataset>138381</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>29625.5655327</from_tof_range>
-   <to_tof_range>42440.6956614</to_tof_range>
-   <from_q_range>0.0116806439469</from_q_range>
-   <to_q_range>0.0167333398017</to_q_range>
-   <from_lambda_range>7.86</from_lambda_range>
-   <to_lambda_range>11.26</to_lambda_range>
-   <incident_angle>1.199377424</incident_angle>
-   <data_sets>138431</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>162</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>9.56</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>159</norm_x_max>
-   <norm_x_min>108</norm_x_min>
-   <norm_from_peak_pixels>152</norm_from_peak_pixels>
-   <norm_to_peak_pixels>159</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>149</norm_from_back_pixels>
-   <norm_to_back_pixels>162</norm_to_back_pixels>
-   <norm_lambda_requested>9.56</norm_lambda_requested>
-   <norm_dataset>138382</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>18354.0089848</from_tof_range>
-   <to_tof_range>31172.6998066</to_tof_range>
-   <from_q_range>0.0158977754393</from_q_range>
-   <to_q_range>0.0269968383744</to_q_range>
-   <from_lambda_range>4.87</from_lambda_range>
-   <to_lambda_range>8.27</to_lambda_range>
-   <incident_angle>1.198926488</incident_angle>
-   <data_sets>138432</data_sets>
-   <x_min_pixel>93</x_min_pixel>
-   <x_max_pixel>162</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>6.57</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>146</norm_x_max>
-   <norm_x_min>119</norm_x_min>
-   <norm_from_peak_pixels>152</norm_from_peak_pixels>
-   <norm_to_peak_pixels>160</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>149</norm_from_back_pixels>
-   <norm_to_back_pixels>163</norm_to_back_pixels>
-   <norm_lambda_requested>6.57</norm_lambda_requested>
-   <norm_dataset>138385</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9609.56724994</from_tof_range>
-   <to_tof_range>22428.2580717</to_tof_range>
-   <from_q_range>0.0255869843321</from_q_range>
-   <to_q_range>0.0597029634415</to_q_range>
-   <from_lambda_range>2.55</from_lambda_range>
-   <to_lambda_range>5.95</to_lambda_range>
-   <incident_angle>1.388319608</incident_angle>
-   <data_sets>138433</data_sets>
-   <x_min_pixel>92</x_min_pixel>
-   <x_max_pixel>162</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>4.25</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>145</norm_x_max>
-   <norm_x_min>120</norm_x_min>
-   <norm_from_peak_pixels>152</norm_from_peak_pixels>
-   <norm_to_peak_pixels>160</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>149</norm_from_back_pixels>
-   <norm_to_back_pixels>163</norm_to_back_pixels>
-   <norm_lambda_requested>4.25</norm_lambda_requested>
-   <norm_dataset>138390</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>152</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>149</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9611.34759649</from_tof_range>
-   <to_tof_range>22426.4777252</to_tof_range>
-   <from_q_range>0.050466049268</from_q_range>
-   <to_q_range>0.117754114959</to_q_range>
-   <from_lambda_range>2.55</from_lambda_range>
-   <to_lambda_range>5.95</to_lambda_range>
-   <incident_angle>2.738421992</incident_angle>
-   <data_sets>138434</data_sets>
-   <x_min_pixel>90</x_min_pixel>
-   <x_max_pixel>161</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>4.25</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>145</norm_x_max>
-   <norm_x_min>120</norm_x_min>
-   <norm_from_peak_pixels>152</norm_from_peak_pixels>
-   <norm_to_peak_pixels>160</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>149</norm_from_back_pixels>
-   <norm_to_back_pixels>163</norm_to_back_pixels>
-   <norm_lambda_requested>4.25</norm_lambda_requested>
-   <norm_dataset>138390</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  <RefLData>
-   <peak_selection_type>narrow</peak_selection_type>
-   <from_peak_pixels>151</from_peak_pixels>
-   <to_peak_pixels>160</to_peak_pixels>
-   <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
-   <back_roi1_from>148</back_roi1_from>
-   <back_roi1_to>163</back_roi1_to>
-   <back_roi2_from>0</back_roi2_from>
-   <back_roi2_to>0</back_roi2_to>
-   <clocking_from>110</clocking_from>
-   <clocking_to>197</clocking_to>
-   <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>9611.34759649</from_tof_range>
-   <to_tof_range>22426.4777252</to_tof_range>
-   <from_q_range>0.0998261338796</from_q_range>
-   <to_q_range>0.232927645719</to_q_range>
-   <from_lambda_range>2.55</from_lambda_range>
-   <to_lambda_range>5.95</to_lambda_range>
-   <incident_angle>5.41833464</incident_angle>
-   <data_sets>138435</data_sets>
-   <x_min_pixel>86</x_min_pixel>
-   <x_max_pixel>167</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
-   <tthd_value>-5.39</tthd_value>
-   <ths_value>-4.69</ths_value>
-   <data_lambda_requested>4.25</data_lambda_requested>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
-   <norm_x_max>145</norm_x_max>
-   <norm_x_min>120</norm_x_min>
-   <norm_from_peak_pixels>152</norm_from_peak_pixels>
-   <norm_to_peak_pixels>160</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
-   <norm_from_back_pixels>149</norm_from_back_pixels>
-   <norm_to_back_pixels>163</norm_to_back_pixels>
-   <norm_lambda_requested>4.25</norm_lambda_requested>
-   <norm_dataset>138390</norm_dataset>
-   <auto_q_binning>False</auto_q_binning>
-   <overlap_lowest_error>True</overlap_lowest_error>
-   <angle_offset>0.0163</angle_offset>
-   <angle_offset_error>0.001</angle_offset_error>
-   <q_step>0.005</q_step>
-   <q_min>0.005</q_min>
-   <scaling_factor_flag>True</scaling_factor_flag>
-   <scaling_factor_file>/SNS/REF_L/IPTS-16012/shared/autoreduce/sf_Si_138288_0316.cfg</scaling_factor_file>
-   <incident_medium_list>2inSi</incident_medium_list>
-   <incident_medium_index_selected>0</incident_medium_index_selected>
-   <fourth_column_flag>True</fourth_column_flag>
-   <fourth_column_dq0>0.0004</fourth_column_dq0>
-   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
-   <slits_width_flag>True</slits_width_flag>
-  </RefLData>
-  </DataSeries>
+  <platform>Linux</platform>
+  <architecture>('64bit', 'ELF')</architecture>
+  <mantid_version>3.4.0</mantid_version>
+<DataSeries>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>149</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>146</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>50351.0</from_tof_range>
+<to_tof_range>62771.0</to_tof_range>
+<data_sets>129065</data_sets>
+<x_min_pixel>97</x_min_pixel>
+<x_max_pixel>158</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>158</norm_x_max>
+<norm_x_min>96</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129044</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>149</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>146</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>40762.0</from_tof_range>
+<to_tof_range>53149.0</to_tof_range>
+<data_sets>129066</data_sets>
+<x_min_pixel>97</x_min_pixel>
+<x_max_pixel>158</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>158</norm_x_max>
+<norm_x_min>96</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129045</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>149</from_peak_pixels>
+<to_peak_pixels>158</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>146</back_roi1_from>
+<back_roi1_to>161</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>29724.0</from_tof_range>
+<to_tof_range>42030.0</to_tof_range>
+<data_sets>129067</data_sets>
+<x_min_pixel>96</x_min_pixel>
+<x_max_pixel>158</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>160</norm_x_max>
+<norm_x_min>110</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129046</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>148</from_peak_pixels>
+<to_peak_pixels>158</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>145</back_roi1_from>
+<back_roi1_to>161</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>18324.0</from_tof_range>
+<to_tof_range>31035.0</to_tof_range>
+<data_sets>129068</data_sets>
+<x_min_pixel>96</x_min_pixel>
+<x_max_pixel>158</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.80</tthd_value>
+<ths_value>-3.40</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>144</norm_x_max>
+<norm_x_min>124</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129047</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>146</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>143</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22000.0</to_tof_range>
+<data_sets>129069</data_sets>
+<x_min_pixel>95</x_min_pixel>
+<x_max_pixel>161</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-2.62</tthd_value>
+<ths_value>-3.31</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>146</norm_x_max>
+<norm_x_min>125</norm_x_min>
+<norm_from_peak_pixels>148</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>145</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129048</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22196.0</to_tof_range>
+<data_sets>129070</data_sets>
+<x_min_pixel>96</x_min_pixel>
+<x_max_pixel>158</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>-1.26</tthd_value>
+<ths_value>-2.63</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>145</norm_x_max>
+<norm_x_min>125</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129048</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+<RefLData>
+<peak_selection_type>narrow</peak_selection_type>
+<from_peak_pixels>147</from_peak_pixels>
+<to_peak_pixels>159</to_peak_pixels>
+<peak_discrete_selection>N/A</peak_discrete_selection>
+<background_flag>True</background_flag>
+<back_roi1_from>144</back_roi1_from>
+<back_roi1_to>162</back_roi1_to>
+<back_roi2_from>0</back_roi2_from>
+<back_roi2_to>0</back_roi2_to>
+<tof_range_flag>True</tof_range_flag>
+<from_tof_range>9800.0</from_tof_range>
+<to_tof_range>22155.0</to_tof_range>
+<data_sets>129071</data_sets>
+<x_min_pixel>91</x_min_pixel>
+<x_max_pixel>164</x_max_pixel>
+<x_range_flag>True</x_range_flag>
+<tthd_value>1.42</tthd_value>
+<ths_value>-1.29</ths_value>
+<norm_flag>True</norm_flag>
+<norm_x_range_flag>True</norm_x_range_flag>
+<norm_x_max>145</norm_x_max>
+<norm_x_min>126</norm_x_min>
+<norm_from_peak_pixels>149</norm_from_peak_pixels>
+<norm_to_peak_pixels>157</norm_to_peak_pixels>
+<norm_background_flag>True</norm_background_flag>
+<norm_from_back_pixels>146</norm_from_back_pixels>
+<norm_to_back_pixels>160</norm_to_back_pixels>
+<norm_dataset>129048</norm_dataset>
+<q_min>0.005</q_min>
+<q_step>0.02</q_step>
+<auto_q_binning>False</auto_q_binning>
+<overlap_lowest_error>True</overlap_lowest_error>
+<overlap_mean_value>False</overlap_mean_value>
+<angle_offset>0.016</angle_offset>
+<angle_offset_error>0.001</angle_offset_error>
+<scaling_factor_flag>True</scaling_factor_flag>
+<scaling_factor_file>/SNS/REF_L/IPTS-11021/shared/directBeamDatabaseFall2015_60Hz_No_FOM.cfg</scaling_factor_file>
+<slits_width_flag>True</slits_width_flag>
+<geometry_correction_switch>False</geometry_correction_switch>
+<incident_medium_list>Air</incident_medium_list>
+<incident_medium_index_selected>0</incident_medium_index_selected>
+<fourth_column_flag>True</fourth_column_flag>
+<fourth_column_dq0>0.0004</fourth_column_dq0>
+<fourth_column_dq_over_q>0.02</fourth_column_dq_over_q>
+ </RefLData>
+</DataSeries>
 </Reduction>
