@@ -37,12 +37,11 @@ NORMALIZE_TO_UNITY = False #True
 
 # Locate the template file
 # If no template file is available, the automated reduction will generate one
-# template_dir = output_dir.replace('/autoreduce','')
 template_file = ""
 if os.path.isfile("template.xml"):
     template_file = "template.xml"
-elif os.path.isfile(os.path.join(template_dir, "template.xml")):
-    template_file = os.path.join(template_dir, "template.xml")
+elif os.path.isfile(os.path.join(output_dir, "template.xml")):
+    template_file = os.path.join(output_dir, "template.xml")
 elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
 
