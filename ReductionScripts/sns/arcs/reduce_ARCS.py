@@ -5,8 +5,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/IPTS-16075/data/ARCS_74333_event.nxs"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van74333.nxs"
+    RawVanadium="/SNS/ARCS/IPTS-16075/data/ARCS_75293_event.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van75293.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
