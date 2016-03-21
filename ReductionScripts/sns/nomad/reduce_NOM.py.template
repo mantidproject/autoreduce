@@ -71,7 +71,7 @@ if False: # can_run > 0:
                                             OtherProperties=canProcessingOtherProperties)
     print "Container cache file:", canCacheName
 
-    if os.path.exists(canCacheName):
+    if False: # os.path.exists(canCacheName):
         print "Loading container cache file '%%s'" %% canCacheName
         Load(Filename=canCacheName, OutputWorkspace=canWkspName)
 
