@@ -55,7 +55,7 @@ charPM = mantid.PropertyManagerDataService.retrieve('__pd_reduction_properties')
 
 # work on container cache file
 can_run = charPM['container'].value[0]
-if can_run > 0:
+if False: # can_run > 0:
     canWkspName="NOM_"+str(can_run)
     canProcessingProperties = ['container', 'd_min', 'd_max',
                                'tof_min', 'tof_max']
