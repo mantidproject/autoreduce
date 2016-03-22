@@ -15,7 +15,8 @@ MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-16111/1/161099/NeXus/CNCS_161099_event.nxs"
 processed_vanadium="van161099.nxs"
-grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, powder
+VanadiumIntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
+grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.5"
 Emax="0.95"
 Estep="0.005"
@@ -36,9 +37,9 @@ gamma="90"
 uVector="1,0,0"
 vVector="0,0,1"
 
+
 #parameters not on the webpage
 #below remains unchanged
-VanadiumIntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
 NormalizedVanadiumEqualToOne = True
 
 
@@ -104,19 +105,6 @@ def preprocessData(filename):
     dictdata['IncidentBeamNormalisation']='ByCurrent'
     return dictdata
 
-#import numpy as np
-#def preprocesst0(Eguess,ws):
-#    try:
-#        t0=float(T0)
-#    except ValueError:
-#        mode=ws.run()['DoubleDiskMode'].timeAverageValue()
-#        Ei=ws.run()['EnergyRequest'].timeAverageValue()
-#        lnEi=np.log(Ei)
-#        t0=157.539+lnEi*(-33.04593+lnEi*(-8.07523+lnEi*(2.2143-0.109521767*lnEi)))
-#        if (mode!=1):
-#            t0-=5.91
-#    AddSampleLog(Workspace=ws,LogName="CalculatedT0",LogText=str(t0),LogType="Number")
-#    return t0
 
 def preprocesst0(Eguess,ws):
     try:
