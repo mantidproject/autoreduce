@@ -16,10 +16,10 @@ MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-16111/1/161099/NeXus/CNCS_161099_event.nxs"
 processed_vanadium="van161099.nxs"
 VanadiumIntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="${grouping}"#"2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="${e_min}"#"-0.5"
-Emax="${e_max}"#"0.95"
-Estep="${e_step}"#"0.005"
+grouping="${grouping}" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="${e_min}"
+Emax="${e_max}"
+Estep="${e_step}"
 E_pars_in_mev=${e_pars_in_mev}
 TIB_min="${tib_min}"
 TIB_max="${tib_max}"
