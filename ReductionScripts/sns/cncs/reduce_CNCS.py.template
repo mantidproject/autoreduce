@@ -11,9 +11,9 @@ from mantid.simpleapi import *
 #this part changes with web input
 MaskBTPParameters=[]
 ${mask}
-MaskBTPParameters.append({'Pixel': '1-43,95-128'})
+#MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
-MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
+#MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="${raw_vanadium}"
 processed_vanadium="${processed_vanadium}"
 VanadiumIntegrationRange=[${vanadium_integration_min},${vanadium_integration_max}]#integration range for Vanadium in TOF at 1.0 meV
