@@ -31,11 +31,11 @@ create_MDnxs=False
 a="${a}"
 b="${b}"
 c="${c}"
-alpha="90"
-beta="90"
-gamma="90"
-uVector="1,0,0"
-vVector="0,0,1"
+alpha="${alpha}"
+beta="${beta}"
+gamma="${gamma}"
+uVector="${u_vector}"
+vVector="${v_vector}"
 
 
 #parameters not on the webpage

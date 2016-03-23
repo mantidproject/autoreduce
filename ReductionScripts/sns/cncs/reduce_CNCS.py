@@ -31,9 +31,9 @@ create_MDnxs=False
 a="7.76"
 b="7.76"
 c="7.02"
-alpha="90"
-beta="90"
-gamma="90"
+alpha="90.0"
+beta="90.0"
+gamma="90.0"
 uVector="1,0,0"
 vVector="0,0,1"
 
