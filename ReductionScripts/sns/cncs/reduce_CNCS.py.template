@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
     run_number =mtd["reduce"].getRun()['run_number'].value
     if groupdict['GroupingFile']==output_directory+'powdergroupfile.xml':
-        nxspe_filename=os.path.join(output_directory, “inelastic/CNCS_" + run_number + "_powder.nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_powder.nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
@@ -224,7 +224,7 @@ if __name__ == "__main__":
         s1=elog.save_line('reduce')
         roundedvalue = "%.1f" % s1
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
-        nxspe_filename=os.path.join(output_directory, “inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:

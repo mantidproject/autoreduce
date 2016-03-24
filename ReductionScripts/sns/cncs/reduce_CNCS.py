@@ -22,7 +22,7 @@ processed_vanadium="van161099.nxs"
 VanadiumIntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.5"
-Emax="0.9"
+Emax="0.92"
 Estep="0.005"
 E_pars_in_mev=False
 TIB_min=""
@@ -31,7 +31,7 @@ T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
 create_elastic_nxspe=True #+-0.1Ei, 5 steps
-create_MDnxs=False
+create_MDnxs=True
 a="7.76"
 b="7.76"
 c="7.02"
@@ -216,7 +216,7 @@ if __name__ == "__main__":
 
     run_number =mtd["reduce"].getRun()['run_number'].value
     if groupdict['GroupingFile']==output_directory+'powdergroupfile.xml':
-        nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_powder.nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_powder.nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         s1=elog.save_line('reduce')
         roundedvalue = "%.1f" % s1
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
-        nxspe_filename=os.path.join(output_directory, "CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
