@@ -176,12 +176,13 @@ if __name__ == "__main__":
     # Do the cross-correlation and save the file
     try:
         cc=CorelliCrossCorrelate(raw,56000)
-        SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
-        CCsucceded=True
     except:
         logger.warning("Cross Correlation failed")
         CCsucceded=False
-    
+    else:
+        SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+        CCsucceded=True
+
     # validate inputs
     config=processInputs()
     config.validate()
