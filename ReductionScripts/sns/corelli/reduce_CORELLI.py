@@ -15,12 +15,11 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        #self.ub_matrix_file='/SNS/CORELLI/IPTS-15796/shared/20160304-BaIrO3/BaIrO3_UB_Mono6K.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
-        self.ub_matrix_file='/SNS/CORELLI/IPTS-15073/shared/UB_006K.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
-        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20160304.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
-        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20160304.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
+        self.ub_matrix_file='' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/SolidAngle20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
+        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
-        self.plot_requests=[{'Minimum': '-0.10', 'PerpendicularTo': '[H,0,0]', 'Maximum': '0.10'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': 'Q_sample_y', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
         self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
@@ -70,7 +69,7 @@ class processInputs(object):
             if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
-            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]','[H,H,0]']:
+            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
             if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,K,0]','[0,0,L]']:
@@ -102,9 +101,9 @@ def makePlot(mdws,plotConfig,normalize):
     d0=(d2+1)%3
     d1=(d2+2)%3
     dim0=mdws.getDimension(d0)
-    AlignedDim0=dim0.getName()+','+str(dim0.getMinimum())+','+str(dim0.getMaximum())+',400'
+    AlignedDim0=dim0.getName()+','+str(dim0.getMinimum())+','+str(dim0.getMaximum())+',500'
     dim1=mdws.getDimension(d1)
-    AlignedDim1=dim1.getName()+','+str(dim1.getMinimum())+','+str(dim1.getMaximum())+',400'
+    AlignedDim1=dim1.getName()+','+str(dim1.getMinimum())+','+str(dim1.getMaximum())+',500'
     dim2=mdws.getDimension(d2)
     if plotConfig['Minimum']=='':
         d2min=dim2.getMinimum()
@@ -131,8 +130,8 @@ def makePlot(mdws,plotConfig,normalize):
                      AlignedDim0=AlignedDim0,
                      AlignedDim1=AlignedDim1,
                      AlignedDim2=AlignedDim2)
-    xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/400.)
-    yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/400.)
+    xvals=numpy.arange(dim0.getMinimum(),dim0.getMaximum(),(dim0.getMaximum()-dim0.getMinimum())/500.)
+    yvals=numpy.arange(dim1.getMinimum(),dim1.getMaximum(),(dim1.getMaximum()-dim1.getMinimum())/500.)
     arrayToPlot=np.log(wsToPlot.getSignalArray()[:,:,0]) #this is for next mantid release, or nightly
     #arrayToPlot=np.log(wsToPlot.getSignalArray())
     arrayToPlot[np.where(np.logical_not(np.isfinite(arrayToPlot)))]=0.
@@ -201,8 +200,8 @@ if __name__ == "__main__":
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
     cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
-    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
+    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
@@ -219,14 +218,10 @@ if __name__ == "__main__":
         Q3DFrames="Q_sample"
         QConversionScales="Q in A^-1"
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
-    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
-                        LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-4.5,-5.5,-0.5',MaxValues='4.5,5.5,0.5',
-                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
-    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,QConversionScales=QConversionScales,
-                        LorentzCorrection=LorentzCorrection,#MinValues=minn,MaxValues=maxx,
-                        MinValues='-4.5,-5.5,-0.5',MaxValues='4.5,5.5,0.5',
-                        Uproj='0,1,0',Vproj='0,0,1',Wproj='1,0,0')
+    mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)
+    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
 
     # Save normalized MDs, if possible
     if config.can_do_norm:
@@ -247,11 +242,11 @@ if __name__ == "__main__":
         SaveMD(mdnorm,Filename=os.path.join(output_directory,output_file+"_norm_MD.nxs"))
         SaveMD(mdraw,Filename=os.path.join(output_directory,output_file+"_data_MDE.nxs"))
         SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
-
+        
     # do some plots
     fig = plt.gcf()
     numfig=len(config.plots)
-    fig.set_size_inches(4.0,4.0*(numfig+1))
+    fig.set_size_inches(5.0,5.0*(numfig+1))
     for i in range(numfig):
         plt.subplot(numfig+1,1,i+2)
         if config.useCC=="True":
@@ -263,3 +258,8 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
+
+
+
+
+
