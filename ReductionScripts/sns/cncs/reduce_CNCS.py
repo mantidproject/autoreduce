@@ -10,16 +10,15 @@ from mantid.simpleapi import *
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '1-43'})
-MaskBTPParameters.append({'Bank': '36-50'})
-MaskBTPParameters.append({'Pixel': '95-128'})
+MaskBTPParameters.append({'Pixel': '1-39'})
+MaskBTPParameters.append({'Pixel': '89-128'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-16111/1/161099/NeXus/CNCS_161099_event.nxs"
+raw_vanadium="/SNS/CNCS/IPTS-16111/0/171328/NeXus/CNCS_171328_event.nxs"
 processed_vanadium="van161099.nxs"
-VanadiumIntegrationRange=[84000.0,94000.0]#integration range for Vanadium in TOF at 1.0 meV
+VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.5"
 Emax="0.92"
@@ -30,8 +29,8 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
-create_elastic_nxspe=True #+-0.1Ei, 5 steps
-create_MDnxs=True
+create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_MDnxs=False
 a="7.76"
 b="7.76"
 c="7.02"
