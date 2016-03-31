@@ -180,7 +180,6 @@ if __name__ == "__main__":
         SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
         CCsucceded=True
     except RuntimeError as e:
-        logger.warning(e)
         logger.warning("Cross Correlation failed")
         CCsucceded=False
 
