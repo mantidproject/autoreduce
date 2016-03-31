@@ -179,7 +179,7 @@ if __name__ == "__main__":
         cc=CorelliCrossCorrelate(raw,56000)
         SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
         CCsucceded=True
-    except:
+    except RuntimeError:
         logger.error("Cross Correlation failed")
         CCsucceded=False
 
