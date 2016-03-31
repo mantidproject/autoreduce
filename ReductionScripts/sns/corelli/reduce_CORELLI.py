@@ -20,9 +20,10 @@ class processInputs(object):
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
         self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': 'Q_sample_y', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='True' #"True"
+        self.useCC='False' #"True"
         #other
         self.can_do_HKL=False
+        self.saveMD=False
         self.can_do_norm=False
         self.good_mask=False
         self.plots=[]
@@ -224,7 +225,7 @@ if __name__ == "__main__":
                         LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
 
     # Save normalized MDs, if possible
-    if config.can_do_norm:
+    if config.can_do_norm and config.saveMD:
         if config.can_do_HKL:
             AlignedDim0='[H,0,0],'+str(minn[0])+','+str(maxx[0])+',300'
             AlignedDim1='[0,K,0],'+str(minn[1])+','+str(maxx[1])+',300'
@@ -258,8 +259,4 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
-
-
-
-
 
