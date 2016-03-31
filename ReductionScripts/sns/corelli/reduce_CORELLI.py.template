@@ -181,7 +181,7 @@ if __name__ == "__main__":
     except:
         logger.warning("Cross Correlation failed")
         CCsucceded=False
-
+    
     # validate inputs
     config=processInputs()
     config.validate()
