@@ -173,14 +173,19 @@ if __name__ == "__main__":
     # load file
     raw=Load(nexus_file)
     
-    # Do the cross-correlation and save the file.
-    cc=CorelliCrossCorrelate(raw,56000)
-    SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+    # Do the cross-correlation and save the file
+    CCsucceded=False
+    try:
+        cc=CorelliCrossCorrelate(raw,56000)
+        SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+        CCsucceded=True
+    except:
+        logger.error("Cross Correlation failed")
+        CCsucceded=False
 
     # validate inputs
     config=processInputs()
     config.validate()
-
 
     # Masking - use vanadium, then add extra masks
     if config.can_do_norm:

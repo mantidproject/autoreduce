@@ -20,7 +20,7 @@ class processInputs(object):
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/Spectrum20150825New.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
         self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': 'Q_sample_y', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
-        self.useCC='False' #"True"
+        self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
         self.saveMD=False
@@ -173,14 +173,19 @@ if __name__ == "__main__":
     # load file
     raw=Load(nexus_file)
     
-    # Do the cross-correlation and save the file.
-    cc=CorelliCrossCorrelate(raw,56000)
-    SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+    # Do the cross-correlation and save the file
+    CCsucceded=False
+    try:
+        cc=CorelliCrossCorrelate(raw,56000)
+        SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+        CCsucceded=True
+    except:
+        logger.error("Cross Correlation failed")
+        CCsucceded=False
 
     # validate inputs
     config=processInputs()
     config.validate()
-
 
     # Masking - use vanadium, then add extra masks
     if config.can_do_norm:
