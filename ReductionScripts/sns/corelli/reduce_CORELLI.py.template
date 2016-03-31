@@ -194,23 +194,28 @@ if __name__ == "__main__":
         for d in config.mask:
             if d.values()!=['', '', '']:
                 MaskBTP(raw,**d)
-    MaskDetectors(Workspace=cc,MaskedWorkspace=raw)
+    if CCsucceded:
+        MaskDetectors(Workspace=cc,MaskedWorkspace=raw)
     
     # convert to momentum add goniometer and UB
     raw=ConvertUnits(raw,Target="Momentum",EMode="Elastic")
-    cc=ConvertUnits(cc,Target="Momentum",EMode="Elastic")
+    if CCsucceded:
+        cc=ConvertUnits(cc,Target="Momentum",EMode="Elastic")
     kmin=2.5
     kmax=10.
     if config.can_do_norm:
         kmin=mtd['autoreduction_flux'].readX(0)[0]
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
-    cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
+    if CCsucceded:
+        cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
     SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    if CCsucceded:
+        SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
-        CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
+        if CCsucceded:
+            CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
 
     # convert to MD
     if config.can_do_norm:
@@ -226,8 +231,9 @@ if __name__ == "__main__":
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)
-    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
-                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
+    if CCsucceded:
+        mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                            LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
 
     # Save normalized MDs, if possible
     if config.can_do_norm and config.saveMD:
@@ -242,12 +248,14 @@ if __name__ == "__main__":
         mdrawgrid,mdnorm=MDNormSCD(InputWorkspace=mdraw,
                                    AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2,
                                    FluxWorkspace='autoreduction_flux',SolidAngleWorkspace='autoreduction_sa')
-        mdccgrid=BinMD(InputWorkspace=mdcc,AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2)
+        if CCsucceded:
+            mdccgrid=BinMD(InputWorkspace=mdcc,AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2)
         SaveMD(mdrawgrid,Filename=os.path.join(output_directory,output_file+"_data_MD.nxs"))
-        SaveMD(mdccgrid,Filename=os.path.join(output_directory,output_file+"_datacc_MD.nxs"))
+        if CCsucceded:
+            SaveMD(mdccgrid,Filename=os.path.join(output_directory,output_file+"_datacc_MD.nxs"))
+            SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
         SaveMD(mdnorm,Filename=os.path.join(output_directory,output_file+"_norm_MD.nxs"))
         SaveMD(mdraw,Filename=os.path.join(output_directory,output_file+"_data_MDE.nxs"))
-        SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
         
     # do some plots
     fig = plt.gcf()
@@ -255,7 +263,7 @@ if __name__ == "__main__":
     fig.set_size_inches(5.0,5.0*(numfig+1))
     for i in range(numfig):
         plt.subplot(numfig+1,1,i+2)
-        if config.useCC=="True":
+        if config.useCC=="True" and CCsucceded:
             makePlot(mdcc,config.plots[i],config.can_do_norm)
         else:
             makePlot(mdraw,config.plots[i],config.can_do_norm)
@@ -264,4 +272,3 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
-
