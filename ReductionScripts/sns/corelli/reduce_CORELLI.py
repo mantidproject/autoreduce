@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys,os
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
 from mantid import logger
@@ -176,8 +176,8 @@ if __name__ == "__main__":
     # Do the cross-correlation and save the file
     try:
         cc=CorelliCrossCorrelate(raw,56000)
-    except:
-        logger.warning("Cross Correlation failed")
+    except RuntimeErrro, e:
+        logger.warning("Cross Correlation failed because: " + str(e))
         CCsucceded=False
     else:
         SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
