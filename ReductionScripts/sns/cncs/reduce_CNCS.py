@@ -19,7 +19,7 @@ MaskBTPParameters.append({'Pixel': '89-128'})
 raw_vanadium="/SNS/CNCS/IPTS-16111/0/171328/NeXus/CNCS_171328_event.nxs"
 processed_vanadium="van161099.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.25"
 Emax="0.92"
 Estep="0.005"
