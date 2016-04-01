@@ -176,7 +176,7 @@ if __name__ == "__main__":
     # Do the cross-correlation and save the file
     try:
         cc=CorelliCrossCorrelate(raw,56000)
-    except RuntimeErrro, e:
+    except RuntimeError, e:
         logger.warning("Cross Correlation failed because: " + str(e))
         CCsucceded=False
     else:
