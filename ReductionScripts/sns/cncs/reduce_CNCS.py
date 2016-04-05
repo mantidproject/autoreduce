@@ -29,16 +29,16 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
-create_MDnxs=True
-a="5.975"
-b="5.975"
-c="17.0"
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_MDnxs=False
+a="4.655"
+b="4.655"
+c="7.543"
 alpha="90.0"
 beta="90.0"
-gamma="120.0"
-uVector="1,0,0"
-vVector="0,0,1"
+gamma="90.0"
+uVector="0,0,1"
+vVector="1,1,0"
 
 
 #parameters not on the webpage
