@@ -760,6 +760,7 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
     :param auto_reduction_record_file_name:
     :param logs_record_file_name
     :param export_mode: sample log exporting mode
+    :return: True if it is an alignment run
     """
     # Convert the record base to input arrays
     sample_title_list, sample_name_list, sample_operation_list = generateRecordFormat()
@@ -803,8 +804,11 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
         record_file_path = os.path.dirname(logs_record_file_name)
         if title.startswith('Align:'):
             categorized_record_file = os.path.join(record_file_path, 'AutoRecordAlign.txt')
+            is_alignment_run = True
         else:
             categorized_record_file = os.path.join(record_file_path, 'AutoRecordData.txt')
+            is_alignment_run = False
+
         if os.path.exists(categorized_record_file) is False:
             filemode2 = 'new'
         else:
@@ -845,7 +849,7 @@ def export_experiment_records(log_ws_name, instrument, ipts, run, auto_reduction
                                 OrderByTitle='RUN',
                                 RemoveDuplicateRecord=True)
 
-    return True
+    return is_alignment_run
 
 
 def saveGSASFile(ipts, runnumber, outputdir):
@@ -1107,9 +1111,8 @@ def main(argv):
         if recordFileName is not None or record2FileName is not None:
             # Append auto record file
             instrument = "VULCAN"
-            export_good = export_experiment_records(meta_ws_name, instrument, ipts, runNumber, recordFileName,
-                                                    record2FileName, mode)
-            assert export_good
+            is_alignment_run = export_experiment_records(meta_ws_name, instrument, ipts, runNumber, recordFileName, 
+                                                         record2FileName, mode)
         # ENDIF
     # ENDIF
 
@@ -1118,8 +1121,9 @@ def main(argv):
         # SNSPowderReduction
         gsasfilename = saveGSASFile(ipts, runNumber, gsasDir)
 
-        # 2nd copy for Ke
-        duplicate_gsas_file(gsasfilename, gsas2Dir)
+        # 2nd copy for Ke if it IS NOT an alignment run
+        if is_alignment_run is False: 
+            duplicate_gsas_file(gsasfilename, gsas2Dir)
 
         try:
             SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=pngfilename,  YLabel='Intensity')
