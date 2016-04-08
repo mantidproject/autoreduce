@@ -117,9 +117,9 @@ class AutoReduction():
       offset=psda*(1.-psr/4200.)
       if offset!=0:
         RotateInstrumentComponent(Workspace=autows,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
-        IntegratedTiZr=Load(self._norm_file)
-        additional_pars['UseProcessedDetVan']=1 
-        additional_pars['DetectorVanadiumInputWorkspace']=IntegratedTiZr    
+        #IntegratedTiZr=Load(self._norm_file)
+        #additional_pars['UseProcessedDetVan']=1 
+        #additional_pars['DetectorVanadiumInputWorkspace']=IntegratedTiZr    
       # Overwrite the parameters - will cause TIB to be calculated as histogram, so the output from DgsReduction is histogram
       #LoadParameterFile(Workspace=autows, Filename='/SNS/HYS/shared/autoreduce/HYSPEC_TIBasHist_Parameters.xml')
  
