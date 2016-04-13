@@ -10,16 +10,16 @@ from mantid.simpleapi import *
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '1-39'})
-MaskBTPParameters.append({'Pixel': '89-128'})
-MaskBTPParameters.append({'Tube': '36-50'})
+MaskBTPParameters.append({'Pixel': '1-8'})
+MaskBTPParameters.append({'Pixel': '121-128'})
+MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-16111/0/171328/NeXus/CNCS_171328_event.nxs"
-processed_vanadium="van161099.nxs"
-VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
+raw_vanadium="/SNS/CNCS/IPTS-16057/0/173037/NeXus/CNCS_173037_event.nxs"
+processed_vanadium="van173037.nxs"
+VanadiumIntegrationRange=[52000.0,53000.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.1"
 Emax="0.92"
@@ -31,7 +31,7 @@ T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
-create_MDnxs=True
+create_MDnxs=False
 a="4.655"
 b="4.655"
 c="7.543"
