@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+!/usr/bin/env python
 
 #imports section
 import sys, os, glob, filecmp, datetime, shutil
@@ -25,8 +25,8 @@ Emin="-0.92"
 Emax="0.92"
 Estep="0.005"
 E_pars_in_mev=False
-TIB_min="65000"
-TIB_max="66000"
+TIB_min="79500"
+TIB_max="79800"
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
