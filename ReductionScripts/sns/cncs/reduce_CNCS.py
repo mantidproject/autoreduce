@@ -228,7 +228,6 @@ if __name__ == "__main__":
         roundedvalue = "%.1f" % s1
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
         nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
-        SaveNXS(InputWorkspace="reduce",Filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxs"))
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
