@@ -103,7 +103,7 @@ def preprocessData(filename):
     dictdata['IncidentEnergyGuess']=Ei
     dictdata['TimeZeroGuess']=t0
     dictdata['EnergyTransferRange']=ETransfer
-    dictdata['TimeIndepBackgroundSub']=True
+    dictdata['TimeIndepBackgroundSub']=False
     dictdata['TibTofRangeStart']=tibmin
     dictdata['TibTofRangeEnd']=tibmax
     dictdata['IncidentBeamNormalisation']='ByCurrent'
