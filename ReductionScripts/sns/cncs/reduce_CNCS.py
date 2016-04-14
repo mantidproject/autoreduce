@@ -1,4 +1,4 @@
-!/usr/bin/env python
+#!/usr/bin/env python
 
 #imports section
 import sys, os, glob, filecmp, datetime, shutil
