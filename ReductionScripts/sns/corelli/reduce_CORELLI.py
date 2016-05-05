@@ -38,8 +38,8 @@ class processInputs(object):
             except:
                 logger.warning("Could not load normalization vanadium")
                 self.can_do_norm=False
-        # validate UB
-        if self.ub_matrix_file == '': # ub_file not given us newest *.mat in IPTS shared directory
+        # if ub_matrix_file not given us newest *.mat in IPTS shared directory
+        if self.ub_matrix_file == '':
             mat_list=[]
             for root, dirs, files in os.walk(os.path.abspath(os.path.join(sys.argv[2],".."))): # Look in IPTS shared
                 for f in files:
@@ -49,6 +49,7 @@ class processInputs(object):
                 self.ub_matrix_file = ''
             else:
                 self.ub_matrix_file = max(mat_list,key=os.path.getctime)
+        # validate UB
         if os.path.isfile(self.ub_matrix_file):
             try:
                 autoreduction_ub=CreateSingleValuedWorkspace(0.)
