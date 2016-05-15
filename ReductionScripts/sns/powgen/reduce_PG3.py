@@ -1,8 +1,7 @@
 import os
 import sys
 import shutil 
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py
-2.6-linux-x86_64.egg/")
+sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 import mantid
