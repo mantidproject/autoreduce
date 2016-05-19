@@ -51,6 +51,7 @@ output = LRAutoReduction(Filename=event_file_path,
                          ScalingWavelengthCutoff=WL_CUTOFF,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                          OutputDirectory=output_dir,
+                         SlitTolerance=0.06,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=output[1]
 
