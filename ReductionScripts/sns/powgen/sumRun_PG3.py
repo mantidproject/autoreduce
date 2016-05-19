@@ -1,5 +1,8 @@
 #!/usr/bin/python
 import nxs, os, numpy, sys, posixpath, logging, csv
+import sys
+sys.path.append("/opt/Mantid/bin")
+
 #import xml.utils.iso8601, ConfigParser
 import ConfigParser
 from datetime import datetime
