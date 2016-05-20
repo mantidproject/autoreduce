@@ -85,6 +85,7 @@ if __name__ == "__main__":
     for item in mtd['USANS'].getRun().getProperties():
         if item.name.startswith("BL1A:Mot:") and not item.name.endswith(".RBV"):
             stats = item.getStatistics()
+            print abs(stats.mean)
             if abs(stats.mean)>0 and abs(stats.standard_deviation/item.getStatistics().mean)>0.01:
                 scan_var = item.name
                 short_name = item.name.replace("BL1A:Mot:","")
