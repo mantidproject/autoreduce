@@ -15,6 +15,23 @@ warnings.filterwarnings('ignore',module='numpy')
 
 peaks = []
 
+def update_sequence_info(out_file, info):
+    scan_dict_global = {}
+
+    if os.path.isfile(out_file):
+        with open(out_file, 'r') as fd:
+            try:
+                scan_dict_global = json.loads(fd.read())
+            except:
+                logging.error("Could not read json file: creating a new one")
+
+    scan_dict_global.update(info)
+
+    with open(out_file, 'w') as fd:
+        fd.write(json.dumps(scan_dict_global))
+
+
+
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 
@@ -144,7 +161,9 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
-
+                        # Save scan info to use for stitching later
+                        
+                        
                         for i_theta in range(len(x_data)):
                             q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[main_index]
                             #if q<=0:
