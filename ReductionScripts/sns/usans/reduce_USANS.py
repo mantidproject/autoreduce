@@ -162,7 +162,8 @@ if __name__ == "__main__":
                         json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
                         SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
                         # Save scan info to use for stitching later
-                        
+                        update_sequence_info(os.path.join(outdir, "scan_%s.json" % sequence_first_run,
+                                             {run_number: {'iq':file_path} })
                         
                         for i_theta in range(len(x_data)):
                             q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[main_index]
