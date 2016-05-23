@@ -147,8 +147,8 @@ if __name__ == "__main__":
 
                         for i_theta in range(len(x_data)):
                             q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[main_index]
-                            if q<=0:
-                                continue
+                            #if q<=0:
+                            #    continue
                             
                             # Write I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
@@ -160,8 +160,8 @@ if __name__ == "__main__":
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
                         for i_theta in range(len(x_data)):
                             q = 2.0*math.pi*math.sin(x_data[i_theta]*math.pi/180.0/3600.0)/wavelength[i-1]
-                            if q<=0:
-                                continue
+                            #if q<=0:
+                            #    continue
                             
                             # Write complete I(q) file
                             i_q = y_data[i_theta]/y_monitor[i_theta]
