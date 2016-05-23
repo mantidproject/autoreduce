@@ -109,9 +109,9 @@ if __name__ == "__main__":
                 experiment = mtd['USANS'].getRun().getProperty("experiment_identifier").value
                 run_number = mtd['USANS'].getRun().getProperty("run_number").value
                 run_title = mtd['USANS'].getRun().getProperty("run_title").value
-                sequence_first_run = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:FirstRun").value
-                sequence_index = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Index").value
-                meta_wavelength = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value
+                sequence_first_run = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:FirstRun").value[0]
+                sequence_index = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Index").value[0]
+                meta_wavelength = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
 
                 iq_fd.write('# Experiment %s Run %s\n' % (experiment, run_number))
                 iq_fd.write('# Run start time: %s\n' % start_time)
