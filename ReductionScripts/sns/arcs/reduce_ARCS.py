@@ -6,7 +6,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/IPTS-16075/data/ARCS_74333_event.nxs"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van74333_no6_no95.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van74333_no6_no95_no77.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -20,6 +20,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
     MaskBTPParameters.append({'Bank': '6'})
     MaskBTPParameters.append({'Bank': '95'})
+    MaskBTPParameters.append({'Bank': '77'})
 
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
