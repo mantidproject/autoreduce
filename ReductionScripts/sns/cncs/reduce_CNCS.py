@@ -20,7 +20,7 @@ MaskBTPParameters.append({'Bank': '36-50'})
 raw_vanadium="/SNS/CNCS/IPTS-16057/0/173037/NeXus/CNCS_173037_event.nxs"
 processed_vanadium="van173037_powder.nxs"
 VanadiumIntegrationRange=[52000.0,53000.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.9"
 Emax="0.9"
 Estep="0.005"
@@ -30,8 +30,8 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
-create_MDnxs=False
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_MDnxs=True
 a="10.17"
 b="10.17"
 c="10.17"
@@ -154,8 +154,12 @@ def preprocessGrouping(ws,outdir):
     if grouping in ['2x1', '4x1', '8x1']:
         dictgrouping={'GroupingFile':"/SNS/CNCS/shared/autoreduce/CNCS_"+grouping+".xml"}
     elif grouping=='powder':
-        GenerateGroupingPowder(InputWorkspace=ws,AngleStep=0.5, GroupingFilename=outdir+'powdergroupfile.xml')
-        dictgrouping={'GroupingFile':outdir+'powdergroupfile.xml'}
+        GroupingFilename=outdir+'powdergroupfile.xml'
+        ParFilename=outdir+'powdergroupfile.par'
+        GenerateGroupingPowder(InputWorkspace=ws,AngleStep=0.5, GroupingFilename=GroupingFilename)
+        dictgrouping={'GroupingFile':GroupingFilename}
+        os.chmod(GroupingFilename,0664)
+        os.chmod(ParFilename,0664)
     else:
         dictgrouping={'GroupingFile':''}
     return dictgrouping
@@ -215,23 +219,25 @@ if __name__ == "__main__":
 
 
     run_number =mtd["reduce"].getRun()['run_number'].value
+    s1,temp=elog.save_line('reduce')
+    roundedvalue = "_%.1f_%.1f" % (s1,temp)
+    valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
     if groupdict['GroupingFile']==output_directory+'powdergroupfile.xml':
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_powder.nxspe")
+        roundedvalue = "_powder_%.1f" % temp
+        valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + "_elastic_powder.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
             os.chmod(nxspe_filename,0664)
     else:
-        s1=elog.save_line('reduce')
-        roundedvalue = "%.1f" % s1
-        valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + "_" + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + "_" + valuestringwithoutdot + "_elastic.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             os.chmod(nxspe_filename,0664)
             
@@ -240,7 +246,7 @@ if __name__ == "__main__":
             SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
             SetGoniometer("reduce",Axis0=str(s1)+",0,1,0,1")
             ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
-            filename=os.path.join(output_directory, "MD/CNCS_" + run_number + "_" + valuestringwithoutdot + "_MD.nxs")
+            filename=os.path.join(output_directory, "MD/CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
             SaveMD(Filename=filename, InputWorkspace="md")
             os.chmod(filename,0664)
         except:
