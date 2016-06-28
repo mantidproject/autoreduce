@@ -42,14 +42,14 @@ import plotly.graph_objs as go
 wksp = mtd['PG3_'+runNumber]
 trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
 xunit = wksp.getAxis(0).getUnit()
-xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
+#xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
 xlabel = '%s (%s)' % (xunit.caption(), 'Angstrom')
 #xlabel = '%s ($%s$)' % (xunit.caption(), xunit.symbol().latex())
 layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
                    xaxis=dict(title=xlabel))
 fig = go.Figure(data=[trace], layout=layout)
 
-post_image = False
+post_image = True
 if post_image:
     plotly_args = {'filename':'/tmp/PG3_%s.html' % runNumber}
 else:
