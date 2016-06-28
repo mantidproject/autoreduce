@@ -56,13 +56,13 @@ if post_image:
 else:
     plotly_args = {'filename':os.path.join(outputDir, 'PG3_%s.html' % runNumber)}
 
-print "*****"
-print plotly_args
 div = plot(fig, show_link=False, **plotly_args)
-print "*****"
+print "***** begin div"
 print div
-print "*****"
+print "***** end div"
 if post_image:  # post to the plot server
     from postprocessing.publish_plot import publish_plot
     request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
+    print "resulting json:"
+    print request.json()
