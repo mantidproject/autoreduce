@@ -57,6 +57,9 @@ else:
         'include_plotlyjs':False}
 
 div = plot(fig, show_link=False, filename='/tmp/PG3_%s.html' % runNumber)
+print "*****"
+print div
+print "*****"
 if post_image:  # post to the plot server
     from postprocessing.publish_plot import publish_plot
     request = publish_plot('PG3', runNumber, files={'file':div})
