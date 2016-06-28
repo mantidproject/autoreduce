@@ -45,7 +45,6 @@ from plotly.offline import plot
 import plotly.graph_objs as go
 wksp = mtd['PG3_'+runNumber]
 trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
-data = [trace]
 xunit = wksp.getAxis(0).getUnit()
 xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
 layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
@@ -61,10 +60,6 @@ else:
 
 div = plot(fig, show_link=False, filename='/tmp/PG3_%s.html' % runNumber)
 if post_image:  # post to the plot server
-    div = pltly.plot_mpl(fig, show_link=False,
-                         output_type='div', include_plotlyjs=False)
-    files = {'file':div}
-
     from postprocessing.publish_plot import publish_plot
-    request = publish_plot('PG3', runNumber, files)
+    request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
