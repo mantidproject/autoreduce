@@ -56,7 +56,7 @@ xunit = wksp.getAxis(0).getUnit()
 ax.set_xlabel('%s (%s)' % (xunit.caption(), xunit.symbol().utf8()))
 ax.grid()
 
-if True:  # full html page
+if False:  # full html page
     pltly.plot_mpl(fig, show_link=False,
                    filename=os.path.join('/tmp','PG3_%s.html' % runNumber))
 else:  # post to the plot server
