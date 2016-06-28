@@ -43,7 +43,7 @@ wksp = mtd['PG3_'+runNumber]
 trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
 xunit = wksp.getAxis(0).getUnit()
 #xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
-xlabel = 'd-spacing (Angstrom)'
+xlabel = 'd-spacing'
 #xlabel = '%s ($%s$)' % (xunit.caption(), xunit.symbol().latex())
 layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
                    xaxis=dict(title=xlabel))
