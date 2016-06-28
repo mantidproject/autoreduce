@@ -51,12 +51,14 @@ fig = go.Figure(data=[trace], layout=layout)
 
 post_image = True
 if post_image:
-    plotly_args = {'filename':'/tmp/PG3_%s.html' % runNumber}
-else:
     plotly_args = {'output_type':'div',
-        'include_plotlyjs':False}
+                   'include_plotlyjs':False}
+else:
+    plotly_args = {'filename':os.path.join(outputDir, 'PG3_%s.html' % runNumber)}
 
-div = plot(fig, show_link=False, filename='/tmp/PG3_%s.html' % runNumber)
+print "*****"
+print plotly_args
+div = plot(fig, show_link=False, **plotly_args)
 print "*****"
 print div
 print "*****"
