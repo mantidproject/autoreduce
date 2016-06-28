@@ -8,12 +8,8 @@ cal_file  = os.path.join(cal_dir, "PG3_OC_d28334_2016_05_25.h5")
 char_file = os.path.join(cal_dir, "PG3_char_2016_05_24-HR-OC-10mm.txt")
 #MODE = 0664
 
-#eventFileAbs=sys.argv[1]
-#outputDir=sys.argv[2]+'/'
-
-eventFileAbs='/SNS/PG3/IPTS-15653/0/28395/NeXus/PG3_28395_event.nxs'
-eventFileAbs='/SNS/PG3/IPTS-17223/nexus/PG3_29053.nxs.h5'
-outputDir='/tmp'
+eventFileAbs=sys.argv[1]
+outputDir=sys.argv[2]+'/'
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
