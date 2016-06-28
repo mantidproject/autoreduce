@@ -1,17 +1,15 @@
 import os
 import sys
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-from matplotlib import *
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_1_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_OC_d28334_2016_05_25.h5")
 char_file = os.path.join(cal_dir, "PG3_char_2016_05_24-HR-OC-10mm.txt")
 #MODE = 0664
 
-eventFileAbs=sys.argv[1]
-outputDir=sys.argv[2]+'/'
+#eventFileAbs=sys.argv[1]
+#outputDir=sys.argv[2]+'/'
 
 eventFileAbs='/SNS/PG3/IPTS-15653/0/28395/NeXus/PG3_28395_event.nxs'
 eventFileAbs='/SNS/PG3/IPTS-17223/nexus/PG3_29053.nxs.h5'
@@ -43,23 +41,26 @@ ConvertUnits(InputWorkspace='PG3_'+runNumber, OutputWorkspace='PG3_'+runNumber,
     EMode='Elastic')
 
 # interactive plots
-import matplotlib.pyplot as plt
-import plotly.offline as pltly
+from plotly.offline import plot
+import plotly.graph_objs as go
 wksp = mtd['PG3_'+runNumber]
-fig, ax = plt.subplots()
-ax.plot(wksp.readX(0)[:-1], wksp.readY(0)
-        #edgecolor=ec,
-        #linewidth=ew*width_scale
-)
-ax.set_ylabel(wksp.YUnitLabel())
+trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
+data = [trace]
 xunit = wksp.getAxis(0).getUnit()
-ax.set_xlabel('%s (%s)' % (xunit.caption(), xunit.symbol().utf8()))
-ax.grid()
+xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
+layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
+                   xaxis=dict(title=xlabel))
+fig = go.Figure(data=[trace], layout=layout)
 
-if False:  # full html page
-    pltly.plot_mpl(fig, show_link=False,
-                   filename=os.path.join('/tmp','PG3_%s.html' % runNumber))
-else:  # post to the plot server
+post_image = True
+if post_image:
+    plotly_args = {'filename':'/tmp/PG3_%s.html' % runNumber}
+else:
+    plotly_args = {'output_type':'div',
+        'include_plotlyjs':False}
+
+div = plot(fig, show_link=False, filename='/tmp/PG3_%s.html' % runNumber)
+if post_image:  # post to the plot server
     div = pltly.plot_mpl(fig, show_link=False,
                          output_type='div', include_plotlyjs=False)
     files = {'file':div}
