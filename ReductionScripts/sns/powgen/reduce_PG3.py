@@ -42,8 +42,8 @@ import plotly.graph_objs as go
 wksp = mtd['PG3_'+runNumber]
 trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
 xunit = wksp.getAxis(0).getUnit()
-#xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
-xlabel = 'd-spacing'
+xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
+#xlabel = 'd-spacing'
 #xlabel = '%s ($%s$)' % (xunit.caption(), xunit.symbol().latex())
 layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
                    xaxis=dict(title=xlabel))
@@ -65,4 +65,4 @@ if post_image:  # post to the plot server
     request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
     print "resulting json:"
-    print request.text()
+    print request.text
