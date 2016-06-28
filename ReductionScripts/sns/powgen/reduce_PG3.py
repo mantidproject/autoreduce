@@ -64,5 +64,5 @@ if post_image:  # post to the plot server
     from postprocessing.publish_plot import publish_plot
     request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
-    print "resulting json:"
+    print "resulting document:"
     print request.text
