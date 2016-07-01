@@ -31,7 +31,7 @@ WL_CUTOFF = 10.0
 # Default primary fraction range to be used if it is not defined in the template
 PRIMARY_FRACTION_RANGE = [116, 197]
 
-NORMALIZE_TO_UNITY = False #True
+NORMALIZE_TO_UNITY = True
 #-------------------------------------------------------------------------
 
 
@@ -61,9 +61,6 @@ first_run_of_set=output[1]
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 if os.path.isfile(default_file_name):
     reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
-    #reflectivity.getAxis(1).getUnit().setLabel('Reflectivity', 'Reflectivity')
-    #json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
-    #SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
 
     from postprocessing.publish_plot import plot1d
     x = reflectivity.readX(0)
