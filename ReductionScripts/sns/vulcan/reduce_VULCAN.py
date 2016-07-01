@@ -1126,7 +1126,19 @@ def main(argv):
             duplicate_gsas_file(gsasfilename, gsas2Dir)
 
         try:
-            SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=pngfilename,  YLabel='Intensity')
+            #SavePlot1D(InputWorkspace="Proto2Bank", OutputFilename=pngfilename,  YLabel='Intensity')
+            
+            from postprocessing.publish_plot import plot1d
+            x = mtd["Proto2Bank"].readX(0)
+            y = mtd["Proto2Bank"].readY(0)
+            x2 = mtd["Proto2Bank"].readX(1)
+            y2 = mtd["Proto2Bank"].readY(1)
+    
+            plot1d(run_number, [[x, y], [x2, y2]], instrument='VULCAN',
+                   data_names=["sp-1", "sp-2"], 
+                   x_title=u"Time-of-flight (\u03BCs)",
+                   y_title="Intensity", y_log=True, show_dx=False)
+
         except ValueError as err:
             print "Unable to generate 1D plot for run %s caused by %s. " % (str(runNumber), str(err))
         except RuntimeError as err:
