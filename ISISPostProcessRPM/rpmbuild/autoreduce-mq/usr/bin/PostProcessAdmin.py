@@ -163,7 +163,7 @@ class PostProcessAdmin:
             cycle = re.match(r'.*cycle_(\d\d_\d).*', self.data_file.lower()).group(1)
             if self.instrument in (self.conf["ceph_instruments"] + self.conf["excitation_instruments"]):
                 cycle = re.sub('[_]', '', cycle)
-                instrument_dir = self.conf["ceph_directory"] % (self.instrument, cycle, self.proposal, self.run_number)
+                instrument_dir = self.conf["ceph_directory"] % (self.instrument, self.proposal, self.run_number)
                 if self.instrument in self.conf["excitation_instruments"]:
                     #Excitations would like to remove the run number folder at the end
                     instrument_dir = instrument_dir[:instrument_dir.rfind('/')+1]
@@ -255,7 +255,7 @@ class PostProcessAdmin:
             self.delete_temp_directory(reduce_result_dir)
 
             self.client.send(self.conf['reduction_complete'] , json.dumps(self.data))
-            logging.info("\nCalling: "+self.conf['reduction_complete'] + "\n" + json.dumps(self.data) + "\n")
+            logger.info("\nCalling: "+self.conf['reduction_complete'] + "\n" + json.dumps(self.data) + "\n")
 
         except Exception, e:
             self.data["message"] = "REDUCTION Error: %s " % e

@@ -39,12 +39,12 @@ else:
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-15125/shared/autoNOM_00/exp.ini"
+    expiniFilename="%(expini_file)s"
 print "Using", expiniFilename
 
 # determine information for caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
-PDLoadCharacterizations(Filename="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
+PDLoadCharacterizations(Filename="%(char_file)s",
                         ExpIniFilename=expiniFilename,
                         OutputWorkspace="characterizations")
 PDDetermineCharacterizations(InputWorkspace=wksp,
@@ -63,7 +63,7 @@ if can_run > 0:
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
                                     "BackgroundSmoothParams="+str(''),
-                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5"]
+                                    "CalibrationFile=%(cal_file)s"]
 
     (canCacheName, _) = CreateCacheFilename(Prefix=canWkspName, CacheDir=cacheDir,
                                             PropertyManager='__pd_reduction_properties',
@@ -72,7 +72,7 @@ if can_run > 0:
     print "Container cache file:", canCacheName
 
     if os.path.exists(canCacheName):
-        print "Loading container cache file '%s'" % canCacheName
+        print "Loading container cache file '%%s'" %% canCacheName
         Load(Filename=canCacheName, OutputWorkspace=canWkspName)
 
 # work on vanadium cache file
@@ -85,7 +85,7 @@ if van_run > 0:
                                     "VanadiumRadius="+str(vanradius),
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
-                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5"]
+                                    "CalibrationFile=%(cal_file)s"]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
                                              PropertyManager='__pd_reduction_properties',
@@ -94,14 +94,14 @@ if van_run > 0:
     print "Vanadium cache file:", vanCacheName
 
     if os.path.exists(vanCacheName):
-        print "Loading vanadium cache file '%s'" % vanCacheName
+        print "Loading vanadium cache file '%%s'" %% vanCacheName
         Load(Filename=vanCacheName, OutputWorkspace=vanWkspName)
 
 # process the run
 SNSPowderReduction(Filename=eventFile,
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5",
-                   CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
+                   CalibrationFile="%(cal_file)s",
+                   CharacterizationRunsFile="%(char_file)s",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
@@ -154,7 +154,7 @@ if mpiRank == 0:
                                 name=banklabels[specNum], visible=visible))
 
     xunit = wksp.getAxis(0).getUnit()
-    xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
+    xlabel = '%%s (%%s)' %% (xunit.caption(), xunit.symbol().utf8())
     layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
                        xaxis=dict(title=xlabel))
     fig = go.Figure(data=data, layout=layout)
@@ -171,6 +171,6 @@ if mpiRank == 0:
     if post_image:  # post to the plot server
          from postprocessing.publish_plot import publish_plot
          request = publish_plot('NOM', runNumber, files={'file':div})
-         print "post returned %d" % request.status_code
+         print "post returned %%d" %% request.status_code
          print "resulting document:"
          print request.text

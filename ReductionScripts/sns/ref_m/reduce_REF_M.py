@@ -10,11 +10,11 @@ start a new one otherwise.
 import logging
 import sys, os
 import time
-
+sys.path.append("/opt/mantidnightly/bin")
 # for testing use latest quicknxs test version instead of the installed one
-sys.path.insert(0, u'/SNS/users/agf/software/QuickNXS/')
-for path in "/SNS/software/lib/python2.6/site-packages:/SNS/software/lib/python2.6/site-packages/HLRedux:/SNS/software/lib64/python2.6/site-packages/DOM:/SNS/software/lib/python2.6/site-packages/sns_common_libs:/SNS/software/lib/python2.6/site-packages:/SNS/users/agf/python/lib64/python2.6/site-packages:/SNS/users/agf/python/lib/python2.6/site-packages".split(":"):
-    sys.path.append(path)
+#sys.path.insert(0, u'/SNS/users/agf/software/QuickNXS/')
+#for path in "/SNS/software/lib/python2.6/site-packages:/SNS/software/lib/python2.6/site-packages/HLRedux:/SNS/software/lib64/python2.6/site-packages/DOM:/SNS/software/lib/python2.6/site-#packages/sns_common_libs:/SNS/software/lib/python2.6/site-packages:/SNS/users/agf/python/lib64/python2.6/site-packages:/SNS/users/agf/python/lib/python2.6/site-packages".split(":"):
+#    sys.path.append(path)
 #sys.path.insert(0, u'/home/agf/Software/Scripte/QuickNXS/')
 
 from quicknxs.console_logging import setup_logging
@@ -41,11 +41,13 @@ def trigger_autorefl(fnumber, fname=None, image_path=None):
     The script will handle communication with running instance
     or start of new instance of the script.
   '''
-  from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
-  if FileCom.check_running():
-    FileCom.send_new_file(fnumber, fname, image_path)
-  else:
-    ReflectivityBuilder.spawn_daemon(fnumber, fname, image_path)
+  #from quicknxs.auto_reflectivity import ReflectivityBuilder, FileCom
+  #if FileCom.check_running():
+  #  FileCom.send_new_file(fnumber, fname, image_path)
+  #else:
+  #  ReflectivityBuilder.spawn_daemon(fnumber, fname, image_path)
+  from quicknxs.auto_reflectivity import FileCom
+  FileCom.send_new_file(fnumber, fname, image_path)
 
 def kill_autorefl():
   from quicknxs.auto_reflectivity import FileCom

@@ -10,7 +10,7 @@ def get_run_number(data_path):
     data_path = data_path.split('/')[-1]    # Get the file name
     data_path = data_path.split('.')[0]     # Remove the extension
     data_path = data_path[4:]               # Remove the WISH prefix
-    return int(data_path.strip('0'))
+    return int(data_path)
 
 # Get the valid wavelength range, i.e. excluding regions where choppers cut
 def WISH_getlambdarange():

@@ -5,8 +5,9 @@ sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py
 from string import *
 from numpy import *
 
-mantid_root = "/opt/Mantid"
-mantid_bin = sys.path.append(os.path.join(mantid_root, "bin"))
+#sys.path.append(os.path.join("/opt/Mantid/bin"))
+sys.path.append(os.path.join("/opt/mantidnightly/bin"))
+
 from mantid.simpleapi import *
 from ARLibrary import *
 from matplotlib import *
@@ -20,7 +21,8 @@ class AutoReduction():
   def __init__(self, nexus_file, output_directory):
     print nexus_file, output_directory
     self._nexus_file = nexus_file
-    self._output_directory = output_directory 
+    self._output_directory = output_directory
+    self._norm_file='/SNS/HYS/shared/autoreduce/TiZr_Mar18-2016.nxs' 
 
   def execute(self):
     try:
@@ -46,14 +48,16 @@ class AutoReduction():
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
 
       # Check for sample logs
-      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest') 
+      checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda, BL14B:Mot:Sample:Axis2,omega') 
       #print "checkResult: %s" % checkResult 
       if len(checkResult):
         raise ValueError(checkResult)
       elog=ExperimentLog()
-      elog.setLogList('s2')
-      elog.setSimpleLogList('s2')
-      elog.setSERotOptions('s1')
+      elog.setLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
+      elog.setSimpleLogList('s2,FermiSpeed,EnergyRequest,psr,psda,FlipOn')
+      #elog.setSERotOptions('s1')
+      #elog.setSERotOptions('BL14B:Mot:Sample:Axis2')
+      elog.setSERotOptions('omega')
       #elog.setLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSimpleLogList('s2,Speed4,EnergyRequest,a1b,a1t,a1r,a1l,a2b,a2t,a2r,a2l')
       #elog.setSERotOptions('s1')
@@ -69,7 +73,9 @@ class AutoReduction():
 
   
       # Get Angle
-      s1 = run['s1'].getStatistics().mean
+      #s1 = run['s1'].getStatistics().mean
+      #s1 = run['BL14B:Mot:Sample:Axis2'].getStatistics().mean
+      s1 = run['omega'].getStatistics().mean
 
       # Work out some energy bins
       emin = -2.0 * Ei
@@ -104,6 +110,16 @@ class AutoReduction():
       tofmax=tel+1e6/120+470
       CropWorkspace(InputWorkspace=autows,OutputWorkspace=autows,XMin=tofmin,XMax=tofmax)
       
+      # Rotate instrument for polarized operations.
+      additional_pars={}
+      psda=run['psda'].getStatistics().mean
+      psr=run['psr'].getStatistics().mean
+      offset=psda*(1.-psr/4200.)
+      if offset!=0:
+        RotateInstrumentComponent(Workspace=autows,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
+        IntegratedTiZr=Load(self._norm_file)
+        additional_pars['UseProcessedDetVan']=1 
+        additional_pars['DetectorVanadiumInputWorkspace']=IntegratedTiZr    
       # Overwrite the parameters - will cause TIB to be calculated as histogram, so the output from DgsReduction is histogram
       #LoadParameterFile(Workspace=autows, Filename='/SNS/HYS/shared/autoreduce/HYSPEC_TIBasHist_Parameters.xml')
  
@@ -112,18 +128,18 @@ class AutoReduction():
       #tib = self.SpurionPromptPulse2()
       #reduction command
       DgsReduction(SampleInputWorkspace=autows, IncidentEnergyGuess=Ei, EnergyTransferRange=energy_bins,
-		SampleInputMonitorWorkspace=autows,
-		GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
-		IncidentBeamNormalisation='ByCurrent', 
-                HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
-              TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1")
+            SampleInputMonitorWorkspace=autows,
+		    GroupingFile='/SNS/HYS/shared/autoreduce/128x1pixels.xml',
+		    IncidentBeamNormalisation='ByCurrent', 
+            HardMaskFile='/SNS/HYS/shared/autoreduce/MonsterMask.xml',
+            TimeIndepBackgroundSub='1', TibTofRangeStart=tib[0], TibTofRangeEnd=tib[1], OutputWorkspace="out1",**additional_pars)
       
       DgsReduction(SampleInputWorkspace=autows,IncidentEnergyGuess=Ei,EnergyTransferRange=energy_bins,
-		SampleInputMonitorWorkspace=autows,
-		GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
-		IncidentBeamNormalisation='ByCurrent',
-                #HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
-		TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3")
+            SampleInputMonitorWorkspace=autows,
+		    GroupingFile='/SNS/HYS/shared/autoreduce/4x1pixels.xml',  
+		    IncidentBeamNormalisation='ByCurrent',
+            HardMaskFile='/SNS/HYS/shared/autoreduce/TubeTipMask.xml',
+		    TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3",**additional_pars)
 
 
       if run_number>38844 and run_number<38904:
@@ -131,7 +147,10 @@ class AutoReduction():
          AddSampleLog('out3','Ei',24.,'Number')
       # Save files
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
-      SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1') 
+      SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1')
+ 
+      SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
+      SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
 
       minvals,maxvals=ConvertToMDMinMaxLocal('out1','|Q|','Direct')
       xmin=minvals[0]
@@ -142,7 +161,7 @@ class AutoReduction():
       ystep=(ymax-ymin)*0.01
       x=arange(xmin,xmax,xstep)
       y=arange(ymin,ymax,ystep)
-      X,Y=meshgrid(x,y)
+      Y,X=meshgrid(y,x)
 
 
       MD=ConvertToMD('out1',QDimensions='|Q|',dEAnalysisMode='Direct',MinValues=minvals,MaxValues=maxvals)
@@ -154,16 +173,17 @@ class AutoReduction():
       dne=d/ne
 
       Zm=ma.masked_where(ne==0,dne)
-      pcolormesh(X,Y,log(Zm),shading='gouraud')
-      xlabel('|Q| ($\AA^{-1}$)')
-      ylabel('E (meV)')
+      #pcolormesh(X,Y,log(Zm),shading='gouraud')
+      #xlabel('|Q| ($\AA^{-1}$)')
+      #ylabel('E (meV)')
       #imshow(log(dne[::-1]))
       #axis('off')
-
-      savefig(processed_filename1+'.png',bbox_inches='tight')
+      #savefig(processed_filename1+'.png',bbox_inches='tight')
       
-      SaveNexus(Filename=processed_filename3, InputWorkspace="out3")
-      SaveNXSPE(Filename=nxspe_filename3, InputWorkspace="out3", Psi=str(s1), KiOverKfScaling='1')
+      from postprocessing.publish_plot import plot_heatmap
+      Zm = np.log(np.transpose(Zm))
+      plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
+                 x_log=False, y_log=False, instrument='HYS', publish=True)
       
     except Exception, e:
       raise e
