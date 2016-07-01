@@ -173,15 +173,17 @@ class AutoReduction():
       dne=d/ne
 
       Zm=ma.masked_where(ne==0,dne)
-      pcolormesh(X,Y,log(Zm),shading='gouraud')
-      xlabel('|Q| ($\AA^{-1}$)')
-      ylabel('E (meV)')
+      #pcolormesh(X,Y,log(Zm),shading='gouraud')
+      #xlabel('|Q| ($\AA^{-1}$)')
+      #ylabel('E (meV)')
       #imshow(log(dne[::-1]))
       #axis('off')
-
-      savefig(processed_filename1+'.png',bbox_inches='tight')
+      #savefig(processed_filename1+'.png',bbox_inches='tight')
       
-      
+      from postprocessing.publish_plot import plot_heatmap
+      Zm = np.log(np.transpose(Zm))
+      plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
+                 x_log=False, y_log=False, instrument='HYS', publish=True)
       
     except Exception, e:
       raise e

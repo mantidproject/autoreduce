@@ -2,6 +2,7 @@
 import sys,os
 sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 sys.path.append("/opt/Mantid/bin")
+sys.path.append('/SNS/SNAP/shared/autoreduce/')
 from mantid.simpleapi import *
 from matplotlib import *
 # auto_Reduce_Funcs are special functions for normalization from data written by  Antonio dos Santos
@@ -27,27 +28,27 @@ out_prefix = instrument + "_" + run_number
 folder = '/SNS/SNAP/IPTS-15429/shared/'
 
 #Masking should be one of the following strings :
-# 'None' ## 'Horizontal' 
+# 'None' ## 'Horizontal'
 # 'Vertical' ## 'Custom mask - xml file'
 
 Masking = "None"
 
 
 #Calibration  should be one of the following strings :
-# 'Convert Units' or  'Calibration File' 
+# 'Convert Units' or  'Calibration File'
 
 Calibration = 'Convert Units'
 calib_File = 'SNAP_calibrate_d30628_2016_02_19.cal'
 
 #Grouping  should be one of the following strings :
-# '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules' 
+# '2_4 Grouping' # 'All' # 'Banks' # 'Column' # 'Modules'
 
-Grouping = '2_4 Grouping' 
+Grouping = '2_4 Grouping'
 
 #Normalization  should be one of the following strings :
-# 'None' # 'Processed Nexus' # 'Extract from Data' 
+# 'None' # 'Processed Nexus' # 'Extract from Data'
 
-Normalization = 'Extract from Data' 
+Normalization = 'Extract from Data'
 norm_file = 'nor_nexus.nxs'
 
 
@@ -87,16 +88,16 @@ if Calibration == 'Calibration File':
     ows = AlignDetectors(InputWorkspace='iws', CalibrationFile = folder + calib_File)
 
 if Masking != 'None':
-	
-	if Masking == "Custom - xml masking file" : 
-		mask_file = folder + 'mask_dac.xml'
-		Mask= LoadMask(InputFile = mask_file, Instrument ='SNAP', OutputWorkspace = 'Mask')
-	if Masking == "Horizontal" : 
-		Mask = LoadMask(InputFile = '/SNS/SNAP/shared/libs/Horizontal_Mask.xml', Instrument ='SNAP', OutputWorkspace = 'Mask')
-	if Masking == "Vertical" : 
-		Mask = LoadMask(InputFile = '/SNS/SNAP/shared/libs/Vertical_Mask.xml', Instrument ='SNAP', OutputWorkspace = 'Mask')
-	
-	ows = MaskDetectors(Workspace='ows',MaskedWorkspace='Mask')
+
+    if Masking == "Custom - xml masking file" :
+        mask_file = folder + 'mask_dac.xml'
+        Mask= LoadMask(InputFile = mask_file, Instrument ='SNAP', OutputWorkspace = 'Mask')
+    if Masking == "Horizontal" :
+        Mask = LoadMask(InputFile = '/SNS/SNAP/shared/libs/Horizontal_Mask.xml', Instrument ='SNAP', OutputWorkspace = 'Mask')
+    if Masking == "Vertical" :
+        Mask = LoadMask(InputFile = '/SNS/SNAP/shared/libs/Vertical_Mask.xml', Instrument ='SNAP', OutputWorkspace = 'Mask')
+
+    ows = MaskDetectors(Workspace='ows',MaskedWorkspace='Mask')
 
 ows = Rebin(InputWorkspace='ows',Params=binning,PreserveEvents='0')
 
@@ -107,44 +108,46 @@ grp  =  group(Grouping)
 ows = DiffractionFocussing(InputWorkspace = 'ows', GroupingWorkspace= 'grp', PreserveEvents=False)
 
 
-if Normalization == "Processed Nexus" :  
-	norm = LoadNexusProcessed(Filename=folder+norm_file)
-	ows = Divide(LHSWorkspace = 'ows', RHSWorkspace = 'norm')
+if Normalization == "Processed Nexus" :
+    norm = LoadNexusProcessed(Filename=folder+norm_file)
+    ows = Divide(LHSWorkspace = 'ows', RHSWorkspace = 'norm')
 
-if Normalization == "Extract from Data" : 
-		
-	window = 10 
-	smooth_range = 5
-				
-	peak_clip_WS = CloneWorkspace('ows')
-	n_histo = peak_clip_WS.getNumberHistograms()
-	
-	x = peak_clip_WS.extractX() 
-	y = peak_clip_WS.extractY() 
-	e = peak_clip_WS.extractE()
+if Normalization == "Extract from Data" :
 
-	for h in range(n_histo):
+    window = 10
+    smooth_range = 5
 
-		peak_clip_WS.setX(h,x[h])
-		peak_clip_WS.setY(h,peak_clip(y[h], win=window, decrese= True, LLS =True, smooth_window = smooth_range ))
-		peak_clip_WS.setE(h,e[h])
+    peak_clip_WS = CloneWorkspace('ows')
+    n_histo = peak_clip_WS.getNumberHistograms()
 
-	ows = Divide(LHSWorkspace = 'ows', RHSWorkspace='peak_clip_WS')
+    x = peak_clip_WS.extractX()
+    y = peak_clip_WS.extractY()
+    e = peak_clip_WS.extractE()
+
+    for h in range(n_histo):
+
+        peak_clip_WS.setX(h,x[h])
+        peak_clip_WS.setY(h,peak_clip(y[h], win=window, decrese= True, LLS =True, smooth_window = smooth_range ))
+        peak_clip_WS.setE(h,e[h])
+
+    ows = Divide(LHSWorkspace = 'ows', RHSWorkspace='peak_clip_WS')
 
 
 
-SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix, Filename = outputDir+'/NEXUS/'+out_prefix+'_inst.nxs')
-SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix, Filename = outputDir+'/NEXUS/'+out_prefix+'_nor.nxs')
+SaveNexusProcessed(InputWorkspace='ows_4', Title=out_prefix,
+Filename = os.path.join(outputDir, 'NEXUS', out_prefix+'_inst.nxs'))
+SaveNexusProcessed(InputWorkspace='ows', Title=out_prefix,
+Filename = os.path.join(outputDir, 'NEXUS', out_prefix+'_nor.nxs'))
 
 ows_tof = ConvertUnits(InputWorkspace='ows', Target='TOF')
 
-print 
+print
 
-SaveFocusedXYE(InputWorkspace = 'ows_tof', Filename = outputDir+'/Fullprof/'+out_prefix+'.dat' , SplitFiles = True, Append=False)
+SaveFocusedXYE(InputWorkspace = 'ows_tof', Filename = os.path.join(outputDir,'Fullprof', out_prefix+'.dat') ,
+SplitFiles = True, Append=False)
 
-SaveGSS (InputWorkspace='ows_tof', Filename = outputDir+'/GSAS/'+out_prefix+'.gsa', Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
+SaveGSS (InputWorkspace='ows_tof', Filename = os.path.join(outputDir, 'GSAS', out_prefix+'.gsa'),
+Format='SLOG', SplitFiles = False, Append=False, MultiplyByBinWidth='1')
 
 
 ##############################################################3
-
-

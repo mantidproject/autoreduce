@@ -28,12 +28,12 @@ if __name__ == "__main__":
     data=wi.extractY().reshape(-1,8,256).T
     data2=data[:,[0,4,1,5,2,6,3,7],:]
     data2=data2.transpose().reshape(-1,256)
-    X,Y=meshgrid(arange(192)+1,arange(256)+1)
     Z=ma.masked_where(data2<1,data2)
-    pcolormesh(X,Y,log(Z.transpose()))
-    ylim([0,256])
-    xlim([0,192])
-    xlabel('Tube')
-    ylabel('Pixel')
-    savefig(str(outdir+'/EQSANS_'+str(w.getRunNumber()) +"_autoreduced.png"),bbox_inches='tight')
-    
+
+    from postprocessing.publish_plot import plot_heatmap
+    x=arange(192)+1
+    y=arange(256)+1
+    Z = np.log(np.transpose(Z))
+    plot_heatmap(w.getRunNumber(), x.tolist(), y.tolist(), Z.tolist(), x_title='Tube', y_title='Pixel',
+                 x_log=False, y_log=False, instrument='EQSANS', publish=True)
+

@@ -236,12 +236,10 @@ ${mask}
         s=SumSpectra("__OWS")
         x=s.readX(0)
         y=s.readY(0)
-        plot(x[1:],y)
-        xlabel('Energy transfer (meV)')
-        ylabel('Intensity')
-        yscale('log')
-        show()
-        savefig(outdir+outfile+'nxs.png',bbox_inches='tight')
+        from postprocessing.publish_plot import plot1d
+        plot1d(runnum, [x[1:], y], instrument='SEQ', 
+               x_title="Energy transfer (meV)",
+               y_title="Intensity", y_log=True)
         
         if NXSPE_flag:    
             angle=mtd["__OWS"].run()['phi'].getStatistics().mean      

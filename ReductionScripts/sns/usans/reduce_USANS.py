@@ -159,8 +159,12 @@ if __name__ == "__main__":
                     if i == 0:
                         file_path = os.path.join(outdir, "%s_detector_%s.txt" % (file_prefix, main_wl))
                         SaveAscii(InputWorkspace="USANS_scan_detector",Filename=file_path, WriteSpectrumID=False)
-                        json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
-                        SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
+                        #json_file_path = os.path.join(outdir, "%s_plot_data.json" % file_prefix)
+                        #SavePlot1DAsJson(InputWorkspace="USANS_scan_detector", JsonFilename=json_file_path, PlotName="main_output")
+                        from postprocessing.publish_plot import plot1d
+                        plot1d(run_number, [[x_data, y_data, e_data]], instrument='USANS', 
+                               x_title=scan_var, y_title="Counts", y_log=True)
+
                         # Save scan info to use for stitching later
                         update_sequence_info(os.path.join(outdir, "scan_%s.json" % sequence_first_run),
                                              {run_number: {'iq':file_path} })

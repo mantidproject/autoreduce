@@ -39,7 +39,7 @@ else:
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-17210/shared/testNeXuS/exp.ini"
+    expiniFilename="/SNS/lustre/NOM/IPTS-15125/shared/autoNOM_00/exp.ini"
 print "Using", expiniFilename
 
 # determine information for caching
@@ -63,7 +63,7 @@ if can_run > 0:
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
                                     "BackgroundSmoothParams="+str(''),
-                                    "CalibrationFile=/SNS/NOM/IPTS-17210/shared/NOM_calibrate_d74054_2016_06_28.h5"]
+                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5"]
 
     (canCacheName, _) = CreateCacheFilename(Prefix=canWkspName, CacheDir=cacheDir,
                                             PropertyManager='__pd_reduction_properties',
@@ -85,7 +85,7 @@ if van_run > 0:
                                     "VanadiumRadius="+str(vanradius),
                                     "CropWavelengthMin="+str(wavelengthMin),
                                     "CropWavelengthMax="+str(wavelengthMax),
-                                    "CalibrationFile=/SNS/NOM/IPTS-17210/shared/NOM_calibrate_d74054_2016_06_28.h5"]
+                                    "CalibrationFile=/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5"]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
                                              PropertyManager='__pd_reduction_properties',
@@ -98,9 +98,9 @@ if van_run > 0:
         Load(Filename=vanCacheName, OutputWorkspace=vanWkspName)
 
 # process the run
-SNSPowderReduction(Instrument="NOM", RunNumber=runNumber, Extension="_event.nxs",
+SNSPowderReduction(Filename=eventFile,
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
-                   CalibrationFile="/SNS/NOM/IPTS-17210/shared/NOM_calibrate_d74054_2016_06_28.h5",
+                   CalibrationFile="/SNS/NOM/IPTS-15125/shared/NOM_calibrate_d65454_2016_06_30.h5",
                    CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
@@ -125,58 +125,52 @@ if mpiRank == 0:
         ConvertUnits(InputWorkspace=vanWkspName, OutputWorkspace=vanWkspName, Target="TOF")
         SaveNexusProcessed(InputWorkspace=vanWkspName, Filename=vanCacheName)
 
-    # save a picture of the normalized ritveld data
-    wksp_name="NOM_"+runNumber
-    imgfilename=os.path.join(outputDir,wksp_name+'.png')
+    wksp_name = "NOM_"+runNumber
+
+    # save the processing script
+    GeneratePythonScript(InputWorkspace=wksp_name,
+                     Filename=os.path.join(outputDir,wksp_name+'.py'))
 
     ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
 
-    NUM_HIST = mtd[wksp_name].getNumberHistograms()
-    if NUM_HIST == 6:
-        print "customized plotting"
+    # save a picture of the normalized ritveld data
+    from plotly.offline import plot
+    import plotly.graph_objs as go
 
-        # setup matplotlib to have the correct backend
-        import matplotlib
-        matplotlib=sys.modules['matplotlib']
-        matplotlib.use("agg")
-        import matplotlib.pyplot as plt
+    banklabels = {1 : 'bank 1 - 15 deg',
+                  2 : 'bank 2 - 31 deg',
+                  3 : 'bank 3 - 67 deg',
+                  4 : 'bank 4 - 122 deg',
+                  5 : 'bank 5 - 154 deg',
+                  6 : 'bank 6 - 7 deg',}
+    data = []
+    wksp = mtd[wksp_name]
+    for i in xrange(wksp.getNumberHistograms()):
+         specNum = wksp.getSpectrum(i).getSpectrumNo()
+         visible = True
+         if specNum in [1,6]:
+             visible = 'legendonly'
+         data.append(go.Scatter(x=wksp.readX(i)[:-1], y=wksp.readY(i),
+                                name=banklabels[specNum], visible=visible))
 
-        from numpy import ma
-        gridloc=[]
-        for i in xrange(NUM_HIST):
-            irow = i/2
-            icol = i%2
-            gridloc.append((irow,icol))
+    xunit = wksp.getAxis(0).getUnit()
+    xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
+    layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
+                       xaxis=dict(title=xlabel))
+    fig = go.Figure(data=data, layout=layout)
 
-        fig = plt.gcf() # get current figure
-        #fig.set_size_inches(8.0,16.0)
-
-        wksp = mtd[wksp_name]
-        for (i, loc) in enumerate(gridloc):
-            y = wksp.readY(i)
-            y_van = mtd["NOM_"+str(van_run)].readY(i)
-            (y_min, y_max) = (y_van.min(), y_van.max())
-
-            # detect singularities
-            van_cutoff = .2
-            van_cutoff = van_cutoff*y_van.max() + (1.-van_cutoff)*y_van.min()
-            sam_cutoff = .05*y.mean()
-            mask = ma.masked_where(y_van<van_cutoff, y)
-            mask = ma.masked_where(y<sam_cutoff, mask)
-
-            ax = plt.subplot2grid((wksp.getNumberHistograms()/2, 2), loc)
-            plt.plot(wksp.readX(i)[1:],mask)
-            plt.xlabel('d ($\AA$)')
-            plt.ylabel('Intensity')
-            plt.title('bank {0} '.format(i+1))
-
-        plt.tight_layout(1.08)
-        plt.show()
-        #plt.close()
-        print "saving", imgfilename
-        fig.savefig(imgfilename)#, bbox_inches='tight')
-
+    post_image = True
+    if post_image:
+         plotly_args = {'output_type':'div',
+                        'include_plotlyjs':False}
     else:
-        SavePlot1D(InputWorkspace=wksp,
-                   OutputFilename=imgfilename,
-                   YLabel='Intensity')
+         plotly_args = {'filename':os.path.join(outputDir, wksp_name+'.html')}
+
+    div = plot(fig, show_link=False, **plotly_args)
+    print div
+    if post_image:  # post to the plot server
+         from postprocessing.publish_plot import publish_plot
+         request = publish_plot('NOM', runNumber, files={'file':div})
+         print "post returned %d" % request.status_code
+         print "resulting document:"
+         print request.text

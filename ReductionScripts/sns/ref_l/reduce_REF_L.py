@@ -61,8 +61,18 @@ first_run_of_set=output[1]
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 if os.path.isfile(default_file_name):
     reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
-    reflectivity.getAxis(1).getUnit().setLabel('Reflectivity', 'Reflectivity')
+    #reflectivity.getAxis(1).getUnit().setLabel('Reflectivity', 'Reflectivity')
+    #json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
+    #SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
 
-    json_file_path = os.path.join(output_dir, "REF_L_%s_plot_data.dat" % run_number)
-    SavePlot1DAsJson(InputWorkspace=reflectivity, JsonFilename=json_file_path, PlotName="main_output")
+    from postprocessing.publish_plot import plot1d
+    x = reflectivity.readX(0)
+    y = reflectivity.readY(0)
+    dy = reflectivity.readE(0)
+    dx = reflectivity.readDx(0)
+    
+    plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
+           x_title=u"Q (1/\u212b)",
+           y_title="Reflectivity", y_log=True, show_dx=False)
+
 
