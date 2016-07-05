@@ -70,7 +70,7 @@ if os.path.isfile(default_file_name):
     dx = reflectivity.readDx(0)
     
     plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
-           x_title=u"Q (1/\u212b)",
+           x_title=u"Q (1/\u212b)", x_log=True,
            y_title="Reflectivity", y_log=True, show_dx=False)
 
 
