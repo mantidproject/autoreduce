@@ -863,6 +863,7 @@ def saveGSASFile(ipts, runnumber, outputdir):
         print "GSAS file (%s) has been reduced for run %s already. " % (outfilename, str(runnumber))
         return outfilename
 
+    print 'Filename = ', runnumber, type(runnumber)
     SNSPowderReduction(Filename=runnumber,
                        #Instrument='VULCAN', 
                        #Extension="_event.nxs",
