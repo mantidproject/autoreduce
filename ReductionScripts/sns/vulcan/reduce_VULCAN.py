@@ -386,6 +386,7 @@ def exportVulcanSampleEnvLog(log_ws_name, output_dir, ipts, run_number):
 
         # check whether it is a new file such that no old file will be overwritten
         is_new_file_name = not os.path.exists(output_file_name)
+        num_attempt += 1
     # END-WHILE
     assert output_file_name is not None
     assert is_new_file_name, 'Unable to find an unused log file name for run %d.' % run_number
