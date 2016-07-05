@@ -864,6 +864,8 @@ def saveGSASFile(ipts, runnumber, outputdir):
         return outfilename
 
     print 'Filename = ', runnumber, type(runnumber)
+    print 'Calibration', calibrationfilename
+    print 'Charameter', characterfilename
     SNSPowderReduction(Filename=runnumber,
                        #Instrument='VULCAN', 
                        #Extension="_event.nxs",
