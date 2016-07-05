@@ -862,8 +862,8 @@ def saveGSASFile(ipts, runnumber, outputdir):
         print "GSAS file (%s) has been reduced for run %s already. " % (outfilename, str(runnumber))
         return outfilename
 
-    SNSPowderReduction(Instrument='VULCAN',
-                       RunNumber=runnumber,
+    SNSPowderReduction(RunNumber=runnumber,
+                       #Instrument='VULCAN', 
                        #Extension="_event.nxs",
                        PreserveEvents=True,
                        CalibrationFile=calibrationfilename,
