@@ -37,29 +37,16 @@ ConvertUnits(InputWorkspace='PG3_'+runNumber, OutputWorkspace='PG3_'+runNumber,
     EMode='Elastic')
 
 # interactive plots
-from plotly.offline import plot
-import plotly.graph_objs as go
-wksp = mtd['PG3_'+runNumber]
-trace = go.Scatter(x=wksp.readX(0)[:-1], y=wksp.readY(0))
-xunit = wksp.getAxis(0).getUnit()
-xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
-#xlabel = 'd-spacing'
-#xlabel = '%s ($%s$)' % (xunit.caption(), xunit.symbol().latex())
-layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
-                   xaxis=dict(title=xlabel))
-fig = go.Figure(data=[trace], layout=layout)
-
 post_image = True
 if post_image:
-    plotly_args = {'output_type':'div',
-                   'include_plotlyjs':False}
-else:
-    plotly_args = {'filename':os.path.join(outputDir, 'PG3_%s.html' % runNumber)}
-
-div = plot(fig, show_link=False, **plotly_args)
-if post_image:  # post to the plot server
+    div = SavePlot1D(InputWorkspace='PG3_'+runnumber, OutputType='plotly')
     from postprocessing.publish_plot import publish_plot
     request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
     print "resulting document:"
     print request.text
+else:
+    filename = 'filename':os.path.join(outputDir, 'PG3_%s.html' % runNumber)
+    SavePlot1D(InputWorkspace='PG3_'+runnumber, OutputType='plotly-full',
+               OutputFilename=filename)
+    print 'saved', filename
