@@ -46,7 +46,7 @@ if post_image:
     print "resulting document:"
     print request.text
 else:
-    filename = 'filename':os.path.join(outputDir, 'PG3_%s.html' % runNumber)
+    filename = os.path.join(outputDir, 'PG3_%s.html' % runNumber)
     SavePlot1D(InputWorkspace='PG3_'+runnumber, OutputType='plotly-full',
                OutputFilename=filename)
     print 'saved', filename
