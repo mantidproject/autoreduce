@@ -39,7 +39,7 @@ ConvertUnits(InputWorkspace='PG3_'+runNumber, OutputWorkspace='PG3_'+runNumber,
 # interactive plots
 post_image = True
 if post_image:
-    div = SavePlot1D(InputWorkspace='PG3_'+runnumber, OutputType='plotly')
+    div = SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly')
     from postprocessing.publish_plot import publish_plot
     request = publish_plot('PG3', runNumber, files={'file':div})
     print "post returned %d" % request.status_code
@@ -47,6 +47,6 @@ if post_image:
     print request.text
 else:
     filename = os.path.join(outputDir, 'PG3_%s.html' % runNumber)
-    SavePlot1D(InputWorkspace='PG3_'+runnumber, OutputType='plotly-full',
+    SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
                OutputFilename=filename)
     print 'saved', filename
