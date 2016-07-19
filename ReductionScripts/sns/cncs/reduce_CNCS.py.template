@@ -95,7 +95,7 @@ def preprocessData(filename):
     __tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
     __tmp=ConvertToPointData(InputWorkspace=__tmp)
     x=__tmp.readX(0)
-    y=__tmp.extractY()
+    y=__tmp.extractY()[-1024:,:]    # the last 1024 pixels but all bins
     try:
         import h5py
         output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
