@@ -102,6 +102,8 @@ def preprocessData(filename):
         with h5py.File(output_filename,'w') as hf:
             hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
             hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
+    except:
+        pass
     Ei=__IWS.getRun()['EnergyRequest'].firstValue()
     t0=preprocesst0(Ei,__IWS)
     tibmin,tibmax=preprocessTIB(Ei,__IWS)
