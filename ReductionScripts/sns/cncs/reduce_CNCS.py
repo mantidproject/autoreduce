@@ -20,17 +20,17 @@ MaskBTPParameters.append({'Bank': '36-50'})
 raw_vanadium="/SNS/CNCS/IPTS-17219/0/179212/NeXus/CNCS_179212_event.nxs"
 processed_vanadium="van179212_powder.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.5"
-Emax="3.2"
+grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.9"
+Emax="0.9"
 Estep="0.005"
-E_pars_in_mev=True
+E_pars_in_mev=False
 TIB_min=""
 TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="10.17"
 b="10.17"
@@ -91,8 +91,22 @@ def preprocessVanadium(Raw,Processed,Parameters):
     return dictvan
 
 def preprocessData(filename):
-    dictdata={}    
+    dictdata={}
     __IWS=LoadEventNexus(filename)
+    #this bit is for the ESS detector prototype
+    xmin,xmax=__IWS.readX(0)
+    __tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
+    __tmp=ConvertToPointData(InputWorkspace=__tmp)
+    x=__tmp.readX(0)
+    y=__tmp.extractY()
+    try:
+        import h5py
+        output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
+        with h5py.File(output_filename,'w') as hf:
+            hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
+            hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
+    except:
+        pass
     Ei=__IWS.getRun()['EnergyRequest'].firstValue()
     t0=preprocesst0(Ei,__IWS)
     tibmin,tibmax=preprocessTIB(Ei,__IWS)
