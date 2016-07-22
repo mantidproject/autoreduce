@@ -81,13 +81,13 @@ class processInputs(object):
             if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
-            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
+            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,-H]','[0,K,0]','[H,0,H]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
-            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,K,0]','[0,0,L]']:
+            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,-H]','[0,K,0]','[H,0,H]']:
                 logger.warning("Will not be able to convert to HKL")
                 continue
-            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,K,0]','[0,0,L]']:
+            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,-H]','[0,K,0]','[H,0,H]']:
                 logger.warning("Data will be in HKL - picture not created")
                 continue
             self.plots.append(pl)
@@ -220,9 +220,9 @@ if __name__ == "__main__":
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
     if CCsucceded:
         cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
-    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
     if CCsucceded:
-        SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+        SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis2,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
         if CCsucceded:
