@@ -81,13 +81,13 @@ class processInputs(object):
             if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
-            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,-H]','[0,K,0]','[H,0,H]']:
+            if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Could not find this direction: "+str(pl['PerpendicularTo']))
                 continue
-            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,-H]','[0,K,0]','[H,0,H]']:
+            if not self.can_do_HKL and pl['PerpendicularTo'] in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Will not be able to convert to HKL")
                 continue
-            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,-H]','[0,K,0]','[H,0,H]']:
+            if self.can_do_HKL and pl['PerpendicularTo'] not in ['[H,0,0]','[0,K,0]','[0,0,L]']:
                 logger.warning("Data will be in HKL - picture not created")
                 continue
             self.plots.append(pl)
