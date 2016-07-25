@@ -35,7 +35,6 @@ GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
 ConvertUnits(InputWorkspace='PG3_'+runNumber, OutputWorkspace='PG3_'+runNumber,
     Target='dSpacing',
     EMode='Elastic')
-ConvertFromDistribution(Workspace='PG3_'+runNumber)
 
 # interactive plots
 post_image = True
