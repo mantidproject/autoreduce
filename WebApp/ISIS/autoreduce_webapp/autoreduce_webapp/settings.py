@@ -95,7 +95,8 @@ STATICFILES_DIRS = (
 
 LOG_FILE = os.path.join(BASE_DIR, 'autoreduction.log')
 if DEBUG:
-    LOG_LEVEL = 'DEBUG'
+    #LOG_LEVEL = 'DEBUG' 
+    LOG_LEVEL = 'INFO'
 else:
     LOG_LEVEL = 'INFO'
 
@@ -125,9 +126,10 @@ LOGGING = {
             'propagate': True,
             'level':LOG_LEVEL,
         },
-        'MYAPP': {
-            'handlers': ['file'],
-            'level': LOG_LEVEL,
+        'app' : {
+            'handlers':['file'],
+            'propagate': True,
+            'level':'DEBUG',
         },
     }
 }
@@ -173,6 +175,13 @@ ICAT = {
 
 UOWS_URL = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
 UOWS_LOGIN_URL = 'https://devusers.facilities.rl.ac.uk/auth/?service=http://datareducedev.isis.cclrc.ac.uk&redirecturl='
+
+
+# Email for notifications
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'exchsmtp.stfc.ac.uk'
+EMAIL_PORT = 25
+ERROR_EMAILS = ['isisreduce@stfc.ac.uk']
 
 # Constant vars
 

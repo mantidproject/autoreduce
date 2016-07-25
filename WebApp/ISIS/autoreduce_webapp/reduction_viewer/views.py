@@ -10,11 +10,12 @@ from autoreduce_webapp.settings import UOWS_LOGIN_URL
 from reduction_viewer.models import Experiment, ReductionRun, Instrument
 from reduction_viewer.utils import StatusUtils
 from reduction_viewer.view_utils import deactivate_invalid_instruments
-from django.core.context_processors import csrf
-from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_staff
+from reduction_variables.utils import MessagingUtils, ReductionVariablesUtils
+from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_admin
 import operator
+import json
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('app')
 
 @deactivate_invalid_instruments
 def index(request):
@@ -67,7 +68,80 @@ def run_queue(request):
         'queue' : pending_jobs
     }
     return context_dictionary
+    
+    
+@require_admin
+@login_and_uows_valid
+@render_with('fail_queue.html')
+def fail_queue(request):
+            
+    # render the page
+    error_status = StatusUtils().get_error()
+    failed_jobs = ReductionRun.objects.filter(Q(status=error_status) & Q(hidden_in_failviewer=False)).order_by('-created')
+    context_dictionary = { 
+                  'queue' : failed_jobs
+                , 'status_success' : StatusUtils().get_completed()
+                , 'status_failed' : StatusUtils().get_error()
+                }
 
+
+    if request.method == 'POST':
+        # perform the specified action
+        action = request.POST.get("action", "default")
+        selectedRunString = request.POST.get("selectedRuns", [])
+        selectedRuns = json.loads(selectedRunString)
+        try:
+            for run in selectedRuns:
+                runNumber = int(run[0])
+                runVersion = int(run[1])
+                RBNumber = int(run[2])
+                
+                experiment = Experiment.objects.filter(reference_number=RBNumber).first()
+                reductionRun = ReductionRun.objects.get(experiment=experiment, run_number=runNumber, run_version=runVersion)
+
+                
+                if action == "hide":
+                    reductionRun.hidden_in_failviewer = True
+                    reductionRun.save()
+                    
+                    
+                elif action == "rerun":
+                    highest_version = max([int(runL[1]) for runL in selectedRuns if int(runL[0]) == runNumber])
+                    if runVersion != highest_version:
+                        continue # do not run multiples of the same run
+                
+                    reductionRun.cancel = False
+                    new_job = ReductionVariablesUtils().createRetryRun(reductionRun)
+                    
+                    try:
+                        MessagingUtils().send_pending(new_job)
+                    except Exception as e:
+                        new_job.delete()
+                        raise e
+                    
+                        
+                elif action == "cancel":
+                    reductionRun.cancel = True
+                    reductionRun.save()
+                    
+                    if reductionRun.retry_run:
+                        reductionRun.retry_run.cancel = True
+                        reductionRun.retry_run.save()
+                       
+                       
+                elif action == "default":
+                    pass
+                        
+        except Exception as e:
+            failStr = "Selected action failed: %s %s" % (type(e).__name__, e)
+            logger.info("Failed to carry out fail_queue action - " + failStr)
+            context_dictionary["message"] = failStr
+
+    
+    return context_dictionary
+
+    
+    
 @login_and_uows_valid
 @render_with('run_list.html')
 def run_list(request):
