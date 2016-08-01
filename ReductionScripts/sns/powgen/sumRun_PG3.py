@@ -33,7 +33,7 @@ class RunInfo:
                 if isinstance(value, numpy.ndarray):
                     if value.shape[0] == 1:
                         value = value[0]
-                        print "HI!!!!!!!!!!!"
+                        print "HI!!!!!!!!!!!", type(value)
                     value = sum(value)
             except Exception as e:
                 print e 
