@@ -37,15 +37,16 @@ fi
 echo ${specifiedRunList[@]}
 
 if [[ ${#specifiedRunList[*]} -eq 0 ]]; then
-  for file in `find $1 -name "*_event.nxs" -print` 
+  for file in `find $1 -name "$specifiedRun.nxs.h5" -print` 
   do
     echo $file 
     python $script $instrument $file $output
   done
 else
   for specifiedRun in ${specifiedRunList[@]}; do
-    path=$1/$specifiedRun
-    for file in `find $path -name "*_event.nxs" -print`; do
+    path=$1
+    echo "find $path -name "$specifiedRun.nxs.h5" -print"
+    for file in `find $path -name "$specifiedRun.nxs.h5" -print`; do
       echo $file 
       python $script $instrument $file $output
     done
