@@ -44,11 +44,9 @@ if [[ ${#specifiedRunList[*]} -eq 0 ]]; then
   done
 else
   for specifiedRun in ${specifiedRunList[@]}; do
-    file="$1/PG3_$specifiedRun.nxs.h5"
-    #for file in `find $path -name "\\\*$specifiedRun.nxs.h5" -print`; do
-      echo $file 
-      python $script $instrument $file $output
-    #done
+    file="${1}/${instrument}_${specifiedRun}.nxs.h5"
+    echo $script $instrument $file $output
+    python $script $instrument $file $output
   done
 fi
 
