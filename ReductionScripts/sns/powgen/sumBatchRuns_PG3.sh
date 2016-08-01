@@ -37,6 +37,9 @@ fi
 echo ${specifiedRunList[@]}
 
 if [[ ${#specifiedRunList[*]} -eq 0 ]]; then
+#    file="${1}/${instrument}_${specifiedRun}.nxs.h5"
+#    echo $script $instrument $file $output
+#    python $script $instrument $file $output
   for file in `find $1 -name "$specifiedRun.nxs.h5" -print` 
   do
     echo $file 
