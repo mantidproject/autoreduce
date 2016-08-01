@@ -81,7 +81,7 @@ class AutoReduction():
       emin = -2.0 * Ei
       if Ei > 10.0:
         emin = -20.0
-      emax = Ei * 0.9
+      emax = Ei * 0.95
       if Ei > 3.0:
         estep = 0.02
       if Ei > 4.9:
