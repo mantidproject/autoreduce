@@ -46,7 +46,7 @@ else
   for specifiedRun in ${specifiedRunList[@]}; do
     path=$1
     echo "find $path -name "\\*$specifiedRun.nxs.h5" -print"
-    for file in `find $path -name "\\*$specifiedRun.nxs.h5" -print`; do
+    for file in `find $path -name "\\\*$specifiedRun.nxs.h5" -print`; do
       echo $file 
       python $script $instrument $file $output
     done
