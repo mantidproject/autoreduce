@@ -31,7 +31,9 @@ class RunInfo:
                 file.openpath(node)
                 value =  file.getdata()
                 if isinstance(value, numpy.ndarray):
-                    print type(value)
+                    if value.shape[0] == 1:
+                        value = value[0]
+                        print "HI!!!!!!!!!!!"
                     value = sum(value)
             except Exception as e:
                 print e 
