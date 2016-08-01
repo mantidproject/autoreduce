@@ -26,10 +26,12 @@ class RunInfo:
         #open nexus file
         file = nxs.open(self._infilename, 'r')
         for node in self._nodes:
+            print node
             try:
                 file.openpath(node)
                 value =  file.getdata()
                 if isinstance(value, numpy.ndarray):
+                    print type(value)
                     value = sum(value)
             except Exception as e:
                 print e 
