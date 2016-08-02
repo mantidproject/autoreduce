@@ -136,7 +136,7 @@ def exportFurnaceLog(logwsname, outputDir, runNumber):
                                   SampleLogNames=["furnace.temp1", "furnace.temp2", "furnace.power"],
                                   TimeZone=TIMEZONE2)
     except RuntimeError as run_err:
-        raise RuntimeError('Unable to export sample log
+        raise RuntimeError('Unable to export sample log to %s due to %s.' % (logfilename, str(run_err)))
 
     return
 
