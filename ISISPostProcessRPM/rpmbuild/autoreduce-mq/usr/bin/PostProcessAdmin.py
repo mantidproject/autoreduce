@@ -95,8 +95,8 @@ class PostProcessAdmin:
                 raise ValueError("run_number is missing")
                 
             if data.has_key('reduction_script'):
-                self.reduction_script = windows_to_linux_path(str(data['reduction_script']), self.conf["temp_root_directory"])
-                logger.debug("reduction_script: %s" % str(self.reduction_script))
+                self.reduction_script = data['reduction_script']
+                logger.debug("reduction_script: %s ..." % self.reduction_script[:50])
             else:
                 raise ValueError("reduction_script is missing")
                 
@@ -124,21 +124,23 @@ class PostProcessAdmin:
             return float(value)
 
     def replace_variables(self, reduce_script):
-        if hasattr(reduce_script, 'web_var'):
-            if hasattr(reduce_script.web_var, 'standard_vars'):
-                for key in reduce_script.web_var.standard_vars:
-                    if 'standard_vars' in self.reduction_arguments and key in self.reduction_arguments['standard_vars']:
-                        if type(self.reduction_arguments['standard_vars'][key]).__name__ == 'unicode':
-                            self.reduction_arguments['standard_vars'][key] = self.reduction_arguments['standard_vars'][key].encode('ascii','ignore')
-                        reduce_script.web_var.standard_vars[key] = self.reduction_arguments['standard_vars'][key]
-            if hasattr(reduce_script.web_var, 'advanced_vars'):
-                for key in reduce_script.web_var.advanced_vars:
-                    if 'advanced_vars' in self.reduction_arguments and key in self.reduction_arguments['advanced_vars']:
-                        if type(self.reduction_arguments['advanced_vars'][key]).__name__ == 'unicode':
-                            self.reduction_arguments['advanced_vars'][key] = self.reduction_arguments['advanced_vars'][key].encode('ascii','ignore')
-                        reduce_script.web_var.advanced_vars[key] = self.reduction_arguments['advanced_vars'][key]
+        """We mock up the web_var module according to what's expected. The scripts want standard_vars and advanced_vars, e.g. https://github.com/mantidproject/mantid/blob/master/scripts/Inelastic/Direct/ReductionWrapper.py"""                                           
+        def mergeDicts(dictName): 
+            """ Merge self.reduction_arguments[dictName] into reduce_script.web_var[dictName], overwriting any key that exists in both with the value from sourceDict. """
+            def mergeDictToName(dictName, sourceDict): 
+                oldDict = getattr(reduce_script.web_var, dictName) if hasattr(reduce_script.web_var, dictName) else {}
+                oldDict.update(sourceDict)
+                setattr(reduce_script.web_var, dictName, oldDict)
+            def asciiEncode(var): return var.encode('ascii','ignore') if type(var).__name__ == "unicode" else var
+            
+            encodedDict = {k: asciiEncode(v) for k, v in self.reduction_arguments[dictName].items()}
+            mergeDictToName(dictName, encodedDict)
+            
+        if not hasattr(reduce_script, "web_var"): reduce_script.web_var = imp.new_module("reduce_vars") 
+        map(mergeDicts, ["standard_vars", "advanced_vars"])
         return reduce_script
 
+    
     def reduce(self):
         logger.debug("In reduce() method")
         try:     
@@ -193,7 +195,6 @@ class PostProcessAdmin:
                     problem = "does not exist" if doesNotExist(failPath) else "no write access"
                     raise Exception("Couldn't write to %s  -  %s" % (failPath, problem))
                     
-                # we also want read access to the input data file
                 if filter(notReadable, shouldBeReadable) != []:
                     failPath = filter(notReadable, shouldBeReadable)[0]
                     problem = "does not exist" if doesNotExist(failPath) else "no read access"
@@ -211,11 +212,6 @@ class PostProcessAdmin:
                 self.data["message"] = ""
 
                 
-            # Load reduction script
-            if os.path.exists(os.path.join(self.reduction_script, "reduce.py")) is False:
-                raise Exception("Reduce script doesn't exist within %s" % self.reduction_script)
-            sys.path.append(self.reduction_script)
-
             logger.info("----------------")
             logger.info("Reduction script: %s" % self.reduction_script)
             logger.info("Result dir: %s" % reduce_result_dir)
@@ -228,7 +224,11 @@ class PostProcessAdmin:
 
             try:
                 with channels_redirected(script_out, mantid_log):
-                    reduce_script = imp.load_source('reducescript', os.path.join(self.reduction_script, "reduce.py"))
+                    # Load reduction script as a module. This works as long as reduce.py makes no assumption that it is in the same directory as reduce_vars, 
+                    # i.e., either it does not import it at all, or adds its location to os.path explicitly.
+                    reduce_script = imp.new_module('reducescript')
+                    exec self.reduction_script in reduce_script.__dict__ # loads the string as a module into reduce_script
+                    
                     try:
                         skip_numbers = reduce_script.SKIP_RUNS
                     except:
@@ -403,7 +403,8 @@ if __name__ == "__main__":
             print("Called " + conf['postprocess_error'] + "----" + json.dumps(data))
             raise
         
-        except:
+        except Exception as e:
+            logger.info("PostProcessAdmin error: %s" % e)
             raise
         
     except Exception as er:
