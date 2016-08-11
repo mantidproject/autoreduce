@@ -46,6 +46,7 @@ class AutoReduction():
       LoadEventNexus(Filename=self._nexus_file, OutputWorkspace=autows)
       if len(CheckForSampleLogs(Workspace=autows, LogNames='pause'))==0:
         FilterByLogValue(InputWorkspace=autows,OutputWorkspace=autows,LogName='pause',MinimumValue='-1',MaximumValue='0.5')
+      FilterBadPulses(InputWorkspace=autows,OutputWorkspace=autows,LowerCutoff='5.')
 
       # Check for sample logs
       checkResult = CheckForSampleLogs(Workspace=autows, LogNames='s1, s2, msd, EnergyRequest, psr, psda, BL14B:Mot:Sample:Axis2,omega') 
@@ -95,11 +96,13 @@ class AutoReduction():
       if Ei > 39.0:
         estep = 0.5
       #estep = 0.05
-      if int(run_number)>38844 and int(run_number)<38904:
-        Ei=24.142
-        emin=-48.
-        emax=0.9*24.
-
+      #if int(run_number)>38844 and int(run_number)<38904:
+      #  Ei=24.142
+      #  emin=-48.
+      #  emax=0.9*24.
+      
+      #move 0 meV energy transfer to a bin center
+      emin=(int(emin/estep)+0.5)*estep
       energy_bins = "%f,%f,%f" % (emin, estep, emax)
       
       #get msd
@@ -142,9 +145,9 @@ class AutoReduction():
 		    TimeIndepBackgroundSub='1',TibTofRangeStart=tib[0],TibTofRangeEnd=tib[1],OutputWorkspace="out3",**additional_pars)
 
 
-      if run_number>38844 and run_number<38904:
-         AddSampleLog('out1','Ei',24.,'Number')
-         AddSampleLog('out3','Ei',24.,'Number')
+      #if run_number>38844 and run_number<38904:
+      #   AddSampleLog('out1','Ei',24.,'Number')
+      #   AddSampleLog('out3','Ei',24.,'Number')
       # Save files
       SaveNexus(Filename=processed_filename1, InputWorkspace="out1")
       SaveNXSPE(Filename=nxspe_filename1, InputWorkspace="out1", Psi=str(s1), KiOverKfScaling='1')
