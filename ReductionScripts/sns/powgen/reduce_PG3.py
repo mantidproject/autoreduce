@@ -25,7 +25,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=-0.0008, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
-                   FilterBadPulses=25.,
+                   FilterBadPulses=10,
                    ScaleData =100,
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
