@@ -39,10 +39,17 @@
     };
     var toggleExperimentRunsClickAction = function toggleExperimentRunsClickAction(event){
         var $target = $(event.target);
-        if(($target.is('a') && $target.attr('href')==='#') || ($target.parent().is('a') && $target.parent().attr('href')==='#') || $target.is(':not(a)') && ($.target.parent().is(':not(a)'))){
+        if(($target.is('a') && $target.attr('href')==='#') || ($target.parent().is('a') && $target.parent().attr('href')==='#') || $target.is(':not(a)') && ($target.parent().is(':not(a)'))){
             $(this).find("i[class*='fa-chevron']").toggleClass('fa-chevron-right fa-chevron-down');
             $(this).parents('.experiment').find('.experiment-runs').toggleClass('hide');
         }
+    };
+    
+    var load_all_runs = function load_all_runs(event) {
+        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // trigger loading of all unloaded runs
+        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // click again to reset open/closed status
+        
+        $('#run_search').prop('onfocus',null).off('focus'); // unregister load trigger
     };
 
     var run_search = function run_search(event){
@@ -100,11 +107,38 @@
         }
 
         $('#run_search').on('keyup', run_search).popover();
+        $('#run_search').on('focus', load_all_runs); // load all items
         $('#by-run-number-tab a,#by-experiment-tab a').on('click', tabClickAction);
         $('#by-tabs-mobile').on('change', mobileTabChangeAction);
-        $('.instrument-heading').on('click', toggleInstrumentsExperimentsClickAction)
-        $('.experiment-heading').on('click', toggleExperimentRunsClickAction)
+        $('.instrument-heading').on('click', toggleInstrumentsExperimentsClickAction);
+        $('.experiment-heading').on('click', toggleExperimentRunsClickAction);
     };
 
     init();
 }());
+
+
+// Put this in the global namespace for various snippets to use.
+function expandItem(el) {
+    expandItem.counter = expandItem.counter || 0; // keep track of how many items we're currently loading
+    
+    // indicate that we're loading
+    expandItem.counter++;
+    $("*").css("cursor", "wait");
+    $("#search-parent").addClass("has-warning");
+    
+    // unregister the load trigger
+    $(el).prop('onclick',null).off('click');
+        
+    var name = el.id;
+    $("#"+name+"-list").load("list/"+name, 
+        function () {
+            // remove loading indicators if we should
+            expandItem.counter--;
+            if (expandItem.counter <= 0)
+            {
+                $("*").css("cursor", "default");
+                $("#search-parent").removeClass("has-warning");
+            }
+        });
+};
