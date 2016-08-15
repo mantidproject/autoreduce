@@ -1,11 +1,11 @@
-import logging, os, sys, imp, re, json, time, datetime, cgi
+import logging, os, sys, re, json, cgi, imp
 sys.path.append(os.path.join("../", os.path.dirname(os.path.dirname(__file__))))
 os.environ["DJANGO_SETTINGS_MODULE"] = "autoreduce_webapp.settings"
 from autoreduce_webapp.settings import ACTIVEMQ, REDUCTION_DIRECTORY, FACILITY
 logger = logging.getLogger('django')
-from reduction_variables.models import InstrumentVariable, ScriptFile, RunVariable
+from reduction_variables.models import InstrumentVariable, RunVariable
 from reduction_viewer.models import ReductionRun, Notification
-from reduction_viewer.utils import InstrumentUtils, StatusUtils
+from reduction_viewer.utils import InstrumentUtils, StatusUtils, ReductionRunUtils
 from autoreduce_webapp.icat_communication import ICATCommunication
 
 class DataTooLong(ValueError):
@@ -22,6 +22,19 @@ def log_error_and_notify(message):
 
 
 class VariableUtils(object):
+    def derive_run_variable(self, instrument_var, reduction_run):
+        return RunVariable( name = instrument_var.name
+                          , value = instrument_var.value
+                          , is_advanced = instrument_var.is_advanced
+                          , type = instrument_var.type
+                          , help_text = instrument_var.help_text
+                          , reduction_run = reduction_run
+                          )
+                          
+    def save_run_variables(self, instrument_vars, reduction_run):
+        runVariables = map(lambda iVar: self.derive_run_variable(iVar, reduction_run), instrument_vars)
+        map(lambda rVar: rVar.save(), runVariables)
+
     def wrap_in_type_syntax(self, value, var_type):
         """
         Append the appropriate syntax around variables to be wrote to a preview script.
@@ -111,78 +124,24 @@ class VariableUtils(object):
 
 
 class InstrumentVariablesUtils(object):
-    def __load_reduction_script(self, instrument_name):
+    def get_default_variables(self, instrument_name, reduce_script=None):
         """
-        Load the relevant reduction script and return back the text of the script
-        If the script cannot be loaded None is returned
+        Creates and returns a list of variables matching those found in the appropriate reduce script.
+        An opptional instance of reduce_script can be passed in to prevent multiple hits to the filesystem.
         """
-        reduction_file = os.path.join((REDUCTION_DIRECTORY % (instrument_name)), 'reduce.py')
-        try:
-            f = open(reduction_file, 'rb')
-            script_binary = f.read()
-            return script_binary
-        except Exception as e:
-            log_error_and_notify("Unable to load reduction script %s - %s" % (reduction_file, e))
-            return None
-
-    def __load_reduction_vars_script(self, instrument_name):
-        """
-        Load the relevant reduction script and return back a tuple containing:
-            - An instance of the python script
-            - The text of the script
-        If the script cannot be loaded (None, None) is returned
-        """
-        reduction_file = os.path.join((REDUCTION_DIRECTORY % (instrument_name)), 'reduce_vars.py')
-        try:
-            reduce_script = imp.load_source(instrument_name + 'reduce_script', reduction_file)
-            f = open(reduction_file, 'rb')
-            script_binary = f.read()
-            return reduce_script, script_binary
-        except ImportError as e:
-            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (reduction_file, e.message))
-            return None, None
-        except IOError:
-            log_error_and_notify("Unable to load reduction script %s" % reduction_file)
-            return None, None
-        except SyntaxError:
-            log_error_and_notify("Syntax error in reduction script %s" % reduction_file)
-            return None, None
-
-    def __get_scripts_modified(self, instrument_name):
-        """
-        Returns the last modification time of the scripts located in the filesystem
-        """
-        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce.py")
-        script_mod_time = os.path.getmtime(reduction_file)
-        reduction_file = os.path.join((REDUCTION_DIRECTORY % instrument_name), "reduce_vars.py")
-        script_vars_mod_time = os.path.getmtime(reduction_file)
-        return script_mod_time, script_vars_mod_time
-
-    def __update_variable_scripts(self, variables, script_binary, script_vars_binary):
-        """
-        Helper method to save a new script into the database and update a set of variables with the script
-        """
-        script = ScriptFile(script=script_binary, file_name='reduce.py')
-        script.save()
-        script_vars = ScriptFile(script=script_vars_binary, file_name='reduce_vars.py')
-        script_vars.save()
-
-        for variable in variables:
-            variable.save()
-            variable.scripts.clear()
-            variable.scripts.add(script)
-            variable.scripts.add(script_vars)
-            variable.save()
-
-    def get_variables_from_current_script(self, instrument_name):
-        """
-        Reloads script in variables to match that on disk. For now ignore modification time check.
-        """
-        reduce_vars_script, vars_script_binary = self.__load_reduction_vars_script(instrument_name)
-        variables = self.get_default_variables(instrument_name, reduce_vars_script)
-        script_binary = self.__load_reduction_script(instrument_name)
-        self.__update_variable_scripts(variables, script_binary, vars_script_binary)
-
+        if not reduce_script:
+            reduce_script = self._load_reduction_vars_script(instrument_name)
+            
+        reduce_vars_module = self._read_script(reduce_script, os.path.join(self._reduction_script_location(instrument_name), 'reduce_vars.py'))
+        if not reduce_vars_module:
+            return []
+        
+        instrument = InstrumentUtils().get_instrument(instrument_name)
+        variables = []
+        if 'standard_vars' in dir(reduce_vars_module):
+            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.standard_vars, False))
+        if 'advanced_vars' in dir(reduce_vars_module):
+            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.advanced_vars, True))
         return variables
 
     def set_default_instrument_variables(self, instrument_name, start_run=1):
@@ -192,115 +151,17 @@ class InstrumentVariablesUtils(object):
         """
         if not start_run:
             start_run = 1
-        script_binary =  self.__load_reduction_script(instrument_name)
-        reduce_vars_script, vars_script_binary =  self.__load_reduction_vars_script(instrument_name)
-
-        script = ScriptFile(script=script_binary, file_name='reduce.py')
-        script.save()
-        script_vars = ScriptFile(script=vars_script_binary, file_name='reduce_vars.py')
-        script_vars.save()
-
+            
+        reduce_vars_script = self._load_reduction_vars_script(instrument_name)
         instrument_variables = self.get_default_variables(instrument_name, reduce_vars_script)
+        
         variables = []
         for variable in instrument_variables:
             variable.start_run = start_run
             variable.save()
-            variable.scripts.add(script)
-            variable.scripts.add(script_vars)
-            variable.save()
             variables.append(variable)
 
         return variables
-
-    def get_variables_for_run(self, reduction_run):
-        """
-        Fetches the appropriate variables for the given reduction run.
-        If instrument variables with a matching experiment reference number is found then these will be used
-        otherwise the variables with the closest run start will be used.
-        If no variable are found, default variables are created for the instrument and those are returned.
-        """
-        instrument_name = reduction_run.instrument.name
-        variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument, experiment_reference=reduction_run.experiment.reference_number)
-        # No experiment-specific variables, lets look for run number
-        if not variables:
-            try:
-                variables_run_start = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run__lte=reduction_run.run_number, experiment_reference__isnull=True ).order_by('-start_run').first().start_run
-                variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run=variables_run_start)
-            except AttributeError:
-                # Still not found any variables, we better create some
-                variables = self.set_default_instrument_variables(instrument_name)
-
-        if variables[0].tracks_script:
-            script_binary = self.__load_reduction_script(instrument_name)
-            reduce_vars_script, vars_script_binary = self.__load_reduction_vars_script(instrument_name)
-            self.__update_variable_scripts(variables, script_binary, vars_script_binary)
-
-        return variables
-
-    def get_current_script_text(self, instrument_name):
-        """
-        Returns the binary text within the reduce script for the provided instrument.
-        """
-        script_binary =  self.__load_reduction_script(instrument_name)
-        reduce_vars_script, vars_script_binary =  self.__load_reduction_vars_script(instrument_name)
-        return script_binary, vars_script_binary
-        
-    def get_script(self, instrument_name):
-        """
-        Fetches the reduction script for the given instument, and returns it as a string.
-        This is for use when a reduction script doesn't expose any variables
-        """
-        script_binary =  self.__load_reduction_script(instrument_name)
-        return ScriptUtils().read_binary(script_binary)
-
-    def _create_variables(self, instrument, script, variable_dict, is_advanced):
-        variables = []
-        for key, value in variable_dict.iteritems():
-            str_value = str(value).replace('[','').replace(']','')
-            if len(str_value) > InstrumentVariable._meta.get_field('value').max_length:
-                raise DataTooLong
-            variable = InstrumentVariable(
-                instrument=instrument,
-                name=key,
-                value=str_value,
-                is_advanced=is_advanced,
-                type=VariableUtils().get_type_string(value),
-                start_run = 0,
-                help_text=self.get_help_text('standard_vars', key, instrument.name, script),
-                )
-            variables.append(variable)
-        return variables
-
-    def get_default_variables(self, instrument_name, reduce_script=None):
-        """
-        Creates and returns a list of variables matching those found in the appropriate reduce script.
-        An opptional instance of reduce_script can be passed in to prevent multiple hits to the filesystem.
-        """
-        if not reduce_script:
-            reduce_script, script_binary =  self.__load_reduction_vars_script(instrument_name)
-        instrument = InstrumentUtils().get_instrument(instrument_name)
-        variables = []
-        if 'standard_vars' in dir(reduce_script):
-            variables.extend(self._create_variables(instrument, reduce_script, reduce_script.standard_vars, False))
-        if 'advanced_vars' in dir(reduce_script):
-            variables.extend(self._create_variables(instrument, reduce_script, reduce_script.advanced_vars, True))
-        return variables
-
-    def _replace_special_chars(self, help_text):
-        help_text = cgi.escape(help_text)  # Remove any HTML already in the help string
-        help_text = help_text.replace('\n', '<br>').replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
-        return help_text
-
-    def get_help_text(self, dictionary, key, instrument_name, reduce_script=None):
-        if not dictionary or not key:
-            return ""
-        if not reduce_script:
-            reduce_script, script_binary = self.__load_reduction_vars_script(instrument_name)
-        if 'variable_help' in dir(reduce_script):
-            if dictionary in reduce_script.variable_help:
-                if key in reduce_script.variable_help[dictionary]:
-                    return self._replace_special_chars(reduce_script.variable_help[dictionary][key])
-        return ""
 
     def get_current_and_upcoming_variables(self, instrument_name):
         """
@@ -342,40 +203,137 @@ class InstrumentVariablesUtils(object):
 
         return current_variables, upcoming_variables_by_run, upcoming_variables_by_experiment
 
-class ReductionVariablesUtils(object):
-
-    def get_script_and_arguments(self, run_variables):
+    def get_variables_for_run(self, reduction_run):
         """
-        Fetches the reduction script from the given variables and returns it as a string, along with a dictionary of arguments.
+        Fetches the appropriate variables for the given reduction run.
+        If instrument variables with a matching experiment reference number is found then these will be used
+        otherwise the variables with the closest run start will be used.
+        If no variable are found, default variables are created for the instrument and those are returned.
         """
-        if not run_variables or len(run_variables) == 0:
-            raise Exception("Run variables required")
-        reduction_run = None
-        for variables in run_variables:
-            if variables.scripts is None or len(variables.scripts.all()) == 0:
-                raise Exception("Run variables missing scripts")
-            if not reduction_run:
-                reduction_run = variables.reduction_run.id
-            else:
-                if reduction_run != variables.reduction_run.id:
-                    raise Exception("All run variables must be for the same reduction run")
+        instrument_name = reduction_run.instrument.name
+        variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument, experiment_reference=reduction_run.experiment.reference_number)
         
-        script_binary, script_vars_binary = ScriptUtils().get_reduce_scripts_binary(run_variables[0].scripts.all())
+        if not variables:
+            # No experiment-specific variables, lets look for run number
+            try:
+                variables_run_start = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run__lte=reduction_run.run_number, experiment_reference__isnull=True ).order_by('-start_run').first().start_run
+                variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run=variables_run_start)
+            except:
+                pass
+                
+        if not variables:
+            # Still not found any variables, we better create some
+            variables = self.set_default_instrument_variables(instrument_name)
+        
+        
+        # make sure variables are up to date if they need to be
+        defaults = self.get_default_variables(instrument_name)
+        
+        def updateVariable(oldVar, defaultVars):
+            matchingVars = filter(lambda var: var.name == oldVar.name, defaultVars)
+            try:
+                newVar = matchingVars[0]
+                map(lambda name: setattr(oldVar, name, getattr(newVar, name)),
+                    ["value", "type", "is_advanced", "help_text"])
+                oldVar.save()
+            except:
+                pass
+                
+        map(lambda var: updateVariable(var, defaults) if var.tracks_script else None, variables)
+        return variables
+        
+    def get_variables_from_current_script(self, instrument_name):
+        """
+        Reloads script in variables to match that on disk.
+        """
+        reduce_vars_script = self._load_reduction_vars_script(instrument_name)
+        variables = self.get_default_variables(instrument_name, reduce_vars_script)
+        return variables
 
-        script = ScriptUtils().read_binary(script_binary)
+    def get_current_script_text(self, instrument_name):
+        """
+        Fetches the reduction script and variables script for the given instument, and returns each as a string.
+        """
+        script_text = self._load_reduction_script(instrument_name)
+        script_vars_text = self._load_reduction_vars_script(instrument_name)
+        return (script_text, script_vars_text)
+        
+        
+    def _read_script(self, script_text, script_path):
+        """
+        Takes a python script as a text string, and returns it loaded as a module. Failure will return None, and notify.
+        """
+        if not script_text or not script_path:
+            return None
+            
+        module_name = os.path.basename(script_path).split(".")[0] # file name without extension
+        script_module = imp.new_module(module_name)
+        try:
+            exec script_text in script_module.__dict__
+            return script_module
+        except ImportError as e:
+            log_error_and_notify("Unable to load reduction script %s due to missing import. (%s)" % (script_path, e.message))
+            return None
+        except SyntaxError:
+            log_error_and_notify("Syntax error in reduction script %s" % script_path)
+            return None
+        
+        
+        
+    def _load_script(self, path):
+        """
+        Load the relevant reduction script and return back the text of the script. If the script cannot be loaded, None is returned.
+        """
+        try:
+            f = open(path, 'r')
+            script_text = f.read()
+            return script_text
+        except Exception as e:
+            log_error_and_notify("Unable to load reduction script %s - %s" % (path, e))
+            return None
+            
+    def _reduction_script_location(self, instrument_name):
+        return REDUCTION_DIRECTORY % instrument_name
+        
+    def _load_reduction_script(self, instrument_name):
+        return self._load_script(os.path.join(self._reduction_script_location(instrument_name), 'reduce.py'))
 
-        standard_vars = {}
-        advanced_vars = {}
-        for variables in run_variables:
-            value = VariableUtils().convert_variable_to_type(variables.value, variables.type)
-            if variables.is_advanced:
-                advanced_vars[variables.name] = value
-            else:
-                standard_vars[variables.name] = value
+    def _load_reduction_vars_script(self, instrument_name):
+        return self._load_script(os.path.join(self._reduction_script_location(instrument_name), 'reduce_vars.py'))
+        
+    def _create_variables(self, instrument, script, variable_dict, is_advanced):
+        variables = []
+        for key, value in variable_dict.iteritems():
+            str_value = str(value).replace('[','').replace(']','')
+            if len(str_value) > InstrumentVariable._meta.get_field('value').max_length:
+                raise DataTooLong
+            variable = InstrumentVariable( instrument=instrument
+                                         , name=key
+                                         , value=str_value
+                                         , is_advanced=is_advanced
+                                         , type=VariableUtils().get_type_string(value)
+                                         , start_run = 0
+                                         , help_text=self._get_help_text('standard_vars', key, instrument.name, script)
+                                         )
+            variables.append(variable)
+        return variables
 
-        arguments = { 'standard_vars' : standard_vars, 'advanced_vars': advanced_vars }
+    def _get_help_text(self, dictionary, key, instrument_name, reduce_script=None):
+        if not dictionary or not key:
+            return ""
+        if not reduce_script:
+            reduce_script = self._load_reduction_vars_script(instrument_name)
+        if 'variable_help' in dir(reduce_script):
+            if dictionary in reduce_script.variable_help:
+                if key in reduce_script.variable_help[dictionary]:
+                    return self._replace_special_chars(reduce_script.variable_help[dictionary][key])
+        return ""
+        
+    def _replace_special_chars(self, help_text):
+        help_text = cgi.escape(help_text)  # Remove any HTML already in the help string
+        help_text = help_text.replace('\n', '<br>').replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+        return help_text
 
-        return (script, arguments)
         
 
 class MessagingUtils(object):
@@ -384,7 +342,7 @@ class MessagingUtils(object):
         """
         Creates a dict message from the given run, ready to be sent to ReductionPending
         """
-        script, arguments = ReductionVariablesUtils().get_script_and_arguments(RunVariable.objects.filter(reduction_run=reduction_run))
+        script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
 
         data_path = ''
         # Currently only support single location
@@ -436,43 +394,3 @@ class MessagingUtils(object):
         data_dict["cancel"] = True
         self._send_pending_msg(data_dict)
         
-
-class ScriptUtils(object):
-    def get_reduce_scripts(self, scripts):
-        script_out = None
-        script_vars_out = None
-        for script in scripts:
-            if script.file_name == "reduce.py":
-                script_out = script
-            elif script.file_name == "reduce_vars.py":
-                script_vars_out = script
-        return script_out, script_vars_out
-
-    def get_reduce_scripts_binary(self, scripts):
-        script, script_vars = self.get_reduce_scripts(scripts)
-        return script.script, script_vars.script
-        
-    def read_binary(self, bin_script):
-        """
-        Takes a binary script and returns its Python string form. It assumes that the encoding of the binary is UTF-8.
-        """
-        return bin_script.decode("utf-8")
-
-    def get_cache_scripts_modified(self, scripts):
-        """
-        Returns the last time the scripts in the database were modified (in seconds since epoch).
-        """
-        script_modified = None
-        script_vars_modified = None
-
-        for script in scripts:
-            if script.file_name == "reduce.py":
-                script_modified = self._convert_time_from_string(str(script.created))
-            elif script.file_name == "reduce_vars.py":
-                script_vars_modified = self._convert_time_from_string(str(script.created))
-        return script_modified, script_vars_modified
-
-    def _convert_time_from_string(self, string_time):
-        time_format = "%Y-%m-%d %H:%M:%S"
-        string_time = string_time[:string_time.find('+')]
-        return int(time.mktime(time.strptime(string_time, time_format)))

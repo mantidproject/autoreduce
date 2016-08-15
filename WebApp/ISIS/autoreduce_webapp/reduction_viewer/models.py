@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from autoreduce_webapp.utils import SeparatedValuesField
 import autoreduce_webapp.icat_communication
 
@@ -17,33 +16,38 @@ class Experiment(models.Model):
     def __unicode__(self):
         return u'%s' % self.reference_number
 
-    def get_ICAT_details():
-        return icat_communication.get_experiment_details(reference_number)
+    def get_ICAT_details(self):
+        return autoreduce_webapp.icat_communication.get_experiment_details(self.reference_number)
 
 class Status(models.Model):
     value = models.CharField(max_length=25)
 
     def __unicode__(self):
-        return u'%s' % self.value
-
+        return u'%s' % self.value        
+        
 class ReductionRun(models.Model):
-    instrument = models.ForeignKey(Instrument, related_name='reduction_runs', null=True)
     run_number = models.IntegerField(blank=False)
-    run_name = models.CharField(max_length=200, blank=True)
     run_version = models.IntegerField(blank=False)
+    run_name = models.CharField(max_length=200, blank=True)
     experiment = models.ForeignKey(Experiment, blank=False, related_name='reduction_runs')
-    created = models.DateTimeField(auto_now_add=True, blank=False)
-    started_by = models.IntegerField(null=True, blank=True)
-    last_updated = models.DateTimeField(auto_now=True, blank=False)
+    instrument = models.ForeignKey(Instrument, related_name='reduction_runs', null=True)
+    
+    script = models.TextField(blank=False)
+    
     status = models.ForeignKey(Status, blank=False, related_name='+')
+    created = models.DateTimeField(auto_now_add=True, blank=False)
+    last_updated = models.DateTimeField(auto_now=True, blank=False)
     started = models.DateTimeField(null=True, blank=True)
     finished = models.DateTimeField(null=True, blank=True)
+    started_by = models.IntegerField(null=True, blank=True)
     message = models.CharField(max_length=255, blank=True)
     graph = SeparatedValuesField(null=True, blank=True)
-    hidden_in_failviewer = models.BooleanField(default=False)
-    retry_when = models.DateTimeField(null=True, blank=True)
+    
     retry_run = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    retry_when = models.DateTimeField(null=True, blank=True)
     cancel = models.BooleanField(default=False)
+    hidden_in_failviewer = models.BooleanField(default=False)
+    
 
     def __unicode__(self):
         if self.run_name:
@@ -63,7 +67,8 @@ class ReductionRun(models.Model):
         else:
             title = '%s' % self.run_number
         return title
-
+        
+        
 class DataLocation(models.Model):
     file_path = models.CharField(max_length=255)
     reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='data_location')
