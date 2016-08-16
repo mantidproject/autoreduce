@@ -1,11 +1,11 @@
 import sys, time, logging, os, datetime, json, shutil, getpass
 from sets import Set
 from mock import patch
-from urllib2 import URLError
+from xml.sax import SAXParseException
 
 from django.test import TestCase, TransactionTestCase 
 from django.utils import timezone
-from autoreduce_webapp.settings import LOG_FILE, LOG_LEVEL, ACTIVEMQ, BASE_DIR, REDUCTION_DIRECTORY, ICAT
+from autoreduce_webapp.settings import LOG_FILE, LOG_LEVEL, ACTIVEMQ, BASE_DIR, TEST_REDUCTION_DIRECTORY, ICAT, UOWS_URL, UOWS_LOGIN_URL
 logging.basicConfig(filename=LOG_FILE.replace('.log', '.test.log'),level=LOG_LEVEL, format=u'%(message)s',)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 sys.path.insert(0, BASE_DIR)
@@ -13,15 +13,16 @@ sys.path.insert(0, BASE_DIR)
 from icat.exception import ICATSessionError
 from suds.client import Client as suds_client
 
-from reduction_viewer.models import ReductionRun, Instrument, ReductionLocation, Status, Experiment, DataLocation
-from reduction_viewer.utils import StatusUtils
-from reduction_variables.models import InstrumentVariable, RunVariable
+with patch('autoreduce_webapp.settings.REDUCTION_DIRECTORY', TEST_REDUCTION_DIRECTORY):
+    from reduction_viewer.models import ReductionRun, Instrument, ReductionLocation, Status, Experiment, DataLocation
+    from reduction_viewer.utils import StatusUtils
+    from reduction_variables.models import InstrumentVariable, RunVariable
 
-from autoreduce_webapp.icat_communication import ICATCommunication
-from autoreduce_webapp.uows_client import UOWSClient
-from autoreduce_webapp.daemon import Daemon
-from autoreduce_webapp.queue_processor_daemon import QueueProcessorDaemon
-from autoreduce_webapp.queue_processor import Client, Listener
+    from autoreduce_webapp.icat_communication import ICATCommunication
+    from autoreduce_webapp.uows_client import UOWSClient
+    from autoreduce_webapp.daemon import Daemon
+    from autoreduce_webapp.queue_processor_daemon import QueueProcessorDaemon
+    from autoreduce_webapp.queue_processor import Client, Listener
 
 from utils import copyScripts, removeScripts
 
@@ -29,7 +30,6 @@ rb_number = 2
 
        
             
-
 class QueueProcessorTestCase(TransactionTestCase):
     '''
         Insert any data that is needed for tests
@@ -44,7 +44,7 @@ class QueueProcessorTestCase(TransactionTestCase):
         Remove InactiveInstrument dummy script
     '''
     def tearDown(self):
-        pass#self.remove_dummy_reduce_script("InactiveInstrument")
+        pass
 
     @classmethod
     def setUpClass(cls):
@@ -58,11 +58,11 @@ class QueueProcessorTestCase(TransactionTestCase):
         
         cls._timeout_wait = 1
 
-        map(copyScripts, ['valid', 'empty_script', 'duplicate_var_reduce', 'syntax_error', 'new_instrument'] )
+        map(copyScripts, ['valid', 'empty_script', 'duplicate_var_reduce', 'syntax_error', 'new_instrument', 'InactiveInstrument', 'ExistingTestInstrument1'] )
     
     @classmethod
     def tearDownClass(cls):
-        map(removeScripts, ['valid', 'empty_script', 'duplicate_var', 'syntax_error'])
+        map(removeScripts, ['valid', 'empty_script', 'duplicate_var', 'syntax_error', 'new_instrument', 'InactiveInstrument', 'ExistingTestInstrument1'])
         pass
         
     def createMockSMTP(self):
@@ -119,7 +119,7 @@ class QueueProcessorTestCase(TransactionTestCase):
         Copy a test reduce.py script to the correct location for use in the tests
     '''
     def save_dummy_reduce_script(self, instrument_name):
-        directory = REDUCTION_DIRECTORY % instrument_name
+        directory = TEST_REDUCTION_DIRECTORY % instrument_name
         test_reduce = os.path.join(os.path.dirname(__file__), '../', 'test_files','reduce.py')
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -132,7 +132,7 @@ class QueueProcessorTestCase(TransactionTestCase):
         WARNING!!!! Destructive!!!
     '''
     def remove_dummy_reduce_script(self, instrument_name):
-        directory = REDUCTION_DIRECTORY % instrument_name
+        directory = TEST_REDUCTION_DIRECTORY % instrument_name
         logging.warning("About to remove %s" % directory)
         if os.path.exists(directory):
             shutil.rmtree(directory)
@@ -760,15 +760,8 @@ class QueueProcessorTestCase(TransactionTestCase):
         self.assertNotEqual(runs[0].finished, None, "Expected the reduction run to have a finished timestamp")
         self.assertNotEqual(runs[0].graph, None, "Expected to find some graphs")
         self.assertTrue(len(runs[0].graph) == 1, "Expected to find 1 graph but instead found %s" % len(runs[0].graph))
-        self.assertTrue('base64' in runs[0].graph[0], "Expected to find 'base64' in graph text")
-
-
-        
-        
-        
-"""
+        self.assertTrue('base64' in runs[0].graph[0], "Expected to find 'base64' in graph text")  
    
-
    
 class ICATCommunicationTestCase(TestCase):
 
@@ -800,7 +793,7 @@ class ICATCommunicationTestCase(TestCase):
     def test_icat_login_with_invalid_credentials(self):
         try:
             with ICATCommunication(USER='MadeUp') as icat:
-                self.fail("Expecting login to fail")
+                self.assertEqual(icat, None, "Expecting login to fail")
         except ICATSessionError:
             pass
     
@@ -810,17 +803,14 @@ class ICATCommunicationTestCase(TestCase):
     def test_icat_login_with_invalid_url(self):
         try:
             with ICATCommunication(URL='https://www.example.com/') as icat:
-                self.fail("Expecting login to fail")
-        except URLError:
+                self.assertEqual(icat, None, "Expecting login to fail")
+        except SAXParseException:
             pass
 
     '''
         Check that ICAT can login when passed in credentials
     '''
     def test_icat_login_with_valid_values_passed_in(self):
-        import settings
-        reload(settings)
-        from settings import ICAT
         with ICATCommunication(**ICAT) as icat:
             pass
         
@@ -840,9 +830,11 @@ class ICATCommunicationTestCase(TestCase):
     '''
     def test_get_experiment_details_invalid_experiment(self):
         with ICATCommunication() as icat:
-            experiment = icat.get_experiment_details(-123)
+            reference_number = -123333
+            shouldBeReturned = {'reference_number': str(reference_number), 'end_date': 'N/A', 'title': 'N/A', 'summary': u'N/A', 'pi':'', 'start_date': 'N/A'}
             
-            self.assertEqual(experiment, None, 'Not expecting an experiment to be returned')
+            experiment = icat.get_experiment_details(reference_number)            
+            self.assertEqual(experiment, shouldBeReturned, 'Expecting %s to be returned, but got %s' % (str(shouldBeReturned), str(experiment)))
 
     '''
         Check that an error is raised when passing in invalid values
@@ -1107,10 +1099,10 @@ class ICATCommunicationTestCase(TestCase):
             found_experiment = False
             for instrument in instruments:
                 for experiment in instruments[instrument]:
-                    if experiment == str(1290062):
+                    if experiment == str(1290075):
                         found_experiment = True
                         break
-            self.assertTrue(found_experiment, "Expecting to find experiment %s" % 1290062)
+            self.assertTrue(found_experiment, "Expecting to find experiment %s, but only received %s" % (1290075, str(instruments)))
               
     '''
         Check that an exception is raised when no instruments are passed in
@@ -1151,30 +1143,34 @@ class ICATCommunicationTestCase(TestCase):
             is_admin = icat.is_admin(self.test_instrument_scientist)
 
             self.assertFalse(is_admin, "Not expecting user %s to be an admin." % self.test_instrument_scientist)
-            
+         
+         
 class UOWSClientTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('\nThese tests require that you have a user account on the dev user office system. https://devusers.facilities.rl.ac.uk/auth/')
+        cls.uows = UOWSClient(URL=UOWS_URL)
+        
+        print('\nThese tests require that you have a user account on the user office system.')
         cls._username = raw_input('UserOffice WebService Username: ')
         cls._password = getpass.getpass('UserOffice WebService Password: ')
+        client = suds_client(UOWS_URL)
+        cls._session_id = client.service.login(cls._username, cls._password)
+        
+    @classmethod
+    def tearDownClass(cls):
+        client = suds_client(UOWS_URL)
+        try:
+            client.service.logout(cls._session_id)
+        except:
+            pass        
         
     def setUp(self):
-        url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
-        client = suds_client(url)
-        self._session_id = client.service.login(self._username, self._password)
-        url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
-        self.uows = UOWSClient(URL=url)
-
+        pass
+        
     def tearDown(self):
-        url = 'https://fitbawebdev.isis.cclrc.ac.uk:8181/UserOfficeWebService/UserOfficeWebService?wsdl'
-        client = suds_client(url)
-        try:
-            client.service.logout(self._session_id)
-        except:
-            pass
-
+        pass
+        
     '''
         Check that a valid session is correctly identified
     '''
@@ -1313,5 +1309,3 @@ class UOWSClientTestCase(TestCase):
             
             
             
-            
-"""
