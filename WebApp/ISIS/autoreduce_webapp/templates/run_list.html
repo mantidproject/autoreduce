@@ -54,7 +54,11 @@
     {% endif %} 
 {% endblock %}
 
-{% block scripts %}
+{% block scripts %}    
+    {% if preload_runs %}
+        <script>window.preload_runs = true;</script>
+    {% endif %}
     <script src="{% static "javascript/vendor/fastdom.js" %}"></script>
     <script src="{% static "javascript/run_list.js" %}"></script>
+
 {% endblock %}

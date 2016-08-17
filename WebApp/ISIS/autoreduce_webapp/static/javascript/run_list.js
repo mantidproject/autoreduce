@@ -45,11 +45,30 @@
         }
     };
     
-    var load_all_runs = function load_all_runs(event) {
-        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // trigger loading of all unloaded runs
-        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // click again to reset open/closed status
+    function expandItem(event) {
+        el = event.currentTarget;
         
-        $('#run_search').prop('onfocus',null).off('focus'); // unregister load trigger
+        expandItem.counter = expandItem.counter || 0; // keep track of how many items we're currently loading
+        
+        // indicate that we're loading
+        expandItem.counter++;
+        $("*").css("cursor", "wait");
+        $("#search-parent").addClass("has-warning");
+        
+        // unregister the load trigger
+        $(el).off('click', expandItem);
+            
+        var name = el.id;
+        $("#"+name+"-list").load("list/"+name, 
+            function () {
+                // remove loading indicators if we should
+                expandItem.counter--;
+                if (expandItem.counter <= 0)
+                {
+                    $("*").css("cursor", "default");
+                    $("#search-parent").removeClass("has-warning");
+                }
+            });
     };
 
     var run_search = function run_search(event){
@@ -94,6 +113,13 @@
             $('#no-search-results').removeClass('hide').show();
         }
     };
+    
+    var load_all_runs = function load_all_runs(event) {
+        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // trigger loading of all unloaded runs
+        $(".js-toggle-experiment-children,.js-toggle-instrument-children").click(); // click again to reset open/closed status
+        
+        $('#run_search').off('focus', load_all_runs); // unregister load trigger
+    };
 
     var mobileOnly = function mobileOnly(){
         $('#run_search').data('placement', 'top');
@@ -110,35 +136,16 @@
         $('#run_search').on('focus', load_all_runs); // load all items
         $('#by-run-number-tab a,#by-experiment-tab a').on('click', tabClickAction);
         $('#by-tabs-mobile').on('change', mobileTabChangeAction);
+        
         $('.instrument-heading').on('click', toggleInstrumentsExperimentsClickAction);
-        $('.experiment-heading').on('click', toggleExperimentRunsClickAction);
+        $('.js-instrument-loader').on('click', expandItem); // should only be attributed to these that are in the 'by run number' tab.
+        $('.experiment-heading').on('click', toggleExperimentRunsClickAction).on('click', expandItem);
+        
+        if (window.preload_runs)
+        {
+            load_all_runs(null);
+        }
     };
 
     init();
 }());
-
-
-// Put this in the global namespace for various snippets to use.
-function expandItem(el) {
-    expandItem.counter = expandItem.counter || 0; // keep track of how many items we're currently loading
-    
-    // indicate that we're loading
-    expandItem.counter++;
-    $("*").css("cursor", "wait");
-    $("#search-parent").addClass("has-warning");
-    
-    // unregister the load trigger
-    $(el).prop('onclick',null).off('click');
-        
-    var name = el.id;
-    $("#"+name+"-list").load("list/"+name, 
-        function () {
-            // remove loading indicators if we should
-            expandItem.counter--;
-            if (expandItem.counter <= 0)
-            {
-                $("*").css("cursor", "default");
-                $("#search-parent").removeClass("has-warning");
-            }
-        });
-};
