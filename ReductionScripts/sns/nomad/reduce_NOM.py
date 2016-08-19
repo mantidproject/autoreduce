@@ -39,7 +39,7 @@ else:
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename="/SNS/lustre/NOM/IPTS-17335/shared/autoNOM_00/exp.ini"
+    expiniFilename="/SNS/lustre/NOM/IPTS-17335/shared/autoNOM/exp.ini"
 print "Using", expiniFilename
 
 # determine information for caching
