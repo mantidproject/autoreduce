@@ -44,7 +44,7 @@ print "Using", expiniFilename
 
 # determine information for caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
-PDLoadCharacterizations(Filename="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
+PDLoadCharacterizations(Filename="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_08_18-rietveld.txt",
                         ExpIniFilename=expiniFilename,
                         OutputWorkspace="characterizations")
 PDDetermineCharacterizations(InputWorkspace=wksp,
@@ -101,7 +101,7 @@ if van_run > 0:
 SNSPowderReduction(Filename=eventFile,
                    MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
                    CalibrationFile="/SNS/NOM/IPTS-17335/shared/NOM_calibrate_d78267_2016_08_19.h5",
-                   CharacterizationRunsFile="/SNS/NOM/IPTS-4480/shared/characterization_files/NOM_characterizations_2015_10_15.txt",
+                   CharacterizationRunsFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_08_18-rietveld.txt",
                    ExpIniFilename=expiniFilename,
                    RemovePromptPulseWidth=50,
                    ResampleX=resamplex, BinInDspace=True, FilterBadPulses=25.,
