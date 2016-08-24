@@ -125,7 +125,6 @@
             }
         };
         var validateText = function validateText(){
-            validateNotEmpty.call(this);
         };
         var validateDescriptionText = function validateDescriptionText(){
             var max_length = 200;
@@ -147,14 +146,13 @@
         };
         var validateListNumber = function validateListNumber(){
             var items, i;
-            validateNotEmpty.call(this);
             if($(this).val().trim().endsWith(',')){
-                addInvalid($(this), getVarName($(this)) + ' must be a comma seperated list.')
-            }else{
+                addInvalid($(this), getVarName($(this)) + ' must be a comma separated list.')
+            }else if($(this).val() !== ''){
                 items = $(this).val().split(',');
                 for(i=0;i<items.length;i++){
                     if(!isNumber(items[i])){
-                        addInvalid($(this), getVarName($(this)) + ' must be a comma seperated list of numbers.')
+                        addInvalid($(this), getVarName($(this)) + ' must be a comma separated list of numbers.')
                         break;
                     }
                 }
@@ -162,14 +160,13 @@
         };
         var validateListText = function validateListText(){
             var items, i;
-            validateNotEmpty.call(this);
             if($(this).val().trim().endsWith(',')){
-                addInvalid($(this), getVarName($(this)) + ' must be a comma seperated list.')
-            }else{
+                addInvalid($(this), getVarName($(this)) + ' must be a comma separated list.')
+            }else if($(this).val() !== ''){
                 items = $(this).val().split(',');
                 for(i=0;i<items.length;i++){
                     if(items[i].trim() === ''){
-                        addInvalid($(this), getVarName($(this)) + ' must be a comma seperated list.')
+                        addInvalid($(this), getVarName($(this)) + ' must be a comma separated list.')
                         break;
                     }
                 }
@@ -179,7 +176,7 @@
             // Validates the batch re-run text
             validateNotEmpty.call(this);
             if($(this).val().trim().endsWith(',')){
-                addInvalid($(this), '<strong>Run Numbers</strong> must be a comma seperated list of either numbers or ranges.');
+                addInvalid($(this), '<strong>Run Numbers</strong> must be a comma separated list of either numbers or ranges.');
                 return;
             }else{
                 items = $(this).val().split(',');
@@ -189,7 +186,7 @@
                         // Might be range
                         var range = items[i].split('-');
                         if(range.length != 2) {
-                            addInvalid($(this), '<strong>Run Numbers</strong> must be a comma seperated list of either numbers or ranges.');
+                            addInvalid($(this), '<strong>Run Numbers</strong> must be a comma separated list of either numbers or ranges.');
                             break;
                         }else{
                             var rangeSubTot = range[1]-range[0];
@@ -362,7 +359,13 @@
     var toggleTrackScript = function toggleTrackScript(event) {
         var checkBox = $('#track_script_checkbox');
         checkBox.prop("checked", !checkBox.prop("checked"));
+        updateTrackFields();
     };
+    var updateTrackFields = function updateTrackFields() {
+        // Lock the variable fields if they should track the script.
+        var checkBox = $('#track_script_checkbox');
+        $("[id^=var-]").attr("disabled", checkBox.prop("checked"));
+    }
 
     var cancelForm = function cancelForm(event){
         event.preventDefault();
@@ -423,14 +426,20 @@
     var init = function init(){
         $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#previewScript', previewScript);
         $('#script-preview-modal').on('click', '#downloadScript', downloadScript);
+        
         $('#run_variables,#instrument_variables').on('click', '#resetValues', resetDefaultVariables);
         $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#currentScript', resetCurrentVariables);
         $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#variableSubmit', submitForm);
         $('#run_variables,#instrument_variables,#submit_jobs').on('click', '#cancelForm', cancelForm);
         $('#run_variables,#instrument_variables').on('click', 'input[type=checkbox][data-type=boolean]', updateBoolean);
+        
         $('#instrument_variables').on('click', '#track_script', toggleTrackScript);
+        $('#instrument_variables').on('click', '#track_script_checkbox', updateTrackFields);
+        updateTrackFields();
+        
         $('#instrument_variables').on('mouseover mouseleave', '#track_script', toggleActionExplainations);
         $('.js-form-actions li>a').on('mouseover mouseleave', toggleActionExplainations);
+        
         $('#run_end').on('change', triggerAfterRunOptions);
         $('.js-show-default-variables').on('click', showDefaultSriptVariables);
         if($('#variable-range-toggle').length >0){

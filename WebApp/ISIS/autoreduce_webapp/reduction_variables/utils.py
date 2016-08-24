@@ -1,4 +1,4 @@
-import logging, os, sys, re, json, cgi, imp
+import logging, os, sys, re, json, cgi, imp, copy
 sys.path.append(os.path.join("../", os.path.dirname(os.path.dirname(__file__))))
 os.environ["DJANGO_SETTINGS_MODULE"] = "autoreduce_webapp.settings"
 from autoreduce_webapp.settings import ACTIVEMQ, REDUCTION_DIRECTORY, FACILITY
@@ -30,10 +30,24 @@ class VariableUtils(object):
                           , help_text = instrument_var.help_text
                           , reduction_run = reduction_run
                           )
-                          
+
     def save_run_variables(self, instrument_vars, reduction_run):
         runVariables = map(lambda iVar: self.derive_run_variable(iVar, reduction_run), instrument_vars)
         map(lambda rVar: rVar.save(), runVariables)
+        return runVariables
+        
+    def copy_variable(self, variable):
+        """ Return a temporary copy (unsaved) of the variable, which can be modified and then saved without modifying the original. """
+        return InstrumentVariable( name = variable.name
+                                 , value = variable.value
+                                 , is_advanced = variable.is_advanced
+                                 , type = variable.type
+                                 , help_text = variable.help_text
+                                 , instrument = variable.instrument
+                                 , experiment_reference = variable.experiment_reference
+                                 , start_run = variable.start_run
+                                 , tracks_script = variable.tracks_script
+                                 )
 
     def wrap_in_type_syntax(self, value, var_type):
         """
@@ -124,44 +138,41 @@ class VariableUtils(object):
 
 
 class InstrumentVariablesUtils(object):
-    def get_default_variables(self, instrument_name, reduce_script=None):
+    def create_variables_for_run(self, reduction_run):
         """
-        Creates and returns a list of variables matching those found in the appropriate reduce script.
-        An opptional instance of reduce_script can be passed in to prevent multiple hits to the filesystem.
+        Finds the appropriate `InstrumentVariable`s for the given reduction run, and creates `RunVariable`s from them.
+        If the run is a re-run, use the previous run's variables.
+        If instrument variables set for the run's experiment are found, they're used.
+        Otherwise if variables set for the run's run number exist, they'll be used.
+        If not, the instrument's default variables will be.
         """
-        if not reduce_script:
-            reduce_script = self._load_reduction_vars_script(instrument_name)
-            
-        reduce_vars_module = self._read_script(reduce_script, os.path.join(self._reduction_script_location(instrument_name), 'reduce_vars.py'))
-        if not reduce_vars_module:
-            return []
-        
-        instrument = InstrumentUtils().get_instrument(instrument_name)
+        instrument_name = reduction_run.instrument.name
         variables = []
-        if 'standard_vars' in dir(reduce_vars_module):
-            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.standard_vars, False))
-        if 'advanced_vars' in dir(reduce_vars_module):
-            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.advanced_vars, True))
-        return variables
-
-    def set_default_instrument_variables(self, instrument_name, start_run=1):
-        """
-        Creates and saves a set of variables for the given run number using default values found in the relevant reduce script and returns them.
-        If no start_run is supplied, 1 is assumed.
-        """
-        if not start_run:
-            start_run = 1
-            
-        reduce_vars_script = self._load_reduction_vars_script(instrument_name)
-        instrument_variables = self.get_default_variables(instrument_name, reduce_vars_script)
+        # Check whether this run is a re-run.
+        previousRuns = ReductionRun.objects.filter(run_number = reduction_run.run_number, run_version__lt = reduction_run.run_version).order_by('-run_version')
+        if previousRuns:
+            lastRun = previousRuns.first()
+            variables = RunVariable.objects.filter(reduction_run = lastRun) # These will be treated as InstrumentVariable for later copying, but that doesn't matter.
         
-        variables = []
-        for variable in instrument_variables:
-            variable.start_run = start_run
-            variable.save()
-            variables.append(variable)
+        if not variables:
+            # No previous run versions. Find the instrument variables we want to use.
+            variables = self.show_variables_for_experiment(instrument_name, reduction_run.experiment.reference_number)
 
-        return variables
+        if not variables:
+            # No experiment-specific variables, so let's look for variables set by run number.
+            variables = self.show_variables_for_run(instrument_name, reduction_run.run_number)
+
+        if not variables:
+            # No variables are set, so we'll use the defaults, and set them them while we're at it.
+            variables = self.get_default_variables(instrument_name)
+            self.set_variables_for_runs(instrument_name, variables, reduction_run.run_number)
+
+        # Make sure the variables are up to date if they should be tracking the script.
+        self._update_variables(variables)
+
+        # Create run variables from these instrument variables, and return them.
+        return VariableUtils().save_run_variables(self, variables, reduction_run)
+
 
     def get_current_and_upcoming_variables(self, instrument_name):
         """
@@ -173,99 +184,175 @@ class InstrumentVariablesUtils(object):
         """
         instrument = InstrumentUtils().get_instrument(instrument_name)
         completed_status = StatusUtils().get_completed()
-
-        # Get latest run number and latest experiment reference
+        
+        # First, we find the latest run number to determine what's upcoming.
         try:
-            latest_completed_run = ReductionRun.objects.filter(instrument=instrument, run_version=0, status=completed_status).order_by('-run_number').first()
-            latest_completed_run_number = latest_completed_run.run_number
-        except AttributeError :
+            latest_completed_run_number = ReductionRun.objects.filter(instrument = instrument, run_version = 0, status = completed_status).order_by('-run_number').first().run_number
+        except AttributeError:
             latest_completed_run_number = 1
 
-        # Get the run number of the closest instrument variables
-        try:
-            current_variables_run_start = InstrumentVariable.objects.filter(instrument=instrument,start_run__lte=latest_completed_run_number).order_by('-start_run').first().start_run
-        except AttributeError :
-            current_variables_run_start = 1
-
-        current_variables = InstrumentVariable.objects.filter(instrument=instrument,start_run=current_variables_run_start)
-        upcoming_variables_by_run = InstrumentVariable.objects.filter(instrument=instrument, start_run__isnull=False,start_run__gt=latest_completed_run_number ).order_by('start_run')
-
+        # Get the most recent run variables.
+        current_variables = self.show_variables_for_run(instrument_name, latest_completed_run_number)
+        if not current_variables:
+            # If no variables are saved, we'll use the default ones, and set them while we're at it.
+            current_variables = self.get_default_variables(instrument_name)
+            self.set_variables_for_runs(instrument_name, current_variables)
+            
+        # And then select the variables for all subsequent run numbers; collect the immediate upcoming variables and all subsequent sets.
+        upcoming_variables_by_run = self.show_variables_for_run(instrument_name, latest_completed_run_number+1)
+        upcoming_variables_by_run += list(InstrumentVariable.objects.filter(instrument = instrument, start_run__isnull = False, start_run__gt = latest_completed_run_number+1).order_by('start_run'))
+        
+        # Get the upcoming experiments, and then select all variables for these experiments.
         upcoming_experiments = []
         with ICATCommunication() as icat:
             upcoming_experiments = list(icat.get_upcoming_experiments_for_instrument(instrument_name))
-
-        upcoming_variables_by_experiment = InstrumentVariable.objects.filter(instrument=instrument,experiment_reference__in=upcoming_experiments).order_by('experiment_reference')
-
-        # If no variables are saved, use the dfault ones from the reduce script
-        if not current_variables:
-            self.set_default_instrument_variables(instrument.name, current_variables_run_start)
-            current_variables = InstrumentVariable.objects.filter(instrument=instrument,start_run=current_variables_run_start )
-
+        upcoming_variables_by_experiment = InstrumentVariable.objects.filter(instrument = instrument, experiment_reference__in = upcoming_experiments).order_by('experiment_reference')
+                
         return current_variables, upcoming_variables_by_run, upcoming_variables_by_experiment
 
-    def get_variables_for_run(self, reduction_run):
+
+    def set_variables_for_experiment(self, instrument_name, variables, experiment_reference):
+        """ Given a list of variables, we set them to be the variables used for subsequent runs under the given experiment reference. """
+        map(lambda var: var.delete(), self.show_variables_for_experiment(instrument_name, experiment_reference)) # Delete old instrument variables if they exist.
+        # Save the new ones.
+        for var in variables:
+            var.experiment_reference = experiment_reference
+            var.save()
+
+
+    def set_variables_for_runs(self, instrument_name, variables, start_run=0, end_run=None):
         """
-        Fetches the appropriate variables for the given reduction run.
-        If instrument variables with a matching experiment reference number is found then these will be used
-        otherwise the variables with the closest run start will be used.
-        If no variable are found, default variables are created for the instrument and those are returned.
+        Given a list of variables, we set them to be the variables used for subsequent runs in the given run range.
+        If end_run is not supplied, these variables will be ongoing indefinitely.
+        If start_run is not supplied, these variables will be set for all run numbers going backwards.
         """
-        instrument_name = reduction_run.instrument.name
-        variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument, experiment_reference=reduction_run.experiment.reference_number)
-        
-        if not variables:
-            # No experiment-specific variables, lets look for run number
-            try:
-                variables_run_start = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run__lte=reduction_run.run_number, experiment_reference__isnull=True ).order_by('-start_run').first().start_run
-                variables = InstrumentVariable.objects.filter(instrument=reduction_run.instrument,start_run=variables_run_start)
-            except:
-                pass
+        instrument = InstrumentUtils().get_instrument(instrument_name)
+
+        # In this case we need to make sure that the variables we set will be the only ones used for the range given.
+        # If there are variables which apply after the given range ends, we want to create/modify a set to have a start_run after this end_run, with the right values.
+        # First, find all variables that are in the range.
+        applicable_variables = InstrumentVariable.objects.filter(instrument = instrument, start_run__gte = start_run)
+        if end_run:
+            applicable_variables = applicable_variables.filter(start_run__lte = end_run)
+            after_variables = InstrumentVariable.objects.filter(start_run = end_run).order_by('start_run')
+            previous_variables = InstrumentVariable.objects.filter(start_run__lt = start_run)
+            final_variables = []
+            
+            if applicable_variables and not after_variables:
+                # The last set of applicable variables extends outside our range.
+                final_start = applicable_variables.order_by('-start_run').first().start_run # Find the last set.
+                final_variables = list(applicable_variables.filter(start_run = final_start))
+                applicable_variables = applicable_variables.exclude(start_run = final_start) # Don't delete the final set.
                 
-        if not variables:
-            # Still not found any variables, we better create some
-            variables = self.set_default_instrument_variables(instrument_name)
-        
-        
-        # make sure variables are up to date if they need to be
-        defaults = self.get_default_variables(instrument_name)
-        
-        def updateVariable(oldVar, defaultVars):
-            matchingVars = filter(lambda var: var.name == oldVar.name, defaultVars)
-            try:
-                newVar = matchingVars[0]
-                map(lambda name: setattr(oldVar, name, getattr(newVar, name)),
-                    ["value", "type", "is_advanced", "help_text"])
-                oldVar.save()
-            except:
-                pass
+            elif not applicable_variables and not after_variables and previous_variables:
+                # There is a previous set that applies but doesn't start or end in the range.
+                final_start = previous_variables.order_by('-start_run').first().start_run # Find the last set.
+                final_variables = previous_variables.filter(start_run = final_start) # Set them to apply after our variables.
+                [VariableUtils().copy_variable(var).save() for var in final_variables] # Also copy them to apply before our variables.
                 
-        map(lambda var: updateVariable(var, defaults) if var.tracks_script else None, variables)
-        return variables
-        
-    def get_variables_from_current_script(self, instrument_name):
+            elif not applicable_variables and not after_variables and not previous_variables:
+                # There are instrument defaults which apply after our range.
+                final_variables = self.get_default_variables(instrument_name)
+       
+            # Modify the range of the final set to after the specified range, if there is one.
+            for var in final_variables:
+                var.start_run = end_run + 1
+                var.save()
+                
+        # Delete all currently saved variables that apply to the range.
+        map(lambda var: var.delete(), applicable_variables)
+
+        # Then save the new ones.
+        for var in variables:
+            var.start_run = start_run
+            var.save()
+
+
+    def show_variables_for_experiment(self, instrument_name, experiment_reference):
+        """ Look for currently set variables for the experiment. If none are set, return an empty list (or QuerySet) anyway. """
+        instrument = InstrumentUtils().get_instrument(instrument_name)
+        vars = InstrumentVariable.objects.filter(instrument=instrument, experiment_reference=experiment_reference)
+        self._update_variables(vars)
+        return [VariableUtils().copy_variable(var) for var in vars]
+
+
+    def show_variables_for_run(self, instrument_name, run_number=None):
         """
-        Reloads script in variables to match that on disk.
+        Look for the applicable variables for the given run number. If none are set, return an empty list (or QuerySet) anyway.
+        If run_number isn't given, we'll look for variables for the last run number.
         """
-        reduce_vars_script = self._load_reduction_vars_script(instrument_name)
-        variables = self.get_default_variables(instrument_name, reduce_vars_script)
+        instrument = InstrumentUtils().get_instrument(instrument_name)
+
+        # Find the run number of the latest set of variables that apply to this run; descending order, so the first will be the most recent run number.
+        if run_number:
+            applicable_variables = InstrumentVariable.objects.filter(instrument=instrument, start_run__lte=run_number).order_by('-start_run')
+        else:
+            applicable_variables = InstrumentVariable.objects.filter(instrument=instrument).order_by('-start_run')
+
+        if len(applicable_variables) != 0:
+            variable_run_number = applicable_variables.first().start_run
+            # Select all variables with that run number.
+            vars = InstrumentVariable.objects.filter(instrument=instrument, start_run=variable_run_number)
+            self._update_variables(vars)
+            return [VariableUtils().copy_variable(var) for var in vars]
+        else:
+            return []
+
+
+    def get_default_variables(self, instrument_name, reduce_script=None):
+        """
+        Creates and returns a list of variables from the reduction script on disk for the instrument.
+        If reduce_script is supplied, return variables using that script instead of the one on disk.
+        """
+        if not reduce_script:
+            reduce_script = self._load_reduction_vars_script(instrument_name)
+
+        reduce_vars_module = self._read_script(reduce_script, os.path.join(self._reduction_script_location(instrument_name), 'reduce_vars.py'))
+        if not reduce_vars_module:
+            return []
+
+        instrument = InstrumentUtils().get_instrument(instrument_name)
+        variables = []
+        if 'standard_vars' in dir(reduce_vars_module):
+            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.standard_vars, False))
+        if 'advanced_vars' in dir(reduce_vars_module):
+            variables.extend(self._create_variables(instrument, reduce_vars_module, reduce_vars_module.advanced_vars, True))
+            
+        for var in variables:
+            var.tracks_script = True
+            
         return variables
+
 
     def get_current_script_text(self, instrument_name):
         """
-        Fetches the reduction script and variables script for the given instument, and returns each as a string.
+        Fetches the reduction script and variables script for the given instrument, and returns each as a string.
         """
         script_text = self._load_reduction_script(instrument_name)
         script_vars_text = self._load_reduction_vars_script(instrument_name)
         return (script_text, script_vars_text)
         
         
+    def _update_variables(self, variables):
+        """ Updates all variables with tracks_script to their value in the script. This assumes that the variables all belong to the same instrument. """
+        defaults = self.get_default_variables(variables[0].instrument.name) if variables else []
+        
+        def updateVariable(oldVar):
+            matchingVars = filter(lambda var: var.name == oldVar.name, defaults) # Find the new variable from the script.
+            if matchingVars and oldVar.tracks_script: # Check whether we should and can update the old one.
+                newVar = matchingVars[0]
+                map(lambda name: setattr(oldVar, name, getattr(newVar, name)),
+                    ["value", "type", "is_advanced", "help_text"]) # Copy the new one's important attributes onto the old variable.
+                oldVar.save()
+
+        map(updateVariable, variables)
+
+
     def _read_script(self, script_text, script_path):
-        """
-        Takes a python script as a text string, and returns it loaded as a module. Failure will return None, and notify.
-        """
+        """ Takes a python script as a text string, and returns it loaded as a module. Failure will return None, and notify. """
         if not script_text or not script_path:
             return None
-            
+
         module_name = os.path.basename(script_path).split(".")[0] # file name without extension
         script_module = imp.new_module(module_name)
         try:
@@ -277,13 +364,10 @@ class InstrumentVariablesUtils(object):
         except SyntaxError:
             log_error_and_notify("Syntax error in reduction script %s" % script_path)
             return None
-        
-        
+
         
     def _load_script(self, path):
-        """
-        Load the relevant reduction script and return back the text of the script. If the script cannot be loaded, None is returned.
-        """
+        """ Load the relevant reduction script and return back the text of the script. If the script cannot be loaded, None is returned. """
         try:
             f = open(path, 'r')
             script_text = f.read()
@@ -291,16 +375,16 @@ class InstrumentVariablesUtils(object):
         except Exception as e:
             log_error_and_notify("Unable to load reduction script %s - %s" % (path, e))
             return None
-            
+
     def _reduction_script_location(self, instrument_name):
         return REDUCTION_DIRECTORY % instrument_name
-        
+
     def _load_reduction_script(self, instrument_name):
         return self._load_script(os.path.join(self._reduction_script_location(instrument_name), 'reduce.py'))
 
     def _load_reduction_vars_script(self, instrument_name):
         return self._load_script(os.path.join(self._reduction_script_location(instrument_name), 'reduce_vars.py'))
-        
+
     def _create_variables(self, instrument, script, variable_dict, is_advanced):
         variables = []
         for key, value in variable_dict.iteritems():
@@ -328,20 +412,28 @@ class InstrumentVariablesUtils(object):
                 if key in reduce_script.variable_help[dictionary]:
                     return self._replace_special_chars(reduce_script.variable_help[dictionary][key])
         return ""
-        
+
     def _replace_special_chars(self, help_text):
         help_text = cgi.escape(help_text)  # Remove any HTML already in the help string
         help_text = help_text.replace('\n', '<br>').replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
         return help_text
 
-        
+
 
 class MessagingUtils(object):
+    def send_pending(self, reduction_run, delay=None):
+        """ Sends a message to the queue with the details of the job to run. """
+        data_dict = self._make_pending_msg(reduction_run)
+        self._send_pending_msg(data_dict, delay)
+
+    def send_cancel(self, reduction_run):
+        """ Sends a message to the queue telling it to cancel any reruns of the job. """
+        data_dict = self._make_pending_msg(reduction_run)
+        data_dict["cancel"] = True
+        self._send_pending_msg(data_dict)
 
     def _make_pending_msg(self, reduction_run):
-        """
-        Creates a dict message from the given run, ready to be sent to ReductionPending
-        """
+        """ Creates a dict message from the given run, ready to be sent to ReductionPending. """
         script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
 
         data_path = ''
@@ -363,34 +455,14 @@ class MessagingUtils(object):
             'facility':FACILITY,
             'message':'',
         }
-        
+
         return data_dict
-        
-    
+
     def _send_pending_msg(self, data_dict, delay=None):
-        """
-        Sends data_dict to ReductionPending (with the specified delay)
-        """
+        """ Sends data_dict to ReductionPending (with the specified delay) """
         from autoreduce_webapp.queue_processor import Client as ActiveMQClient # to prevent circular dependencies
 
         message_client = ActiveMQClient(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Webapp_QueueProcessor', False, ACTIVEMQ['SSL'])
         message_client.connect()
         message_client.send('/queue/ReductionPending', json.dumps(data_dict), priority='0', delay=delay)
         message_client.stop()
-        
-
-    def send_pending(self, reduction_run, delay=None):
-        """
-        Sends a message to the queue with the details of the job to run
-        """
-        data_dict = self._make_pending_msg(reduction_run)
-        self._send_pending_msg(data_dict, delay)
-        
-    def send_cancel(self, reduction_run):
-        """
-        Sends a message to the queue telling it to cancel any reruns of the job
-        """
-        data_dict = self._make_pending_msg(reduction_run)
-        data_dict["cancel"] = True
-        self._send_pending_msg(data_dict)
-        
