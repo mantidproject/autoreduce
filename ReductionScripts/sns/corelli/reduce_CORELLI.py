@@ -183,7 +183,7 @@ if __name__ == "__main__":
 
     # load file
     raw=Load(nexus_file)
-    LoadInstrument(Workspace= raw, Filename='/SNS/CORELLI/shared/Calibration/CORELLI_Definition_cal_20160310.xml',RewriteSpectraMap=False)    
+    
     # Do the cross-correlation and save the file
     try:
         cc=CorelliCrossCorrelate(raw,56000)
