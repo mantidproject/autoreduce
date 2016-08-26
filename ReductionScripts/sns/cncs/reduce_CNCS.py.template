@@ -37,7 +37,7 @@ beta="${beta}"
 gamma="${gamma}"
 uVector="${u_vector}"
 vVector="${v_vector}"
-sub_directory="${sub_directory}$"
+sub_directory="${sub_directory}"
 
 #parameters not on the webpage
 #below remains unchanged
