@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_OC_d35725_2016_08_24.cal")
-char_file = os.path.join(cal_dir, "PG3_char_2016_08_24-pressure.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2016_08_28-OC-8mm.txt")
 #MODE = 0664
 
 eventFileAbs=sys.argv[1]
@@ -23,7 +23,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0008, BinInDspace=True,
+                   Binning=-0.0006, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
