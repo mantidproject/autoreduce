@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #imports section
-import sys, os, glob, filecmp, datetime, shutil
+import sys, os, glob, filecmp, datetime, shutil, ConfigParser
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
@@ -12,7 +12,6 @@ from mantid.simpleapi import *
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '1-25'})
 MaskBTPParameters.append({'Pixel': '91-128'})
-MaskBTPParameters.append({'Bank': '36-38'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -20,8 +19,8 @@ MaskBTPParameters.append({'Bank': '36-38'})
 raw_vanadium="/SNS/CNCS/IPTS-16626/0/182079/NeXus/CNCS_182079_event.nxs"
 processed_vanadium="van182079.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.25"
+grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -45,7 +44,7 @@ sub_directory="rrrr"
 #parameters not on the webpage
 #below remains unchanged
 NormalizedVanadiumEqualToOne = True
-
+configfile="config.ini"
 
 
 
@@ -71,6 +70,7 @@ def check_newer_script(instrument,folder):
     if newer_file_exists:
         new_filename=os.path.join(folder,"reduce_"+instrument+"_"+datetime.datetime.now().strftime('%Y.%m.%d_%H.%M.%S')+".py")
         shutil.copy2(master_filename,new_filename)
+    return newer_file_exists 
 
 
 def preprocessVanadium(Raw,Processed,Parameters):
@@ -194,8 +194,31 @@ if __name__ == "__main__":
     nexus_file=sys.argv[1]
     output_directory=sys.argv[2]
     
-    check_newer_script("CNCS",output_directory)
+    ar_changed=check_newer_script("CNCS",output_directory)
     DownloadInstrument(ForceUpdate=True)
+    
+    cfgfile_path=os.path.join(output_directory,configfile)
+    if not os.path.isfile(cfgfile_path):
+        sub_directory=''
+        cfg = ConfigParser.ConfigParser()
+        cfg.add_section('Reduction config')
+        cfg.set('Reduction config','subdirectory',sub_directory)
+        with open(cfgfile_path,'w') as f:
+            cfg.write(f)
+        os.chmod(cfgfile_path,0664) 
+    else:
+        if ar_changed:
+            cfg = ConfigParser.ConfigParser()
+            cfg.add_section('Reduction config')
+            cfg.set('Reduction config','subdirectory',sub_directory)
+            with open(cfgfile_path,'w') as f:
+                cfg.write(f)
+            os.chmod(cfgfile_path,0664)    
+        else:
+            cfg = ConfigParser.ConfigParser()
+            cfg.read(cfgfile_path)
+            sub_directory=cfg.get('Reduction config','subdirectory')
+    sub_directory=sub_directory.strip()
     
     DGSdict=preprocessVanadium(raw_vanadium,output_directory+processed_vanadium,MaskBTPParameters)
     datadict=preprocessData(nexus_file)
@@ -239,19 +262,19 @@ if __name__ == "__main__":
     if groupdict['GroupingFile']==output_directory+'powdergroupfile.xml':
         roundedvalue = "_powder_%.1f" % temp
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
             os.chmod(nxspe_filename,0664)
     else:
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             os.chmod(nxspe_filename,0664)
             
@@ -260,7 +283,7 @@ if __name__ == "__main__":
             SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
             SetGoniometer("reduce",Axis0=str(s1)+",0,1,0,1")
             ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
-            filename=os.path.join(output_directory, "MD/CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
+            filename=os.path.join(output_directory, "MD",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
             SaveMD(Filename=filename, InputWorkspace="md")
             os.chmod(filename,0664)
         except:
