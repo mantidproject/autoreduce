@@ -213,7 +213,7 @@ if __name__ == "__main__":
             cfg = ConfigParser.ConfigParser()
             cfg.read(cfgfile_path)
             sub_directory=cfg.get('Reduction config','subdirectory')
-    
+    sub_directory=sub_directory.strip()
     
     DGSdict=preprocessVanadium(raw_vanadium,output_directory+processed_vanadium,MaskBTPParameters)
     datadict=preprocessData(nexus_file)
@@ -257,19 +257,19 @@ if __name__ == "__main__":
     if groupdict['GroupingFile']==output_directory+'powdergroupfile.xml':
         roundedvalue = "_powder_%.1f" % temp
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic",subdir,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic",subdir,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
             os.chmod(nxspe_filename,0664)
     else:
-        nxspe_filename=os.path.join(output_directory, "inelastic/CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
+        nxspe_filename=os.path.join(output_directory, "inelastic",subdir,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
         os.chmod(nxspe_filename,0664)
         if create_elastic_nxspe:
-            nxspe_filename=os.path.join(output_directory, "elastic/CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
+            nxspe_filename=os.path.join(output_directory, "elastic",subdir,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             os.chmod(nxspe_filename,0664)
             
@@ -278,7 +278,7 @@ if __name__ == "__main__":
             SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
             SetGoniometer("reduce",Axis0=str(s1)+",0,1,0,1")
             ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
-            filename=os.path.join(output_directory, "MD/CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
+            filename=os.path.join(output_directory, "MD",subdir,"CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
             SaveMD(Filename=filename, InputWorkspace="md")
             os.chmod(filename,0664)
         except:
