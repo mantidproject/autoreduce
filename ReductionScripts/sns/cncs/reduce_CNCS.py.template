@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #imports section
-import sys, os, glob, filecmp, datetime, shutil
+import sys, os, glob, filecmp, datetime, shutil, ConfigParser
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
@@ -42,7 +42,7 @@ sub_directory="${sub_directory}"
 #parameters not on the webpage
 #below remains unchanged
 NormalizedVanadiumEqualToOne = True
-
+configfile="config.ini"
 
 
 
@@ -68,6 +68,7 @@ def check_newer_script(instrument,folder):
     if newer_file_exists:
         new_filename=os.path.join(folder,"reduce_"+instrument+"_"+datetime.datetime.now().strftime('%Y.%m.%d_%H.%M.%S')+".py")
         shutil.copy2(master_filename,new_filename)
+    return newer_file_exists 
 
 
 def preprocessVanadium(Raw,Processed,Parameters):
@@ -191,8 +192,28 @@ if __name__ == "__main__":
     nexus_file=sys.argv[1]
     output_directory=sys.argv[2]
     
-    check_newer_script("CNCS",output_directory)
+    ar_changed=check_newer_script("CNCS",output_directory)
     DownloadInstrument(ForceUpdate=True)
+    
+    if not os.path.isfile(cfgfile_path):
+        sub_directory=''
+        cfg = ConfigParser.ConfigParser()
+        cfg.add_section('Reduction config')
+        cfg.set('Reduction config','subdirectory',sub_directory)
+        with open(cfgfile_path,'w') as f:
+            cfg.write(f)
+    else:
+        if ar_changed:
+            cfg = ConfigParser.ConfigParser()
+            cfg.add_section('Reduction config')
+            cfg.set('Reduction config','subdirectory',sub_directory)
+            with open(cfgfile_path,'w') as f:
+                cfg.write(f)
+        else:
+            cfg = ConfigParser.ConfigParser()
+            cfg.read(cfgfile_path)
+            sub_directory=cfg.get('Reduction config','subdirectory')
+    
     
     DGSdict=preprocessVanadium(raw_vanadium,output_directory+processed_vanadium,MaskBTPParameters)
     datadict=preprocessData(nexus_file)
