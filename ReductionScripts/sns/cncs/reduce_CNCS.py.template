@@ -195,6 +195,7 @@ if __name__ == "__main__":
     ar_changed=check_newer_script("CNCS",output_directory)
     DownloadInstrument(ForceUpdate=True)
     
+    cfgfile_path=os.path.join(output_directory,configfile)
     if not os.path.isfile(cfgfile_path):
         sub_directory=''
         cfg = ConfigParser.ConfigParser()
@@ -202,6 +203,7 @@ if __name__ == "__main__":
         cfg.set('Reduction config','subdirectory',sub_directory)
         with open(cfgfile_path,'w') as f:
             cfg.write(f)
+        os.chmod(cfgfile_path,0664) 
     else:
         if ar_changed:
             cfg = ConfigParser.ConfigParser()
@@ -209,6 +211,7 @@ if __name__ == "__main__":
             cfg.set('Reduction config','subdirectory',sub_directory)
             with open(cfgfile_path,'w') as f:
                 cfg.write(f)
+            os.chmod(cfgfile_path,0664)    
         else:
             cfg = ConfigParser.ConfigParser()
             cfg.read(cfgfile_path)
