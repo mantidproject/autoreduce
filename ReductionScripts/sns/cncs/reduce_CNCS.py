@@ -39,7 +39,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,1,0"
 vVector="0,0,1"
-sub_directory=""
+sub_directory="ambient_pressure"
 
 #parameters not on the webpage
 #below remains unchanged
