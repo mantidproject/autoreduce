@@ -38,9 +38,9 @@ NORMALIZE_TO_UNITY = True
 # Locate the template file
 # If no template file is available, the automated reduction will generate one
 template_file = ""
-#if os.path.isfile("template.xml"):
-#    template_file = "template.xml"
-if os.path.isfile(os.path.join(output_dir, "template.xml")):
+if os.path.isfile("template.xml"):
+    template_file = "template.xml"
+elif os.path.isfile(os.path.join(output_dir, "template.xml")):
     template_file = os.path.join(output_dir, "template.xml")
 elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
     template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
@@ -53,7 +53,7 @@ output = LRAutoReduction(Filename=event_file_path,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                          OutputDirectory=output_dir,
                          SlitTolerance=0.06,
-                         ReadSequenceFromFile=True,
+                         ReadSequenceFromFile=False,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=output[1]
 
