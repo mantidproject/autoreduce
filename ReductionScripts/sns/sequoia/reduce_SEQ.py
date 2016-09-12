@@ -85,7 +85,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Tube': '2-4', 'Pixel': '32-35', 'Bank': '88'})
     MaskBTPParameters.append({'Pixel': '1-74', 'Bank': '38-74'})
     MaskBTPParameters.append({'Pixel': '60-128', 'Bank': '114-150'})
-    MaskBTPParameters.append({'Bank': '68-74,104-113,144-150'})
+    MaskBTPParameters.append({'Bank': '68-74,109-113,144-150'})
  
     #uninstalled packs at far left
     #MaskBTPParameters.append({'Bank':"114,115,75,76,38,39"})
