@@ -12,7 +12,7 @@ wavelengthMin=0.1
 wavelengthMax=2.9
 calFile="/SNS/NOM/IPTS-17210/shared/NOM_calibrate_d77194_2016_09_13.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_08_18-rietveld.txt"
-expiniFileDefault="/SNS/lustre/NOM/IPTS-17210/shared/manpixtest/exp.ini"
+expiniFileDefault="/SNS/lustre/NOM/IPTS-17210/shared/autoNOM_NeXuS/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
