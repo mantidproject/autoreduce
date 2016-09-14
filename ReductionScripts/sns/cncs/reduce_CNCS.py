@@ -17,9 +17,9 @@ MaskBTPParameters.append({'Bank': '38-50'})
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-16057/0/173037/NeXus/CNCS_173037_event.nxs"
-processed_vanadium="van173037_oneside.nxs"
-VanadiumIntegrationRange=[52000.0,53000.0]#integration range for Vanadium in TOF at 1.0 meV
+raw_vanadium="/SNS/CNCS/IPTS-15501/1/184549/NeXus/CNCS_184549_event.nxs"
+processed_vanadium="van184549_oneside.nxs"
+VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-1.1"
 Emax="0.92"
