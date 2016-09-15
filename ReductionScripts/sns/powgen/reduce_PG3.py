@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_PAC_d29581_2016_08_29.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2016_09_14-HR-JanisLT-6mm.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt")
 #MODE = 0664
 
 eventFileAbs=sys.argv[1]
