@@ -5,11 +5,11 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Config settings for cycle number, and instrument file arrangement
-INST_FOLDER = "\\\\isis\inst$\NDX%s\Instrument"
-DATA_LOC = "\data\cycle_%s\\"
-SUMMARY_LOC = "\logs\journal\SUMMARY.txt"
-LAST_RUN_LOC = "\logs\lastrun.txt"
-LOG_FILE = "xx\\monitor_log.txt"
+INST_FOLDER = r"\\isis\inst$\NDX%s\Instrument"
+DATA_LOC = r"\data\cycle_%s\\"
+SUMMARY_LOC = r"\logs\journal\SUMMARY.txt"
+LAST_RUN_LOC = r"\logs\lastrun.txt"
+LOG_FILE = r"xx\monitor_log.txt"
 INSTRUMENTS = [{'name': 'LET', 'use_nexus': True},
                {'name': 'MERLIN', 'use_nexus': False},
                {'name': 'MAPS', 'use_nexus': True},
@@ -50,11 +50,13 @@ class InstrumentMonitor(FileSystemEventHandler):
             self.instrumentFolder = INST_FOLDER % self.instrumentName
         self.instrumentSummaryLoc = self.instrumentFolder + SUMMARY_LOC
         self.instrumentLastRunLoc = self.instrumentFolder + LAST_RUN_LOC
-        self.instrumentDataFolderLoc = self.instrumentFolder + DATA_LOC % self._get_most_recent_cycle()
         with open(self.instrumentLastRunLoc) as lr:
             data = get_data_and_check(lr)
             self.last_run = data[1]
         self.lock = lock
+        
+    def _get_instrument_data_folder_loc(self):
+        return self.instrumentFolder + DATA_LOC % self._get_most_recent_cycle()
 
     def _get_most_recent_cycle(self):
         folders = os.listdir(self.instrumentFolder + '\logs\\')
@@ -69,7 +71,7 @@ class InstrumentMonitor(FileSystemEventHandler):
         and last line of the summary text file to build the query
         """
         filename = ''.join(last_run_data[0:2])  # so MER111 etc
-        run_data_loc = self.instrumentDataFolderLoc + filename + get_file_extension(self.use_nexus)
+        run_data_loc = self._get_instrument_data_folder_loc() + filename + get_file_extension(self.use_nexus)
         return {
             "rb_number": self._get_RB_num(),
             "instrument": self.instrumentName,
@@ -103,8 +105,7 @@ class InstrumentMonitor(FileSystemEventHandler):
                     self.send_message(data)
         except Exception as e:
             # if this code can't be executed it will raise a logging error towards the user.
-            logging.exception("Error on loading file: ")
-            raise e
+            logging.exception("Error on loading file: ", exc_info=True)
 
     def send_message(self, last_run_data):
         # Puts message together and sends it, along with logging.
@@ -128,8 +129,9 @@ def main():
         path = event_handler.get_watched_folder()
         # Tell the observer what to watch and give it the class that will handle the events.
         observer.schedule(event_handler, path)
-        # Start watching files.
-        observer.start()
+        
+    # Start watching files.
+    observer.start()
 
 def stop():
     # This function disables the observer, it stop watching the files.
