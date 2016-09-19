@@ -163,7 +163,7 @@ def preprocessEnergyTransfer(EGuess):
         return [-0.5*EGuess,0.01*EGuess,0.95*EGuess]
 
 def preprocessGrouping(ws,outdir):
-    if grouping in ['2x1', '4x1', '8x1']:
+    if grouping in ['2x1', '4x1', '8x1','8x2']:
         dictgrouping={'GroupingFile':"/SNS/CNCS/shared/autoreduce/CNCS_"+grouping+".xml"}
     elif grouping=='powder':
         GroupingFilename=outdir+'powdergroupfile.xml'

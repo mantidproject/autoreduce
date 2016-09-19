@@ -10,9 +10,9 @@ resamplex=-6000
 vanradius=0.58
 wavelengthMin=0.1
 wavelengthMax=2.9
-calFile="/SNS/NOM/IPTS-17118/shared/NOM_calibrate_d79584_2016_09_12.h5"
+calFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_d78769_2016_09_01.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_08_18-rietveld.txt"
-expiniFileDefault="/SNS/lustre/NOM/IPTS-17118/shared/autoNOM/exp.ini"
+expiniFileDefault="/SNS/lustre/NOM/IPTS-17210/shared/autoNOM/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list

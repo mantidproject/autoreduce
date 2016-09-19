@@ -4,8 +4,8 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_battery_d35725_2016_08_29.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt")
+cal_file  = os.path.join(cal_dir, "PG3_JANIS_LT_HT_d29581_2016_08_29.h5")
+char_file = os.path.join(cal_dir, "PG3_char_2016_09_06-HR-JANIS_LT-6mm.txt")
 #MODE = 0664
 
 eventFileAbs=sys.argv[1]
