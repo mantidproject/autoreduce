@@ -188,7 +188,7 @@ if mpiRank == 0:
          plotly_args = {'filename':os.path.join(outputDir, wksp_name+'.html')}
 
     div = plot(fig, show_link=False, **plotly_args)
-    print div
+    #print div
     if post_image:  # post to the plot server
          from postprocessing.publish_plot import publish_plot
          request = publish_plot('NOM', runNumber, files={'file':div})
