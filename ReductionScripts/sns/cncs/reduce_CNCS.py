@@ -17,10 +17,10 @@ MaskBTPParameters.append({'Bank': '36-50'})
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-16111/1/161062/NeXus/CNCS_161062_event.nxs"
-processed_vanadium="van161062_oneside.nxs"
+raw_vanadium="/SNS/CNCS/IPTS-16669/0/190020/NeXus/CNCS_190020_event.nxs"
+processed_vanadium="van190020_oneside.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
@@ -30,7 +30,7 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8,sensor0normal"
-create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="4.655"
 b="4.655"
