@@ -28,8 +28,8 @@ def plot_dualenergy(ax,x1,y1,x2,y2,xlim):
    ax.set_ylabel('Intensity')
    #ax.legend()
 
-sys.path.append("/opt/mantidnightly/bin")
-#sys.path.insert(0,'/opt/Mantid/bin')
+#sys.path.append("/opt/mantidnightly/bin")
+sys.path.insert(0,'/opt/Mantid/bin')
 
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
