@@ -31,7 +31,7 @@ WL_CUTOFF = 10.0
 # Default primary fraction range to be used if it is not defined in the template
 PRIMARY_FRACTION_RANGE = [116, 197]
 
-NORMALIZE_TO_UNITY = True
+NORMALIZE_TO_UNITY = True#False
 #-------------------------------------------------------------------------
 
 
@@ -53,7 +53,7 @@ output = LRAutoReduction(Filename=event_file_path,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                          OutputDirectory=output_dir,
                          SlitTolerance=0.06,
-                         ReadSequenceFromFile=False,
+                         ReadSequenceFromFile=True,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=output[1]
 
