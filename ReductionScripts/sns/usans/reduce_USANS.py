@@ -76,7 +76,7 @@ if __name__ == "__main__":
         if i>1 and lower_bound == roi_min:
             main_index = i-2
         peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
-    main_wl = 
+    main_wl = wavelength[main_index]
 
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
