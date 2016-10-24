@@ -22,7 +22,7 @@ class AutoReduction():
     print nexus_file, output_directory
     self._nexus_file = nexus_file
     self._output_directory = output_directory
-    self._norm_file='/SNS/HYS/shared/autoreduce/TiZr_Mar18-2016.nxs' 
+    self._norm_file='/SNS/HYS/shared/autoreduce/V_15meV_Sep2016.nxs' 
 
   def execute(self):
     try:
