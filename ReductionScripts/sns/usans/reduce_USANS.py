@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 sequence_first_run = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:FirstRun").value[0]
                 sequence_index = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Index").value[0]
                 meta_wavelength = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
-                logging.error(
+                print("Wavelength: %s [%s]" % (wavelength[main_index], meta_wavelength))
 
                 iq_fd.write('# Experiment %s Run %s\n' % (experiment, run_number))
                 iq_fd.write('# Run start time: %s\n' % start_time)
