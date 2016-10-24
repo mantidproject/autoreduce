@@ -59,10 +59,10 @@ if __name__ == "__main__":
 
     file_prefix = os.path.split(filename)[1].split('.')[0]
 
-    if mtd['USANS'].getRun().hasProperty("BL1A:CS:Scan:USANS:Wavelength"):
-        main_wl = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
-    else:
-        main_wl = "main_peak"
+    #if mtd['USANS'].getRun().hasProperty("BL1A:CS:Scan:USANS:Wavelength"):
+    #    main_wl = mtd['USANS'].getRun().getProperty("BL1A:CS:Scan:USANS:Wavelength").value[0]
+    #else:
+    #    main_wl = "main_peak"
         
     # Get ROI from logs
     wavelength=[3.6,1.8,1.2,0.9,0.72,0.6]
@@ -76,6 +76,7 @@ if __name__ == "__main__":
         if i>1 and lower_bound == roi_min:
             main_index = i-2
         peaks.append([lower_bound*1000.0, (lower_bound+tof_step)*1000.0])
+    main_wl = 
 
     # Produce ASCII data
     Rebin(InputWorkspace="USANS", Params="0,10,17000", OutputWorkspace="USANS")
