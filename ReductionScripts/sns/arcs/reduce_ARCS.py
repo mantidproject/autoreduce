@@ -6,7 +6,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/IPTS-17350/data/ARCS_87355_event.nxs"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van87355_a.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van87355_b.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Tube': '1', 'Bank': '52'})
     MaskBTPParameters.append({'Tube': '6', 'Bank': '71'})
     MaskBTPParameters.append({'Tube': '8', 'Bank': '105'})
-    MaskBTPParameters.append({'Tube': '2,3', 'Bank': '7'})
+    MaskBTPParameters.append({'Tube': '2,3,8', 'Bank': '7'})
     MaskBTPParameters.append({'Tube': '6', 'Bank': '10'})
 
 
