@@ -24,8 +24,6 @@ run_number = filename.split('_')[1]
 autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
 
-dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
-processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_silicon111sqw.nxs")
 
 Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
@@ -57,6 +55,10 @@ Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params='-0.12,0.0004,0.12')
 QAxisBinning='0.2,0.2,2.0'
 SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed='2.082')
 ClearMaskFlag(Workspace=autows+'_sqw')
+
+# Save reduced files
+dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
+processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_silicon111sqw.nxs")
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
 
