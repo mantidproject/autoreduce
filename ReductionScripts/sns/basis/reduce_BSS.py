@@ -74,7 +74,6 @@ Divide(LHSWorkspace=autows, RHSWorkspace=autows_monitor,  OutputWorkspace=autows
 ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMode='Indirect')
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
-#RenameWorkspace(InputWorkspace=autows,OutputWorkspace='bss20200_silicon111_red')
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 #GroupDetectors(InputWorkspace=autows, OutputWorkspace=autows, MapFile='/SNS/BSS/shared/autoreduce/BASIS_Grouping.xml', Behaviour='Sum')
 QAxisBinning=reflection["q_bins"]
