@@ -26,14 +26,19 @@ autows_monitor = autows + "_monitor"
 
 
 Load(Filename=nexus_file, OutputWorkspace=autows)
+# Find out reflection
+reflection="111"
+
 data=mtd[autows].extractY()[0:2520*4]
-#Current masks files
+
+#Apply appropriate mask
 DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
 mask_file = {"111":os.path.join(DEFAULT_MASK_GROUP_DIR, "BASIS_Mask_default_111.xml"),
              "311":os.path.join(DEFAULT_MASK_GROUP_DIR, "BASIS_Mask_default_311.xml"),
              }
-LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile=mask_file["111"])
+LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile=mask_file[reflection])
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
+
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
 LoadParameterFile(Workspace=autows, Filename='BASIS_silicon_111_Parameters.xml')
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
