@@ -54,11 +54,10 @@ if run.hasProperty(logname):
     if run.getProperty(logname).value < middle_gap:
         reflection=REFLECTIONS_DICT["silicon311"]
 
-# Apply appropriate mask
+
 LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK',
          InputFile=os.path.join(DEFAULT_MASK_GROUP_DIR, reflection["mask_file"]))
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
-
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
 LoadParameterFile(Workspace=autows, Filename=reflection["parameter_file"])
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
@@ -84,7 +83,8 @@ CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 QAxisBinning=reflection["q_bins"]
-SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed=reflection["default_energy"])
+SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning,
+       EMode='Indirect', EFixed=reflection["default_energy"])
 ClearMaskFlag(Workspace=autows+'_sqw')
 
 # Save reduced files
