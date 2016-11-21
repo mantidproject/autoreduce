@@ -15,6 +15,24 @@ warnings.filterwarnings('ignore',module='numpy')
 
 from mantid.simpleapi import *
 
+REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
+                                   "energy_bins": [-150, 0.4, 500],  # micro-eV
+                                   "q_bins": [0.3, 0.2, 1.9],  # inverse Angstroms
+                                   "mask_file": "BASIS_Mask_default_111.xml",
+                                   "parameter_file": "BASIS_silicon_111_Parameters.xml",
+                                   "default_energy": 2.0826,  # mili-eV
+                                   "vanadium_bins": [-0.0034, 0.068, 0.0034]  # mili-eV
+                                   },
+                    "silicon311": {"name": "silicon311",
+                                   "energy_bins": [-740, 1.6, 740],
+                                   "q_bins": [0.5, 0.2, 3.7],
+                                   "mask_file": "BASIS_Mask_default_311.xml",
+                                   "parameter_file": "BASIS_silicon_311_Parameters.xml",
+                                   "default_energy": 7.6368,  # mili-eV
+                                   "vanadium_bins": [-0.015, 0.030, 0.015]# mili-eV
+                                   }
+                    }
+
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
