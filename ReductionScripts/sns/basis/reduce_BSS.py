@@ -75,7 +75,6 @@ ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMo
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
-#GroupDetectors(InputWorkspace=autows, OutputWorkspace=autows, MapFile='/SNS/BSS/shared/autoreduce/BASIS_Grouping.xml', Behaviour='Sum')
 QAxisBinning=reflection["q_bins"]
 SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed=reflection["default_energy"])
 ClearMaskFlag(Workspace=autows+'_sqw')
