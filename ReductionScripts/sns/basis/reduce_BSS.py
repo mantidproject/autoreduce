@@ -18,7 +18,7 @@ from mantid.simpleapi import *
 DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
 REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    "energy_bins": [-120, 0.4, 120],  # micro-eV
-                                   "q_bins": [0.3, 0.2, 1.9],  # inverse Angstroms
+                                   "q_bins": [0.2, 0.2, 2.0],  # inverse Angstroms
                                    "mask_file": "BASIS_Mask_default_111.xml",
                                    "parameter_file": "BASIS_silicon_111_Parameters.xml",
                                    "default_energy": 2.0826,  # mili-eV
@@ -26,7 +26,7 @@ REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    },
                     "silicon311": {"name": "silicon311",
                                    "energy_bins": [-740, 1.6, 740],
-                                   "q_bins": [0.5, 0.2, 3.7],
+                                   "q_bins": [0.4, 0.2, 3.8],
                                    "mask_file": "BASIS_Mask_default_311.xml",
                                    "parameter_file": "BASIS_silicon_311_Parameters.xml",
                                    "default_energy": 7.6368,  # mili-eV
@@ -77,10 +77,10 @@ ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMo
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
 #RenameWorkspace(InputWorkspace=autows,OutputWorkspace='bss20200_silicon111_red')
-Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params='-0.12,0.0004,0.12')
+Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 #GroupDetectors(InputWorkspace=autows, OutputWorkspace=autows, MapFile='/SNS/BSS/shared/autoreduce/BASIS_Grouping.xml', Behaviour='Sum')
-QAxisBinning='0.2,0.2,2.0'
-SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed='2.082')
+QAxisBinning=reflection["q_bins"]
+SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed=reflection["default_energy"])
 ClearMaskFlag(Workspace=autows+'_sqw')
 
 # Save reduced files
