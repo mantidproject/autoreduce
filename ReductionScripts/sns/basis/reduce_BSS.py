@@ -45,11 +45,11 @@ autows_monitor = autows + "_monitor"
 Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
 
-# Find out the appropriate reflection
+# Find out the appropriate reflection.
+# LambdaRequest values typical of the 311 reflection are 2.95, and 3.35,
+# and 6.15 and 6.4 of the 111 reflection
 reflection=REFLECTIONS_DICT["silicon111"] # default
-###############
-#      TO-DO
-###############
+middle_gap=4.75  
 #logproperty
 #run=mtd[autows].getRun()
 #if run.hasProperty(logname):
