@@ -47,12 +47,12 @@ data=mtd[autows].extractY()[0:2520*4]
 # LambdaRequest values typical of the 311 reflection are 2.95, and 3.35,
 # and 6.15 and 6.4 of the 111 reflection
 reflection=REFLECTIONS_DICT["silicon111"] # default
-#middle_gap=4.75
-#run=mtd[autows].getRun()
-#logname="LambdaRequest"
-#if run.hasProperty(logname):
-#    if run.getProperty(logname).value < middle_gap:
-#        reflection=REFLECTIONS_DICT["silicon311"]
+middle_gap=4.75
+run=mtd[autows].getRun()
+logname="LambdaRequest"
+if run.hasProperty(logname):
+    if run.getProperty(logname).value < middle_gap:
+        reflection=REFLECTIONS_DICT["silicon311"]
 
 # Apply appropriate mask
 LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK',
