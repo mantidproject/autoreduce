@@ -25,7 +25,8 @@ autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
 Load(Filename=nexus_file, OutputWorkspace=autows)
 
-# Find out reflection
+# Find out the appropriate reflection
+
 reflection="111"
 
 data=mtd[autows].extractY()[0:2520*4]
