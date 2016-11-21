@@ -18,12 +18,13 @@ from mantid.simpleapi import *
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
-# Load Event file, set up workspace names
+# Set up workspace names, load Event file, access handle to detector intensities
 filename = os.path.split(nexus_file)[-1]
 run_number = filename.split('_')[1]
 autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
 Load(Filename=nexus_file, OutputWorkspace=autows)
+data=mtd[autows].extractY()[0:2520*4]
 
 # Find out the appropriate reflection
 reflection="111" # default
@@ -36,7 +37,7 @@ reflection="111" # default
 #  logproperty = run.getProperty(logname)
 # SEE ALGORITHM ExportExperimentLog.py, lines 467-495
 
-data=mtd[autows].extractY()[0:2520*4]
+
 
 #Apply appropriate mask
 DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
