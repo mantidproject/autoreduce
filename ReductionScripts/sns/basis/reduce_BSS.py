@@ -46,7 +46,7 @@ Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
 
 # Find out the appropriate reflection
-reflection="silicon111" # default
+reflection=REFLECTIONS_DICT["silicon111"] # default
 ###############
 #      TO-DO
 ###############
@@ -56,14 +56,9 @@ reflection="silicon111" # default
 #  logproperty = run.getProperty(logname)
 # SEE ALGORITHM ExportExperimentLog.py, lines 467-495
 
-
-
-#Apply appropriate mask
-DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
-mask_file = {"111":os.path.join(DEFAULT_MASK_GROUP_DIR, "BASIS_Mask_default_111.xml"),
-             "311":os.path.join(DEFAULT_MASK_GROUP_DIR, "BASIS_Mask_default_311.xml"),
-             }
-LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile=mask_file[reflection])
+# Apply appropriate mask
+LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK',
+         InputFile=os.path.join(DEFAULT_MASK_GROUP_DIR, reflection["mask_file"]))
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
