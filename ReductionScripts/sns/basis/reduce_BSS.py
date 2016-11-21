@@ -42,13 +42,13 @@ autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
 Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
+run=mtd[autows].getRun()
 
 # Find out the appropriate reflection.
 # LambdaRequest values typical of the 311 reflection are 2.95, and 3.35,
 # and 6.15 and 6.4 of the 111 reflection
 reflection=REFLECTIONS_DICT["silicon111"] # default
 middle_gap=4.75
-run=mtd[autows].getRun()
 logname="LambdaRequest"
 if run.hasProperty(logname):
     if run.getProperty(logname).value < middle_gap:
@@ -73,6 +73,10 @@ RebinToWorkspace(WorkspaceToRebin=autows, WorkspaceToMatch=autows_monitor, Outpu
 Divide(LHSWorkspace=autows, RHSWorkspace=autows_monitor,  OutputWorkspace=autows)
 ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMode='Indirect')
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
+
+# Save NXSPE file
+logname=""  # Here goes discriminating property
+if 
 
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 QAxisBinning=reflection["q_bins"]
