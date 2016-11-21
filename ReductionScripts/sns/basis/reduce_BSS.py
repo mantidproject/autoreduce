@@ -18,14 +18,13 @@ from mantid.simpleapi import *
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
+# Load Event file, set up workspace names
 filename = os.path.split(nexus_file)[-1]
 run_number = filename.split('_')[1]
-
 autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
-
-
 Load(Filename=nexus_file, OutputWorkspace=autows)
+
 # Find out reflection
 reflection="111"
 
