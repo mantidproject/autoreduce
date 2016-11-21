@@ -256,10 +256,10 @@ if __name__ == "__main__":
         s=SumSpectra("__OWS")
         x=s.readX(0)
         y=s.readY(0)
-        from postprocessing.publish_plot import plot1d
-        plot1d(runnum, [x[1:], y], instrument='SEQ', 
-               x_title="Energy transfer (meV)",
-               y_title="Intensity", y_log=True)
+        #from postprocessing.publish_plot import plot1d
+        #plot1d(runnum, [x[1:], y], instrument='SEQ', 
+        #       x_title="Energy transfer (meV)",
+        #       y_title="Intensity", y_log=True)
         
         if NXSPE_flag:    
             angle=mtd["__OWS"].run()['phi'].getStatistics().mean      
