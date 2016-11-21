@@ -39,7 +39,7 @@ beta="90.0"
 gamma="90.0"
 uVector="0,0,1"
 vVector="1,1,0"
-sub_directory="TbFe3BO3-250K"
+sub_directory="TbFe3BO3-200K_full"
 
 #parameters not on the webpage
 #below remains unchanged
