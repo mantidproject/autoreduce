@@ -80,8 +80,8 @@ SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisB
 ClearMaskFlag(Workspace=autows+'_sqw')
 
 # Save reduced files
-dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
-processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_silicon111sqw.nxs")
+dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.dat")
+processed_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxs")
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
 
