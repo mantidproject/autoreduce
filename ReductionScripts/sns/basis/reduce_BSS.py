@@ -15,6 +15,7 @@ warnings.filterwarnings('ignore',module='numpy')
 
 from mantid.simpleapi import *
 
+DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
 REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    "energy_bins": [-150, 0.4, 500],  # micro-eV
                                    "q_bins": [0.3, 0.2, 1.9],  # inverse Angstroms
@@ -45,7 +46,7 @@ Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
 
 # Find out the appropriate reflection
-reflection="111" # default
+reflection="silicon111" # default
 ###############
 #      TO-DO
 ###############
