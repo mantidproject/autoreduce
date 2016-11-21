@@ -22,7 +22,6 @@ REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    "mask_file": "BASIS_Mask_default_111.xml",
                                    "parameter_file": "BASIS_silicon_111_Parameters.xml",
                                    "default_energy": 2.0826,  # mili-eV
-                                   "vanadium_bins": [-0.0034, 0.068, 0.0034]  # mili-eV
                                    },
                     "silicon311": {"name": "silicon311",
                                    "energy_bins": [-740, 1.6, 740],
@@ -30,7 +29,6 @@ REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    "mask_file": "BASIS_Mask_default_311.xml",
                                    "parameter_file": "BASIS_silicon_311_Parameters.xml",
                                    "default_energy": 7.6368,  # mili-eV
-                                   "vanadium_bins": [-0.015, 0.030, 0.015]# mili-eV
                                    }
                     }
 
