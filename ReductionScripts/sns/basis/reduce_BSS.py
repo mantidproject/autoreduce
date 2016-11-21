@@ -62,7 +62,7 @@ LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK',
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
-LoadParameterFile(Workspace=autows, Filename='BASIS_silicon_111_Parameters.xml')
+LoadParameterFile(Workspace=autows, Filename=reflection["parameter_file"])
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
 MonTemp=CloneWorkspace(autows_monitor)
 ModeratorTzeroLinear(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor)
