@@ -26,8 +26,15 @@ autows_monitor = autows + "_monitor"
 Load(Filename=nexus_file, OutputWorkspace=autows)
 
 # Find out the appropriate reflection
-
-reflection="111"
+reflection="111" # default
+###############
+#      TO-DO
+###############
+#logproperty
+#run=mtd[autows].getRun()
+#if run.hasProperty(logname):
+#  logproperty = run.getProperty(logname)
+# SEE ALGORITHM ExportExperimentLog.py, lines 467-495
 
 data=mtd[autows].extractY()[0:2520*4]
 
