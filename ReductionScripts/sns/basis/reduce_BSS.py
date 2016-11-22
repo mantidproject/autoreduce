@@ -74,12 +74,12 @@ ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMo
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
 # Save NXSPE file
-#logname=""  # Here goes discriminating property for the PSI angle
-#if run.hasProperty(logname):
-#    angle = run.getProperty(logname).value
-#    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxspe")
-#    SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename, Efixed=reflection["default_energy"],
-#              Psi=angle, KiOverKfScaling=1)
+logname="Ox2WeldRot"  # Discriminating property for the PSI angle
+if run.hasProperty(logname):
+    angle = run.getProperty(logname).value
+    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxspe")
+    SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename, Efixed=reflection["default_energy"],
+              Psi=angle, KiOverKfScaling=1)
 
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 QAxisBinning=reflection["q_bins"]
