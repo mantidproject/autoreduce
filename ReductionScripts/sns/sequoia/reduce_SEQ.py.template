@@ -36,7 +36,6 @@ Emin=${e_min}
 Emax=${e_max}
 Estep=${e_step}
 grouping="${grouping}" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-# create_elastic_nxspe=${create_elastic_nxspe} #+-0.1Ei, 5 steps
 create_elastic_nxspe=True
 
 # additional parameters
