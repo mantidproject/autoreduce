@@ -76,7 +76,7 @@ CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 # Save NXSPE file
 logname="Ox2WeldRot"  # Discriminating property for the PSI angle
 if run.hasProperty(logname):
-    angle = np.average(run.getProperty(logname).value)
+    angle = numpy.average(run.getProperty(logname).value)
     nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxspe")
     SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename, Efixed=reflection["default_energy"],
               Psi=angle, KiOverKfScaling=1)
