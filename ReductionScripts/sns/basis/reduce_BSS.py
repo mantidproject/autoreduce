@@ -78,7 +78,7 @@ logname="Ox2WeldRot"  # Discriminating property for the PSI angle
 #if run.hasProperty(logname):
 #    print logname
 #    angle = numpy.average(run.getProperty(logname).value)
-#    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxspe")
+#    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + ".nxspe")
 #    SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename, Efixed=reflection["default_energy"],
 #              Psi=angle, KiOverKfScaling=1)
 
