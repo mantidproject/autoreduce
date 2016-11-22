@@ -15,54 +15,95 @@ warnings.filterwarnings('ignore',module='numpy')
 
 from mantid.simpleapi import *
 
+DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
+REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
+                                   "energy_bins": [-0.120, 0.0004, 0.120],  # micro-eV
+                                   "q_bins": [0.2, 0.2, 2.0],  # inverse Angstroms
+                                   "mask_file": "BASIS_Mask_default_111.xml",
+                                   "parameter_file": "BASIS_silicon_111_Parameters.xml",
+                                   "default_energy": 2.0826,  # mili-eV
+                                   },
+                    "silicon311": {"name": "silicon311",
+                                   "energy_bins": [-0.740, 0.0016, 0.740],
+                                   "q_bins": [0.4, 0.2, 3.8],
+                                   "mask_file": "BASIS_Mask_default_311.xml",
+                                   "parameter_file": "BASIS_silicon_311_Parameters.xml",
+                                   "default_energy": 7.6368,  # mili-eV
+                                   }
+                    }
+
 nexus_file=sys.argv[1]
 output_directory=sys.argv[2]
 
+# Set up workspace names, load Event file, access handle to detector intensities
 filename = os.path.split(nexus_file)[-1]
 run_number = filename.split('_')[1]
-
 autows = "__auto_ws"
 autows_monitor = autows + "_monitor"
-
-dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_1run.dat")
-processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_silicon111sqw.nxs")
-
 Load(Filename=nexus_file, OutputWorkspace=autows)
 data=mtd[autows].extractY()[0:2520*4]
-LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK', InputFile='/SNS/BSS/shared/autoreduce/BASIS_Mask.xml')
+run = mtd[autows].getRun()
+
+# Determine if we save the NXSPE file
+psi_angle=None
+logname="Ox2WeldRot"  # Discriminating property for the PSI angle
+if run.hasProperty(logname):
+    logproperty = run.getProperty(logname)
+    psi_angle = numpy.average(logproperty.value)
+
+# Find out the appropriate reflection.
+# LambdaRequest values typical of the 311 reflection are 2.95, and 3.35,
+# and 6.15 and 6.4 of the 111 reflection
+reflection=REFLECTIONS_DICT["silicon111"] # default
+middle_gap=4.75
+logname="LambdaRequest"
+if run.hasProperty(logname):
+    if numpy.average(run.getProperty(logname).value) < middle_gap:
+        reflection=REFLECTIONS_DICT["silicon311"]
+
+LoadMask(Instrument='BASIS', OutputWorkspace='BASIS_MASK',
+         InputFile=os.path.join(DEFAULT_MASK_GROUP_DIR, reflection["mask_file"]))
 MaskDetectors(Workspace=autows, MaskedWorkspace='BASIS_MASK')
 ModeratorTzeroLinear(InputWorkspace=autows,OutputWorkspace=autows)
-LoadParameterFile(Workspace=autows, Filename='BASIS_silicon_111_Parameters.xml')
+LoadParameterFile(Workspace=autows, Filename=reflection["parameter_file"])
 LoadNexusMonitors(Filename=nexus_file, OutputWorkspace=autows_monitor)
 MonTemp=CloneWorkspace(autows_monitor)
 ModeratorTzeroLinear(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor)
 Rebin(InputWorkspace=autows_monitor,OutputWorkspace=autows_monitor,Params='10')
 ConvertUnits(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor, Target='Wavelength')
-OneMinusExponentialCor(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor, C='0.20749999999999999', C1='0.001276')
+OneMinusExponentialCor(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor,
+                       C='0.20749999999999999', C1='0.001276')
 Scale(InputWorkspace=autows_monitor, OutputWorkspace=autows_monitor, Factor='9.9999999999999995e-07')
 ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='Wavelength', EMode='Indirect')
 RebinToWorkspace(WorkspaceToRebin=autows, WorkspaceToMatch=autows_monitor, OutputWorkspace=autows)
 Divide(LHSWorkspace=autows, RHSWorkspace=autows_monitor,  OutputWorkspace=autows)
 ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMode='Indirect')
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
+Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
+if psi_angle:
+    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + ".nxspe")
+    SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename,
+              Efixed=reflection["default_energy"], Psi=psi_angle, KiOverKfScaling=1)
 
-#RenameWorkspace(InputWorkspace=autows,OutputWorkspace='bss20200_silicon111_red')
-Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params='-0.12,0.0004,0.12')
-#GroupDetectors(InputWorkspace=autows, OutputWorkspace=autows, MapFile='/SNS/BSS/shared/autoreduce/BASIS_Grouping.xml', Behaviour='Sum')
-QAxisBinning='0.2,0.2,2.0'
-SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning, EMode='Indirect', EFixed='2.082')
+QAxisBinning=reflection["q_bins"]
+SofQW3(InputWorkspace=autows, OutputWorkspace=autows+'_sqw', QAxisBinning=QAxisBinning,
+       EMode='Indirect', EFixed=reflection["default_energy"])
 ClearMaskFlag(Workspace=autows+'_sqw')
+
+# Save reduced files
+dave_grp_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.dat")
+processed_filename = os.path.join(output_directory, "BASIS_" + run_number + "_sqw.nxs")
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
 
 # Save experiment log file
-logname = os.path.join(output_directory, 'experiment_log.csv')
+logfilename = os.path.join(output_directory, 'experiment_log.csv')
 filemode = 'new'
-if os.path.exists(logname):
+if os.path.exists(logfilename):
     filemode = 'fastappend'
 comment = mtd[autows].getComment()
 AddSampleLog(autows, LogName='Comment', LogText=comment, LogType='String')
-ExportExperimentLog(InputWorkspace=autows, OutputFilename=logname, FileMode=filemode,
+ExportExperimentLog(InputWorkspace=autows, OutputFilename=logfilename, FileMode=filemode,
                     SampleLogTitles = 'Run number,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,Mean Sensor A, Min Sensor A, Max Sensor A,  Mean Sensor B, Min Sensor B, Max Sensor B, Wavelength, Chopper 1, Chopper 2, Chopper 3, Slit S1t, Slit S1b, Slit S1l, Slit S1r',
                     SampleLogNames = 'run_number,run_title,Comment,start_time,end_time,duration,gd_prtn_chrg,SensorA,SensorA,SensorA,SensorB,SensorB,SensorB,LambdaRequest,Speed1,Speed2,Speed3,s1t,s1b,s1l,s1r',
                     SampleLogOperation = '0,0,0,0,0,0,0,average,min,max,average,min,max,0,0,0,0,0,0,0,0',
@@ -104,7 +145,7 @@ plt.axis('on')
 
 # Spectra Figures
 autows_sqw=mtd[autows+'_sqw']
-Qm,dQ,QM = [float(x) for x in QAxisBinning.split(',')]
+Qm,dQ,QM = QAxisBinning
 nQ = int( (QM-Qm)/dQ )
 for i in range(nQ):
     if max(autows_sqw.readY(i))<=0:
