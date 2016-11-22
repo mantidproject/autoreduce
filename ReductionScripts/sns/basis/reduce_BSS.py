@@ -94,13 +94,13 @@ SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
 
 # Save experiment log file
-logname = os.path.join(output_directory, 'experiment_log.csv')
+logfilename = os.path.join(output_directory, 'experiment_log.csv')
 filemode = 'new'
-if os.path.exists(logname):
+if os.path.exists(logfilename):
     filemode = 'fastappend'
 comment = mtd[autows].getComment()
 AddSampleLog(autows, LogName='Comment', LogText=comment, LogType='String')
-ExportExperimentLog(InputWorkspace=autows, OutputFilename=logname, FileMode=filemode,
+ExportExperimentLog(InputWorkspace=autows, OutputFilename=logfilename, FileMode=filemode,
                     SampleLogTitles = 'Run number,Title,Comment,StartTime,EndTime,Duration,ProtonCharge,Mean Sensor A, Min Sensor A, Max Sensor A,  Mean Sensor B, Min Sensor B, Max Sensor B, Wavelength, Chopper 1, Chopper 2, Chopper 3, Slit S1t, Slit S1b, Slit S1l, Slit S1r',
                     SampleLogNames = 'run_number,run_title,Comment,start_time,end_time,duration,gd_prtn_chrg,SensorA,SensorA,SensorA,SensorB,SensorB,SensorB,LambdaRequest,Speed1,Speed2,Speed3,s1t,s1b,s1l,s1r',
                     SampleLogOperation = '0,0,0,0,0,0,0,average,min,max,average,min,max,0,0,0,0,0,0,0,0',
