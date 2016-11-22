@@ -75,6 +75,7 @@ CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 
 # Save NXSPE file
 logname="Ox2WeldRot"  # Discriminating property for the PSI angle
+run = mtd[autows].getRun()
 if run.hasProperty(logname):
     print "logname=", logname
     logproperty = run.getProperty(logname)
