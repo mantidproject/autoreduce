@@ -77,6 +77,7 @@ CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 logname="Ox2WeldRot"  # Discriminating property for the PSI angle
 #if run.hasProperty(logname):
 #    print logname
+log
 #    angle = numpy.average(run.getProperty(logname).value)
 #    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + ".nxspe")
 #    SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename, Efixed=reflection["default_energy"],
@@ -143,7 +144,7 @@ plt.axis('on')
 
 # Spectra Figures
 autows_sqw=mtd[autows+'_sqw']
-Qm,dQ,QM = [float(x) for x in QAxisBinning.split(',')]
+Qm,dQ,QM = QAxisBinning
 nQ = int( (QM-Qm)/dQ )
 for i in range(nQ):
     if max(autows_sqw.readY(i))<=0:
