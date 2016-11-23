@@ -69,7 +69,7 @@ charPM = mantid.PropertyManagerDataService.retrieve('__pd_reduction_properties')
 # get back the runs to use so they can be explicit in the generated python script
 sampleBackRun = charPM['container'].value[0]
 vanRun        = charPM['vanadium'].value[0]
-vanBackRun    = charPM['empty'].value[0]
+vanBackRun    = charPM['vanadium_background'].value[0]
 
 # work on container cache file
 if sampleBackRun > 0:
@@ -95,7 +95,7 @@ if sampleBackRun > 0:
 # work on vanadium cache file
 if vanRun > 0:
     vanWkspName="NOM_"+str(vanRun)
-    vanProcessingProperties = ['vanadium', 'empty', 'd_min', 'd_max',
+    vanProcessingProperties = ['vanadium', 'vanadium_background', 'd_min', 'd_max',
                                'tof_min', 'tof_max']
     vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "VanadiumRadius="+str(vanradius),
