@@ -20,7 +20,7 @@ raw_vanadium="/SNS/CNCS/IPTS-16111/5/201975/NeXus/CNCS_201975_event.nxs"
 processed_vanadium="van201975.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-2.0"
+Emin="-0.1"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -39,7 +39,7 @@ beta="90.0"
 gamma="90.0"
 uVector="0,0,1"
 vVector="1,1,0"
-sub_directory="TbFe3BO3-193K"
+sub_directory="TbFe3BO3-250K"
 
 #parameters not on the webpage
 #below remains unchanged
