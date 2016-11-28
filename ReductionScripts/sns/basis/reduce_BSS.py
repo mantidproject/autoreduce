@@ -81,7 +81,7 @@ ConvertUnits(InputWorkspace=autows, OutputWorkspace=autows, Target='DeltaE', EMo
 CorrectKiKf(InputWorkspace=autows, OutputWorkspace=autows,EMode='Indirect')
 Rebin(InputWorkspace=autows, OutputWorkspace=autows, Params=reflection["energy_bins"])
 if psi_angle:
-    nxspe_filename = os.path.join(output_directory, "BASIS_" + run_number + ".nxspe")
+    nxspe_filename = os.path.join(output_directory, "BSS_" + run_number + ".nxspe")
     SaveNXSPE(InputWorkspace=autows, Filename=nxspe_filename,
               Efixed=reflection["default_energy"], Psi=psi_angle, KiOverKfScaling=1)
 
