@@ -52,7 +52,6 @@ sys.path.append("/opt/mantidnightly/bin")
 # sys.path.append('/opt/mantidunstable/bin/')
 # sys.path.append("/opt/Mantid/bin")
 # sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
-# sys.path.append('/Users/wzz/MantidBuild/debug-mantid2/bin/')
 
 import mantid.simpleapi as mantidsimple
 import mantid
@@ -309,10 +308,9 @@ class ReductionSetup(object):
                              '' % self._eventFileFullPath
 
         # focusing file
-        for file_index, file_name in enumerate([self._focusFileName, self._characterFileName, self._vulcanBinsFileName]):
-            assert isinstance(file_name, str), '%d-th file is None' % file_index
+        for file_name in [self._focusFileName, self._characterFileName, self._vulcanBinsFileName]:
             if not os.path.exists(file_name):
-                error_message += '%d-th calibration file %s cannot be found.\n' % (file_index, file_name)
+                error_message += 'Calibration file %s cannot be found.\n' % file_name
 
         # GSAS file
         if self._mainGSASName is not None and not os.access(self._mainGSASName, os.W_OK):
@@ -341,7 +339,7 @@ class ReductionSetup(object):
         """
         # set to default if it is not set up yet
         if self._focusFileName is None:
-            self._focusFileName = CalibrationFileName
+            raise RuntimeError('Focus file is not set up.')
 
         return self._focusFileName
 
@@ -1089,7 +1087,7 @@ class ReduceVulcanData(object):
         mantidsimple.SNSPowderReduction(Filename=self._reductionSetup.get_event_file(),
                                         PreserveEvents=True,
                                         CalibrationFile=self._reductionSetup.get_focus_file(),
-                                        CharacterizationRunsFile=CharacterFileName,
+                                        CharacterizationRunsFile=self._reductionSetup.get_characterization_file(),
                                         Binning="-0.001",
                                         SaveAS="",
                                         OutputDirectory=self._reductionSetup.get_gsas_dir(),
@@ -1143,7 +1141,7 @@ class ReduceVulcanData(object):
             # overwrite the original file
             vdrive_bin_ws_name = reduced_ws_name
             mantidsimple.SaveVulcanGSS(InputWorkspace=tof_ws_name,
-                                       BinFilename=refLogTofFilename,
+                                       BinFilename=self._reductionSetup.get_vulcan_bin_file(),
                                        OutputWorkspace=vdrive_bin_ws_name,
                                        GSSFilename=gsas_file_name,
                                        IPTS=self._reductionSetup.get_ipts_number(),
@@ -1682,7 +1680,7 @@ class ReduceVulcanData(object):
                                             PreserveEvents=True,
                                             # CalibrationFile=CalibrationFileName,
                                             CalibrationFile=self._reductionSetup.get_focus_file(),
-                                            CharacterizationRunsFile=CharacterFileName,
+                                            CharacterizationRunsFile=self._reductionSetup.get_characterization_file(),
                                             Binning="-0.001",
                                             SaveAS="",
                                             OutputDirectory=self._reductionSetup.get_gsas_dir(),
@@ -1712,7 +1710,7 @@ class ReduceVulcanData(object):
 
         vdrive_bin_ws_name = 'VULCAN_%d_Vdrive_2Bank' % self._reductionSetup.get_run_number()
         mantidsimple.SaveVulcanGSS(InputWorkspace=tof_ws_name,
-                                   BinFilename=refLogTofFilename,
+                                   BinFilename=self._reductionSetup.get_vulcan_bin_file(),
                                    OutputWorkspace=vdrive_bin_ws_name,
                                    GSSFilename=gsas_file_name,
                                    IPTS=self._reductionSetup.get_ipts_number(),
@@ -1929,8 +1927,11 @@ def main(argv):
     if not status:
         return
 
-    # process
+    # process and set calibration files
     reduction_setup.process_configurations()
+    reduction_setup.set_focus_file(CalibrationFileName)
+    reduction_setup.set_charact_file(CharacterFileName)
+    reduction_setup.set_vulcan_bin_file(refLogTofFilename)
 
     # create reducer
     reducer = ReduceVulcanData(reduction_setup)
