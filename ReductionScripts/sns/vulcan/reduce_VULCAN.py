@@ -250,6 +250,9 @@ class ReductionSetup(object):
         self._splitterWsName = None
         self._splitterInfoName = None
 
+        # reduction type
+        self._isFullReduction = True
+
         return
 
     @staticmethod
