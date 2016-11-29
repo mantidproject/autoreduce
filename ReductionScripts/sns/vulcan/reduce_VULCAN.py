@@ -316,10 +316,30 @@ class ReductionSetup(object):
                 error_message += 'Calibration file %s cannot be found.\n' % file_name
 
         # GSAS file
-        if self._mainGSASName is not None and not os.access(self._mainGSASName, os.W_OK):
-            error_message += 'Main GSAS %s is not writable.' % self._mainGSASDir
-        if self._mainRecordFileName is not None and not os.access(self._mainRecordFileName, os.W_OK):
-            error_message += 'Main record file %s is not writable.' % self._mainGSASDir
+        if self._mainGSASName is not None:
+            if os.path.exists(self._mainGSASName):
+                # check whether it is over-writable
+                if not os.access(self._mainGSASName, os.W_OK):
+                    error_message += 'Existing main GSAS file %s cannot be over-written.' \
+                                     '' % self._mainGSASName
+            else:
+                # check whether the directory is writable
+                if not os.access(self._mainGSASDir, os.W_OK):
+                    error_message += 'Directory %s is not writable for main gSAS file.' % self._mainGSASDir
+        # END-IF
+
+        # Record file
+        if self._mainRecordFileName is not None:
+            if os.path.exists(self._mainRecordFileName):
+                # check whether it is over-writable
+                if not os.access(self._mainRecordFileName, os.W_OK):
+                    error_message += 'Main record file %s exists but cannot be written.' % self._mainRecordFileName
+            else:
+                # check whether the directory is writable
+                record_dir = os.path.dirname(self._mainRecordFileName)
+                if not os.access(record_dir, os.W_OK):
+                    error_message += 'Directory %s is not writable for main record file.' % record_dir
+        # END-IF
 
         if error_message == '':
             status = True
@@ -1951,7 +1971,7 @@ def main(argv):
         reducer.execute_vulcan_reduction()
     elif not status:
         # error message
-        print '[Error] Reduction Setup:\n%s' % error_message
+        raise RuntimeError('Reduction Setup is not valid:\n%s' % error_message)
 
     return
 
