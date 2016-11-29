@@ -48,11 +48,11 @@ import shutil
 import xml.etree.ElementTree as ET
 import sys
 
-# sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/mantidnightly/bin")
 # sys.path.append('/opt/mantidunstable/bin/')
 # sys.path.append("/opt/Mantid/bin")
 # sys.path.append('/home/wzz/Mantid/Code/debug/bin/')
-sys.path.append('/Users/wzz/MantidBuild/debug-mantid2/bin/')
+# sys.path.append('/Users/wzz/MantidBuild/debug-mantid2/bin/')
 
 import mantid.simpleapi as mantidsimple
 import mantid
