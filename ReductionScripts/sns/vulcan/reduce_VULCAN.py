@@ -631,7 +631,7 @@ class ReductionSetup(object):
         self._2ndRecordFileName = os.path.join(self.change_output_directory(self._outputDirectory, ""),
                                                "AutoRecord.txt")
         # output GSAS directory
-        self._mainGSASDir = self.change_output_directory(self._outputDirectory, 'autoreduce/binned')
+        self._mainGSASDir = self.change_output_directory(self._outputDirectory, 'autoreduce/binnedgda')
         self._2ndGSASDir = self.change_output_directory(self._outputDirectory, 'binned_data')
 
         self.is_full_reduction = True
