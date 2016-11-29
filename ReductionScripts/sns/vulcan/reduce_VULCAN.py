@@ -309,7 +309,8 @@ class ReductionSetup(object):
                              '' % self._eventFileFullPath
 
         # focusing file
-        for file_name in [self._focusFileName, self._characterFileName, self._vulcanBinsFileName]:
+        for file_index, file_name in enumerate([self._focusFileName, self._characterFileName, self._vulcanBinsFileName]):
+            assert isinstance(file_name, str), 
             if not os.path.exists(file_name):
                 error_message += 'Calibration file %s cannot be found.\n' % file_name
 
