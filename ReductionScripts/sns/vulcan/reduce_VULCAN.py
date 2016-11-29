@@ -310,9 +310,9 @@ class ReductionSetup(object):
 
         # focusing file
         for file_index, file_name in enumerate([self._focusFileName, self._characterFileName, self._vulcanBinsFileName]):
-            assert isinstance(file_name, str), 
+            assert isinstance(file_name, str), '%d-th file is None' % file_index
             if not os.path.exists(file_name):
-                error_message += 'Calibration file %s cannot be found.\n' % file_name
+                error_message += '%d-th calibration file %s cannot be found.\n' % file_name
 
         # GSAS file
         if self._mainGSASName is not None and not os.access(self._mainGSASName, os.W_OK):
