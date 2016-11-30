@@ -658,6 +658,17 @@ class ReductionSetup(object):
 
         return
 
+    def set_default_calibration_files(self):
+        """
+        set default calibration files
+        :return:
+        """
+        self.set_focus_file(CalibrationFileName)
+        self.set_charact_file(CharacterFileName)
+        self.set_vulcan_bin_file(refLogTofFilename)
+
+        return
+
     def set_dry_run(self, status):
         """
         set whether it is a dry run or a normal run
@@ -1291,12 +1302,13 @@ class ReduceVulcanData(object):
         # check whether it is an alignment run
         self._reductionSetup.is_alignment_run = self.check_alignment_run()
 
-        # export the sample log record file
+        # export the sample log record file: AutoRecord.txt and etc.
         is_record_good, msg_record = self.export_experiment_records()
 
         # write experiment files
         is_log_good, msg_log = self.export_log_files()
 
+        # special operations for auto reduction
         is_auto_good, msg_auto = self.special_operation_auto_reduction_service()
 
         final_message = ''
@@ -1360,6 +1372,7 @@ class ReduceVulcanData(object):
             return False, message
 
         # Export to either data or align
+        error_message = ''
         try:
             record_file_path = os.path.dirname(self._reductionSetup.get_record_file())
             if self._reductionSetup.is_alignment_run:
@@ -1381,17 +1394,19 @@ class ReduceVulcanData(object):
                                              OverrideLogValue=patch_list,
                                              OrderByTitle='RUN',
                                              RemoveDuplicateRecord=True)
-
-            # Change file  mode
-            if file_access_mode != '666' and file_access_mode != '676':
-                os.chmod(categorized_record_file, 0666)
+            # change file mode for local manual modification
+            os.chmod(categorized_record_file, 0666)
         except NameError as e:
-            print '[Error] %s.' % str(e)
+            if self._reductionSetup.is_alignment_run:
+                error_message += 'Unable to write to AutoRecord-Alignment due to %s.' % str(e)
+            else:
+                error_message += 'Unable to write to AutoRecord-Data due to %s.' % str(e)
+            categorized_record_file = None
 
         # Auto reduction only
         if self._reductionSetup.get_record_2nd_file() is not None:
             # Check if it is necessary to copy AutoRecord.txt from rfilename2 to rfilename1
-            if os.path.exists(self._reductionSetup.get_record_2nd_file()) is False:
+            if not os.path.exists(self._reductionSetup.get_record_2nd_file()):
                 # File do not exist, the copy
                 shutil.copy(self._reductionSetup.get_record_file(),
                             self._reductionSetup.get_record_2nd_file())
@@ -1407,8 +1422,41 @@ class ReduceVulcanData(object):
                                                  OverrideLogValue=patch_list,
                                                  OrderByTitle='RUN',
                                                  RemoveDuplicateRecord=True)
+            # change file mode for local manual modification
+            os.chmod(self._reductionSetup.get_record_2nd_file(), 0666)
 
-        return True, ''
+        # prepare for the cop for  auto record align or data file
+        if self._reductionSetup.get_record_2nd_file() is not None and len(error_message) == 0:
+            # find out the path
+            record_file_2_path = os.path.dirname(self._reductionSetup.get_record_2nd_file())
+            if self._reductionSetup.is_alignment_run:
+                categorized_2_record_file = os.path.join(record_file_2_path, 'AutoRecordAlign.txt')
+            else:
+                categorized_2_record_file = os.path.join(record_file_2_path, 'AutoRecordData.txt')
+
+            if os.path.exists(categorized_record_file) is False:
+                # File do not exist, the copy
+                shutil.copy(categorized_record_file, categorized_2_record_file)
+            else:
+                # append to the existing file
+                filemode2 = 'append'
+                mantidsimple.ExportExperimentLog(InputWorkspace=self._dataWorkspaceName,
+                                                 OutputFilename=categorized_2_record_file,
+                                                 FileMode=filemode2,
+                                                 SampleLogNames=sample_name_list,
+                                                 SampleLogTitles=sample_title_list,
+                                                 SampleLogOperation=sample_operation_list,
+                                                 TimeZone="America/New_York",
+                                                 OverrideLogValue=patch_list,
+                                                 OrderByTitle='RUN',
+                                                 RemoveDuplicateRecord=True)
+            # END-IF-ELSE
+
+            # Change file  mode
+            os.chmod(categorized_2_record_file, 0666)
+        # END-IF
+
+        return True, error_message
 
     def export_log_files(self):
         """
@@ -1597,19 +1645,17 @@ class ReduceVulcanData(object):
             file_name, file_ext = os.path.splitext(log_file_name)
             max_attempts = 99
             num_attempts = 0
-            back_file_name = None
             while num_attempts < max_attempts:
                 # form new name
                 back_file_name = file_name + '_%02d' % num_attempts + file_ext
                 # check backup file name
-                if os.path.exists(back_file_name):
+                if os.path.exists(back_file_name) and num_attempts < max_attempts - 1:
                     num_attempts += 1
                 else:
+                    # save last file
+                    shutil.copy(log_file_name, back_file_name)
                     break
             # END-WHILE()
-
-            # save last file
-            shutil.copy(log_file_name, back_file_name)
         # END-IF
 
         # export log to CSV file
@@ -1619,6 +1665,9 @@ class ReduceVulcanData(object):
                                                WriteHeaderFile=True,
                                                TimeZone=TIMEZONE2,
                                                Header=header)
+
+        # change the file permission
+        os.chmod(log_file_name, 0666)
 
         return log_file_name
 
@@ -1643,10 +1692,60 @@ class ReduceVulcanData(object):
 
     def generate_sliced_logs(self, ws_name_list):
         """
-
+        generate sliced logs
         :param ws_name_list:
         :return:
         """
+        # check
+        assert isinstance(ws_name_list, list) and len(ws_name_list) > 0, 'Workspace name list must be a non-' \
+                                                                         'empty list'
+        ws_name_list.sort()
+
+        # get the properties' names list
+        ws_name = ws_name_list[0]
+        workspace = AnalysisDataService.retrieve(ws_name)
+        property_name_list = list()
+        for sample_log in workspace.getProperties():
+            p_name = sample_log.name
+            property_name_list.append(p_name)
+        property_name_list.sort()
+
+        # get a list of
+        stat_list = list()
+        for i_ws, ws_name in enumerate(ws_name_list):
+            workspace_i = AnalysisDataService.retrieve(ws_name)
+            stat_dict = dict()
+
+            for entry in MTS_Header_List:
+                mts_name, log_name = entry
+                if len(log_name) > 0:
+                    # regular log
+                    sample_log = workspace_i.getProperty(log_name)
+                    log_min = sample_log.value.min()
+                    log_mean = sample_log.value.mean()
+                    log_max = sample_log.value.max()
+                    stat_dict[mts_name] = (log_min, log_mean, log_max)
+                else:
+                    # time stamp and
+                    print 'I DON\'T KNOW HOW TO DEAL WITH THIS!'
+                    stat_dict[mts_name] = (-1, -1, -1)
+            # END-FOR
+
+            stat_list.append(stat_dict)
+        # END-FOR
+
+        # output
+        chop_dir = '/SNS/VULCAN/IPTS-%d/shared/ChoppedData/%d' % (self._reductionSetup.get_ipts_number(),
+                                                                  self._reductionSetup.get_run_number())
+
+        start_file_name = os.path.join(chop_dir,
+                                       '%dsampleenv_chopped_start.txt' % self._reductionSetup.get_run_number())
+        mean_file_name = os.path.join(chop_dir,
+                                      '%dsampleenv_chopped_mean.txt' % self._reductionSetup.get_run_number())
+        end_file_name = os.path.join(chop_dir,
+                                     '%dsampleenv_chopped_end.txt' % self._reductionSetup.get_run_number())
+
+        raise NotImplementedError('Figure out how to use PANDAS')
 
     def load_data_file(self):
         """
@@ -1952,9 +2051,7 @@ def main(argv):
 
     # process and set calibration files
     reduction_setup.process_configurations()
-    reduction_setup.set_focus_file(CalibrationFileName)
-    reduction_setup.set_charact_file(CharacterFileName)
-    reduction_setup.set_vulcan_bin_file(refLogTofFilename)
+    reduction_setup.set_default_calibration_files()
 
     # create reducer
     reducer = ReduceVulcanData(reduction_setup)
