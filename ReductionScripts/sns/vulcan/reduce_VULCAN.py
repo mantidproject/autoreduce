@@ -820,7 +820,7 @@ class PatchRecord:
     added to NeXus file or exported to Mantid workspace
     """
     # PatchLogList = ['TotalCounts', 'Monitor1', 'Monitor2', 'Sample']
-    PatchLogList = ['TotalCounts', 'Monitor1', 'Monitor2', 'VROT', 'Vcollimator', 'Sample']
+    PatchLogList = ['TotalCounts', 'Monitor1', 'Monitor2', 'VROT', 'Collimator', 'Sample']
 
     def __init__(self, instrument, ipts, run):
         """ Init
