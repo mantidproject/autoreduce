@@ -53,7 +53,8 @@ output = LRAutoReduction(Filename=event_file_path,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                          OutputDirectory=output_dir,
                          SlitTolerance=0.06,
-                         ReadSequenceFromFile=True,
+                         ReadSequenceFromFile=False,
+                         OrderDirectBeamsByRunNumber=True,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=output[1]
 
