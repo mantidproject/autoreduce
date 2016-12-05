@@ -169,7 +169,7 @@ if mpiRank == 0:
     for i in xrange(wksp.getNumberHistograms()):
          specNum = wksp.getSpectrum(i).getSpectrumNo()
          visible = True
-         if specNum in [6]:
+         if specNum in [1,6]:
              visible = 'legendonly'
          data.append(go.Scatter(x=wksp.readX(i)[:-1], y=wksp.readY(i),
                                 name=banklabels[specNum], visible=visible))
