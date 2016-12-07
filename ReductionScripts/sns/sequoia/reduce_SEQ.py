@@ -377,8 +377,11 @@ def main():
             Ei_primary = int(round(Ei_primary, -1))
         else:
             Ei_primary = int(round(Ei_primary, -2))
-        Ei_2ndary = rrm_Eis[Ei_primary]
-        print " * RRM is on. Secondary Ei: %s" % Ei_2ndary
+        try:
+            Ei_2ndary = rrm_Eis[Ei_primary]
+            print " * RRM is on. Secondary Ei: %s" % Ei_2ndary
+        except:
+            Ei_2ndary = None
     else:
         Ei_2ndary = None
 
