@@ -1454,9 +1454,9 @@ class ReduceVulcanData(object):
 
             # Change file  mode
             try:
-            	os.chmod(categorized_2_record_file, 0666)
+                os.chmod(categorized_2_record_file, 0666)
             except OSError:
-                pass
+                print ('Unable to set file %s\'s mode to 0666' % categorized_2_record_file)
         # END-IF
 
         return True, error_message
