@@ -34,8 +34,8 @@ processed_van_file = None
 ProcessedVanadium="van102084_nov_2016_2x2.nxs"
 Emin=-0.6
 Emax=0.95
-Estep=0.01
-grouping="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Estep=0.005
+grouping="/SNS/SEQ/shared/autoreduce/SEQ_1x1_grouping.xml" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 create_elastic_nxspe=True
 
 # additional parameters
