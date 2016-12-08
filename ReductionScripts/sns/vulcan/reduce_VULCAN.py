@@ -1453,7 +1453,10 @@ class ReduceVulcanData(object):
             # END-IF-ELSE
 
             # Change file  mode
-            os.chmod(categorized_2_record_file, 0666)
+            try:
+            	os.chmod(categorized_2_record_file, 0666)
+            except OSError:
+                pass
         # END-IF
 
         return True, error_message
