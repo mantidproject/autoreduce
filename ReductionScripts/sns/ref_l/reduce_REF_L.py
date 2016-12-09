@@ -72,10 +72,11 @@ if os.path.isfile(default_file_name):
     dx = reflectivity.readDx(0)
     
     if int(run_number) - first_run_of_set < 10:
-        for r in range(first_run_of_set, int(run_number)+1):
-            plot1d(r, [[x, y, dy, dx]], instrument='REF_L', 
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
+        for r in range(0, 10):
+            if os.path.isfile('REFL_%s_%s_%s_auto.nxs' % (first_run_of_set, r+1, first_run_if_set+r)):
+                plot1d(first_run_if_set+r, [[x, y, dy, dx]], instrument='REF_L', 
+                       x_title=u"Q (1/\u212b)", x_log=True,
+                       y_title="Reflectivity", y_log=True, show_dx=False)
     else:
         plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
                x_title=u"Q (1/\u212b)", x_log=True,
