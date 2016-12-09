@@ -56,7 +56,7 @@ output = LRAutoReduction(Filename=event_file_path,
                          ReadSequenceFromFile=True,
                          OrderDirectBeamsByRunNumber=True,
                          TemplateFile=template_file, FindPeaks=False)
-first_run_of_set=output[1]
+first_run_of_set=int(output[1])
 
 
 #-------------------------------------------------------------------------
@@ -71,8 +71,14 @@ if os.path.isfile(default_file_name):
     dy = reflectivity.readE(0)
     dx = reflectivity.readDx(0)
     
-    plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
-           x_title=u"Q (1/\u212b)", x_log=True,
-           y_title="Reflectivity", y_log=True, show_dx=False)
+    if int(run_number) - first_run_of_set < 10:
+        for r in range(first_run_of_set, int(run_number)+1):
+            plot1d(r, [[x, y, dy, dx]], instrument='REF_L', 
+                   x_title=u"Q (1/\u212b)", x_log=True,
+                   y_title="Reflectivity", y_log=True, show_dx=False)
+    else:
+        plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
+               x_title=u"Q (1/\u212b)", x_log=True,
+               y_title="Reflectivity", y_log=True, show_dx=False)
 
 
