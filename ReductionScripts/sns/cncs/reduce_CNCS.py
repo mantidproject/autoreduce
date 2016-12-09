@@ -39,7 +39,7 @@ beta="90.0"
 gamma="90.0"
 uVector="0,0,1"
 vVector="1,1,0"
-sub_directory=""
+sub_directory="12kbar"
 
 #parameters not on the webpage
 #below remains unchanged
