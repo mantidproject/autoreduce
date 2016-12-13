@@ -46,7 +46,7 @@ run = mtd[autows].getRun()
 
 # Determine if we save the NXSPE file
 psi_angle=None
-logname="Ox2WeldRot"  # Discriminating property for the PSI angle
+logname="ShinyRot"  # Discriminating property for the PSI angle
 if run.hasProperty(logname):
     logproperty = run.getProperty(logname)
     psi_angle = numpy.average(logproperty.value)
