@@ -1251,7 +1251,10 @@ class ReduceVulcanData(object):
             return
         else:
             shutil.copy(source_gsas_file_name, target_directory)
-            os.chmod(target_file_name, 0664)
+            try:
+                os.chmod(target_file_name, 0664)
+            except OSError:
+                pass
 
         return
 
@@ -1365,7 +1368,10 @@ class ReduceVulcanData(object):
             if file_access_mode != '666' and file_access_mode != '676':
                 print "Current file %s's mode is %s." % (self._reductionSetup.get_record_file(),
                                                          file_access_mode)
-                os.chmod(self._reductionSetup.get_record_file(), 0666)
+                try:
+                    os.chmod(self._reductionSetup.get_record_file(), 0666)
+                except OSError:
+                    pass
         except RuntimeError as run_err:
             message = 'Exporting experiment record to %s due to %s.' % (self._reductionSetup.get_record_file(),
                                                                         str(run_err))
