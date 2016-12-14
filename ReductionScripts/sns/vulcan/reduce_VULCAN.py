@@ -1432,7 +1432,8 @@ class ReduceVulcanData(object):
                                                  OrderByTitle='RUN',
                                                  RemoveDuplicateRecord=True)
             # change file mode for local manual modification
-            os.chmod(self._reductionSetup.get_record_2nd_file(), 0666)
+            try:
+                os.chmod(self._reductionSetup.get_record_2nd_file(), 0666)
 
         # prepare for the cop for  auto record align or data file
         if self._reductionSetup.get_record_2nd_file() is not None and len(error_message) == 0:
