@@ -1401,7 +1401,10 @@ class ReduceVulcanData(object):
                                              OrderByTitle='RUN',
                                              RemoveDuplicateRecord=True)
             # change file mode for local manual modification
-            os.chmod(categorized_record_file, 0666)
+            try:
+                os.chmod(categorized_record_file, 0666)
+            except OSError:
+                pass
         except NameError as e:
             if self._reductionSetup.is_alignment_run:
                 error_message += 'Unable to write to AutoRecord-Alignment due to %s.' % str(e)
