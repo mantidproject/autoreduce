@@ -1670,7 +1670,10 @@ class ReduceVulcanData(object):
                                                Header=header)
 
         # change the file permission
-        os.chmod(log_file_name, 0666)
+        try:
+            os.chmod(log_file_name, 0666)
+        except OSError:
+            pass
 
         return log_file_name
 
