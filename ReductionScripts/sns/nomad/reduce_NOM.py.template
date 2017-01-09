@@ -8,8 +8,8 @@ import mantid
 ########## user defined parameters
 resamplex=-6000
 vanradius=0.58
-wavelengthMin=0.1
-wavelengthMax=2.9
+#wavelengthMin=0.1
+#wavelengthMax=2.9
 calFile="%(cal_file)s"
 charFile="%(char_file)s"
 expiniFileDefault="%(expini_file)s"
@@ -77,8 +77,6 @@ if sampleBackRun > 0:
     canProcessingProperties = ['container', 'd_min', 'd_max',
                                'tof_min', 'tof_max']
     canProcessingOtherProperties = ["ResampleX="+str(resamplex),
-                                    "CropWavelengthMin="+str(wavelengthMin),
-                                    "CropWavelengthMax="+str(wavelengthMax),
                                     "BackgroundSmoothParams="+str(''),
                                     "CalibrationFile="+calFile]
 
@@ -99,8 +97,6 @@ if vanRun > 0:
                                'tof_min', 'tof_max']
     vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "VanadiumRadius="+str(vanradius),
-                                    "CropWavelengthMin="+str(wavelengthMin),
-                                    "CropWavelengthMax="+str(wavelengthMax),
                                     "CalibrationFile="+calFile]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
@@ -126,8 +122,6 @@ SNSPowderReduction(Filename=eventFile,
                    ResampleX=resamplex,
                    BinInDspace=True,
                    FilterBadPulses=25.,
-                   CropWavelengthMin=wavelengthMin,
-                   CropWavelengthMax=wavelengthMax,
                    SaveAs="gsas fullprof topas",
                    OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,

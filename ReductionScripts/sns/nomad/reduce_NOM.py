@@ -8,8 +8,8 @@ import mantid
 ########## user defined parameters
 resamplex=-6000
 vanradius=0.58
-wavelengthMin=0.1
-wavelengthMax=2.9
+#wavelengthMin=0.1
+#wavelengthMax=2.9
 calFile="/SNS/NOM/IPTS-18316/shared/NOM_calibrate_d87646_2016_12_14.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_08_18-rietveld.txt"
 expiniFileDefault="/SNS/lustre/NOM/IPTS-18316/shared/autoNOM/exp.ini"
@@ -77,8 +77,6 @@ if sampleBackRun > 0:
     canProcessingProperties = ['container', 'd_min', 'd_max',
                                'tof_min', 'tof_max']
     canProcessingOtherProperties = ["ResampleX="+str(resamplex),
-                                    "CropWavelengthMin="+str(wavelengthMin),
-                                    "CropWavelengthMax="+str(wavelengthMax),
                                     "BackgroundSmoothParams="+str(''),
                                     "CalibrationFile="+calFile]
 
@@ -99,8 +97,6 @@ if vanRun > 0:
                                'tof_min', 'tof_max']
     vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "VanadiumRadius="+str(vanradius),
-                                    "CropWavelengthMin="+str(wavelengthMin),
-                                    "CropWavelengthMax="+str(wavelengthMax),
                                     "CalibrationFile="+calFile]
 
     (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
@@ -126,8 +122,6 @@ SNSPowderReduction(Filename=eventFile,
                    ResampleX=resamplex,
                    BinInDspace=True,
                    FilterBadPulses=25.,
-                   CropWavelengthMin=wavelengthMin,
-                   CropWavelengthMax=wavelengthMax,
                    SaveAs="gsas fullprof topas",
                    OutputDirectory=outputDir,
                    StripVanadiumPeaks=True,
