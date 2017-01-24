@@ -149,43 +149,28 @@ if mpiRank == 0:
     ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
 
     # save a picture of the normalized ritveld data
-    from plotly.offline import plot
-    import plotly.graph_objs as go
+    banklabels = ['bank 1 - 15 deg',
+                  'bank 2 - 31 deg',
+                  'bank 3 - 67 deg',
+                  'bank 4 - 122 deg',
+                  'bank 5 - 154 deg',
+                  'bank 6 - 7 deg']
+    spectratoshow = [2,3,4,5]
 
-    banklabels = {1 : 'bank 1 - 15 deg',
-                  2 : 'bank 2 - 31 deg',
-                  3 : 'bank 3 - 67 deg',
-                  4 : 'bank 4 - 122 deg',
-                  5 : 'bank 5 - 154 deg',
-                  6 : 'bank 6 - 7 deg',}
-    data = []
-    wksp = mtd[wksp_name]
-    for i in xrange(wksp.getNumberHistograms()):
-         specNum = wksp.getSpectrum(i).getSpectrumNo()
-         visible = True
-         if specNum in [1,6]:
-             visible = 'legendonly'
-         data.append(go.Scatter(x=wksp.readX(i)[:-1], y=wksp.readY(i),
-                                name=banklabels[specNum], visible=visible))
-
-    xunit = wksp.getAxis(0).getUnit()
-    xlabel = '%s (%s)' % (xunit.caption(), xunit.symbol().utf8())
-    layout = go.Layout(yaxis=dict(title=wksp.YUnitLabel()),
-                       xaxis=dict(title=xlabel))
-    fig = go.Figure(data=data, layout=layout)
+    saveplot1d_args = dict(InputWorkspace=wksp_name,
+                           SpectraList=spectratoshow,
+                           SpectraNames=banklabels)
 
     post_image = True
     if post_image:
-         plotly_args = {'output_type':'div',
-                        'include_plotlyjs':False}
+        div = SavePlot1D(OutputType='plotly', **saveplot1d_args)
+        from postprocessing.publish_plot import publish_plot
+        request = publish_plot('NOM', runNumber, files={'file':div})
+        print "post returned %d" % request.status_code
+        print "resulting document:"
+        print request.text
     else:
-         plotly_args = {'filename':os.path.join(outputDir, wksp_name+'.html')}
-
-    div = plot(fig, show_link=False, **plotly_args)
-    #print div
-    if post_image:  # post to the plot server
-         from postprocessing.publish_plot import publish_plot
-         request = publish_plot('NOM', runNumber, files={'file':div})
-         print "post returned %d" % request.status_code
-         print "resulting document:"
-         print request.text
+        filename = os.path.join(outputDir, wksp_name + '.html')
+        SavePlot1D(OutputFilename=filename, OutputType='plotly-full',
+                   **saveplot1d_args)
+        print 'saved', filename
