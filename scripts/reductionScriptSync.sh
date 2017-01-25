@@ -33,8 +33,8 @@ fi
 
 # commit the result
 if [[ -n $(git status) ]];then
-    echo "Pushing updates to github"
-    git add ReductionScripts/sns
-    git commit -m 'Updated reduction script by cron job'
-    git push
+    echo "Pushing updates to github" >> $LOG_FILE
+    git add ReductionScripts/sns >> $LOG_FILE
+    git commit -m 'Updated reduction script by cron job' >> $LOG_FILE
+    git push >> $LOG_FILE
 fi
