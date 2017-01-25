@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from __future__ import (absolute_import, division, print_function, unicode_literals)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import os
 import shutil
 
@@ -10,22 +11,19 @@ INSTRUMENTS = {'HYSPEC': 'HYS',
                'SEQUOIA': 'SEQ',
                'VISION': 'VIS'}
 
+
 def toShared(name, srcdir):
     direc = os.path.join(srcdir, shortName(name), 'shared')
     return direc
 
-def toGit(name, gitdir):
-    self.instrument = INSTRUMENTS.get(name, name).lower()
-    return None
 
 def filesInGit(gitdir, instrument):
     direc = os.path.join(options.gitdir, instrument)
 
     filenames = os.listdir(direc)
-    #filenames = [os.path.join(direc, filename)
-    #             for filename in filenames]
 
     return filenames
+
 
 def shortName(instrument):
     instrument = instrument.upper()
@@ -40,15 +38,11 @@ def defaultNames(instrument):
                  'reduce_%s.py.template',
                  'sumRun_%s.py',
                  'sumRun_%s.cfg',
-                 'sumBatchRun_%s.sh',
-    ]
+                 'sumBatchRun_%s.sh']
 
     filenames = [item % instrument for item in filenames]
     return filenames
 
-def inDir(filename, direc):
-    filename = os.path.join(direc, filename)
-    return os.path.exists(filename)
 
 def copyfile(filename, src, dst):
     srcfile = os.path.join(src, filename)
@@ -61,7 +55,9 @@ def copyfile(filename, src, dst):
 if __name__ == '__main__':
     # configure the argument parser
     import argparse
-    parser = argparse.ArgumentParser(description="Copy autoreduction and livereduction files to specified directory")
+    parser = argparse.ArgumentParser(description="Copy autoreduction and "
+                                     "livereduction files to specified "
+                                     "directory")
     parser.add_argument('gitdir', help='Directory with the git repository')
     parser.add_argument('srcdir', nargs='?',
                         help='Directory containing reduction script root',
@@ -92,12 +88,10 @@ if __name__ == '__main__':
             print('-----', autodir)
             filenames = filesInGit(options.gitdir, instrument)
             filenames.extend(defaultNames(instrument))
-            filenames = list(set(filenames)) # remove repeats
+            filenames = list(set(filenames))  # remove repeats
 
             for filename in filenames:
                 copyfile(filename, autodir, gitdir)
-                #print('>>', filename, inDir(filename, options.srcdir))
-
 
         livedir = os.path.join(sharedir, 'livereduce')
         if os.path.isdir(livedir):
@@ -109,7 +103,3 @@ if __name__ == '__main__':
             for filename in livefiles:
                 copyfile(filename, livedir, gitdir)
                 print('-----', filename)
-
-
-
-    #sync = Synchronizer(instruments[1], options.srcdir, options.gitdir)
