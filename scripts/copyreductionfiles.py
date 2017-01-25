@@ -30,7 +30,7 @@ def shortName(instrument):
     return INSTRUMENTS.get(instrument, instrument)
 
 
-def defaultNames(instrument):
+def defaultAutoNames(instrument):
     instrument = shortName(instrument)
 
     filenames = ['reduce_%s.py',
@@ -44,13 +44,29 @@ def defaultNames(instrument):
     return filenames
 
 
+def defaultLiveNames(instrument):
+    instrument = shortName(instrument)
+
+    filenames = ['reduce_%s_live_proc.py',
+                 'reduce_%s_live_post_proc.py']
+    filenames = [item % shortName(instrument) for item in filenames]
+
+    return filenames
+
+
 def copyfile(filename, src, dst):
     srcfile = os.path.join(src, filename)
     dstfile = os.path.join(dst, filename)
 
     if os.path.exists(srcfile):
+        # TODO could check to see if they are different
         print('copy', srcfile, 'to', dstfile)
         shutil.copyfile(srcfile, dstfile)
+
+
+def copyfiles(filenames, src, dst):
+    for filename in filenames:
+        copyfile(filename, src, dst)
 
 if __name__ == '__main__':
     # configure the argument parser
@@ -84,22 +100,20 @@ if __name__ == '__main__':
         gitdir = os.path.join(options.gitdir, instrument)
 
         autodir = os.path.join(sharedir, 'autoreduce')
+
         if os.path.isdir(autodir):
             print('-----', autodir)
+
             filenames = filesInGit(options.gitdir, instrument)
-            filenames.extend(defaultNames(instrument))
+            filenames.extend(defaultAutoNames(instrument))
             filenames = list(set(filenames))  # remove repeats
 
-            for filename in filenames:
-                copyfile(filename, autodir, gitdir)
+            copyfiles(filenames, autodir, gitdir)
 
         livedir = os.path.join(sharedir, 'livereduce')
         if os.path.isdir(livedir):
             print('-----', livedir)
-            livefiles = ['reduce_%s_live_proc.py',
-                         'reduce_%s_live_post_proc.py']
-            livefiles = [item % shortName(instrument) for item in livefiles]
 
-            for filename in livefiles:
-                copyfile(filename, livedir, gitdir)
-                print('-----', filename)
+            filenames = defaultLiveNames(instrument)
+
+            copyfiles(filenames, livedir, gitdir)
