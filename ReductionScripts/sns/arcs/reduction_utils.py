@@ -4,6 +4,7 @@ sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py
 
 sys.path.append("/opt/Mantid/bin")
 import numpy
+numpy.seterr(all='ignore') # added Dec 8, 2016 to suppress divide by zero warning following what is done in HYSPEC autoreduce script
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 from mantid.simpleapi import *
 from matplotlib import *
@@ -24,6 +25,8 @@ def preprocessVanadium(Raw,Processed,Parameters):
 
         for d in Parameters:
             MaskBTP(Workspace="__VAN",**d)
+        zeroDets=FindDetectorsOutsideLimits("__VAN")
+        MaskDetectors(Workspace="__VAN",MaskedWorkspace=zeroDets[0])
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
         
@@ -31,8 +34,8 @@ def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     # uncomment the following if using two monitors
-    # [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-    # logger.notice("Ei=%s, T=%s" % (Efixed,T0))
+    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
@@ -42,9 +45,10 @@ def preprocessData(filename):
     CorrectLogTimes('__IWS')
 
     #use detectors and first monitor to get Ei
-    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
-    logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
-    return [Eguess,result[0],result[3]]
+    #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    #logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
+    #return [Eguess,result[0],result[3]]
+
     #Add other Filters here
     #Filter chopper 3 bad events
     #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
@@ -155,12 +159,23 @@ def reduceMono(
 
     # make a plot
     Zm=ma.masked_where(ne==0,dne)
-    pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
-    colorbar(pcm)
-    xlabel('|Q| ($\AA^{-1}$)')
-    ylabel('E (meV)')
-    title("Run "+outfile)
-    savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
+    #pcm=pcolormesh(X,Y,log(Zm),shading='gouraud')
+    #colorbar(pcm)
+    #xlabel('|Q| ($\AA^{-1}$)')
+    #ylabel('E (meV)')
+    #title("Run "+outfile)
+    #savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
+
+    try:
+        from postprocessing.publish_plot import plot_heatmap
+        Zm = np.log(np.transpose(Zm))
+        run_number=str(mtd['__OWS'].getRunNumber())
+        plot_heatmap(
+            run_number, x.tolist(), y.tolist(), Zm.tolist(), 
+            x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
+            x_log=False, y_log=False, instrument='ARCS', publish=True)
+    except:
+        logger.error("Could not plot")
 
     if clean:
         WS_clean()

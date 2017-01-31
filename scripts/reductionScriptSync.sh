@@ -21,7 +21,7 @@ if [[ -d "$WORK_DIR/autoreduce" ]]; then
     git rebase origin master >> $LOG_FILE
 else
     #git clone git@github.com:mantidproject/autoreduce.git >> $LOG_FILE
-    ssh-agent bash -c 'ssh-add ~/.ssh/autoreduce.rsa; git clone git@github.com:mantidproject/autoreduce.git >> $LOG_FILE'
+    ssh-agent bash -c 'ssh-add ~/.ssh/autoreduce.rsa; git clone git@github.com:mantidproject/autoreduce.git'
     cd autoreduce
 
     git config user.name "mantid-publisher"
