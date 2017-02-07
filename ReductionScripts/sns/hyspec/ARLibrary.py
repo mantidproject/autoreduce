@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys,os,glob, filecmp
+import sys,os,glob, filecmp, datetime
 sys.path.append("/opt/mantidnightly/bin")
 import mantid
 
