@@ -1,12 +1,32 @@
 #!/usr/bin/env python
 
-import sys,os
+import sys,os,glob, filecmp
 sys.path.append("/opt/mantidnightly/bin")
-from numpy import *
-from string import *
-
 import mantid
 
+
+def check_newer_script(instrument, folder):
+    """
+    Checks if reduce_instrument.py is in a certain folder.
+    It searches for all reduce_instrument*.py, takes the newest one and compares the content with
+    /SNS/instrument/shared/autoreduce/reduce_instrument.py. If there is no such file in the folder,
+    or the content has changed, it will copy reduce_instrument.py to reduce_instrument_date_and_time.py
+    in folder.
+    The function raises OSError if /SNS/instrument/shared/autoreduce/reduce_instrument.py is not found
+    """
+    master_filename="/SNS/"+instrument+"/shared/autoreduce/reduce_"+instrument+".py"
+    search_pattern=os.path.join(folder,"reduce_"+instrument+"*.py")
+    result=glob.glob(search_pattern)
+    newer_file_exists=True
+    if result:
+        # there are reduce_... files, get the newest
+        newest_filename=max(result,key=os.path.getctime)
+        #check content. If the same, then there is no newer file
+        newer_file_exists=not filecmp.cmp(master_filename,newest_filename)
+    if newer_file_exists:
+        new_filename=os.path.join(folder,"reduce_"+instrument+"_"+datetime.datetime.now().strftime('%Y.%m.%d_%H.%M.%S')+".py")
+        shutil.copy2(master_filename,new_filename)
+    return newer_file_exists 
 
 class ExperimentLog(object):
     def __init__(self):
