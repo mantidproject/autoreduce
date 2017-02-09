@@ -88,17 +88,14 @@ if van is not None:
 ##### generate plot and post
 div = simpleapi.SavePlot1D(InputWorkspace=output, OutputType='plotly')
 
-try:
-    runNumber = simpleapi.mtd[output].run().get('run_number').value
-except:
-    runNumber = simpleapi.mtd[str(input)].run().get('run_number').value
-
-mantid.logger.information('Posting plot of PG3_%s' % runNumber)
-try: # version on autoreduce
-    from postprocessing.publish_plot import publish_plot
-except ImportError: # version on instrument computers
-    from finddata import publish_plot
-request = publish_plot('PG3', runNumber, files={'file':div})
-mantid.logger.information("post returned %d" % request.status_code)
-mantid.logger.information("resulting document:")
-mantid.logger.information(str(request.text))
+runNumber = simpleapi.mtd[output].getRunNumber()
+if runNumber > 0:  # it is 0 between runs
+    mantid.logger.information('Posting plot of PG3_%s' % runNumber)
+    try: # version on autoreduce
+        from postprocessing.publish_plot import publish_plot
+    except ImportError: # version on instrument computers
+        from finddata import publish_plot
+    request = publish_plot('PG3', runNumber, files={'file':div})
+    mantid.logger.information("post returned %d" % request.status_code)
+    mantid.logger.information("resulting document:")
+    mantid.logger.information(str(request.text))
