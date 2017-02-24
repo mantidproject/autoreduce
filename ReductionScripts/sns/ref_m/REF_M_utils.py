@@ -30,10 +30,10 @@ def reduce_data(run_number):
         
     apply_norm = True
     if norm_run is None:
-        logging.notice("Could not find direct beam run: skipping")
+        logging.info("Could not find direct beam run: skipping")
         apply_norm = False
     else:
-        logging.notice("Direct beam run: %s" % norm_run)
+        logging.info("Direct beam run: %s" % norm_run)
 
     # Find peak in direct beam run
     ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
