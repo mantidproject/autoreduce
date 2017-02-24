@@ -94,7 +94,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
     s2_ = scatt_ws.getRun().getProperty("S2HWidth").getStatistics().mean
     s3_ = scatt_ws.getRun().getProperty("S3HWidth").getStatistics().mean
     run_ = int(scatt_ws.getRunNumber())
-
+    dangle_ = scatt_ws.getRun().getProperty("DANGLE").getStatistics().mean
     closest = None
     for item in os.listdir(data_dir):
         if item.endswith("_event.nxs") or item.endswith("h5"):
