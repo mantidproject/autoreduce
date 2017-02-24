@@ -4,7 +4,7 @@
     TODO: - Write output in a format that can be loaded in quicknxs
 """
 import sys
-sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
+sys.path.insert(0,'/opt/mantidnightly/bin')
 import mantid
 from mantid.simpleapi import *
 import numpy as np
