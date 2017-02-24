@@ -104,10 +104,14 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
         if item.endswith("_event.nxs") or item.endswith("h5"):
             summary_path = os.path.join(ar_dir, item+'.json')
             if not os.path.isfile(summary_path):
-                ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
-                                    NXentryName='entry-Off_Off',
-                                    MetaDataOnly=True,
-                                    OutputWorkspace="meta_data")
+                try:
+                    ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
+                                        NXentryName='entry-Off_Off',
+                                        MetaDataOnly=True,
+                                        OutputWorkspace="meta_data")
+                except:
+                    # If we can't load the Off-Off entry, it's not a direct beam
+                    continue
                 run_number = int(ws.getRunNumber())
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
                 wl = ws.getRun().getProperty("LambdaRequest").getStatistics().mean
