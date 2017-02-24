@@ -71,8 +71,10 @@ if __name__=="__main__":
   # initialize logging to file and console
   # console log level is given by LOG_LEVEL
   # while file log level is always DEBUG
+  #setup_logging(log_level=LOG_LEVEL,
+  #              filename=FILE_PREFIX+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
   setup_logging(log_level=LOG_LEVEL,
-                filename=FILE_PREFIX+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
+                filename=os.path.join(sys.argv[2], 'reduce_REF_M_FILE_PREFIX'+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
