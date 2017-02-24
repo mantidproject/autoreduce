@@ -77,7 +77,7 @@ if __name__=="__main__":
   #setup_logging(log_level=LOG_LEVEL,
   #              filename=FILE_PREFIX+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
   setup_logging(log_level=LOG_LEVEL,
-                filename=os.path.join(sys.argv[2], 'reduction_log', 'reduce_REF_M_FILE_PREFIX'+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log'))
+                filename=os.path.join(sys.argv[2], 'reduction_log', 'reduce_REF_M_'+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log'))
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
