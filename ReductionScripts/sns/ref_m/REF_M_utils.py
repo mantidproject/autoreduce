@@ -11,6 +11,7 @@ import numpy as np
 import math
 from scipy.optimize import curve_fit
 import json
+import logging
 
 def reduce_data(run_number):
     """
@@ -26,6 +27,11 @@ def reduce_data(run_number):
     norm_run = find_direct_beam(ws)
     if norm_run is None:
         norm_run = find_direct_beam(ws, skip_slits=True)
+        
+    apply_norm = True
+    if norm_run is None:
+        logging.error("Could not find direct beam run: skipping")
+        apply_norm = False
 
     # Find peak in direct beam run
     ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
@@ -38,7 +44,7 @@ def reduce_data(run_number):
                                     SignalPeakPixelRange=scatt_peak,
                                     SubtractSignalBackground=True,
                                     SignalBackgroundPixelRange=[4, scatt_peak[0]-30],
-                                    ApplyNormalization=True,
+                                    ApplyNormalization=apply_norm,
                                     NormPeakPixelRange=direct_peak,
                                     SubtractNormBackground=False,
                                     NormBackgroundPixelRange=[4, direct_peak[0]-30],
