@@ -24,6 +24,8 @@ def reduce_data(run_number):
 
     # Find direct beam run
     norm_run = find_direct_beam(ws)
+    if norm_run is None:
+        norm_run = find_direct_beam(ws, skip_slits=True)
 
     # Find peak in direct beam run
     ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
@@ -71,7 +73,7 @@ def reduce_data(run_number):
 
     return reflectivity
 
-def find_direct_beam(scatt_ws, tolerance=0.02):
+def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
     """
         Find the appropriate direct beam run
     """
@@ -118,9 +120,10 @@ def find_direct_beam(scatt_ws, tolerance=0.02):
                 continue
 
             if math.fabs(wl-wl_) < tolerance \
-                and math.fabs(s1-s1_) < tolerance \
+                and skip_slits is True or \
+                (math.fabs(s1-s1_) < tolerance \
                 and math.fabs(s2-s2_) < tolerance \
-                and math.fabs(s3-s3_) < tolerance:
+                and math.fabs(s3-s3_) < tolerance):
                 if closest is None:
                     closest = run_number
                 elif abs(run_number-run_) < abs(closest-run_):
