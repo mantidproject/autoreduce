@@ -150,7 +150,7 @@ def WS_clean():
     DeleteWorkspace('__MonWS')
     
 
-def run(filename, outdir, setEi=None):
+def run(filename, outdir, setEi=None, outfn_template=None):
     DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
     #--------------------------------------
     #Preprocess data to get Ei and T0
@@ -224,9 +224,9 @@ def run(filename, outdir, setEi=None):
     elog.setFilename(outdir+'experiment_log.csv')
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)
     
-    outpre='SEQ'
     runnum=str(mtd['__IWS'].getRunNumber()) 
-    outfile=outpre+'_'+runnum+'_autoreduced'
+    outfn_template = outfn_template or 'SEQ_%(runnum)s_autoreduced'
+    outfile = outfn_template % dict(runnum=runnum)
     if not numpy.isnan(Ei):
         DGSdict['SampleInputWorkspace']='__IWS'
         DGSdict['SampleInputMonitorWorkspace']='__MonWS'
@@ -391,11 +391,12 @@ def main():
     if Ei_2ndary:
         global create_elastic_nxspe
         create_elastic_nxspe=False
-        outdir2 = os.path.join(outdir, 'rrm_%smeV'%Ei_2ndary)
+        outdir2 = os.path.join(outdir, 'RRM')
         if not os.path.exists(outdir2):
             os.makedirs(outdir2)
         outdir2 += '/'
-        run(filename, outdir2, setEi=Ei_2ndary)
+        outfn_template = 'SEQ_%(runnum)s_rrm_' + str(Ei_2ndary) + 'p0meV' + '_autoreduced'
+        run(filename, outdir2, setEi=Ei_2ndary, outfn_template=outfn_template)
     return
 
 if __name__ == '__main__': main()
