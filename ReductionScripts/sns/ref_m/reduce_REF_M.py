@@ -116,4 +116,5 @@ if __name__=="__main__":
     run_number = run_number.replace('.nxs.h5', '')
     reduce_data(run_number)
   except:
+    logging.warning(sys.exc_value)
     logging.warning("Could not reduce with Mantid")
