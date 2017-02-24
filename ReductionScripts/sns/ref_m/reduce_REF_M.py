@@ -100,3 +100,15 @@ if __name__=="__main__":
       logging.warning('Could not add run to database, check logs for details')
 
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
+
+  try:
+    from REF_M_utils import reduce_data
+    event_file_path=sys.argv[1]
+    event_file = os.path.split(event_file_path)[-1]
+    # The legacy format is REF_L_xyz_event.nxs
+    # The new format is REF_L_xyz.nxs.h5
+    run_number = event_file.split('_')[2]
+    run_number = run_number.replace('.nxs.h5', '')
+    reduce_data(run_number)
+  except:
+    logging.warning("Could not reduce with Mantid")
