@@ -43,7 +43,7 @@ if __name__ == "__main__":
         outdir = sys.argv[2]+'/'
         if not os.path.exists(outdir): os.makedirs(outdir)
 
-    [EGuess,Ei,T0]=preprocessData(filename)
+    [EGuess,Ei,T0, getEi_from_monitors_failed]=preprocessData(filename)
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
@@ -78,3 +78,5 @@ if __name__ == "__main__":
         Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.1,0.005,5',PreserveEvents='0')
         SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
 
+    if getEi_from_monitors_failed:
+        raise ValueError("Warning: getEi from monitor data failed. Used EnergyRequest and calculated T0 accordingly")
