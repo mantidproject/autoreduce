@@ -29,12 +29,22 @@ def preprocessVanadium(Raw,Processed,Parameters):
         MaskDetectors(Workspace="__VAN",MaskedWorkspace=zeroDets[0])
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
-        
+
+
+def computeT0(Ei):
+    return 125.0*numpy.power(Ei, -0.5255)
+
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     # uncomment the following if using two monitors
-    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    getEi_from_monitors_failed = False
+    try:
+        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    except:
+        getEi_from_monitors_failed = True
+        Efixed, T0 = Eguess, computeT0(Eguess)
+        
     logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
@@ -54,7 +64,7 @@ def preprocessData(filename):
     #valC3=__MonWS.getRun()['Phase3'].getStatistics().median
     #FilterByLogValue(InputWorkspace='__IWS',OutputWorkspace='__IWS',LogName='Phase3',MinimumValue=valC3-0.15,MaximumValue=valC3+0.15)
     #FilterBadPulses(InputWorkspace="__IWS",OutputWorkspace = "__IWS",LowerCutoff = 50)
-    return [Eguess,Efixed,T0]
+    return Eguess,Efixed,T0, getEi_from_monitors_failed
 
 def CheckPacks(inputWorkspace,outdir) :
     #check here for bad packs - added 2014-2-14 by JLN
