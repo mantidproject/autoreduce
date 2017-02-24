@@ -65,9 +65,9 @@ def reduce_data(run_number):
                                     EntryName='entry-Off_Off',
                                     OutputWorkspace="r_%s" % run_number)
 
+    reflectivity = mtd["r_%s" % run_number]
     try:
         from postprocessing.publish_plot import plot1d
-        reflectivity = mtd["r_%s" % run_number]
         x = reflectivity.readX(0)
         y = reflectivity.readY(0)
         dy = reflectivity.readE(0)
