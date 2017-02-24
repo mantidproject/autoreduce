@@ -20,6 +20,9 @@ sys.path.append("/opt/mantidnightly/bin")
 from quicknxs.console_logging import setup_logging
 from quicknxs.version import str_version
 
+import warnings
+warnings.simplefilter('ignore', RuntimeWarning)
+
 LOG_LEVEL=logging.INFO
 FILE_PREFIX=u'/SNS/REF_M/shared/autoreduce/logfiles/reduce_REF_M_'
 #FILE_PREFIX=u'/tmp/reduce_'
