@@ -49,7 +49,7 @@ configfile="config.ini"
 
 def change_permissions(filename,permission):
     try:
-        os.chmod(filename,permissions)
+        os.chmod(filename,permission)
     except OSError:
         pass
 
