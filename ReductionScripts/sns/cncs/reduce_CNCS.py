@@ -17,8 +17,8 @@ MaskBTPParameters.append({'Bank': '38-50'})
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-16111/5/201975/NeXus/CNCS_201975_event.nxs"
-processed_vanadium="van201975.nxs"
+raw_vanadium="/SNS/CNCS/IPTS-16111/6/208719/NeXus/CNCS_208719_event.nxs"
+processed_vanadium="van208719.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.2"
@@ -47,7 +47,11 @@ sub_directory=""
 NormalizedVanadiumEqualToOne = True
 configfile="config.ini"
 
-
+def change_permissions(filename,permission):
+    try:
+        os.chmod(filename,permissions)
+    except OSError:
+        pass
 
 #Reduction section
 def check_newer_script(instrument,folder):
@@ -173,8 +177,8 @@ def preprocessGrouping(ws,outdir):
         ParFilename=outdir+'powdergroupfile.par'
         GenerateGroupingPowder(InputWorkspace=ws,AngleStep=0.5, GroupingFilename=GroupingFilename)
         dictgrouping={'GroupingFile':GroupingFilename}
-        os.chmod(GroupingFilename,0664)
-        os.chmod(ParFilename,0664)
+        change_permissions(GroupingFilename,0664)
+        change_permissions(ParFilename,0664)
     else:
         dictgrouping={'GroupingFile':''}
     return dictgrouping
@@ -206,7 +210,7 @@ if __name__ == "__main__":
         cfg.set('Reduction config','subdirectory',sub_directory)
         with open(cfgfile_path,'w') as f:
             cfg.write(f)
-        os.chmod(cfgfile_path,0664) 
+        change_permissions(cfgfile_path,0664) 
     else:
         if ar_changed:
             cfg = ConfigParser.ConfigParser()
@@ -214,7 +218,7 @@ if __name__ == "__main__":
             cfg.set('Reduction config','subdirectory',sub_directory)
             with open(cfgfile_path,'w') as f:
                 cfg.write(f)
-            os.chmod(cfgfile_path,0664)    
+            change_permissions(cfgfile_path,0664)    
         else:
             cfg = ConfigParser.ConfigParser()
             cfg.read(cfgfile_path)
@@ -232,7 +236,7 @@ if __name__ == "__main__":
 
     if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
         filename=DGSdict['SaveProcDetVanFilename']
-        os.chmod(filename,0664)
+        change_permissions(filename,0664)
         LoadNexus(Filename=filename,OutputWorkspace="__VAN")
         datay = mtd['__VAN'].extractY()
         meanval = float(datay[datay>0].mean())
@@ -240,7 +244,7 @@ if __name__ == "__main__":
         Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
         Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
         SaveNexus(InputWorkspace="__VAN", Filename= filename) 
-        os.chmod(filename,0664)
+        change_permissions(filename,0664)
 
     if create_elastic_nxspe:
         DGSdict['OutputWorkspace']='reduce_elastic'
@@ -265,19 +269,19 @@ if __name__ == "__main__":
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
         nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
-        os.chmod(nxspe_filename,0664)
+        change_permissions(nxspe_filename,0664)
         if create_elastic_nxspe:
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
-            os.chmod(nxspe_filename,0664)
+            change_permissions(nxspe_filename,0664)
     else:
         nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
-        os.chmod(nxspe_filename,0664)
+        change_permissions(nxspe_filename,0664)
         if create_elastic_nxspe:
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
-            os.chmod(nxspe_filename,0664)
+            change_permissions(nxspe_filename,0664)
             
     if create_MDnxs:
         try:
@@ -286,6 +290,6 @@ if __name__ == "__main__":
             ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
             filename=os.path.join(output_directory, "MD",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
             SaveMD(Filename=filename, InputWorkspace="md")
-            os.chmod(filename,0664)
+            change_permissions(filename,0664)
         except:
             mantid.kernel.logger.information("Problems converting to MD")
