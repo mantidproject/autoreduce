@@ -195,7 +195,10 @@ def guess_params(ws):
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
     peak_position = float(peak_position)
-    return peak, low_res, peak_position
+    
+    dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
+    is_direct_beam = dangle_ < tolerance
+    return peak, low_res, peak_position, is_direct_beam
 
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
