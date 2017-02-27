@@ -30,6 +30,8 @@ def reduce_data(run_number):
         norm_run = find_direct_beam(ws)
         if norm_run is None:
             norm_run = find_direct_beam(ws, skip_slits=True)
+    else:
+        logging.warning("This is a direct beam run")
         
     apply_norm = True
     if norm_run is None:
