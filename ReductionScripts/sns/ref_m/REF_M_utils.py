@@ -98,7 +98,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
     s2_ = scatt_ws.getRun().getProperty("S2HWidth").getStatistics().mean
     s3_ = scatt_ws.getRun().getProperty("S3HWidth").getStatistics().mean
     run_ = int(scatt_ws.getRunNumber())
-    dangle_ = scatt_ws.getRun().getProperty("DANGLE").getStatistics().mean
+    dangle_ = abs(scatt_ws.getRun().getProperty("DANGLE").getStatistics().mean)
     # Skip direct beam runs
     if dangle_ < tolerance:
         return None
