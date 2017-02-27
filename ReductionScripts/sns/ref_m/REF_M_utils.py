@@ -41,9 +41,10 @@ def reduce_data(run_number):
             y = ws.readY(0)
             dy = ws.readE(0)
 
-            plot1d(run_number, [[x, y, dy]], instrument='REF_M',
-                       x_title=u"TOF", x_log=True,
-                       y_title="Direct Beam Run", y_log=True, show_dx=False)
+            plot1d(run_number, [[x, y, dy]], data_names='Direct Beam r%s' % run_number,
+                   instrument='REF_M',
+                   x_title=u"TOF", x_log=True,
+                   y_title="Counts", y_log=True, show_dx=False)
         except:
             logging.error("No publisher module found")
         return
