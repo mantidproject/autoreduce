@@ -22,12 +22,14 @@ def reduce_data(run_number):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-Off_Off',
                         OutputWorkspace="MR_%s" % run_number)
-    scatt_peak, scatt_low_res, scatt_pos = guess_params(ws)
+    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws)
 
     # Find direct beam run
-    norm_run = find_direct_beam(ws)
-    if norm_run is None:
-        norm_run = find_direct_beam(ws, skip_slits=True)
+    norm_run = None
+    if not is_direct:
+        norm_run = find_direct_beam(ws)
+        if norm_run is None:
+            norm_run = find_direct_beam(ws, skip_slits=True)
         
     apply_norm = True
     if norm_run is None:
@@ -42,7 +44,7 @@ def reduce_data(run_number):
         ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                             NXentryName='entry-Off_Off',
                             OutputWorkspace="MR_%s" % norm_run)
-        direct_peak, direct_low_res, _ = guess_params(ws)
+        direct_peak, direct_low_res, _, _ = guess_params(ws)
 
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
