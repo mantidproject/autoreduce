@@ -36,11 +36,11 @@ def reduce_data(run_number):
     else:
         logging.info("Direct beam run: %s" % norm_run)
 
-    # Find peak in direct beam run
-    ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
-                        NXentryName='entry-Off_Off',
-                        OutputWorkspace="MR_%s" % norm_run)
-    direct_peak, direct_low_res, _ = guess_params(ws)
+        # Find peak in direct beam run
+        ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
+                            NXentryName='entry-Off_Off',
+                            OutputWorkspace="MR_%s" % norm_run)
+        direct_peak, direct_low_res, _ = guess_params(ws)
 
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
