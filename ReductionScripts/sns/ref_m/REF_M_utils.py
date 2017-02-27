@@ -14,6 +14,7 @@ from scipy.optimize import curve_fit
 import json
 import logging
 
+tolerance = 0.02
 def reduce_data(run_number):
     """
         Reduce a data run
