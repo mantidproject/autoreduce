@@ -32,7 +32,7 @@ def reduce_data(run_number):
         if norm_run is None:
             norm_run = find_direct_beam(ws, skip_slits=True)
     else:
-        logging.warning("This is a direct beam run")
+        logging.info("This is a direct beam run")
         tof_min = ws.getTofMin()
         tof_max = ws.getTofMax()
         ws = Rebin(ws, Params="%s, 50, %s" % (tof_min, tof_max))
@@ -172,7 +172,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
 
     return closest
 
-def guess_params(ws):
+def guess_params(ws, tolerance=0.02):
     """
         Determine peak positions
     """
