@@ -58,7 +58,7 @@ def reduce_data(run_number):
                                     CutLowResNormAxis=True,
                                     LowResNormAxisPixelRange=direct_low_res,
                                     CutTimeAxis=False,
-                                    QMin=0.005,
+                                    QMin=0.0001,
                                     QStep=-0.01,
                                     UseWLTimeAxis=False,
                                     TimeAxisStep=40,
