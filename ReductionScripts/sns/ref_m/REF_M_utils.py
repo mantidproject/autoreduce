@@ -220,7 +220,7 @@ def guess_params(ws, tolerance=0.02):
     dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
     is_direct_beam = dangle_ < tolerance
     if is_direct_beam:
-        logging.info("Direct beam run with DANGLE = %s" % dangle)
+        logging.info("Direct beam run with DANGLE = %s" % dangle_)
     return peak, low_res, peak_position, is_direct_beam
 
 if __name__ == '__main__':
