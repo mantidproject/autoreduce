@@ -32,6 +32,21 @@ def reduce_data(run_number):
             norm_run = find_direct_beam(ws, skip_slits=True)
     else:
         logging.warning("This is a direct beam run")
+        tof_min = ws.getTofMin()
+        tof_max = ws.getTofMax()
+        ws = Rebin(ws, Params="%s, 50, %s" % (tof_min, tof_max))
+        try:
+            from postprocessing.publish_plot import plot1d
+            x = ws.readX(0)
+            y = ws.readY(0)
+            dy = ws.readE(0)
+
+            plot1d(run_number, [[x, y, dy]], instrument='REF_M',
+                       x_title=u"TOF", x_log=True,
+                       y_title="Direct Beam Run", y_log=True, show_dx=False)
+        except:
+            logging.error("No publisher module found")
+        return
         
     apply_norm = True
     if norm_run is None:
