@@ -33,6 +33,8 @@ def reduce_data(run_number):
     if norm_run is None:
         logging.info("Could not find direct beam run: skipping")
         apply_norm = False
+        direct_peak = scatt_peak
+        direct_low_res = scatt_low_res
     else:
         logging.info("Direct beam run: %s" % norm_run)
 
