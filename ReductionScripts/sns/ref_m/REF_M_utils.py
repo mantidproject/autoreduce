@@ -18,10 +18,14 @@ tolerance = 0.02
 def reduce_data(run_number):
     """
         Reduce a data run
+        
+        Return False if the data is a direct beam
     """
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         reflectivity = reduce_cross_section(run_number, entry)
-        
+        if reflectivity is None:
+            return False
+    return True
 
 def reduce_cross_section(run_number, entry='Off_Off'):
     """
