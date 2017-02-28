@@ -136,9 +136,9 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     EntryName='entry-%s' % entry,
                                     OutputWorkspace="r_%s_%s" % (run_number, entry))
 
-    label = "r%s %s" % (run_number, entry)
+    label = entry
     if not apply_norm:
-        label += " [no direct beam found]"
+        label += " [no direct beam]"
     return mtd["r_%s_%s" % (run_number, entry)], label
 
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
