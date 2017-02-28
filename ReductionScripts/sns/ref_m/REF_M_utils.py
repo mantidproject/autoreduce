@@ -263,10 +263,10 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
     is_direct_beam = dangle_ < tolerance
 
-    logging.warning("Run: %s [direct beam: %s]" % (ws.getRunNumber(), is_direct_beam))
-    logging.warning("Peak position: %s" % peak_position)
-    logging.warning("Reflectivity peak: %s" % str(peak))
-    logging.warning("Low-resolution pixel range: %s" % str(low_res))
+    logging.info("Run: %s [direct beam: %s]" % (ws.getRunNumber(), is_direct_beam))
+    logging.info("Peak position: %s" % peak_position)
+    logging.info("Reflectivity peak: %s" % str(peak))
+    logging.info("Low-resolution pixel range: %s" % str(low_res))
             
         
     return peak, low_res, peak_position, is_direct_beam
