@@ -266,10 +266,13 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
         A, mu, sigma = p
         return A*np.exp(-(x-mu)**2/(2.*sigma**2))
     p0 = [np.max(signal_y), (peak[1]+peak[0])/2.0, (peak[1]-peak[0])/2.0]
-    coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
-
-    #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
-    peak_position = coeff[1]
+    try:
+        coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
+        peak_position = coeff[1]
+    except:
+        logging.warning("Could not use Gaussian fit to determine peak position")    
+        peak_position = np.average(signal_x_crop, weights=signal_y_crop)
+    
 
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
