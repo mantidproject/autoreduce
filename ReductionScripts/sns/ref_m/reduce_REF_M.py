@@ -81,8 +81,8 @@ if __name__=="__main__":
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
     logging.error("data file '%s' not found"%sys.argv[1])
-  #elif False:
-  else:
+  elif False:
+  #else:
     filename=unicode(sys.argv[1])
     outdir=unicode(sys.argv[2])
 
