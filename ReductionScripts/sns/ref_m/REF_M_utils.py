@@ -21,10 +21,35 @@ def reduce_data(run_number):
         
         Return False if the data is a direct beam
     """
+    data_list = []
+    data_names = []
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
-        reflectivity = reduce_cross_section(run_number, entry)
-        if reflectivity is None:
-            return False
+        try:
+            reflectivity = reduce_cross_section(run_number, entry)
+            if reflectivity is None:
+                return False
+        except:
+            # No data for this cross-section, skip to the next
+            continue
+
+        try:
+            from postprocessing.publish_plot import plot1d
+            x = reflectivity.readX(0)
+            y = reflectivity.readY(0)
+            dy = reflectivity.readE(0)
+            dx = reflectivity.readDx(0)
+            data_list.append( (x, y, dy, dx) )
+            data_names.append( entry )
+        except:
+            logging.error("No publisher module found")
+    try:
+        from postprocessing.publish_plot import plot1d
+        plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
+                   x_title=u"Q (1/\u212b)", x_log=True,
+                   y_title="Reflectivity", y_log=True, show_dx=False)
+    except:
+        logging.error("No publisher module found")
+        
     return True
 
 def reduce_cross_section(run_number, entry='Off_Off'):
@@ -104,18 +129,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
                                     OutputWorkspace="r_%s" % run_number)
 
     reflectivity = mtd["r_%s" % run_number]
-    try:
-        from postprocessing.publish_plot import plot1d
-        x = reflectivity.readX(0)
-        y = reflectivity.readY(0)
-        dy = reflectivity.readE(0)
-        dx = reflectivity.readDx(0)
 
-        plot1d(run_number, [[x, y, dy, dx]], instrument='REF_M',
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
-    except:
-        logging.error("No publisher module found")
 
     return reflectivity
 
