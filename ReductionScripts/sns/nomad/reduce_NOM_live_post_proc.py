@@ -2,10 +2,10 @@ import mantid
 from mantid import simpleapi
 
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
-if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
+if input.run().getProtonCharge() > 0.:
     # the proton charge doesn't come with the correct units
     input.run().integrateProtonCharge()
-    input.run()['gd_prtn_chrg'] = input.run()['gd_prtn_chrg'].value * (1.e-6 / 3600.) 
+    input.run()['gd_prtn_chrg'] = input.run().getProtonCharge() * (1.e-6 / 3600.) 
 
     simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output,
                                  RecalculatePCharge=False)
