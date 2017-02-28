@@ -388,7 +388,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
     fd.write("# sample_length  10\n")
     fd.write("#\n") 
     fd.write("# [Data]\n") 
-    toks = [u'%12s' % item for item in [u'Qz [Å⁻¹]', u'R [a.u.]', u'dR [a.u.]', u'dQz [Å⁻¹]', u'αi [rad]']]
+    toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
     fd.write(u"# %s\n" % '  '.join(toks))
    
     for ws in ws_list:
@@ -396,7 +396,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         y = ws.readY(0)
         dy = ws.readE(0)
         dx = ws.readDx(0)
-        tth = mtd['r_%s' % run].getRun().getProperty("two_theta").value
+        tth = mtd['r_%s' % run].getRun().getProperty("two_theta").value * math.pi / 180.0
         for i in range(len(x)):
             fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
 
