@@ -125,12 +125,9 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     SpecularPixel=scatt_pos,
                                     ConstantQBinning=False,
                                     EntryName='entry-%s' % entry,
-                                    OutputWorkspace="r_%s" % run_number)
+                                    OutputWorkspace="r_%s_%s" % (run_number, entry))
 
-    reflectivity = mtd["r_%s" % run_number]
-
-
-    return reflectivity
+    return mtd["r_%s_%s" % (run_number, entry)]
 
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
