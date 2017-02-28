@@ -6,7 +6,7 @@ if input.getRunNumber() <= 0:
 
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
-    simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output,     
+    simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output,
                                  RecalculatePCharge=True)
 
 simpleapi.PDDetermineCharacterizations(InputWorkspace=output,
@@ -49,7 +49,8 @@ if can is not None and not simpleapi.mtd.doesExist(can):
                                   **processingParams)
     simpleapi.ConvertUnits(InputWorkspace=can, OutputWorkspace=can,
                            Target='dSpacing', EMode='Elastic')
-    simpleapi.NormaliseByCurrent(InputWorkspace=can, OutputWorkspace=can)
+    simpleapi.NormaliseByCurrent(InputWorkspace=can, OutputWorkspace=can,
+                                 RecalculatePCharge=True)
     #smooth(can)
 
 if can is not None:
@@ -61,7 +62,8 @@ if van is not None and not simpleapi.mtd.doesExist(van):
     simpleapi.LoadEventNexus(Filename=van, OutputWorkspace=van)
     simpleapi.AlignAndFocusPowder(InputWorkspace=van, OutputWorkspace=van,
                                   **processingParams)
-    simpleapi.NormaliseByCurrent(InputWorkspace=van, OutputWorkspace=van)
+    simpleapi.NormaliseByCurrent(InputWorkspace=van, OutputWorkspace=van,
+                                 RecalculatePCharge=True)
 
     vanback = getRunId(manager, 'vanadium_background')
     if vanback is not None:
@@ -70,7 +72,8 @@ if van is not None and not simpleapi.mtd.doesExist(van):
         vanback = '__vanback'
         simpleapi.AlignAndFocusPowder(InputWorkspace=vanback, OutputWorkspace=vanback,
                                       **processingParams)
-        simpleapi.NormaliseByCurrent(InputWorkspace=vanback, OutputWorkspace=vanback)
+        simpleapi.NormaliseByCurrent(InputWorkspace=vanback, OutputWorkspace=vanback,
+                                     RecalculatePCharge=True)
 
         mantid.logger.information("subtracting vanadium background")
         simpleapi.Minus(LHSWorkspace=van, RHSWorkspace=vanback, OutputWorkspace=van,
