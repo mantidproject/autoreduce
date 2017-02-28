@@ -36,6 +36,7 @@ def reduce_data(run_number):
         tof_min = ws.getTofMin()
         tof_max = ws.getTofMax()
         ws = Rebin(ws, Params="%s, 50, %s" % (tof_min, tof_max))
+        ws = SumSpectra(ws)
         try:
             from postprocessing.publish_plot import plot1d
             x = ws.readX(0)
@@ -45,7 +46,7 @@ def reduce_data(run_number):
             plot1d(run_number, [(x, y, dy),], data_names=['Direct Beam r%s' % run_number],
                    instrument='REF_M',
                    x_title=u"TOF", x_log=False,
-                   y_title="Counts", y_log=False, show_dx=False)
+                   y_title="Counts", y_log=True, show_dx=False)
         except:
             logging.error("No publisher module found")
         return
