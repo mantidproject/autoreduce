@@ -44,7 +44,7 @@ processingParams = {'CalibrationWorkspace':'NOM_cal',
                     'ReductionProperties':'__pd_reduction_properties'}
 
 can = getRunId(manager, 'container')
-can = None # REMOVE
+#can = None # REMOVE
 if can is not None and not simpleapi.mtd.doesExist(can):
     mantid.logger.information("processing container '%s'" % can)
     simpleapi.LoadEventNexus(Filename=can, OutputWorkspace=can)
@@ -60,7 +60,7 @@ if can is not None:
     simpleapi.Minus(LHSWorkspace=output, RHSWorkspace=can, OutputWorkspace=output)
 
 van = getRunId(manager, 'vanadium')
-van = None # REMOVE
+#van = None # REMOVE
 if van is not None and not simpleapi.mtd.doesExist(van):
     mantid.logger.information("processing vanadium '%s'" % van)
     simpleapi.LoadEventNexus(Filename=van, OutputWorkspace=van)
