@@ -25,7 +25,7 @@ def reduce_data(run_number, use_roi=True):
     data_names = []
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
-            reflectivity = reduce_cross_section(run_number, entry, use_roi=use_roi)
+            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
                 return False
             x = reflectivity.readX(0)
@@ -33,7 +33,7 @@ def reduce_data(run_number, use_roi=True):
             dy = reflectivity.readE(0)
             dx = reflectivity.readDx(0)
             data_list.append( [x, y, dy, dx] )
-            data_names.append( entry )
+            data_names.append( label )
         except:
             # No data for this cross-section, skip to the next
             continue
@@ -136,7 +136,10 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     EntryName='entry-%s' % entry,
                                     OutputWorkspace="r_%s_%s" % (run_number, entry))
 
-    return mtd["r_%s_%s" % (run_number, entry)]
+    label = "r%s %s" % (run_number, entry)
+    if not apply_norm:
+        label += " [no direct beam found]"
+    return mtd["r_%s_%s" % (run_number, entry)], label
 
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
