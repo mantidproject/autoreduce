@@ -32,7 +32,7 @@ def reduce_data(run_number, use_roi=True):
             y = reflectivity.readY(0)
             dy = reflectivity.readE(0)
             dx = reflectivity.readDx(0)
-            data_list.append( (x, y, dy, dx) )
+            data_list.append( [x, y, dy, dx] )
             data_names.append( entry )
         except:
             # No data for this cross-section, skip to the next
