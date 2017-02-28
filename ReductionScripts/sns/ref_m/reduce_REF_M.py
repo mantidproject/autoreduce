@@ -10,15 +10,14 @@ start a new one otherwise.
 import logging
 import sys, os
 import time
-sys.path.append("/opt/mantidnightly/bin")
-# for testing use latest quicknxs test version instead of the installed one
-#sys.path.insert(0, u'/SNS/users/agf/software/QuickNXS/')
-#for path in "/SNS/software/lib/python2.6/site-packages:/SNS/software/lib/python2.6/site-packages/HLRedux:/SNS/software/lib64/python2.6/site-packages/DOM:/SNS/software/lib/python2.6/site-#packages/sns_common_libs:/SNS/software/lib/python2.6/site-packages:/SNS/users/agf/python/lib64/python2.6/site-packages:/SNS/users/agf/python/lib/python2.6/site-packages".split(":"):
-#    sys.path.append(path)
-#sys.path.insert(0, u'/home/agf/Software/Scripte/QuickNXS/')
+#sys.path.append("/opt/mantidnightly/bin")
+sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
 
 from quicknxs.console_logging import setup_logging
 from quicknxs.version import str_version
+
+import warnings
+warnings.simplefilter('ignore', RuntimeWarning)
 
 LOG_LEVEL=logging.INFO
 FILE_PREFIX=u'/SNS/REF_M/shared/autoreduce/logfiles/reduce_REF_M_'
@@ -71,8 +70,10 @@ if __name__=="__main__":
   # initialize logging to file and console
   # console log level is given by LOG_LEVEL
   # while file log level is always DEBUG
+  #setup_logging(log_level=LOG_LEVEL,
+  #              filename=FILE_PREFIX+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
   setup_logging(log_level=LOG_LEVEL,
-                filename=FILE_PREFIX+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log')
+                filename=os.path.join(sys.argv[2], 'reduction_log', 'reduce_REF_M_'+time.strftime('%Y_%m_%d-%H_%M_%S')+'.log'))
   logging.info('*** reduce_REF_M using QuickNXS %s Logging started ***'%str_version)
   if len(sys.argv)==2 and sys.argv[1]=='kill':
     kill_autorefl()
@@ -80,6 +81,7 @@ if __name__=="__main__":
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
     logging.error("data file '%s' not found"%sys.argv[1])
+  #elif False:
   else:
     filename=unicode(sys.argv[1])
     outdir=unicode(sys.argv[2])
@@ -100,3 +102,16 @@ if __name__=="__main__":
       logging.warning('Could not add run to database, check logs for details')
 
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
+
+  try:
+    from REF_M_utils import reduce_data
+    event_file_path=sys.argv[1]
+    event_file = os.path.split(event_file_path)[-1]
+    # The legacy format is REF_L_xyz_event.nxs
+    # The new format is REF_L_xyz.nxs.h5
+    run_number = event_file.split('_')[2]
+    run_number = run_number.replace('.nxs.h5', '')
+    reduce_data(run_number)
+  except:
+    logging.warning(sys.exc_value)
+    logging.warning("Could not reduce with Mantid")

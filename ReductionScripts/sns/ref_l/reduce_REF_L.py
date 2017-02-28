@@ -53,7 +53,7 @@ output = LRAutoReduction(Filename=event_file_path,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
                          OutputDirectory=output_dir,
                          SlitTolerance=0.06,
-                         ReadSequenceFromFile=True,
+                         ReadSequenceFromFile=False,
                          OrderDirectBeamsByRunNumber=True,
                          TemplateFile=template_file, FindPeaks=False)
 first_run_of_set=int(output[1])
@@ -63,6 +63,7 @@ first_run_of_set=int(output[1])
 # Produce plot for the web monitor
 default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
 if os.path.isfile(default_file_name):
+    print("Loading %s" % os.path.join(output_dir, default_file_name))
     reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
 
     from postprocessing.publish_plot import plot1d
