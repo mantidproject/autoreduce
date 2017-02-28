@@ -40,9 +40,11 @@ def reduce_data(run_number):
 
     try:
         from postprocessing.publish_plot import plot1d
-        plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
+        if len(data_list) > 0:
+            plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
+                       x_title=u"Q (1/\u212b)", x_log=True,
+                       y_title="Reflectivity", y_log=True, show_dx=False)
+        logging.warning("Nothing to plot")
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
@@ -130,7 +132,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
 
     return reflectivity
 
-def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
+def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
         Find the appropriate direct beam run
     """
@@ -160,7 +162,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                                         OutputWorkspace="meta_data")
                 except:
                     # If we can't load the Off-Off entry, it's not a direct beam
-                    meta_data = dict(invalid=True)
+                    meta_data = dict(run=0, invalid=True)
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
                     fd.close()
@@ -189,7 +191,10 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                 s3 = meta_data['s3']
             if run_number == run_ or dangle > tolerance:
                 continue
-
+            # If we don't allow runs taken later than the run we are processing...
+            if not allow_later_runs and run_number > run_:
+                continue
+            
             if math.fabs(wl-wl_) < tolerance \
                 and skip_slits is True or \
                 (math.fabs(s1-s1_) < tolerance \
@@ -249,8 +254,11 @@ def guess_params(ws, tolerance=0.02):
     
     dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
     is_direct_beam = dangle_ < tolerance
-    if is_direct_beam:
-        logging.info("Direct beam run with DANGLE = %s" % dangle_)
+
+    logging.warning("Run: %s [direct beam: %s]" % (ws.getRunNumber(), is_direct_beam))
+    logging.warning("Peak position: %s" % peak_position)
+    logging.warning("Reflectivity peak: %s" % str(peak))
+    logging.warning("Low-resolution pixel range: %s" % str(low_res))
     return peak, low_res, peak_position, is_direct_beam
 
 if __name__ == '__main__':
