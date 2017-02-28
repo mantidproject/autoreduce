@@ -44,7 +44,8 @@ def reduce_data(run_number, use_roi=True):
             plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
                        x_title=u"Q (1/\u212b)", x_log=True,
                        y_title="Reflectivity", y_log=True, show_dx=False)
-        logging.warning("Nothing to plot")
+        else:
+            logging.warning("Nothing to plot")
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
