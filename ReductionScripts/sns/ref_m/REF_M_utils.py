@@ -54,7 +54,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
     """
     # Find reflectivity peak of scattering run
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
-                        NXentryName='entry-Off_Off',
+                        NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
     scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws)
 
