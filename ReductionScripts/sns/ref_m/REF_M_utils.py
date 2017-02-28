@@ -136,6 +136,43 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     EntryName='entry-%s' % entry,
                                     OutputWorkspace="r_%s_%s" % (run_number, entry))
 
+    # Write output file
+    reflectivity = mtd["r_%s_%s" % (run_number, entry)]
+    ipts = reflectivity.getRun().getProperty("experiment_identifier").value
+    output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts
+    dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
+    filename = reflectivity.getRun().getProperty("Filename").value
+    tth = reflectivity.getRun().getProperty("two_theta").value
+    meta_data = {'scatt': [dict(scale=1, DB_ID=1,
+                               P0=0, PN=0, tth=tth, extract_fan=False,
+                               x_pos=scatt_pos,
+                               x_width=scatt_peak[1]-scatt_peak[0]+1,
+                               y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
+                               y_width=scatt_low_res[1]-scatt_low_res[0]+1,
+                               bg_pos=(scatt_peak[0]-30+4)/2.0,
+                               bg_width=scatt_peak[0]-33,
+                               dpix=dpix,
+                               number=run,
+                               File=filename,
+                              )]}
+
+    dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
+    filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
+
+    meta_data['direct'] = [dict(DB_ID=1, tth=0,
+                               P0=0, PN=0,
+                               x_pos=(direct_peak[1]+direct_peak[0])/2.0,
+                               x_width=direct_peak[1]-direct_peak[0]+1,
+                               y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
+                               y_width=direct_low_res[1]-direct_low_res[0]+1,
+                               bg_pos=(direct_peak[0]-30+4)/2.0,
+                               bg_width=direct_peak[0]-33,
+                               dpix=dpix,
+                               number=norm_run,
+                               File=filename)]
+
+    write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]], '/SNS/users/m2d/results/test.dat', meta_data)
+    
     label = entry
     if not apply_norm:
         label += " [no direct beam]"
