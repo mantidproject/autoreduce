@@ -124,7 +124,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     #TimeAxisRange=[24000, 54000],
                                     SpecularPixel=scatt_pos,
                                     ConstantQBinning=False,
-                                    EntryName='entry-Off_Off',
+                                    EntryName='entry-%s' % entry,
                                     OutputWorkspace="r_%s" % run_number)
 
     reflectivity = mtd["r_%s" % run_number]
