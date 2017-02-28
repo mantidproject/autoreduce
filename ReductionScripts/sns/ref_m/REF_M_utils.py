@@ -15,7 +15,7 @@ import json
 import logging
 
 tolerance = 0.02
-def reduce_data(run_number):
+def reduce_data(run_number, entry='Off_Off'):
     """
         Reduce a data run
     """
