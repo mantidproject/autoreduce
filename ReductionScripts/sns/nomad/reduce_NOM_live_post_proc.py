@@ -55,7 +55,7 @@ if can is not None:
     simpleapi.Minus(LHSWorkspace=output, RHSWorkspace=can, OutputWorkspace=output)
 
 van = getRunId(manager, 'vanadium')
-van = None # REMOVE
+#van = None # REMOVE
 if van is not None and not simpleapi.mtd.doesExist(van):
     mantid.logger.information("processing vanadium '%s'" % van)
     simpleapi.LoadEventNexus(Filename=van, OutputWorkspace=van)
