@@ -90,12 +90,12 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
         
     apply_norm = True
     if norm_run is None:
-        logging.info("Could not find direct beam run: skipping")
+        logging.warning("Could not find direct beam run: skipping")
         apply_norm = False
         direct_peak = scatt_peak
         direct_low_res = scatt_low_res
     else:
-        logging.info("Direct beam run: %s" % norm_run)
+        logging.warning("Direct beam run: %s" % norm_run)
 
         # Find peak in direct beam run
         ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
