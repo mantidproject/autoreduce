@@ -160,7 +160,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                                         OutputWorkspace="meta_data")
                 except:
                     # If we can't load the Off-Off entry, it's not a direct beam
-                    meta_data = dict('invalid'=True)
+                    meta_data = dict(invalid=True)
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
                     fd.close()
