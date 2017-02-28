@@ -1,9 +1,13 @@
 import mantid
 from mantid import simpleapi
 
+if input.getRunNumber() <= 0:
+    return
+
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
-    simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output)
+    simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output,     
+                                 RecalculatePCharge=True)
 
 simpleapi.PDDetermineCharacterizations(InputWorkspace=output,
                                        Characterizations='characterizations',

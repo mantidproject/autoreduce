@@ -130,7 +130,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
 
     return reflectivity
 
-def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
+def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
         Find the appropriate direct beam run
     """
@@ -189,7 +189,10 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                 s3 = meta_data['s3']
             if run_number == run_ or dangle > tolerance:
                 continue
-
+            # If we don't allow runs taken later than the run we are processing...
+            if not allow_later_runs and run_number > run_:
+                continue
+            
             if math.fabs(wl-wl_) < tolerance \
                 and skip_slits is True or \
                 (math.fabs(s1-s1_) < tolerance \
