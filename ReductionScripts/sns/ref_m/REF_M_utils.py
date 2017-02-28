@@ -159,6 +159,10 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                                         OutputWorkspace="meta_data")
                 except:
                     # If we can't load the Off-Off entry, it's not a direct beam
+                    meta_data = dict('invalid'=True)
+                    fd = open(summary_path, 'w')
+                    fd.write(json.dumps(meta_data))
+                    fd.close()
                     continue
                 run_number = int(ws.getRunNumber())
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
@@ -174,6 +178,8 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                 fd = open(summary_path, 'r')
                 meta_data = json.loads(fd.read())
                 fd.close()
+                if 'invalid' in meta_data.keys():
+                    continue
                 run_number = meta_data['run']
                 dangle = meta_data['dangle']
                 wl = meta_data['wl']
