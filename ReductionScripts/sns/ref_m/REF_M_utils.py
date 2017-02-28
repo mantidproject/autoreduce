@@ -253,9 +253,9 @@ def guess_params(ws, tolerance=0.02):
     if is_direct_beam:
         logging.info("Direct beam run with DANGLE = %s" % dangle_)
         
-    logging.info("Peak position: %s" % peak_position)
-    logging.info("Reflectivity peak: %s" % str(peak))
-    logging.info("Low-resolution pixel range: %s" % str(low_res))
+    logging.warning("Peak position: %s" % peak_position)
+    logging.warning("Reflectivity peak: %s" % str(peak))
+    logging.warning("Low-resolution pixel range: %s" % str(low_res))
     return peak, low_res, peak_position, is_direct_beam
 
 if __name__ == '__main__':
