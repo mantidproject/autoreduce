@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """
     Autoreduction utilities for Mantid-based reduction.
 
@@ -13,6 +12,7 @@ import numpy as np
 import math
 from scipy.optimize import curve_fit
 import json
+import time
 import logging
 
 tolerance = 0.02
