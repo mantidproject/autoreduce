@@ -44,6 +44,7 @@ def reduce_data(run_number):
                    x_title=u"Q (1/\u212b)", x_log=True,
                    y_title="Reflectivity", y_log=True, show_dx=False)
     except:
+        logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
         
     return True
