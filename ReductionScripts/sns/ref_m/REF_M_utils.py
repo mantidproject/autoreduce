@@ -298,6 +298,72 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
         
     return peak, low_res, peak_position, is_direct_beam
 
+def write_reflectivity(ws_list, output_path, meta_data):
+    direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
+                         'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
+    dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
+                     'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
+    
+    fd = open(output_path, 'w')
+    fd.write("# Datafile created by QuickNXS 1.0.32\n")
+    fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
+    fd.write("# Date: %s" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
+    fd.write("# Type: Specular\n")
+    run_list = [str(ws.getRunNumber()) for ws in ws_list]
+    fd.write("# Input file indices: %s\n" % ','.join(run_list))
+    fd.write("# Extracted states: +\n")
+    fd.write("#\n")
+    fd.write("# [Direct Beam Runs]\n")
+    toks = ['%8s' % item for item in direct_beam_options]
+    fd.write("# %s\n" % '  '.join(toks))
+
+    for item in meta_data['direct']:
+        par_list = ['{%s}' % p for p in direct_beam_options]
+        template = "# %s\n" % '  '.join(par_list)
+        _clean_dict = {}
+        for key in item:
+            if isinstance(item[key], str):
+                _clean_dict[key] = item[key]
+            else:
+                _clean_dict[key] = "%8g" % item[key]
+        fd.write(template.format(**_clean_dict))
+  
+    fd.write("#\n") 
+    fd.write("# [Data Runs]\n") 
+    toks = ['%8s' % item for item in dataset_options]
+    fd.write("# %s\n" % '  '.join(toks))
+
+    for item in meta_data['scatt']:
+        par_list = ['{%s}' % p for p in dataset_options]
+        template = "# %s\n" % '  '.join(par_list)
+        _clean_dict = {}
+        for key in item:
+            if isinstance(item[key], str):
+                _clean_dict[key] = item[key]
+            else:
+                _clean_dict[key] = "%8g" % item[key]
+        fd.write(template.format(**_clean_dict))
+
+    fd.write("#\n") 
+    fd.write("# [Global Options]\n") 
+    fd.write("# name           value\n")
+    fd.write("# sample_length  10\n")
+    fd.write("#\n") 
+    fd.write("# [Data]\n") 
+    toks = ['%12s' % item for item in ['Qz [Å⁻¹]', 'R [a.u.]', 'dR [a.u.]', 'dQz [Å⁻¹]', 'αi [rad]']]
+    fd.write("# %s\n" % '  '.join(toks))
+   
+    for ws in ws_list:
+        x = ws.readX(0)
+        y = ws.readY(0)
+        dy = ws.readE(0)
+        dx = ws.readDx(0)
+        tth = mtd['r_%s' % run].getRun().getProperty("two_theta").value
+        for i in range(len(x)):
+            fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
+
+    fd.close()
+
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
 
