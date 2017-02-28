@@ -3,6 +3,7 @@ from mantid import simpleapi
 
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
+    input *= (1.e-6 / 3600.) # the proton charge doesn't come with the correct units
     simpleapi.NormaliseByCurrent(InputWorkspace=input, OutputWorkspace=output,
                                  RecalculatePCharge=True)
 
