@@ -15,7 +15,7 @@ import json
 import logging
 
 tolerance = 0.02
-def reduce_data(run_number):
+def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
         
@@ -25,7 +25,7 @@ def reduce_data(run_number):
     data_names = []
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
-            reflectivity = reduce_cross_section(run_number, entry)
+            reflectivity = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
                 return False
             x = reflectivity.readX(0)
@@ -51,7 +51,7 @@ def reduce_data(run_number):
         
     return True
 
-def reduce_cross_section(run_number, entry='Off_Off'):
+def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     """
         Reduce a given cross-section of a data run
     """
@@ -59,7 +59,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
-    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws)
+    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
 
     # Find direct beam run
     norm_run = None
@@ -100,7 +100,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
         ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                             NXentryName='entry-Off_Off',
                             OutputWorkspace="MR_%s" % norm_run)
-        direct_peak, direct_low_res, _, _ = guess_params(ws)
+        direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
 
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
@@ -207,7 +207,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
 
     return closest
 
-def guess_params(ws, tolerance=0.02):
+def guess_params(ws, tolerance=0.02, use_roi=True):
     """
         Determine peak positions
     """
@@ -221,19 +221,27 @@ def guess_params(ws, tolerance=0.02):
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
 
-    ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
-                           NXPixel=304, NYPixel=256,
-                           ConvertToQ=False,
-                           OutputWorkspace="ws_summed")
+    if use_roi and ws.getRun().hasProperty('ROI1StartX'):
+        roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
+        roi1_y0 = ws.getRun()['ROI1StartY'].getStatistics().mean
+        roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
+        roi1_y1 = ws.getRun()['ROI1EndY'].getStatistics().mean
+        peak = [int(roi1_x0), int(roi1_x1)]
+        low_res = [int(roi1_y0), int(roi1_y1)]
+    else:
+        ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
+                               NXPixel=304, NYPixel=256,
+                               ConvertToQ=False,
+                               OutputWorkspace="ws_summed")
 
-    integrated_low_res = Integration(ws_low_res)
-    integrated_low_res = Transpose(integrated_low_res)
+        integrated_low_res = Integration(ws_low_res)
+        integrated_low_res = Transpose(integrated_low_res)
 
-    # Find reflectivity peak
-    peak, _, _ = LRPeakSelection(InputWorkspace=integrated)
+        # Find reflectivity peak
+        peak, _, _ = LRPeakSelection(InputWorkspace=integrated)
 
-    # Determine low-resolution region
-    _, low_res, _ = LRPeakSelection(InputWorkspace=integrated_low_res)
+        # Determine low-resolution region
+        _, low_res, _ = LRPeakSelection(InputWorkspace=integrated_low_res)
 
     # Determine reflectivity peak position (center)
     signal_y_crop = signal_y[peak[0]:peak[1]+1]
@@ -259,6 +267,13 @@ def guess_params(ws, tolerance=0.02):
     logging.warning("Peak position: %s" % peak_position)
     logging.warning("Reflectivity peak: %s" % str(peak))
     logging.warning("Low-resolution pixel range: %s" % str(low_res))
+    
+
+
+        # If the peak we found isn't in the 
+        if peak_position < roi1_x0 or peak_position > roi1_x1:
+            
+        
     return peak, low_res, peak_position, is_direct_beam
 
 if __name__ == '__main__':
