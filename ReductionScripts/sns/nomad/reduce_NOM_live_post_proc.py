@@ -2,7 +2,7 @@ import mantid
 from mantid import simpleapi
 
 if input.getRunNumber() <= 0:
-    return
+    return output
 
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
