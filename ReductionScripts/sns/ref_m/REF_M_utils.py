@@ -267,11 +267,6 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     logging.warning("Peak position: %s" % peak_position)
     logging.warning("Reflectivity peak: %s" % str(peak))
     logging.warning("Low-resolution pixel range: %s" % str(low_res))
-    
-
-
-        # If the peak we found isn't in the 
-        if peak_position < roi1_x0 or peak_position > roi1_x1:
             
         
     return peak, low_res, peak_position, is_direct_beam
