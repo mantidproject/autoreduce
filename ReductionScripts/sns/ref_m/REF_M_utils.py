@@ -387,8 +387,8 @@ def write_reflectivity(ws_list, output_path, meta_data):
     fd.write("# sample_length  10\n")
     fd.write("#\n") 
     fd.write("# [Data]\n") 
-    toks = ['%12s' % item for item in ['Qz [Å⁻¹]', 'R [a.u.]', 'dR [a.u.]', 'dQz [Å⁻¹]', 'αi [rad]']]
-    fd.write("# %s\n" % '  '.join(toks))
+    toks = [u'%12s' % item for item in [u'Qz [Å⁻¹]', u'R [a.u.]', u'dR [a.u.]', u'dQz [Å⁻¹]', u'αi [rad]']]
+    fd.write(u"# %s\n" % '  '.join(toks))
    
     for ws in ws_list:
         x = ws.readX(0)
