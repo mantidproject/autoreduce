@@ -271,8 +271,8 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
         peak_position = coeff[1]
     except:
         logging.warning("Could not use Gaussian fit to determine peak position")    
-        peak_position = np.average(signal_x_crop, weights=signal_y_crop)
-    
+        #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
+        peak_position = (peak[1]+peak[0])/2.0
 
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
