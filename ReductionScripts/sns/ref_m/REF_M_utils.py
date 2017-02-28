@@ -171,7 +171,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                number=norm_run,
                                File=filename)]
 
-    write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]], '/SNS/users/m2d/results/test.dat', meta_data)
+    write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]], os.path.join(output_dir, 'REF_M_%s_autoreduce.dat' % run), meta_data)
     
     label = entry
     if not apply_norm:
