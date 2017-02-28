@@ -32,16 +32,14 @@ def reduce_data(run_number):
             # No data for this cross-section, skip to the next
             continue
 
-        try:
-            from postprocessing.publish_plot import plot1d
-            x = reflectivity.readX(0)
-            y = reflectivity.readY(0)
-            dy = reflectivity.readE(0)
-            dx = reflectivity.readDx(0)
-            data_list.append( (x, y, dy, dx) )
-            data_names.append( entry )
-        except:
-            logging.error("No publisher module found")
+
+        x = reflectivity.readX(0)
+        y = reflectivity.readY(0)
+        dy = reflectivity.readE(0)
+        dx = reflectivity.readDx(0)
+        data_list.append( (x, y, dy, dx) )
+        data_names.append( entry )
+
     try:
         from postprocessing.publish_plot import plot1d
         plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
