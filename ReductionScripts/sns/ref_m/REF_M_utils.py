@@ -15,9 +15,17 @@ import json
 import logging
 
 tolerance = 0.02
-def reduce_data(run_number, entry='Off_Off'):
+def reduce_data(run_number):
     """
         Reduce a data run
+    """
+    for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
+        reflectivity = reduce_cross_section(run_number, entry)
+        
+
+def reduce_cross_section(run_number, entry='Off_Off'):
+    """
+        Reduce a given cross-section of a data run
     """
     # Find reflectivity peak of scattering run
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
@@ -49,7 +57,7 @@ def reduce_data(run_number, entry='Off_Off'):
                    y_title="Counts", y_log=True, show_dx=False)
         except:
             logging.error("No publisher module found")
-        return
+        return None
         
     apply_norm = True
     if norm_run is None:
