@@ -180,7 +180,6 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False):
                 meta_data = json.loads(fd.read())
                 fd.close()
                 if 'invalid' in meta_data.keys():
-                    print('Invalid run %s' % summary_path)
                     continue
                 run_number = meta_data['run']
                 dangle = meta_data['dangle']
