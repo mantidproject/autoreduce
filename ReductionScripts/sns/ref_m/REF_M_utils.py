@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
     Autoreduction utilities for Mantid-based reduction.
 
