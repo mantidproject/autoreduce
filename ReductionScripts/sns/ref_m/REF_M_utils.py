@@ -98,11 +98,12 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
         logging.warning("Direct beam run: %s" % norm_run)
 
         # Find peak in direct beam run
-        for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:           
+        for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:           
             ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
-                            NXentryName='entry-%s' % entry,
+                            NXentryName=entry,
                             OutputWorkspace="MR_%s" % norm_run)
             if ws.getNumberEvents() > 10000:
+                logging.warning("Found direct beam entry: %s" % entry)
                 direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
                 break
 
