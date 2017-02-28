@@ -4,6 +4,7 @@ from mantid import simpleapi
 simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
     # the proton charge doesn't come with the correct units
+    # they are pC without label
     simpleapi.mtd[output].run().integrateProtonCharge()
     simpleapi.mtd[output].run()['gd_prtn_chrg'] = \
                 simpleapi.mtd[output].run().getProtonCharge() * (1.e-6 / 3600.) 
