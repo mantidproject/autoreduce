@@ -28,17 +28,15 @@ def reduce_data(run_number):
             reflectivity = reduce_cross_section(run_number, entry)
             if reflectivity is None:
                 return False
+            x = reflectivity.readX(0)
+            y = reflectivity.readY(0)
+            dy = reflectivity.readE(0)
+            dx = reflectivity.readDx(0)
+            data_list.append( (x, y, dy, dx) )
+            data_names.append( entry )
         except:
             # No data for this cross-section, skip to the next
             continue
-
-
-        x = reflectivity.readX(0)
-        y = reflectivity.readY(0)
-        dy = reflectivity.readE(0)
-        dx = reflectivity.readDx(0)
-        data_list.append( (x, y, dy, dx) )
-        data_names.append( entry )
 
     try:
         from postprocessing.publish_plot import plot1d
