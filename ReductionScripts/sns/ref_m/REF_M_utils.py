@@ -396,7 +396,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         y = ws.readY(0)
         dy = ws.readE(0)
         dx = ws.readDx(0)
-        tth = mtd['r_%s' % run].getRun().getProperty("two_theta").value * math.pi / 180.0
+        tth = ws.getRun().getProperty("two_theta").value * math.pi / 180.0
         for i in range(len(x)):
             fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
 
