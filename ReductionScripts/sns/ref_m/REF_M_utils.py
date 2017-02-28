@@ -98,10 +98,13 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
         logging.warning("Direct beam run: %s" % norm_run)
 
         # Find peak in direct beam run
-        ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
+        for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:           
+            ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                             NXentryName='entry-Off_Off',
                             OutputWorkspace="MR_%s" % norm_run)
-        direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
+            if ws.getNumberEvents() > 10000:
+                direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
+                break
 
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
