@@ -241,8 +241,14 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
         roi1_y0 = ws.getRun()['ROI1StartY'].getStatistics().mean
         roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
         roi1_y1 = ws.getRun()['ROI1EndY'].getStatistics().mean
-        peak = [int(roi1_x0), int(roi1_x1)]
-        low_res = [int(roi1_y0), int(roi1_y1)]
+        if roi1_x1 > roi1_x0:
+            peak = [int(roi1_x0), int(roi1_x1)]
+        else:
+            peak = [int(roi1_x1), int(roi1_x0)]
+        if roi1_y1 > roi1_y0:
+            low_res = [int(roi1_y0), int(roi1_y1)]
+        else:
+            low_res = [int(roi1_y1), int(roi1_y0)]
     else:
         ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
                                NXPixel=304, NYPixel=256,
