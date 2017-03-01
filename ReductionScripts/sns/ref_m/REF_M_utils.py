@@ -144,9 +144,8 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts
     dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
     filename = reflectivity.getRun().getProperty("Filename").value
-    tth = reflectivity.getRun().getProperty("two_theta").value
     meta_data = {'scatt': [dict(scale=1, DB_ID=1,
-                                P0=0, PN=0, tth=tth, fan=const_q_binning,
+                                P0=0, PN=0, tth=0, fan=const_q_binning,
                                 x_pos=scatt_pos,
                                 x_width=scatt_peak[1]-scatt_peak[0]+1,
                                 y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
@@ -341,6 +340,10 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     return peak, low_res, peak_position, is_direct_beam
 
 def write_reflectivity(ws_list, output_path, meta_data):
+    # Sanity check
+    if len(ws_list) == 0:
+        return
+        
     direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                          'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
     dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
@@ -349,6 +352,11 @@ def write_reflectivity(ws_list, output_path, meta_data):
     pol_state = 'x'
     if meta_data['cross_section'] in cross_sections:
         pol_state = cross_sections[meta_data['cross_section']]
+
+
+    tth = ws_list[0].getRun().getProperty("two_theta").value
+    
+    ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
 
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
