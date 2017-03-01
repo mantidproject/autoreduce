@@ -382,7 +382,26 @@ def write_reflectivity(ws_list, output_path, meta_data):
     toks = ['%8s' % item for item in dataset_options]
     fd.write("# %s\n" % '  '.join(toks))
 
+    i_run = 0
     for item in meta_data['scatt']:
+        run_object = ws_list[i_run].getRun()
+        tth = run_object.getProperty("two_theta").value
+        det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
+        direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
+        ref_pix = item['x_pos']
+
+        # Get pixel size from instrument properties
+        if ws_list[i_run].getInstrument().hasParameter("pixel_width"):
+            pixel_width = float(ws_list[i_run].getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
+        else:
+            pixel_width = 0.0007
+
+        
+        item['tth'] = tth - ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
+        
+
+
+
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
@@ -392,6 +411,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
             else:
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
+        i_run += 1
 
     fd.write("#\n") 
     fd.write("# [Global Options]\n") 
