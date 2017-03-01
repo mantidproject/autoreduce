@@ -345,7 +345,11 @@ def write_reflectivity(ws_list, output_path, meta_data):
                          'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
     dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                      'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
-    
+    cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
+    pol_state = 'x'
+    if meta_data['cross_section'] in cross_sections:
+        pol_state = cross_sections[meta_data['cross_section']]
+
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
     fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
@@ -353,7 +357,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
     fd.write("# Type: Specular\n")
     run_list = [str(ws.getRunNumber()) for ws in ws_list]
     fd.write("# Input file indices: %s\n" % ','.join(run_list))
-    fd.write("# Extracted states: +\n")
+    fd.write("# Extracted states: %s\n" % pol_state)
     fd.write("#\n")
     fd.write("# [Direct Beam Runs]\n")
     toks = ['%8s' % item for item in direct_beam_options]
