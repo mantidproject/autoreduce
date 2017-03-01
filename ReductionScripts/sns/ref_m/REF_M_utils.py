@@ -384,6 +384,9 @@ def write_reflectivity(ws_list, output_path, meta_data):
 
     i_run = 0
     for item in meta_data['scatt']:
+        # For some reason, the tth value that QuickNXS expects is offset.
+        # It seems to be because that same offset is applied later in the QuickNXS calculation.
+        # Correct tth here so that it can load properly in QuickNXS and produce the same result.
         run_object = ws_list[i_run].getRun()
         tth = run_object.getProperty("two_theta").value
         det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
@@ -395,12 +398,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
             pixel_width = float(ws_list[i_run].getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
         else:
             pixel_width = 0.0007
-
-        
         item['tth'] = tth - ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
-        
-
-
 
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)

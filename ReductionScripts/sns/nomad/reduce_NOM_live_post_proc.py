@@ -5,12 +5,12 @@ simpleapi.CompressEvents(InputWorkspace=input, OutputWorkspace=output)
 if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
     # the proton charge doesn't come with the correct units
     # they are pC without label
-    simpleapi.mtd[output].run().integrateProtonCharge()
-    simpleapi.mtd[output].run()['gd_prtn_chrg'] = \
-                simpleapi.mtd[output].run().getProtonCharge() * (1.e-6 / 3600.) 
+    #simpleapi.mtd[output].run().integrateProtonCharge()
+    #simpleapi.mtd[output].run()['gd_prtn_chrg'] = \
+    #            simpleapi.mtd[output].run().getProtonCharge() * (1.e-6 / 3600.) 
 
     simpleapi.NormaliseByCurrent(InputWorkspace=output, OutputWorkspace=output,
-                                 RecalculatePCharge=False)
+                                 RecalculatePCharge=True)
 
 simpleapi.PDDetermineCharacterizations(InputWorkspace=output,
                                        Characterizations='characterizations',
@@ -53,8 +53,7 @@ if can is not None and not simpleapi.mtd.doesExist(can):
                                   **processingParams)
     simpleapi.ConvertUnits(InputWorkspace=can, OutputWorkspace=can,
                            Target='dSpacing', EMode='Elastic')
-    simpleapi.NormaliseByCurrent(InputWorkspace=can, OutputWorkspace=can,
-                                 RecalculatePCharge=True)
+    simpleapi.NormaliseByCurrent(InputWorkspace=can, OutputWorkspace=can)
     #smooth(can)
 
 if can is not None:
@@ -67,8 +66,7 @@ if van is not None and not simpleapi.mtd.doesExist(van):
     simpleapi.LoadEventNexus(Filename=van, OutputWorkspace=van)
     simpleapi.AlignAndFocusPowder(InputWorkspace=van, OutputWorkspace=van,
                                   **processingParams)
-    simpleapi.NormaliseByCurrent(InputWorkspace=van, OutputWorkspace=van,
-                                 RecalculatePCharge=True)
+    simpleapi.NormaliseByCurrent(InputWorkspace=van, OutputWorkspace=van)
 
     vanback = getRunId(manager, 'vanadium_background')
     if vanback is not None:
@@ -77,8 +75,7 @@ if van is not None and not simpleapi.mtd.doesExist(van):
         vanback = '__vanback'
         simpleapi.AlignAndFocusPowder(InputWorkspace=vanback, OutputWorkspace=vanback,
                                       **processingParams)
-        simpleapi.NormaliseByCurrent(InputWorkspace=vanback, OutputWorkspace=vanback,
-                                     RecalculatePCharge=True)
+        simpleapi.NormaliseByCurrent(InputWorkspace=vanback, OutputWorkspace=vanback)
 
         mantid.logger.information("subtracting vanadium background")
         simpleapi.Minus(LHSWorkspace=van, RHSWorkspace=vanback, OutputWorkspace=van,
