@@ -356,7 +356,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
     fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
-    fd.write("# Date: %s" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
+    fd.write("# Date: %s\n" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
     fd.write("# Type: Specular\n")
     run_list = [str(ws.getRunNumber()) for ws in ws_list]
     fd.write("# Input file indices: %s\n" % ','.join(run_list))
