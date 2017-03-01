@@ -344,7 +344,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
     direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                          'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
     dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
-                     'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
+                     'bg_pos', 'bg_width', 'fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
     cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
     pol_state = 'x'
     if meta_data['cross_section'] in cross_sections:
