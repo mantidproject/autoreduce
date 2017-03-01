@@ -10,7 +10,7 @@ if simpleapi.mtd[str(input)].run().getProtonCharge() > 0.:
     #            simpleapi.mtd[output].run().getProtonCharge() * (1.e-6 / 3600.) 
 
     simpleapi.NormaliseByCurrent(InputWorkspace=output, OutputWorkspace=output,
-                                 RecalculatePCharge=True)
+                                 RecalculatePCharge=False)
 
 simpleapi.PDDetermineCharacterizations(InputWorkspace=output,
                                        Characterizations='characterizations',
