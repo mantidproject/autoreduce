@@ -353,11 +353,6 @@ def write_reflectivity(ws_list, output_path, meta_data):
     if meta_data['cross_section'] in cross_sections:
         pol_state = cross_sections[meta_data['cross_section']]
 
-
-    tth = ws_list[0].getRun().getProperty("two_theta").value
-    
-    ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
-
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
     fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
