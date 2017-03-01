@@ -146,7 +146,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     filename = reflectivity.getRun().getProperty("Filename").value
     tth = reflectivity.getRun().getProperty("two_theta").value
     meta_data = {'scatt': [dict(scale=1, DB_ID=1,
-                                P0=0, PN=0, tth=tth, extract_fan=const_q_binning,
+                                P0=0, PN=0, tth=tth, fan=const_q_binning,
                                 x_pos=scatt_pos,
                                 x_width=scatt_peak[1]-scatt_peak[0]+1,
                                 y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
