@@ -371,7 +371,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
         for key in item:
-            if isinstance(item[key], str):
+            if isinstance(item[key], (bool, str)):
                 _clean_dict[key] = item[key]
             else:
                 _clean_dict[key] = "%8g" % item[key]
