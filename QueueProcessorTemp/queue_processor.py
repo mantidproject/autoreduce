@@ -1,18 +1,20 @@
-import stomp
+import stomp, logging, logging.config, smtplib, orm_mapping
+import time, sys, os, json, glob, base64
 from settings import ACTIVEMQ, LOGGING, MYSQL, ICAT, LOG_FILE
-import logging
-import logging.config
+from icat_communication import ICATCommunication
+from mysql_client import MySQL
+from base import engine
+from sqlalchemy.orm import sessionmaker
+from orm_mapping import *
+
+# Set up logging and attach the logging to the right part of the config.
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
-import time, sys, os, json, glob, base64
-from icat_communication import ICATCommunication
-import smtplib
-from mysql_client import MySQL
 
 class Listener(object):
     def __init__(self, client):
-        self._mysql = MySQL()
-        self._database = self._mysql.connect()
+        Session = sessionmaker(bind=engine)
+        self._session = Session()
         self._client = client
         self._data_dict = {}
         self._priority = ''
@@ -45,17 +47,28 @@ class Listener(object):
         except Exception as e:
             logger.error("UNCAUGHT ERROR: %s - %s" % (type(e).__name__, str(e)))
 
-            
     def data_ready(self):
-        logger.info("Data ready for processing run %s on %s" % (str(self._data_dict['run_number']), self._data_dict['instrument']))
+        run_number = str(self._data_dict['run_number'])
+        instrument_name = str(self._data_dict['instrument'])
+        logger.info("Data ready for processing run %s on %s" % (run_number, instrument_name))
         
-        instrument = InstrumentUtils().get_instrument(self._data_dict['instrument'])
+        # Check if the instrument is active or not in the MySQL database
+        instrument = self._session.query(Instrument).filter_by(name=instrument_name).first()
+        
         # Activate the instrument if it is currently set to inactive
         if not instrument.is_active:
-            instrument.is_active = True
-            instrument.save()
-            
-        status = StatusUtils().get_skipped() if instrument.is_paused else StatusUtils().get_queued()
+            logger.info("Setting instrument to active!")
+            instrument.is_active = 1
+            session.commit()
+
+        if instrument.is_paused:
+            skipped_status_query = "SELECT id FROM reduction_viewer_status " \
+                                   "WHERE value = 'Skipped'"
+            status = self._mysql.execute_query(self._database, skipped_status_query)[0]
+        else:
+            error_status_query = "SELECT id FROM reduction_viewer_status " \
+                                   "WHERE value = 'Error'"
+            status = self._mysql.execute_query(self._database, error_status_query)[0]
 
         last_run = ReductionRun.objects.filter(run_number=self._data_dict['run_number']).order_by('-run_version').first()
         highest_version = last_run.run_version if last_run is not None else -1
@@ -190,7 +203,6 @@ class Listener(object):
         
         
     def notifyRunFailure(self, reductionRun):
-    
         recipients = EMAIL_ERROR_RECIPIENTS
         localRecipients = filter(lambda addr: addr.split('@')[-1] == BASE_URL, recipients) # this does not parse esoteric (but RFC-compliant) email addresses correctly
         if localRecipients: # don't send local emails
