@@ -156,7 +156,8 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                 dpix=dpix,
                                 number=run_number,
                                 File=filename)],
-                 'direct': []}
+                 'direct': [],
+                 'cross_section': entry}
 
     if mtd.doesExist("MR_%s" % norm_run):
         dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
