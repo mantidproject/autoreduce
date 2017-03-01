@@ -20,7 +20,7 @@ MaskBTPParameters.append({'Bank': '38-50'})
 raw_vanadium="/SNS/CNCS/IPTS-16111/6/208719/NeXus/CNCS_208719_event.nxs"
 processed_vanadium="van208719.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.2"
 Emax="0.95"
 Estep="0.005"
@@ -30,7 +30,7 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot"
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8,sensor0normal"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="4.655"
 b="4.655"

@@ -12,10 +12,11 @@ import numpy as np
 import math
 from scipy.optimize import curve_fit
 import json
+import time
 import logging
 
 tolerance = 0.02
-def reduce_data(run_number):
+def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
         
@@ -25,15 +26,15 @@ def reduce_data(run_number):
     data_names = []
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
-            reflectivity = reduce_cross_section(run_number, entry)
+            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
                 return False
             x = reflectivity.readX(0)
             y = reflectivity.readY(0)
             dy = reflectivity.readE(0)
             dx = reflectivity.readDx(0)
-            data_list.append( (x, y, dy, dx) )
-            data_names.append( entry )
+            data_list.append( [x, y, dy, dx] )
+            data_names.append( label )
         except:
             # No data for this cross-section, skip to the next
             continue
@@ -44,14 +45,15 @@ def reduce_data(run_number):
             plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
                        x_title=u"Q (1/\u212b)", x_log=True,
                        y_title="Reflectivity", y_log=True, show_dx=False)
-        logging.warning("Nothing to plot")
+        else:
+            logging.warning("Nothing to plot")
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
         
     return True
 
-def reduce_cross_section(run_number, entry='Off_Off'):
+def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     """
         Reduce a given cross-section of a data run
     """
@@ -59,7 +61,7 @@ def reduce_cross_section(run_number, entry='Off_Off'):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
-    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws)
+    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
 
     # Find direct beam run
     norm_run = None
@@ -89,18 +91,26 @@ def reduce_cross_section(run_number, entry='Off_Off'):
         
     apply_norm = True
     if norm_run is None:
-        logging.info("Could not find direct beam run: skipping")
+        logging.warning("Could not find direct beam run: skipping")
         apply_norm = False
         direct_peak = scatt_peak
         direct_low_res = scatt_low_res
     else:
-        logging.info("Direct beam run: %s" % norm_run)
+        logging.warning("Direct beam run: %s" % norm_run)
 
         # Find peak in direct beam run
-        ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
-                            NXentryName='entry-Off_Off',
-                            OutputWorkspace="MR_%s" % norm_run)
-        direct_peak, direct_low_res, _, _ = guess_params(ws)
+        for norm_entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+            try:         
+                ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
+                                NXentryName=norm_entry,
+                                OutputWorkspace="MR_%s" % norm_run)
+                if ws.getNumberEvents() > 10000:
+                    logging.warning("Found direct beam entry: %s" % norm_entry)
+                    direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
+                    break
+            except:
+                # No data in this cross-section
+                pass
 
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
@@ -124,13 +134,50 @@ def reduce_cross_section(run_number, entry='Off_Off'):
                                     #TimeAxisRange=[24000, 54000],
                                     SpecularPixel=scatt_pos,
                                     ConstantQBinning=False,
-                                    EntryName='entry-Off_Off',
-                                    OutputWorkspace="r_%s" % run_number)
+                                    EntryName='entry-%s' % entry,
+                                    OutputWorkspace="r_%s_%s" % (run_number, entry))
 
-    reflectivity = mtd["r_%s" % run_number]
+    # Write output file
+    reflectivity = mtd["r_%s_%s" % (run_number, entry)]
+    ipts = reflectivity.getRun().getProperty("experiment_identifier").value
+    output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts
+    dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
+    filename = reflectivity.getRun().getProperty("Filename").value
+    tth = reflectivity.getRun().getProperty("two_theta").value
+    meta_data = {'scatt': [dict(scale=1, DB_ID=1,
+                                P0=0, PN=0, tth=tth, extract_fan=False,
+                                x_pos=scatt_pos,
+                                x_width=scatt_peak[1]-scatt_peak[0]+1,
+                                y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
+                                y_width=scatt_low_res[1]-scatt_low_res[0]+1,
+                                bg_pos=(scatt_peak[0]-30+4)/2.0,
+                                bg_width=scatt_peak[0]-33,
+                                dpix=dpix,
+                                number=run_number,
+                                File=filename)]}
 
+    dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
+    filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
 
-    return reflectivity
+    meta_data['direct'] = [dict(DB_ID=1, tth=0,
+                                P0=0, PN=0,
+                                x_pos=(direct_peak[1]+direct_peak[0])/2.0,
+                                x_width=direct_peak[1]-direct_peak[0]+1,
+                                y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
+                                y_width=direct_low_res[1]-direct_low_res[0]+1,
+                                bg_pos=(direct_peak[0]-30+4)/2.0,
+                                bg_width=direct_peak[0]-33,
+                                dpix=dpix,
+                                number=norm_run,
+                                File=filename)]
+
+    write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]],
+                       os.path.join(output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), meta_data)
+    
+    label = entry
+    if not apply_norm:
+        label += " [no direct beam]"
+    return mtd["r_%s_%s" % (run_number, entry)], label
 
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
@@ -155,18 +202,27 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
         if item.endswith("_event.nxs") or item.endswith("h5"):
             summary_path = os.path.join(ar_dir, item+'.json')
             if not os.path.isfile(summary_path):
+                is_valid = False
                 try:
-                    ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
-                                        NXentryName='entry-Off_Off',
-                                        MetaDataOnly=True,
-                                        OutputWorkspace="meta_data")
+                    for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+                        ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
+                                            NXentryName=entry,
+                                            MetaDataOnly=True,
+                                            OutputWorkspace="meta_data")
+                        if ws.getNumberEvents() > 1000:
+                            is_valid = True
+                            break
                 except:
                     # If we can't load the Off-Off entry, it's not a direct beam
+                    is_valid = False
+
+                if not is_valid or ws.getNumberEvents() < 1000:
                     meta_data = dict(run=0, invalid=True)
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
                     fd.close()
                     continue
+
                 run_number = int(ws.getRunNumber())
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
                 wl = ws.getRun().getProperty("LambdaRequest").getStatistics().mean
@@ -207,7 +263,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
 
     return closest
 
-def guess_params(ws, tolerance=0.02):
+def guess_params(ws, tolerance=0.02, use_roi=True):
     """
         Determine peak positions
     """
@@ -221,19 +277,33 @@ def guess_params(ws, tolerance=0.02):
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
 
-    ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
-                           NXPixel=304, NYPixel=256,
-                           ConvertToQ=False,
-                           OutputWorkspace="ws_summed")
+    if use_roi and ws.getRun().hasProperty('ROI1StartX'):
+        roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
+        roi1_y0 = ws.getRun()['ROI1StartY'].getStatistics().mean
+        roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
+        roi1_y1 = ws.getRun()['ROI1EndY'].getStatistics().mean
+        if roi1_x1 > roi1_x0:
+            peak = [int(roi1_x0), int(roi1_x1)]
+        else:
+            peak = [int(roi1_x1), int(roi1_x0)]
+        if roi1_y1 > roi1_y0:
+            low_res = [int(roi1_y0), int(roi1_y1)]
+        else:
+            low_res = [int(roi1_y1), int(roi1_y0)]
+    else:
+        ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
+                               NXPixel=304, NYPixel=256,
+                               ConvertToQ=False,
+                               OutputWorkspace="ws_summed")
 
-    integrated_low_res = Integration(ws_low_res)
-    integrated_low_res = Transpose(integrated_low_res)
+        integrated_low_res = Integration(ws_low_res)
+        integrated_low_res = Transpose(integrated_low_res)
 
-    # Find reflectivity peak
-    peak, _, _ = LRPeakSelection(InputWorkspace=integrated)
+        # Find reflectivity peak
+        peak, _, _ = LRPeakSelection(InputWorkspace=integrated)
 
-    # Determine low-resolution region
-    _, low_res, _ = LRPeakSelection(InputWorkspace=integrated_low_res)
+        # Determine low-resolution region
+        _, low_res, _ = LRPeakSelection(InputWorkspace=integrated_low_res)
 
     # Determine reflectivity peak position (center)
     signal_y_crop = signal_y[peak[0]:peak[1]+1]
@@ -243,10 +313,13 @@ def guess_params(ws, tolerance=0.02):
         A, mu, sigma = p
         return A*np.exp(-(x-mu)**2/(2.*sigma**2))
     p0 = [np.max(signal_y), (peak[1]+peak[0])/2.0, (peak[1]-peak[0])/2.0]
-    coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
-
-    #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
-    peak_position = coeff[1]
+    try:
+        coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
+        peak_position = coeff[1]
+    except:
+        logging.warning("Could not use Gaussian fit to determine peak position")    
+        #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
+        peak_position = (peak[1]+peak[0])/2.0
 
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
@@ -259,7 +332,75 @@ def guess_params(ws, tolerance=0.02):
     logging.warning("Peak position: %s" % peak_position)
     logging.warning("Reflectivity peak: %s" % str(peak))
     logging.warning("Low-resolution pixel range: %s" % str(low_res))
+            
+        
     return peak, low_res, peak_position, is_direct_beam
+
+def write_reflectivity(ws_list, output_path, meta_data):
+    direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
+                         'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
+    dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
+                     'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
+    
+    fd = open(output_path, 'w')
+    fd.write("# Datafile created by QuickNXS 1.0.32\n")
+    fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
+    fd.write("# Date: %s" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
+    fd.write("# Type: Specular\n")
+    run_list = [str(ws.getRunNumber()) for ws in ws_list]
+    fd.write("# Input file indices: %s\n" % ','.join(run_list))
+    fd.write("# Extracted states: +\n")
+    fd.write("#\n")
+    fd.write("# [Direct Beam Runs]\n")
+    toks = ['%8s' % item for item in direct_beam_options]
+    fd.write("# %s\n" % '  '.join(toks))
+
+    for item in meta_data['direct']:
+        par_list = ['{%s}' % p for p in direct_beam_options]
+        template = "# %s\n" % '  '.join(par_list)
+        _clean_dict = {}
+        for key in item:
+            if isinstance(item[key], str):
+                _clean_dict[key] = item[key]
+            else:
+                _clean_dict[key] = "%8g" % item[key]
+        fd.write(template.format(**_clean_dict))
+  
+    fd.write("#\n") 
+    fd.write("# [Data Runs]\n") 
+    toks = ['%8s' % item for item in dataset_options]
+    fd.write("# %s\n" % '  '.join(toks))
+
+    for item in meta_data['scatt']:
+        par_list = ['{%s}' % p for p in dataset_options]
+        template = "# %s\n" % '  '.join(par_list)
+        _clean_dict = {}
+        for key in item:
+            if isinstance(item[key], str):
+                _clean_dict[key] = item[key]
+            else:
+                _clean_dict[key] = "%8g" % item[key]
+        fd.write(template.format(**_clean_dict))
+
+    fd.write("#\n") 
+    fd.write("# [Global Options]\n") 
+    fd.write("# name           value\n")
+    fd.write("# sample_length  10\n")
+    fd.write("#\n") 
+    fd.write("# [Data]\n") 
+    toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
+    fd.write(u"# %s\n" % '  '.join(toks))
+   
+    for ws in ws_list:
+        x = ws.readX(0)
+        y = ws.readY(0)
+        dy = ws.readE(0)
+        dx = ws.readDx(0)
+        tth = ws.getRun().getProperty("two_theta").value * math.pi / 180.0
+        for i in range(len(x)):
+            fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
+
+    fd.close()
 
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
