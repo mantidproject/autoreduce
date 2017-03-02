@@ -112,6 +112,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                 # No data in this cross-section
                 pass
 
+    const_q_binning = False
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
                                     SignalPeakPixelRange=scatt_peak,
@@ -133,7 +134,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     UseSANGLE=True,
                                     #TimeAxisRange=[24000, 54000],
                                     SpecularPixel=scatt_pos,
-                                    ConstantQBinning=False,
+                                    ConstantQBinning=const_q_binning,
                                     EntryName='entry-%s' % entry,
                                     OutputWorkspace="r_%s_%s" % (run_number, entry))
 
@@ -143,9 +144,8 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts
     dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
     filename = reflectivity.getRun().getProperty("Filename").value
-    tth = reflectivity.getRun().getProperty("two_theta").value
     meta_data = {'scatt': [dict(scale=1, DB_ID=1,
-                                P0=0, PN=0, tth=tth, extract_fan=False,
+                                P0=0, PN=0, tth=0, fan=const_q_binning,
                                 x_pos=scatt_pos,
                                 x_width=scatt_peak[1]-scatt_peak[0]+1,
                                 y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
@@ -154,22 +154,25 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                 bg_width=scatt_peak[0]-33,
                                 dpix=dpix,
                                 number=run_number,
-                                File=filename)]}
+                                File=filename)],
+                 'direct': [],
+                 'cross_section': entry}
 
-    dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
-    filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
+    if mtd.doesExist("MR_%s" % norm_run):
+        dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
+        filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
 
-    meta_data['direct'] = [dict(DB_ID=1, tth=0,
-                                P0=0, PN=0,
-                                x_pos=(direct_peak[1]+direct_peak[0])/2.0,
-                                x_width=direct_peak[1]-direct_peak[0]+1,
-                                y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
-                                y_width=direct_low_res[1]-direct_low_res[0]+1,
-                                bg_pos=(direct_peak[0]-30+4)/2.0,
-                                bg_width=direct_peak[0]-33,
-                                dpix=dpix,
-                                number=norm_run,
-                                File=filename)]
+        meta_data['direct'] = [dict(DB_ID=1, tth=0,
+                                    P0=0, PN=0,
+                                    x_pos=(direct_peak[1]+direct_peak[0])/2.0,
+                                    x_width=direct_peak[1]-direct_peak[0]+1,
+                                    y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
+                                    y_width=direct_low_res[1]-direct_low_res[0]+1,
+                                    bg_pos=(direct_peak[0]-30+4)/2.0,
+                                    bg_width=direct_peak[0]-33,
+                                    dpix=dpix,
+                                    number=norm_run,
+                                    File=filename)]
 
     write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]],
                        os.path.join(output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), meta_data)
@@ -337,19 +340,27 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     return peak, low_res, peak_position, is_direct_beam
 
 def write_reflectivity(ws_list, output_path, meta_data):
+    # Sanity check
+    if len(ws_list) == 0:
+        return
+        
     direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                          'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
     dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
-                     'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
-    
+                     'bg_pos', 'bg_width', 'fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
+    cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
+    pol_state = 'x'
+    if meta_data['cross_section'] in cross_sections:
+        pol_state = cross_sections[meta_data['cross_section']]
+
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
     fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
-    fd.write("# Date: %s" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
+    fd.write("# Date: %s\n" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
     fd.write("# Type: Specular\n")
     run_list = [str(ws.getRunNumber()) for ws in ws_list]
     fd.write("# Input file indices: %s\n" % ','.join(run_list))
-    fd.write("# Extracted states: +\n")
+    fd.write("# Extracted states: %s\n" % pol_state)
     fd.write("#\n")
     fd.write("# [Direct Beam Runs]\n")
     toks = ['%8s' % item for item in direct_beam_options]
@@ -360,7 +371,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
         for key in item:
-            if isinstance(item[key], str):
+            if isinstance(item[key], (bool, str)):
                 _clean_dict[key] = item[key]
             else:
                 _clean_dict[key] = "%8g" % item[key]
@@ -371,7 +382,24 @@ def write_reflectivity(ws_list, output_path, meta_data):
     toks = ['%8s' % item for item in dataset_options]
     fd.write("# %s\n" % '  '.join(toks))
 
+    i_run = 0
     for item in meta_data['scatt']:
+        # For some reason, the tth value that QuickNXS expects is offset.
+        # It seems to be because that same offset is applied later in the QuickNXS calculation.
+        # Correct tth here so that it can load properly in QuickNXS and produce the same result.
+        run_object = ws_list[i_run].getRun()
+        tth = run_object.getProperty("two_theta").value
+        det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
+        direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
+        ref_pix = item['x_pos']
+
+        # Get pixel size from instrument properties
+        if ws_list[i_run].getInstrument().hasParameter("pixel_width"):
+            pixel_width = float(ws_list[i_run].getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
+        else:
+            pixel_width = 0.0007
+        item['tth'] = tth - ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
+
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
@@ -381,6 +409,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
             else:
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
+        i_run += 1
 
     fd.write("#\n") 
     fd.write("# [Global Options]\n") 
@@ -396,7 +425,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         y = ws.readY(0)
         dy = ws.readE(0)
         dx = ws.readDx(0)
-        tth = ws.getRun().getProperty("two_theta").value * math.pi / 180.0
+        tth = ws.getRun().getProperty("SANGLE").value * math.pi / 180.0
         for i in range(len(x)):
             fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
 
