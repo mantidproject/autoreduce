@@ -372,7 +372,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
         _clean_dict = {}
         for key in item:
             if isinstance(item[key], (bool, str)):
-                _clean_dict[key] = item[key]
+                _clean_dict[key] = "%8s" % item[key]
             else:
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
