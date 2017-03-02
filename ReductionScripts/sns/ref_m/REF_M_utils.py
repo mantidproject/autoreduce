@@ -525,13 +525,13 @@ def write_reflectivity2(ws_list, output_path, cross_section):
         tth = run_object.getProperty("two_theta").value
         det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
         direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
-        ref_pix = item['x_pos']
+
         # Get pixel size from instrument properties
         if ws.getInstrument().hasParameter("pixel_width"):
             pixel_width = float(ws.getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
         else:
             pixel_width = 0.0007
-        tth -= ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
+        tth -= ((direct_beam_pix - scatt_pos) * pixel_width) / det_distance * 180.0 / math.pi
         
         item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=tth,
                     fan=const_q_binning,
