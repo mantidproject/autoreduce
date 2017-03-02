@@ -433,7 +433,7 @@ def write_reflectivity(ws_list, output_path, meta_data):
 
     fd.close()
 
-def write_reflectivity2(ws_list, output_path, meta_data):
+def write_reflectivity2(ws_list, output_path, cross_section):
     # Sanity check
     if len(ws_list) == 0:
         return
@@ -444,8 +444,8 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                      'bg_pos', 'bg_width', 'fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
     cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
     pol_state = 'x'
-    if meta_data['cross_section'] in cross_sections:
-        pol_state = cross_sections[meta_data['cross_section']]
+    if cross_section in cross_sections:
+        pol_state = cross_sections[cross_section]
 
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
