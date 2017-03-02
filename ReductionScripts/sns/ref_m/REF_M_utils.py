@@ -475,7 +475,7 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
         filename = run_object.getRun().getProperty("Filename").value
 
-        meta = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
+        item = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
                     x_pos=(peak_min+peak_max)/2.0,
                     x_width=peak_max-peak_min+1,
                     y_pos=(low_res_max+low_res_min)/2.0,
@@ -485,6 +485,18 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                     dpix=dpix,
                     number=normalization_run,
                     File=filename)
+
+        par_list = ['{%s}' % p for p in direct_beam_options]
+        template = "# %s\n" % '  '.join(par_list)
+        _clean_dict = {}
+        for key in item:
+            if isinstance(item[key], (bool, str)):
+                _clean_dict[key] = "%8s" % item[key]
+            else:
+                _clean_dict[key] = "%8g" % item[key]
+        fd.write(template.format(**_clean_dict))
+
+
 
 
         constant_q_binning = self.getProperty("ConstantQBinning").value
@@ -526,16 +538,7 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                  'cross_section': entry}
 
 
-    for item in meta_data['direct']:
-        par_list = ['{%s}' % p for p in direct_beam_options]
-        template = "# %s\n" % '  '.join(par_list)
-        _clean_dict = {}
-        for key in item:
-            if isinstance(item[key], (bool, str)):
-                _clean_dict[key] = "%8s" % item[key]
-            else:
-                _clean_dict[key] = "%8g" % item[key]
-        fd.write(template.format(**_clean_dict))
+
   
     fd.write("#\n") 
     fd.write("# [Data Runs]\n") 
