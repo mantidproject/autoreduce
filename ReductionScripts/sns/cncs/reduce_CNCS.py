@@ -10,15 +10,15 @@ from mantid.simpleapi import *
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '1-8'})
-MaskBTPParameters.append({'Pixel': '120-128'})
+MaskBTPParameters.append({'Pixel': '1-44'})
+MaskBTPParameters.append({'Pixel': '95-128'})
 MaskBTPParameters.append({'Bank': '38-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-16111/6/208719/NeXus/CNCS_208719_event.nxs"
-processed_vanadium="van208719.nxs"
+processed_vanadium="auto_van208719.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.2"
@@ -32,14 +32,14 @@ Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,T
 Temperature_names="SampleTemp,sampletemp,SensorC,SensorB,SensorA,temp5,temp8,sensor0normal"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
-a="4.655"
-b="4.655"
-c="7.543"
+a="6.802"
+b="8.875"
+c="4.703"
 alpha="90.0"
-beta="90.0"
+beta="102.12"
 gamma="90.0"
-uVector="0,0,1"
-vVector="1,1,0"
+uVector="1,0,0"
+vVector="0,1,0"
 sub_directory=""
 
 #parameters not on the webpage
