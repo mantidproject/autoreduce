@@ -462,8 +462,50 @@ def write_reflectivity2(ws_list, output_path, meta_data):
     # Direct beam section
     for ws in ws_list:
         run_object = ws.getRun()
-        normalization_run = run_object.getProperty()
+        normalization_run = run_object.getProperty("normalization_run").value
+        peak_min = run_object.getProperty("norm_peak_min").value
+        peak_max = run_object.getProperty("norm_peak_max").value
 
+
+
+
+        constant_q_binning = self.getProperty("ConstantQBinning").value
+        AddSampleLog(Workspace=workspace, LogName='constant_q_binning', LogText=str(constant_q_binning))
+        # DATA
+        data_peak_range = self.getProperty("SignalPeakPixelRange").value
+        AddSampleLog(Workspace=workspace, LogName='scatt_peak_min', LogText=str(data_peak_range[0]),
+                     LogType='Number', LogUnit='pixel')
+        AddSampleLog(Workspace=workspace, LogName='scatt_peak_max', LogText=str(data_peak_range[1]),
+                     LogType='Number', LogUnit='pixel')
+
+        data_bg_range = self.getProperty("SignalBackgroundPixelRange").value
+        AddSampleLog(Workspace=workspace, LogName='scatt_bg_min', LogText=str(data_bg_range[0]),
+                     LogType='Number', LogUnit='pixel')
+        AddSampleLog(Workspace=workspace, LogName='scatt_bg_max', LogText=str(data_bg_range[1]),
+                     LogType='Number', LogUnit='pixel')
+
+        low_res_range = self.getProperty("LowResDataAxisPixelRange").value
+        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_min', LogText=str(low_res_range[0]),
+                     LogType='Number', LogUnit='pixel')
+        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_max', LogText=str(low_res_range[1]),
+                     LogType='Number', LogUnit='pixel')
+
+        # NORMALIZATION
+        data_peak_range = self.getProperty("NormPeakPixelRange").value
+
+
+        data_bg_range = self.getProperty("NormBackgroundPixelRange").value
+        AddSampleLog(Workspace=workspace, LogName='scatt_bg_min', LogText=str(data_bg_range[0]),
+                     LogType='Number', LogUnit='pixel')
+        AddSampleLog(Workspace=workspace, LogName='scatt_bg_max', LogText=str(data_bg_range[1]),
+                     LogType='Number', LogUnit='pixel')
+
+        low_res_range = self.getProperty("LowResNormAxisPixelRange").value
+        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_min', LogText=str(low_res_range[0]),
+                     LogType='Number', LogUnit='pixel')
+        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_max', LogText=str(low_res_range[1]),
+                     LogType='Number', LogUnit='pixel')
+                     
     dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
     filename = reflectivity.getRun().getProperty("Filename").value
     meta_data = {'scatt': [dict(scale=1, DB_ID=1,
