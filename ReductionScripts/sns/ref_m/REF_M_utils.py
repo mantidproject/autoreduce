@@ -518,8 +518,22 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         filename = run_object.getRun().getProperty("Filename").value
         constant_q_binning = run_object.getRun().getProperty("constant_q_binning").value
         scatt_pos = run_object.getRun().getProperty("specular_pixel").value
-         
-        item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=0,
+
+        # For some reason, the tth value that QuickNXS expects is offset.
+        # It seems to be because that same offset is applied later in the QuickNXS calculation.
+        # Correct tth here so that it can load properly in QuickNXS and produce the same result.
+        tth = run_object.getProperty("two_theta").value
+        det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
+        direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
+        ref_pix = item['x_pos']
+        # Get pixel size from instrument properties
+        if ws.getInstrument().hasParameter("pixel_width"):
+            pixel_width = float(ws.getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
+        else:
+            pixel_width = 0.0007
+        tth -= ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
+        
+        item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=tth,
                     fan=const_q_binning,
                     x_pos=scatt_pos,
                     x_width=peak_max-peak_min+1,
@@ -528,28 +542,17 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                     bg_pos=(bg_min+bg_max)/2.0,
                     bg_width=bg_max-bg_min+1,
                     dpix=dpix,
+                    fan=constant_q_binning,
                     number=normalization_run,
                     File=filename)
 
 
     i_run = 0
     for item in meta_data['scatt']:
-        # For some reason, the tth value that QuickNXS expects is offset.
-        # It seems to be because that same offset is applied later in the QuickNXS calculation.
-        # Correct tth here so that it can load properly in QuickNXS and produce the same result.
-        run_object = ws_list[i_run].getRun()
-        tth = run_object.getProperty("two_theta").value
-        det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
-        direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
-        ref_pix = item['x_pos']
 
-        # Get pixel size from instrument properties
-        if ws_list[i_run].getInstrument().hasParameter("pixel_width"):
-            pixel_width = float(ws_list[i_run].getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
-        else:
-            pixel_width = 0.0007
-        item['tth'] = tth - ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
-        item['fan'] = run_object.getProperty("constant_q_binning").value
+
+
+
         
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)
