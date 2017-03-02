@@ -461,7 +461,9 @@ def write_reflectivity2(ws_list, output_path, meta_data):
     fd.write("# %s\n" % '  '.join(toks))
 
     # Direct beam section
+    i_direct_beam = 0
     for ws in ws_list:
+        i_direct_beam += 1
         run_object = ws.getRun()
         normalization_run = run_object.getProperty("normalization_run").value
         peak_min = run_object.getProperty("norm_peak_min").value
