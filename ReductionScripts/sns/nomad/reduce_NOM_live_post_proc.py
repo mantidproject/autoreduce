@@ -45,7 +45,7 @@ processingParams = {'CalibrationWorkspace':'NOM_cal',
                     'ReductionProperties':'__pd_reduction_properties'}
 
 can = getRunId(manager, 'container')
-can = None # REMOVE
+#can = None # REMOVE
 if can is not None and not simpleapi.mtd.doesExist(can):
     mantid.logger.information("processing container '%s'" % can)
     simpleapi.LoadEventNexus(Filename=can, OutputWorkspace=can)
