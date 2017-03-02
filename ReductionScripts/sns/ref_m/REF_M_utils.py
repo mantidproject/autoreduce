@@ -466,6 +466,8 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         i_direct_beam += 1
         run_object = ws.getRun()
         normalization_run = run_object.getProperty("normalization_run").value
+        if normalization_run == "None":
+            continue
         peak_min = run_object.getProperty("norm_peak_min").value
         peak_max = run_object.getProperty("norm_peak_max").value
         bg_min = run_object.getProperty("norm_bg_min").value
