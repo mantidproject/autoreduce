@@ -28,6 +28,7 @@ def reduce_data(run_number, use_roi=True):
         try:
             reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
+                logging.warning("No reflectivity for %s %s" % (run_number, entry))
                 return False
             x = reflectivity.readX(0)
             y = reflectivity.readY(0)
