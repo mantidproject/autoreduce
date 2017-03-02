@@ -469,8 +469,20 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         bg_max = run_object.getProperty("norm_bg_max").value
         low_res_min = run_object.getProperty("norm_low_res_min").value
         low_res_max = run_object.getProperty("norm_low_res_max").value
+        dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
+        filename = run_object.getRun().getProperty("Filename").value
 
-
+        meta = dict(DB_ID=1, tth=0,
+                                    P0=0, PN=0,
+                                    x_pos=(direct_peak[1]+direct_peak[0])/2.0,
+                                    x_width=direct_peak[1]-direct_peak[0]+1,
+                                    y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
+                                    y_width=direct_low_res[1]-direct_low_res[0]+1,
+                                    bg_pos=(direct_peak[0]-30+4)/2.0,
+                                    bg_width=direct_peak[0]-33,
+                                    dpix=dpix,
+                                    number=normalization_run,
+                                    File=filename)
 
 
         constant_q_binning = self.getProperty("ConstantQBinning").value
@@ -494,21 +506,6 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         AddSampleLog(Workspace=workspace, LogName='scatt_low_res_max', LogText=str(low_res_range[1]),
                      LogType='Number', LogUnit='pixel')
 
-        # NORMALIZATION
-        data_peak_range = self.getProperty("NormPeakPixelRange").value
-
-
-        data_bg_range = self.getProperty("NormBackgroundPixelRange").value
-        AddSampleLog(Workspace=workspace, LogName='scatt_bg_min', LogText=str(data_bg_range[0]),
-                     LogType='Number', LogUnit='pixel')
-        AddSampleLog(Workspace=workspace, LogName='scatt_bg_max', LogText=str(data_bg_range[1]),
-                     LogType='Number', LogUnit='pixel')
-
-        low_res_range = self.getProperty("LowResNormAxisPixelRange").value
-        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_min', LogText=str(low_res_range[0]),
-                     LogType='Number', LogUnit='pixel')
-        AddSampleLog(Workspace=workspace, LogName='scatt_low_res_max', LogText=str(low_res_range[1]),
-                     LogType='Number', LogUnit='pixel')
                      
     dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
     filename = reflectivity.getRun().getProperty("Filename").value
@@ -525,22 +522,6 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                                 File=filename)],
                  'direct': [],
                  'cross_section': entry}
-
-    if mtd.doesExist("MR_%s" % norm_run):
-        dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
-        filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
-
-        meta_data['direct'] = [dict(DB_ID=1, tth=0,
-                                    P0=0, PN=0,
-                                    x_pos=(direct_peak[1]+direct_peak[0])/2.0,
-                                    x_width=direct_peak[1]-direct_peak[0]+1,
-                                    y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
-                                    y_width=direct_low_res[1]-direct_low_res[0]+1,
-                                    bg_pos=(direct_peak[0]-30+4)/2.0,
-                                    bg_width=direct_peak[0]-33,
-                                    dpix=dpix,
-                                    number=norm_run,
-                                    File=filename)]
 
 
     for item in meta_data['direct']:
