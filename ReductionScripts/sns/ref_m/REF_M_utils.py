@@ -534,7 +534,7 @@ def write_reflectivity2(ws_list, output_path, cross_section):
         tth -= ((direct_beam_pix - scatt_pos) * pixel_width) / det_distance * 180.0 / math.pi
         
         item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=tth,
-                    fan=const_q_binning,
+                    fan=constant_q_binning,
                     x_pos=scatt_pos,
                     x_width=peak_max-peak_min+1,
                     y_pos=(low_res_max+low_res_min)/2.0,
