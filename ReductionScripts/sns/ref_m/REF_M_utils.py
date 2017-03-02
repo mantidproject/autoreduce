@@ -474,8 +474,8 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         bg_max = run_object.getProperty("norm_bg_max").value
         low_res_min = run_object.getProperty("norm_low_res_min").value
         low_res_max = run_object.getProperty("norm_low_res_max").value
-        dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
-        filename = run_object.getRun().getProperty("Filename").value
+        dpix = run_object.getRun().getProperty("normalization_dirpix").getStatistics().mean
+        filename = run_object.getRun().getProperty("normalization_file_path").value
 
         item = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
                     x_pos=(peak_min+peak_max)/2.0,
