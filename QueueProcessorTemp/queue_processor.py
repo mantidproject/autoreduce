@@ -1,4 +1,4 @@
-import stomp, logging, logging.config, smtplib, orm_mapping
+import stomp, logging, logging.config, smtplib, orm_mapping, datetime
 import time, sys, os, json, glob, base64
 from settings import ACTIVEMQ, LOGGING, MYSQL, ICAT, LOG_FILE
 from icat_communication import ICATCommunication
@@ -48,56 +48,74 @@ class Listener(object):
             logger.error("UNCAUGHT ERROR: %s - %s" % (type(e).__name__, str(e)))
 
     def data_ready(self):
-        run_number = str(self._data_dict['run_number'])
+        from process_utils import InstrumentVariablesUtils
+        
+        run_no = str(self._data_dict['run_number'])
         instrument_name = str(self._data_dict['instrument'])
-        logger.info("Data ready for processing run %s on %s" % (run_number, instrument_name))
+        logger.info("Data ready for processing run %s on %s" % (run_no, instrument_name))
         
         # Check if the instrument is active or not in the MySQL database
         instrument = self._session.query(Instrument).filter_by(name=instrument_name).first()
         
         # Activate the instrument if it is currently set to inactive
         if not instrument.is_active:
-            logger.info("Setting instrument to active!")
             instrument.is_active = 1
-            session.commit()
-
+            self._session.commit()
+        
+        # If the instrument is paused, we need to find the 'Skipped' status
         if instrument.is_paused:
-            skipped_status_query = "SELECT id FROM reduction_viewer_status " \
-                                   "WHERE value = 'Skipped'"
-            status = self._mysql.execute_query(self._database, skipped_status_query)[0]
+            status = self._session.query(StatusID).filter_by(value='Skipped').first()
+        # Else we need to find the 'Queued' status number
         else:
-            error_status_query = "SELECT id FROM reduction_viewer_status " \
-                                   "WHERE value = 'Error'"
-            status = self._mysql.execute_query(self._database, error_status_query)[0]
-
-        last_run = ReductionRun.objects.filter(run_number=self._data_dict['run_number']).order_by('-run_version').first()
-        highest_version = last_run.run_version if last_run is not None else -1
-
-        experiment, experiment_created = Experiment.objects.get_or_create(reference_number=self._data_dict['rb_number'])
-        if experiment_created:
-            experiment.save()
-            
+            status = self._session.query(StatusID).filter_by(value='Queued').first()
+        
+        last_run = self._session.query(ReductionRun).filter_by(run_number=run_no).order_by('-run_version').first()
+                
+        if last_run is not None:
+            highest_version = last_run.run_version
+        else:
+            highest_version = -1
+        
+        # Search for the experiment, if it doesn't exist then add it
+        experiment = self._session.query(Experiment).filter_by(reference_number=run_no).first()
+        if experiment == None:
+            new_exp = Experiment(reference_number=run_no)
+            self._session.add(new_exp)
+            self._session.commit()
+        
+        # TODO: Send to error if script text = null!
         script_text = InstrumentVariablesUtils().get_current_script_text(instrument.name)[0]
-
-
-        run_version = highest_version+1
+        run_version = highest_version + 1
+        
+        # Make the new reduction run and add it into the database
         reduction_run = ReductionRun( run_number=self._data_dict['run_number']
                                     , run_version=run_version
-                                    , experiment=experiment
-                                    , instrument=instrument
-                                    , status=status
+                                    , run_name=''
+                                    , message=''
+                                    , cancel=0
+                                    , hidden_in_failviewer=0
+                                    , admin_log=''
+                                    , reduction_log=''
+                                    , created=datetime.datetime.now()
+                                    , last_updated=datetime.datetime.now()
+                                    , experiment_id=experiment.id
+                                    , instrument_id=instrument.id
+                                    , status_id=status.id
                                     , script=script_text
                                     )
-        reduction_run.save()
+                                    
+        self._session.add(reduction_run)
+        self._session.commit()
+        
         self._data_dict['run_version'] = reduction_run.run_version
 
-        data_location = DataLocation(file_path=self._data_dict['data'], reduction_run=reduction_run)
-        data_location.save()
-
+        data_location = DataLocation(file_path=self._data_dict['data'], reduction_run_id=reduction_run.id)
+        self._session.add(data_location)
+        self._session.commit()
+        
         variables = InstrumentVariablesUtils().create_variables_for_run(reduction_run)
         if not variables:
             logger.warning("No instrument variables found on %s for run %s" % (instrument.name, self._data_dict['run_number']))
-        
         
         reduction_script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
         self._data_dict['reduction_script'] = reduction_script
