@@ -143,40 +143,8 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     reflectivity = mtd["r_%s_%s" % (run_number, entry)]
     ipts = reflectivity.getRun().getProperty("experiment_identifier").value
     output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts
-    dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
-    filename = reflectivity.getRun().getProperty("Filename").value
-    meta_data = {'scatt': [dict(scale=1, DB_ID=1,
-                                P0=0, PN=0, tth=0, fan=const_q_binning,
-                                x_pos=scatt_pos,
-                                x_width=scatt_peak[1]-scatt_peak[0]+1,
-                                y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
-                                y_width=scatt_low_res[1]-scatt_low_res[0]+1,
-                                bg_pos=(scatt_peak[0]-30+4)/2.0,
-                                bg_width=scatt_peak[0]-33,
-                                dpix=dpix,
-                                number=run_number,
-                                File=filename)],
-                 'direct': [],
-                 'cross_section': entry}
-
-    if mtd.doesExist("MR_%s" % norm_run):
-        dpix =  mtd["MR_%s" % norm_run].getRun().getProperty("DIRPIX").getStatistics().mean
-        filename =  mtd["MR_%s" % norm_run].getRun().getProperty("Filename").value
-
-        meta_data['direct'] = [dict(DB_ID=1, tth=0,
-                                    P0=0, PN=0,
-                                    x_pos=(direct_peak[1]+direct_peak[0])/2.0,
-                                    x_width=direct_peak[1]-direct_peak[0]+1,
-                                    y_pos=(direct_low_res[1]+direct_low_res[0])/2.0,
-                                    y_width=direct_low_res[1]-direct_low_res[0]+1,
-                                    bg_pos=(direct_peak[0]-30+4)/2.0,
-                                    bg_width=direct_peak[0]-33,
-                                    dpix=dpix,
-                                    number=norm_run,
-                                    File=filename)]
-
-    write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]],
-                       os.path.join(output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), meta_data)
+    write_reflectivity2([mtd["r_%s_%s" % (run_number, entry)]],
+                       os.path.join(output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
     
     label = entry
     if not apply_norm:
