@@ -546,20 +546,12 @@ def write_reflectivity2(ws_list, output_path, meta_data):
                     number=normalization_run,
                     File=filename)
 
-
-    i_run = 0
-    for item in meta_data['scatt']:
-
-
-
-
-        
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
         for key in item:
             if isinstance(item[key], str):
-                _clean_dict[key] = item[key]
+                _clean_dict[key] = "%8s" % item[key]
             else:
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
