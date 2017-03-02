@@ -499,6 +499,10 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         fd.write(template.format(**_clean_dict))
 
     # Scattering data
+    fd.write("#\n") 
+    fd.write("# [Data Runs]\n") 
+    toks = ['%8s' % item for item in dataset_options]
+    fd.write("# %s\n" % '  '.join(toks))
     i_direct_beam = 0
     for ws in ws_list:
         i_direct_beam += 1
@@ -513,31 +517,20 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
         filename = run_object.getRun().getProperty("Filename").value
         constant_q_binning = run_object.getRun().getProperty("constant_q_binning").value
-        specular_pix = run_object.getRun().getProperty("specular_pixel").value
-        
- 
-                     
+        scatt_pos = run_object.getRun().getProperty("specular_pixel").value
+         
         item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=0,
                     fan=const_q_binning,
-                                x_pos=scatt_pos,
-                                x_width=scatt_peak[1]-scatt_peak[0]+1,
-                                y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
-                                y_width=scatt_low_res[1]-scatt_low_res[0]+1,
-                                bg_pos=(scatt_peak[0]-30+4)/2.0,
-                                bg_width=scatt_peak[0]-33,
-                                dpix=dpix,
-                                number=run_number,
-                                File=filename)],
-                 'direct': [],
-                 'cross_section': entry}
+                    x_pos=scatt_pos,
+                    x_width=peak_max-peak_min+1,
+                    y_pos=(low_res_max+low_res_min)/2.0,
+                    y_width=low_res_max-low_res_min+1,
+                    bg_pos=(bg_min+bg_max)/2.0,
+                    bg_width=bg_max-bg_min+1,
+                    dpix=dpix,
+                    number=normalization_run,
+                    File=filename)
 
-
-
-  
-    fd.write("#\n") 
-    fd.write("# [Data Runs]\n") 
-    toks = ['%8s' % item for item in dataset_options]
-    fd.write("# %s\n" % '  '.join(toks))
 
     i_run = 0
     for item in meta_data['scatt']:
