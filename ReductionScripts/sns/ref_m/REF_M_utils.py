@@ -465,6 +465,10 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         normalization_run = run_object.getProperty("normalization_run").value
         peak_min = run_object.getProperty("norm_peak_min").value
         peak_max = run_object.getProperty("norm_peak_max").value
+        bg_min = run_object.getProperty("norm_bg_min").value
+        bg_max = run_object.getProperty("norm_bg_max").value
+        low_res_min = run_object.getProperty("norm_low_res_min").value
+        low_res_max = run_object.getProperty("norm_low_res_max").value
 
 
 
