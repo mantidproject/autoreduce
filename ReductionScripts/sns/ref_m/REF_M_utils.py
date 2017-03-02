@@ -555,7 +555,6 @@ def write_reflectivity2(ws_list, output_path, meta_data):
             else:
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
-        i_run += 1
 
     fd.write("#\n") 
     fd.write("# [Global Options]\n") 
