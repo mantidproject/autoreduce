@@ -151,6 +151,25 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
         label += " [no direct beam]"
     return mtd["r_%s_%s" % (run_number, entry)], label
 
+def get_tof_range(workspace):
+        """
+            Determine TOF range from the data
+        """
+        run_object = workspace.getRun()
+        sample_detector_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
+        source_sample_distance = run_object['ModeratorSamDis'].getStatistics().mean / 1000.0
+        source_detector_distance = source_sample_distance + sample_detector_distance
+        
+        h = 6.626e-34  # m^2 kg s^-1
+        m = 1.675e-27  # kg
+        wl = run_object.getRun().getProperty('LambdaRequest').value[0]
+        chopper_speed = run_object.getProperty('SpeedRequest1').value[0]
+        wl_offset = 0
+        cst = source_detector_distance / h * m
+        tof_min = cst * (wl + wl_offset * 60.0 / chopper_speed - 1.7 * 60.0 / chopper_speed) * 1e-4
+        tof_max = cst * (wl + wl_offset * 60.0 / chopper_speed + 1.7 * 60.0 / chopper_speed) * 1e-4
+        return [tof_min, tof_max]
+        
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
     """
         Find the appropriate direct beam run
