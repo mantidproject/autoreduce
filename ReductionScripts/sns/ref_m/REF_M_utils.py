@@ -542,7 +542,6 @@ def write_reflectivity2(ws_list, output_path, cross_section):
                     bg_pos=(bg_min+bg_max)/2.0,
                     bg_width=bg_max-bg_min+1,
                     dpix=dpix,
-                    fan=constant_q_binning,
                     number=normalization_run,
                     File=filename)
 
