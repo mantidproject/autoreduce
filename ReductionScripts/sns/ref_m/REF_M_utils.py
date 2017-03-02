@@ -475,7 +475,7 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
         filename = run_object.getRun().getProperty("Filename").value
 
-        meta = dict(DB_ID=1, tth=0, P0=0, PN=0,
+        meta = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
                     x_pos=(peak_min+peak_max)/2.0,
                     x_width=peak_max-peak_min+1,
                     y_pos=(low_res_max+low_res_min)/2.0,
