@@ -513,13 +513,12 @@ def write_reflectivity2(ws_list, output_path, meta_data):
         dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
         filename = run_object.getRun().getProperty("Filename").value
         constant_q_binning = run_object.getRun().getProperty("constant_q_binning").value
+        specular_pix = run_object.getRun().getProperty("specular_pixel").value
         
  
                      
-    dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
-    filename = reflectivity.getRun().getProperty("Filename").value
-    meta_data = {'scatt': [dict(scale=1, DB_ID=1,
-                                P0=0, PN=0, tth=0, fan=const_q_binning,
+        item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=0,
+                    fan=const_q_binning,
                                 x_pos=scatt_pos,
                                 x_width=scatt_peak[1]-scatt_peak[0]+1,
                                 y_pos=(scatt_low_res[1]+scatt_low_res[0])/2.0,
