@@ -167,8 +167,8 @@ def get_tof_range(workspace):
         chopper_speed = run_object.getProperty('SpeedRequest1').value[0]
         wl_offset = 0
         cst = source_detector_distance / h * m
-        tof_min = cst * (wl + wl_offset * 60.0 / chopper_speed - 1.7 * 60.0 / chopper_speed) * 1e-4
-        tof_max = cst * (wl + wl_offset * 60.0 / chopper_speed + 1.7 * 60.0 / chopper_speed) * 1e-4
+        tof_min = cst * (wl + wl_offset * 60.0 / chopper_speed - 1.6 * 60.0 / chopper_speed) * 1e-4
+        tof_max = cst * (wl + wl_offset * 60.0 / chopper_speed + 1.6 * 60.0 / chopper_speed) * 1e-4
         return [tof_min, tof_max]
         
 def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
