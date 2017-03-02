@@ -459,6 +459,10 @@ def write_reflectivity2(ws_list, output_path, meta_data):
     toks = ['%8s' % item for item in direct_beam_options]
     fd.write("# %s\n" % '  '.join(toks))
 
+    # Direct beam section
+    for ws in ws_list:
+        run_object = ws.getRun()
+        normalization_run = run_object.getProperty()
 
     dpix = reflectivity.getRun().getProperty("DIRPIX").getStatistics().mean
     filename = reflectivity.getRun().getProperty("Filename").value
