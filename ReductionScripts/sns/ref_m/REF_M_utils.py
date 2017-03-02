@@ -63,6 +63,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
     scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
+    tof_range = get_tof_range(ws)
 
     # Find direct beam run
     norm_run = None
@@ -127,13 +128,13 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     LowResDataAxisPixelRange=scatt_low_res,
                                     CutLowResNormAxis=True,
                                     LowResNormAxisPixelRange=direct_low_res,
-                                    CutTimeAxis=False,
+                                    CutTimeAxis=True,
                                     QMin=0.001,
                                     QStep=-0.01,
                                     UseWLTimeAxis=False,
                                     TimeAxisStep=40,
                                     UseSANGLE=True,
-                                    #TimeAxisRange=[24000, 54000],
+                                    TimeAxisRange=tof_range,
                                     SpecularPixel=scatt_pos,
                                     ConstantQBinning=const_q_binning,
                                     EntryName='entry-%s' % entry,
@@ -162,7 +163,7 @@ def get_tof_range(workspace):
         
         h = 6.626e-34  # m^2 kg s^-1
         m = 1.675e-27  # kg
-        wl = run_object.getRun().getProperty('LambdaRequest').value[0]
+        wl = run_object.getProperty('LambdaRequest').value[0]
         chopper_speed = run_object.getProperty('SpeedRequest1').value[0]
         wl_offset = 0
         cst = source_detector_distance / h * m
