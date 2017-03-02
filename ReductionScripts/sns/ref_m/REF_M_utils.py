@@ -474,8 +474,8 @@ def write_reflectivity2(ws_list, output_path, cross_section):
         bg_max = run_object.getProperty("norm_bg_max").value
         low_res_min = run_object.getProperty("norm_low_res_min").value
         low_res_max = run_object.getProperty("norm_low_res_max").value
-        dpix = run_object.getRun().getProperty("normalization_dirpix").getStatistics().mean
-        filename = run_object.getRun().getProperty("normalization_file_path").value
+        dpix = run_object.getProperty("normalization_dirpix").getStatistics().mean
+        filename = run_object.getProperty("normalization_file_path").value
 
         item = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
                     x_pos=(peak_min+peak_max)/2.0,
@@ -514,10 +514,10 @@ def write_reflectivity2(ws_list, output_path, cross_section):
         bg_max = run_object.getProperty("scatt_bg_max").value
         low_res_min = run_object.getProperty("scatt_low_res_min").value
         low_res_max = run_object.getProperty("scatt_low_res_max").value
-        dpix = run_object.getRun().getProperty("DIRPIX").getStatistics().mean
-        filename = run_object.getRun().getProperty("Filename").value
-        constant_q_binning = run_object.getRun().getProperty("constant_q_binning").value
-        scatt_pos = run_object.getRun().getProperty("specular_pixel").value
+        dpix = run_object.getProperty("DIRPIX").getStatistics().mean
+        filename = run_object.getProperty("Filename").value
+        constant_q_binning = run_object.getProperty("constant_q_binning").value
+        scatt_pos = run_object.getProperty("specular_pixel").value
 
         # For some reason, the tth value that QuickNXS expects is offset.
         # It seems to be because that same offset is applied later in the QuickNXS calculation.
