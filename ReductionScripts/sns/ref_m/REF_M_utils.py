@@ -399,7 +399,9 @@ def write_reflectivity(ws_list, output_path, meta_data):
         else:
             pixel_width = 0.0007
         item['tth'] = tth - ((direct_beam_pix - ref_pix) * pixel_width) / det_distance * 180.0 / math.pi
-
+        
+        item['fan'] = run_object.getProperty("constant_q_binning").value
+        
         par_list = ['{%s}' % p for p in dataset_options]
         template = "# %s\n" % '  '.join(par_list)
         _clean_dict = {}
