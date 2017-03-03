@@ -13,8 +13,8 @@ rowB=np.transpose(y[118784:253952].reshape([528,256]))
 rowC=np.transpose(y[253952:372736].reshape([464,256]))
 empty=np.empty([256,32])
 empty.fill(np.nan)
-rowA=np.concatenate(empty,rowA,empty),axis=1)
-rowC=np.concatenate(empty,rowC,empty),axis=1)
+rowA=np.concatenate((empty,rowA,empty),axis=1)
+rowC=np.concatenate((empty,rowC,empty),axis=1)
 inst=np.concatenate((rowA,rowB,rowC),axis=0)
 
 colorscale= [
