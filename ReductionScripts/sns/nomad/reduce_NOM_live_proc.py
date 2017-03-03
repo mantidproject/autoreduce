@@ -2,7 +2,7 @@ import mantid
 from mantid import simpleapi
 import os
 
-cal_dir = '/SNS/NOM/shared/CALIBRATION/2017_2_1B_CAL/'
+cal_dir = '/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/'
 cal_file  = os.path.join(cal_dir, 'NOM_d89318_2017_03_04_cryostat.h5')
 char_file = os.path.join(cal_dir, 'NOM_char_2016_12-13-rietveld.txt')
 expiniFileDefault = "/SNS/NOM/IPTS-18316/shared/autoNOM/exp.ini"
