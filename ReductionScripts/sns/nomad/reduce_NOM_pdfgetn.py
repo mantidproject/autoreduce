@@ -9,8 +9,8 @@ import mantid
 resamplex=-6000
 wavelengthMin=0.
 wavelengthMax=0.
-calFile="/SNS/NOM/IPTS-17697/shared/NOM_calibrate_d89318_2017_03_03.h5"
-charFile="/SNS/NOM/shared/CALIBRATION/2016_2_1B_CAL/NOM_char_2016_12_13-pdf.txt"
+calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d89318_2017_03_04_cryostat.h5"
+charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2016_12_13-rietveld.txt"
 ########## end of user defined parameters
 
 eventFileAbs=sys.argv[1]
