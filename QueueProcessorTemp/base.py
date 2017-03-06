@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from settings import MYSQL
 from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
@@ -13,4 +14,7 @@ connect_string = 'mysql+mysqldb://' + MYSQL['USER'] + ':' + MYSQL['PASSWD'] + \
 # is idle for more than 8 hours.
 engine = create_engine(connect_string, pool_recycle=3600)
 metadata = MetaData(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
 

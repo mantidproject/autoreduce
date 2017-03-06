@@ -6,17 +6,20 @@ from base import Base, metadata, engine
 class Instrument(Base):
     __table__ = Table('reduction_viewer_instrument', metadata, autoload=True, autoload_with=engine)
 
+class Experiment(Base):
+    __table__ = Table('reduction_viewer_experiment', metadata, autoload=True, autoload_with=engine)
+
 class StatusID(Base):
     __table__ = Table('reduction_viewer_status', metadata, autoload=True, autoload_with=engine)
 
 class ReductionRun(Base):
     __table__ = Table('reduction_viewer_reductionrun', metadata, autoload=True, autoload_with=engine)
-
-class Experiment(Base):
-    __table__ = Table('reduction_viewer_experiment', metadata, autoload=True, autoload_with=engine)
+    instrument = relationship('Instrument', foreign_keys='ReductionRun.instrument_id')
+    experiment = relationship('Experiment', foreign_keys='ReductionRun.experiment_id')
     
-class InstrumentVariables(Base):
+class InstrumentVariable(Base):
     __table__ = Table('reduction_variables_instrumentvariable', metadata, autoload=True, autoload_with=engine)
+    instrument = relationship('Instrument', foreign_keys='InstrumentVariable.instrument_id')
 
 class DataLocation(Base):
     __table__ = Table('reduction_viewer_datalocation', metadata, autoload=True, autoload_with=engine)

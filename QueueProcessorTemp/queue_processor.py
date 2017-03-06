@@ -3,8 +3,9 @@ import time, sys, os, json, glob, base64
 from settings import ACTIVEMQ, LOGGING, MYSQL, ICAT, LOG_FILE
 from icat_communication import ICATCommunication
 from mysql_client import MySQL
-from base import engine
+from base import engine, session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import inspect
 from orm_mapping import *
 
 # Set up logging and attach the logging to the right part of the config.
@@ -14,7 +15,7 @@ logger = logging.getLogger("queue_processor")
 class Listener(object):
     def __init__(self, client):
         Session = sessionmaker(bind=engine)
-        self._session = Session()
+        self._session = session
         self._client = client
         self._data_dict = {}
         self._priority = ''
@@ -108,7 +109,7 @@ class Listener(object):
         self._session.commit()
         
         self._data_dict['run_version'] = reduction_run.run_version
-
+        
         data_location = DataLocation(file_path=self._data_dict['data'], reduction_run_id=reduction_run.id)
         self._session.add(data_location)
         self._session.commit()
@@ -127,7 +128,6 @@ class Listener(object):
             self._client.send('/queue/ReductionPending', json.dumps(self._data_dict), priority=self._priority)
             logger.info("Run %s ready for reduction" % self._data_dict['run_number'])
 
-            
     def reduction_started(self):
         logger.info("Run %s has started reduction" % self._data_dict['run_number'])
         
