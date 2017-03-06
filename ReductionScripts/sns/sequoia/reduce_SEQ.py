@@ -29,12 +29,12 @@ warnings.simplefilter('ignore')
 
 
 # parameters
-RawVanadium="/SNS/SEQ/IPTS-16076/nexus/SEQ_102084.nxs.h5"
+RawVanadium="/SNS/SEQ/IPTS-16076/nexus/SEQ_121280.nxs.h5"
 processed_van_file = None
-ProcessedVanadium="van102084_nov_2016_2x2_b.nxs"
+ProcessedVanadium="van121280_march2017.nxs"
 Emin=-0.6
 Emax=0.95
-Estep=0.01
+Estep=0.005
 grouping="/SNS/SEQ/shared/autoreduce/SEQ_2x2_grouping.xml" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 create_elastic_nxspe=True
 
@@ -53,17 +53,10 @@ def updateMask():
     MaskBTPParameters.append({'Pixel': '120-128', 'Bank': '38-42'})
     MaskBTPParameters.append({'Pixel': '119-128', 'Bank': '43'})
     MaskBTPParameters.append({'Pixel': '120-128', 'Bank': '44-48'})
-    MaskBTPParameters.append({'Tube': '1,5', 'Bank': '44'})
-    MaskBTPParameters.append({'Tube': '8', 'Bank': '63'})
-    MaskBTPParameters.append({'Tube': '8', 'Bank': '70'})
-    MaskBTPParameters.append({'Tube': '8', 'Pixel': '1-95', 'Bank': '74'})
+    MaskBTPParameters.append({'Tube': '8', 'Bank': '74'})
     MaskBTPParameters.append({'Tube': '8', 'Bank': '96'})
-    MaskBTPParameters.append({'Tube': '8', 'Bank': '109'})
     MaskBTPParameters.append({'Pixel': '113-128', 'Bank': '130-132'})
     MaskBTPParameters.append({'Tube': '4', 'Bank': '148'})
-    MaskBTPParameters.append({'Tube': '5', 'Bank': '45'})
-    MaskBTPParameters.append({'Bank': '62'})
-    MaskBTPParameters.append({'Tube': '1,3-6,8', 'Bank': '119'})
     MaskBTPParameters.append({'Tube': '6-8', 'Pixel': '105-110', 'Bank': '46'})
  
     return
