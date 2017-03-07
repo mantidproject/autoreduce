@@ -15,6 +15,8 @@ warnings.filterwarnings('ignore',module='numpy')
 
 from mantid.simpleapi import *
 
+TEMPERATURE_SENSOR = "SensorA"
+
 DEFAULT_MASK_GROUP_DIR="/SNS/BSS/shared/autoreduce/new_masks_08_12_2015"
 REFLECTIONS_DICT = {"silicon111": {"name": "silicon111",
                                    "energy_bins": [-0.120, 0.0004, 0.120],  # micro-eV
@@ -95,6 +97,18 @@ dave_grp_filename = os.path.join(output_directory, "BSS_" + run_number + "_sqw.d
 processed_filename = os.path.join(output_directory, "BSS_" + run_number + "_sqw.nxs")
 SaveDaveGrp(Filename=dave_grp_filename, InputWorkspace=autows+'_sqw', ToMicroEV=True)
 SaveNexus(Filename=processed_filename, InputWorkspace=autows+'_sqw')
+
+# Output dynamic susceptibility
+try:
+    temperature = mtd[autows+'_sqw'].getRun().getProperty(TEMPERATURE_SENSOR).getStatistics().mean
+    ApplyDetailedBalance(InputWorkspace=autows+'_sqw', OutputWorkspace=autows+'_Xqw',
+                         Temperature=str(temperature))
+    ConvertUnits(InputWorkspace=autows+'_Xqw', OutputWorkspace=autows+'_Xqw',
+                 Target="DeltaE_inFrequency", Emode="Indirect")
+    susceptibility_filename = processed_filename.replace("sqw", "Xqw")
+    SaveNexus(Filename=susceptibility_filename, InputWorkspace=autows+'_Xqw')
+except:
+    pass
 
 # Save experiment log file
 logfilename = os.path.join(output_directory, 'experiment_log.csv')
