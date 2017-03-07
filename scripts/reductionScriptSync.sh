@@ -13,12 +13,13 @@ echo $LOG_FILE
 echo `date` > $LOG_FILE
 
 # checkout/update git repo
-mkdir -m 0755 -p $WORK_DIR
+mkdir -m 0775 -p $WORK_DIR
+chgrp snswheel $WORK_DIR
 cd $WORK_DIR
 if [[ -d "$WORK_DIR/autoreduce" ]]; then
     cd autoreduce
     git fetch >> $LOG_FILE
-    git rebase origin master >> $LOG_FILE
+    git rebase -v origin/master >> $LOG_FILE
 else
     #git clone git@github.com:mantidproject/autoreduce.git >> $LOG_FILE
     ssh-agent bash -c 'ssh-add ~/.ssh/autoreduce.rsa; git clone git@github.com:mantidproject/autoreduce.git'
