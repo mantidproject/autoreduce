@@ -10,8 +10,8 @@ resamplex=-6000
 vanradius=0.58
 #wavelengthMin=0.1
 #wavelengthMax=2.9
-calFile="/SNS/NOM/IPTS-17683/shared/NOM_calibrate_d89318_2017_03_04.h5"
-charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1A_CAL/NOM_char_2016_12_13-rietveld.txt"
+calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d89318_2017_03_04_cryostat.h5"
+charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2016_12_13-rietveld.txt"
 expiniFileDefault="/SNS/lustre/NOM/IPTS-17683/shared/autoNOM/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction

@@ -37,7 +37,7 @@ class RunInfo:
                         else:
                             value = sum(value)
                         if isinstance(value, bytes):
-                            value = value.decode()
+                            value = value.decode().replace(',','')
                 except Exception as e:
                     print(e)
                     value = 'N/A'

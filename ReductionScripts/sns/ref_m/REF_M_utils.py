@@ -199,7 +199,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                     for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
                         ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
                                             NXentryName=entry,
-                                            MetaDataOnly=True,
+                                            MetaDataOnly=False,
                                             OutputWorkspace="meta_data")
                         if ws.getNumberEvents() > 1000:
                             is_valid = True
@@ -208,7 +208,7 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                     # If we can't load the Off-Off entry, it's not a direct beam
                     is_valid = False
 
-                if not is_valid or ws.getNumberEvents() < 1000:
+                if not is_valid:
                     meta_data = dict(run=0, invalid=True)
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
@@ -217,11 +217,12 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
 
                 run_number = int(ws.getRunNumber())
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
+                huber_x = ws.getRun().getProperty("HuberX").getStatistics().mean
                 wl = ws.getRun().getProperty("LambdaRequest").getStatistics().mean
                 s1 = ws.getRun().getProperty("S1HWidth").getStatistics().mean
                 s2 = ws.getRun().getProperty("S2HWidth").getStatistics().mean
                 s3 = ws.getRun().getProperty("S3HWidth").getStatistics().mean
-                meta_data = dict(run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle)
+                meta_data = dict(run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle, huber_x=huber_x)
                 fd = open(summary_path, 'w')
                 fd.write(json.dumps(meta_data))
                 fd.close()
@@ -237,7 +238,11 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                 s1 = meta_data['s1']
                 s2 = meta_data['s2']
                 s3 = meta_data['s3']
-            if run_number == run_ or dangle > tolerance:
+                if 'huber_x' in meta_data:
+                    huber_x = meta_data['huber_x']
+                else:
+                    huber_x = 0
+            if run_number == run_ or (dangle > tolerance and huber_x < 9) :
                 continue
             # If we don't allow runs taken later than the run we are processing...
             if not allow_later_runs and run_number > run_:
