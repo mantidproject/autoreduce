@@ -16,8 +16,8 @@ class processInputs(object):
     def __init__(self):
         #templated stuff
         self.ub_matrix_file='/SNS/CORELLI/IPTS-17922/shared/SaE/quickUB.mat'
-        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/2017A/SolidAngle_SlimSam_20170301_Central.nxs'
-        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/2017A/Spectrum_SlimSam_20170301_Central.nxs'
+        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/2017A/SolidAngle_SlimSam_20170307_Central.nxs'
+        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/2017A/Spectrum_SlimSam_20170307_Central.nxs'
         self.mask=[{'Bank': '1-6,29,30,62-68,91'}] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
         self.plot_requests=[{'Minimum': '-0.15', 'PerpendicularTo': '[0,K,0]', 'Maximum': '0.15'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
         self.useCC='True' #"True"
