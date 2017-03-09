@@ -4,6 +4,7 @@ import os
 import sys
 import numpy
 import csv
+import re
 try:
     import ConfigParser as configparser
 except ImportError:
@@ -38,6 +39,8 @@ class RunInfo:
                             value = sum(value)
                         if isinstance(value, bytes):
                             value = value.decode().replace(',','')
+                        if 'time' in node.lower():
+                            value = re.sub('\..*','',value) # remove fractional seconds
                 except Exception as e:
                     print(e)
                     value = 'N/A'
