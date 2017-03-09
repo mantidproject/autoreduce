@@ -40,7 +40,7 @@ beta="102.12"
 gamma="90.0"
 uVector="1,0,0"
 vVector="0,1,0"
-sub_directory=""
+sub_directory="Orange_March2017"
 
 #parameters not on the webpage
 #below remains unchanged
