@@ -41,7 +41,8 @@ class RunInfo:
                             value = value.decode().replace(',','')
                         if 'time' in node.lower():
                             value = re.sub('\..*','',value) # remove fractional seconds
-                            value = re.sub(r'-','',value) # remove fractional seconds
+                            value = re.sub(r'-',r'/',value) # change  '-' to '/'
+                            value = re.sub(r'T',r'/',value) # change  'T' to '/'
                 except Exception as e:
                     print(e)
                     value = 'N/A'
