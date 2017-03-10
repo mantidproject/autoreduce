@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file='' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.ub_matrix_file='/SNS/CORELLI/IPTS-18149/shared/DTO_UB.mat' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
         self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/2017A/Spectrum_SlimSam_20170307_Central.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
         self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/2017A/SolidAngle_SlimSam_20170307_Central.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
         self.mask=[{'Bank': '1-30,62-91'}] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
