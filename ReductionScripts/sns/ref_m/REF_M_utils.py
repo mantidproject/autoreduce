@@ -195,8 +195,8 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
             summary_path = os.path.join(ar_dir, item+'.json')
             if not os.path.isfile(summary_path):
                 is_valid = False
-                try:
-                    for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+                for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+                    try:
                         ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
                                             NXentryName=entry,
                                             MetaDataOnly=False,
@@ -204,9 +204,9 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                         if ws.getNumberEvents() > 1000:
                             is_valid = True
                             break
-                except:
-                    # If we can't load the Off-Off entry, it's not a direct beam
-                    is_valid = False
+                    except:
+                        # If we can't load the Off-Off entry, it's not a direct beam
+                        is_valid = False
 
                 if not is_valid:
                     meta_data = dict(run=0, invalid=True)
