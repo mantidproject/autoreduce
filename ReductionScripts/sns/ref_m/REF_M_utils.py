@@ -441,7 +441,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
                     bg_pos=(bg_min+bg_max)/2.0,
                     bg_width=bg_max-bg_min+1,
                     dpix=dpix,
-                    number=normalization_run,
+                    number=str(ws.getRunNumber()),
                     File=filename)
 
         par_list = ['{%s}' % p for p in dataset_options]
