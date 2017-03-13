@@ -201,12 +201,13 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                                             NXentryName=entry,
                                             MetaDataOnly=False,
                                             OutputWorkspace="meta_data")
-                        if ws.getNumberEvents() > 1000:
-                            is_valid = True
-                            break
                     except:
-                        # If we can't load the Off-Off entry, it's not a direct beam
-                        is_valid = False
+                        # If there's no data in the entry, LoadEventNexus will fail.
+                        # This is expected so we just need to proceed with the next entry.
+                        pass
+                    if ws.getNumberEvents() > 1000:
+                        is_valid = True
+                        break
 
                 if not is_valid:
                     meta_data = dict(run=0, invalid=True)
