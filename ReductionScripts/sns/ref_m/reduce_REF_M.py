@@ -11,7 +11,7 @@ import logging
 import sys, os
 import time
 #sys.path.append("/opt/mantidnightly/bin")
-sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
+#sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
 
 from quicknxs.console_logging import setup_logging
 from quicknxs.version import str_version
