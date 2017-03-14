@@ -39,7 +39,6 @@ def reduce_data(run_number, use_roi=True):
         except:
             # No data for this cross-section, skip to the next
             continue
-
     try:
         from postprocessing.publish_plot import plot1d
         if len(data_list) > 0:
