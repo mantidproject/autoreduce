@@ -10,7 +10,7 @@ resamplex=-6000
 vanradius=0.58
 #wavelengthMin=0.1
 #wavelengthMax=2.9
-calFile="/SNS/NOM/IPTS-18449/shared/NOM_d89318_2017_03_04_cryostat.h5"
+calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d89318_2017_03_04_cryostat.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2016_12_13-rietveld.txt"
 expiniFileDefault="/SNS/lustre/NOM/IPTS-18449/shared/autoNOM/exp.ini"
 # 0 means use the runs specified in the exp.ini
