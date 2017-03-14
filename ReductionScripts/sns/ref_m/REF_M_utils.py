@@ -33,9 +33,9 @@ def reduce_data_(run_number, use_roi=True):
             continue
     try:
         from REF_M_merge import combined_curves, plot_combined
-        matched_runs, scaling_factors = combined_curves(run=run_, ipts=ipts_)
-
-        plot_combined(matched_runs, scaling_factors, ipts_)
+        ipts = reflectivity.getRun().getProperty("experiment_identifier").value
+        matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
+        plot_combined(matched_runs, scaling_factors, ipts)
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
