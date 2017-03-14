@@ -10,7 +10,11 @@ from mantid.simpleapi import *
 
 def match_run_for_cross_section(run, ipts, cross_section):
     """
-        Return a list of matching runs
+        Return a list of matching runs to be stitched
+
+        @param run: run to start with
+        @param ipts: experiment identifier
+        @param cross_section: polarization entry
     """
     _previous_q_min = 0
     _previous_q_max = 0
