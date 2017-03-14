@@ -168,7 +168,8 @@ def write_reflectivity_cross_section(run, ipts, cross_section, matched_runs, dir
     if cross_section in cross_sections:
         pol_state = cross_sections[cross_section]
 
-    fd = open("/SNS/users/m2d/results/combined_%s_%s.txt" % (run, cross_section), 'w')
+    file_path = "/SNS/REF_M/IPTS-%s/shared/autoreduce/REF_M_%s_%s_combined.dat" % (ipts, run, cross_section)
+    fd = open(file_path, 'w')
     fd.write("# Datafile created by QuickNXS 1.0.32\n")
     fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
     fd.write("# Date: %s\n" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
