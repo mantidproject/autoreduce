@@ -230,7 +230,6 @@ def combined_curves(run, ipts):
     # Match the given run with previous runs if they are overlapping in Q
     matched_runs = match_run_for_cross_section(run, ipts, high_stat_xs)
 
-        
     # Compute scaling factors for this cross section
     scaling_factors, direct_beam_info, data_info, data_buffer = compute_scaling_factors(matched_runs, ipts, high_stat_xs)
 
