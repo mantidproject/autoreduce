@@ -16,6 +16,32 @@ import time
 import logging
 
 tolerance = 0.02
+def reduce_data_(run_number, use_roi=True):
+    """
+        Reduce a data run
+        
+        Return False if the data is a direct beam
+    """
+    for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
+        try:
+            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
+            if reflectivity is None:
+                logging.warning("No reflectivity for %s %s" % (run_number, entry))
+                return False
+        except:
+            # No data for this cross-section, skip to the next
+            continue
+    try:
+        from REF_M_merge import combined_curves, plot_combined
+        matched_runs, scaling_factors = combined_curves(run=run_, ipts=ipts_)
+
+        plot_combined(matched_runs, scaling_factors, ipts_)
+    except:
+        logging.error(str(sys.exc_value))
+        logging.error("No publisher module found")
+        
+    return True
+
 def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
