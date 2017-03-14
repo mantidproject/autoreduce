@@ -239,7 +239,7 @@ def combined_curves(run, ipts):
 
     for item in xs_buffers:
         if len(item[1]) > 0:
-            write_reflectivity_cross_section(run, ipts, item[0], matched_runs,
+            write_reflectivity_cross_section(matched_runs[0], ipts, item[0], matched_runs,
                                              direct_beam_info, data_info, item[1])
 
     return matched_runs, scaling_factors
