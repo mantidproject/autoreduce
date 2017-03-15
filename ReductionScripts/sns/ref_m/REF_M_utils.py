@@ -16,7 +16,7 @@ import time
 import logging
 
 tolerance = 0.02
-def reduce_data_(run_number, use_roi=True):
+def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
         
@@ -42,7 +42,7 @@ def reduce_data_(run_number, use_roi=True):
         
     return True
 
-def reduce_data(run_number, use_roi=True):
+def reduce_data_(run_number, use_roi=True):
     """
         Reduce a data run
         
