@@ -40,7 +40,7 @@ def smooth(wksp):
 processingParams = {'CalibrationWorkspace':'NOM_cal',
                     'GroupingWorkspace':'NOM_group',
                     'MaskWorkspace':'NOM_mask',
-                    'Params':-0.0008,
+                    'ResampleX':-6000,
                     'RemovePromptPulseWidth':0, # should be 50
                     'ReductionProperties':'__pd_reduction_properties'}
 

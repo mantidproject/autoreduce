@@ -17,10 +17,10 @@ def do_reduction(filename,output_dir):
 
     config['default.facility'] = "SNS"
     data = LoadEventNexus(filename)
-    data = ShiftLogTime(data,LogName = 'proton_charge', IndexShift = -1)  #needs to be checked each cycle
+    #data = ShiftLogTime(data,LogName = 'proton_charge', IndexShift = -1)  #needs to be checked each cycle
     if len(CheckForSampleLogs(Workspace = data, LogNames = 'pause')) == 0:
         data = FilterByLogValue(InputWorkspace = data, LogName = 'pause', MinimumValue = '-1',MaximumValue = '0.5')
-    data = FilterBadPulses(InputWorkspace = data, LowerCutoff = '5.')
+    #data = FilterBadPulses(InputWorkspace = data, LowerCutoff = '5.')
     run_number = str(data.getRunNumber())
     out_prefix = instrument + "_" + run_number
     nxs_filename = os.path.join(output_dir,"event/" + out_prefix + "_events.nxs")

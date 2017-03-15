@@ -4,8 +4,8 @@
     TODO: - Write output in a format that can be loaded in quicknxs
 """
 import sys
-#sys.path.insert(0,'/opt/mantidnightly/bin')
-sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
+sys.path.insert(0,'/opt/mantidnightly/bin')
+#sys.path.insert(0,'/SNS/users/m2d/mantid_build/test/bin')
 import mantid
 from mantid.simpleapi import *
 import numpy as np
@@ -16,6 +16,32 @@ import time
 import logging
 
 tolerance = 0.02
+def reduce_data_(run_number, use_roi=True):
+    """
+        Reduce a data run
+        
+        Return False if the data is a direct beam
+    """
+    for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
+        try:
+            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
+            if reflectivity is None:
+                logging.warning("No reflectivity for %s %s" % (run_number, entry))
+                return False
+        except:
+            # No data for this cross-section, skip to the next
+            continue
+    try:
+        from REF_M_merge import combined_curves, plot_combined
+        ipts = reflectivity.getRun().getProperty("experiment_identifier").value
+        matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
+        plot_combined(matched_runs, scaling_factors, ipts)
+    except:
+        logging.error(str(sys.exc_value))
+        logging.error("No publisher module found")
+        
+    return True
+
 def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
@@ -39,7 +65,6 @@ def reduce_data(run_number, use_roi=True):
         except:
             # No data for this cross-section, skip to the next
             continue
-
     try:
         from postprocessing.publish_plot import plot1d
         if len(data_list) > 0:
@@ -195,20 +220,21 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
             summary_path = os.path.join(ar_dir, item+'.json')
             if not os.path.isfile(summary_path):
                 is_valid = False
-                try:
-                    for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+                for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
+                    try:
                         ws = LoadEventNexus(Filename=os.path.join(data_dir, item),
                                             NXentryName=entry,
-                                            MetaDataOnly=True,
+                                            MetaDataOnly=False,
                                             OutputWorkspace="meta_data")
                         if ws.getNumberEvents() > 1000:
                             is_valid = True
                             break
-                except:
-                    # If we can't load the Off-Off entry, it's not a direct beam
-                    is_valid = False
+                    except:
+                        # If there's no data in the entry, LoadEventNexus will fail.
+                        # This is expected so we just need to proceed with the next entry.
+                        pass
 
-                if not is_valid or ws.getNumberEvents() < 1000:
+                if not is_valid:
                     meta_data = dict(run=0, invalid=True)
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
@@ -217,11 +243,12 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
 
                 run_number = int(ws.getRunNumber())
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
+                huber_x = ws.getRun().getProperty("HuberX").getStatistics().mean
                 wl = ws.getRun().getProperty("LambdaRequest").getStatistics().mean
                 s1 = ws.getRun().getProperty("S1HWidth").getStatistics().mean
                 s2 = ws.getRun().getProperty("S2HWidth").getStatistics().mean
                 s3 = ws.getRun().getProperty("S3HWidth").getStatistics().mean
-                meta_data = dict(run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle)
+                meta_data = dict(run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle, huber_x=huber_x)
                 fd = open(summary_path, 'w')
                 fd.write(json.dumps(meta_data))
                 fd.close()
@@ -237,7 +264,11 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                 s1 = meta_data['s1']
                 s2 = meta_data['s2']
                 s3 = meta_data['s3']
-            if run_number == run_ or dangle > tolerance:
+                if 'huber_x' in meta_data:
+                    huber_x = meta_data['huber_x']
+                else:
+                    huber_x = 0
+            if run_number == run_ or (dangle > tolerance and huber_x < 9) :
                 continue
             # If we don't allow runs taken later than the run we are processing...
             if not allow_later_runs and run_number > run_:
@@ -435,7 +466,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
                     bg_pos=(bg_min+bg_max)/2.0,
                     bg_width=bg_max-bg_min+1,
                     dpix=dpix,
-                    number=normalization_run,
+                    number=str(ws.getRunNumber()),
                     File=filename)
 
         par_list = ['{%s}' % p for p in dataset_options]
