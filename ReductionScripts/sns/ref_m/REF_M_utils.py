@@ -16,7 +16,7 @@ import time
 import logging
 
 tolerance = 0.02
-def reduce_data_(run_number, use_roi=True):
+def reduce_data(run_number, use_roi=True):
     """
         Reduce a data run
         
@@ -33,7 +33,8 @@ def reduce_data_(run_number, use_roi=True):
             continue
     try:
         from REF_M_merge import combined_curves, plot_combined
-        ipts = reflectivity.getRun().getProperty("experiment_identifier").value
+        ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
+        ipts = ipts.split('-')[1]
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         plot_combined(matched_runs, scaling_factors, ipts)
     except:
@@ -42,7 +43,7 @@ def reduce_data_(run_number, use_roi=True):
         
     return True
 
-def reduce_data(run_number, use_roi=True):
+def reduce_data_(run_number, use_roi=True):
     """
         Reduce a data run
         
