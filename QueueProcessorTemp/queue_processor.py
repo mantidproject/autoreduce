@@ -14,8 +14,6 @@ logger = logging.getLogger("queue_processor")
 
 class Listener(object):
     def __init__(self, client):
-        Session = sessionmaker(bind=engine)
-        self._session = session
         self._client = client
         self._data_dict = {}
         self._priority = ''
@@ -56,21 +54,21 @@ class Listener(object):
         logger.info("Data ready for processing run %s on %s" % (run_no, instrument_name))
         
         # Check if the instrument is active or not in the MySQL database
-        instrument = self._session.query(Instrument).filter_by(name=instrument_name).first()
+        instrument = session.query(Instrument).filter_by(name=instrument_name).first()
         
         # Activate the instrument if it is currently set to inactive
         if not instrument.is_active:
             instrument.is_active = 1
-            self._session.commit()
+            session.commit()
         
         # If the instrument is paused, we need to find the 'Skipped' status
         if instrument.is_paused:
-            status = self._session.query(StatusID).filter_by(value='Skipped').first()
+            status = session.query(StatusID).filter_by(value='Skipped').first()
         # Else we need to find the 'Queued' status number
         else:
-            status = self._session.query(StatusID).filter_by(value='Queued').first()
+            status = session.query(StatusID).filter_by(value='Queued').first()
         
-        last_run = self._session.query(ReductionRun).filter_by(run_number=run_no).order_by('-run_version').first()
+        last_run = session.query(ReductionRun).filter_by(run_number=run_no).order_by('-run_version').first()
                 
         if last_run is not None:
             highest_version = last_run.run_version
@@ -78,11 +76,11 @@ class Listener(object):
             highest_version = -1
         
         # Search for the experiment, if it doesn't exist then add it
-        experiment = self._session.query(Experiment).filter_by(reference_number=run_no).first()
+        experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
         if experiment == None:
             new_exp = Experiment(reference_number=run_no)
-            self._session.add(new_exp)
-            self._session.commit()
+            session.add(new_exp)
+            session.commit()
         
         # TODO: Send to error if script text = null!
         script_text = InstrumentVariablesUtils().get_current_script_text(instrument.name)[0]
@@ -105,23 +103,25 @@ class Listener(object):
                                     , script=script_text
                                     )
                                     
-        self._session.add(reduction_run)
-        self._session.commit()
+        session.add(reduction_run)
+        session.commit()
         
         self._data_dict['run_version'] = reduction_run.run_version
         
         data_location = DataLocation(file_path=self._data_dict['data'], reduction_run_id=reduction_run.id)
-        self._session.add(data_location)
-        self._session.commit()
+        session.add(data_location)
+        session.commit()
         
+        logger.info('Creating variables for run')
         variables = InstrumentVariablesUtils().create_variables_for_run(reduction_run)
         if not variables:
             logger.warning("No instrument variables found on %s for run %s" % (instrument.name, self._data_dict['run_number']))
         
+        logger.info('getting script and arguments')
         reduction_script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
         self._data_dict['reduction_script'] = reduction_script
         self._data_dict['reduction_arguments'] = arguments
-
+        
         if instrument.is_paused:
             logger.info("Run %s has been skipped" % self._data_dict['run_number'])
         else:
