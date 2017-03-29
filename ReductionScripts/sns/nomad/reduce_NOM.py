@@ -30,8 +30,8 @@ if len(sys.argv)>3:
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
 cacheDir = "/tmp" # local disk to (hopefully) reduce issues
-for name in [item for item in os.listdir('/tmp') if item.startswith('NOM')]:
-    os.remove(os.path.join('/tmp', name))
+#for name in [item for item in os.listdir('/tmp') if item.startswith('NOM')]:
+#    os.remove(os.path.join('/tmp', name))
 runNumber = eventFile.split('_')[1].split('.')[0]
 configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
