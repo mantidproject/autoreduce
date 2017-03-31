@@ -89,7 +89,7 @@ def do_reduction(filename,output_dir):
     
     MaskBTP(data,Pixel="1-8,121-128")
     #MaskBTP(data,Bank="20",Tube="6-8")
-        
+
     #data for new normalization
     dgs,_=DgsReduction(SampleInputWorkspace=data,
                        IncidentEnergyGuess=Ei,
@@ -113,7 +113,33 @@ def do_reduction(filename,output_dir):
 		                TibTofRangeEnd=tib[1],
 		                **additional_pars)
     SaveNXSPE(Filename=nxspe_filename1, InputWorkspace=dgs4, Psi=str(s1), KiOverKfScaling='1')
-
+    #try to merge MD into sets
+    try:
+        comment=dgs4.getRun()['file_notes'].value
+        if comment!='':
+            UB_DAS=dgs4.getRun()['BL14B:CS:UBMatrix'].value[0]
+            SetUB(dgs4,UB=UB_DAS)
+            minValues,maxValues=ConvertToMDMinMaxGlobal(dgs4,
+                                                        QDimensions='Q3D',
+                                                        dEAnalysisMode='Direct',
+                                                        Q3DFrames='HKL')
+            mdpart=ConvertToMD(dgs4,
+                               QDimensions='Q3D',
+                               dEAnalysisMode='Direct',
+                               Q3DFrames="HKL",
+                               QConversionScales="HKL",
+                               MinValues=minValues,
+                               MaxValues=maxValues)
+            #try to load the corresponding dataset and add to it
+            filenameMD=os.path.join(output_dir, "sqw/" + comment + "_MD.nxs")
+            try:
+                mdacc=LoadMD(filenameMD)
+                mdpart=MergeMD(mdpart,mdacc)
+            except:
+                pass #probably no mdacc
+            SaveMD(mdpart,Filename=filenameMD)
+    except:
+        pass    
     #tube nxspe
     MaskBTP(data,Pixel="1-40,89-128")
     #MaskBTP(data,Bank="20",Tube="6-8")
