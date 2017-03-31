@@ -134,7 +134,7 @@ def do_reduction(filename,output_dir):
             filenameMD=os.path.join(output_dir, "sqw/" + comment + "_MD.nxs")
             try:
                 mdacc=LoadMD(filenameMD)
-                mdpart=MergeMD(mdpart,mdacc)
+                mdpart=MergeMD("mdpart,mdacc")
             except:
                 pass #probably no mdacc
             SaveMD(mdpart,Filename=filenameMD)
