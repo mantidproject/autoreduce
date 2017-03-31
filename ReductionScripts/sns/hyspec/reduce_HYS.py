@@ -115,7 +115,7 @@ def do_reduction(filename,output_dir):
     SaveNXSPE(Filename=nxspe_filename1, InputWorkspace=dgs4, Psi=str(s1), KiOverKfScaling='1')
     #try to merge MD into sets
     try:
-        comment=dgs4.getRun()['file_notes'].value.strip()
+        comment=dgs4.getRun()['file_notes'].value.strip().replace(' ','_')
         if comment!='':
             UB_DAS=dgs4.getRun()['BL14B:CS:UBMatrix'].value[0]
             SetUB(dgs4,UB=UB_DAS)
