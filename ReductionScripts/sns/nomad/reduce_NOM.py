@@ -12,7 +12,7 @@ vanradius=0.58
 #wavelengthMax=2.9
 calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d89318_2017_03_04_cryostat.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2016_12_13-rietveld.txt"
-expiniFileDefault="/SNS/lustre/NOM/IPTS-17888/shared/autoNOM/exp.ini"
+expiniFileDefault="/SNS/lustre/NOM/IPTS-17756/shared/autoNOM/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
@@ -30,8 +30,6 @@ if len(sys.argv)>3:
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
 cacheDir = "/tmp" # local disk to (hopefully) reduce issues
-#for name in [item for item in os.listdir('/tmp') if item.startswith('NOM')]:
-#    os.remove(os.path.join('/tmp', name))
 runNumber = eventFile.split('_')[1].split('.')[0]
 configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
