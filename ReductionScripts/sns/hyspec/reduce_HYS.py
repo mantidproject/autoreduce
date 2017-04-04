@@ -6,6 +6,7 @@ sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
 from ARLibrary import *
+from simpleflock import SimpleFlock
 numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
@@ -132,14 +133,15 @@ def do_reduction(filename,output_dir):
                                MaxValues=maxValues)
             #try to load the corresponding dataset and add to it
             filenameMD=os.path.join(output_dir, "sqw/" + comment + "_MD.nxs")
-            try:
-                mdacc=LoadMD(filenameMD)
-                mdpart=MergeMD("mdpart,mdacc")
-            except:
-                pass #probably no mdacc
-            SaveMD(mdpart,Filename=filenameMD)
-    except:
-        pass    
+            with SimpleFlock("/SNS/users/inelastic/HYSPEC/locks/"+comment,3600):
+                if os.path.isfile(filenameMD):
+                    mdacc=LoadMD(filenameMD)
+                    mdpart=MergeMD("mdpart,mdacc")
+                SaveMD(mdpart,Filename=filenameMD)
+    except Exception as e:
+        logger.error("Something bad occured during MD processing")
+        logger.error(repr(e))
+        
     #tube nxspe
     MaskBTP(data,Pixel="1-40,89-128")
     #MaskBTP(data,Bank="20",Tube="6-8")
