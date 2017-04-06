@@ -36,6 +36,7 @@ def reduce_data(run_number, use_roi=True):
                 all_plots.append(plots)
         except:
             # No data for this cross-section, skip to the next
+            logging.error(str(sys.exc_value))
             continue
     try:
         from REF_M_merge import combined_curves, plot_combined
