@@ -556,7 +556,7 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
         yaxis=y_layout
     )
     fig = go.Figure(data=data, layout=layout)
-    return plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
+    return py(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
 def report(run_number, entry, reflectivity=None):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
