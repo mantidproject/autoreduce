@@ -633,11 +633,11 @@ def get_meta_data(ws):
 
     meta = "<div><b>Run %s</b><br>" % run_object['run_number'].value
     meta += "<table style='width:100%'>"
-    meta += "<tr><td>Q-binning:</td><td>%s</td></tr><br>" % constant_q_binning
-    meta += "<tr><td>Specular peak:</td><td>%s</td></tr><br>" % specular_pixel
-    meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr><br>" % (peak[0], peak[1])
-    meta += "<tr><td>Background:</td><td>%s - %s</td></tr><br>" % (bg[0], bg[1])
-    meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><br>" % (low_res[0], low_res[1])
+    meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
+    meta += "<tr><td>Specular peak:</td><td>%s</td></tr>" % specular_pixel
+    meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
+    meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
+    meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr></tr>" % (low_res[0], low_res[1])
     
     meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th></tr>"
     meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
