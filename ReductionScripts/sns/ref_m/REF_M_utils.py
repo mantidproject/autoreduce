@@ -516,7 +516,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
 
     fd.close()
     
-def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
+def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", title=''):
     colorscale=[[0, "rgb(0,0,131)"], [0.125, "rgb(0,60,170)"], [0.375, "rgb(5,255,255)"],
                 [0.625, "rgb(255,255,0)"], [0.875, "rgb(250,0,0)"], [1, "rgb(128,0,0)"]]
 
@@ -547,7 +547,7 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
                     showexponent="all", showgrid=True,
                     showline=True, mirror="all", ticks="inside")
     layout = go.Layout(
-        title='',
+        title=title,
         showlegend=False,
         autosize=True,
         width=300,
