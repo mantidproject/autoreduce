@@ -547,6 +547,7 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
                     showexponent="all", showgrid=True,
                     showline=True, mirror="all", ticks="inside")
     layout = go.Layout(
+        title='',
         showlegend=False,
         autosize=True,
         width=300,
@@ -602,7 +603,7 @@ def report(run_number, entry, reflectivity=None):
     return [xy_plot, x_tof_plot]
 
 def get_meta_data(ws):
-    run_object = reflectivity.getRun()
+    run_object = ws.getRun()
     constant_q_binning = run_object['constant_q_binning'].value
     sangle = run_object['SANGLE'].getStatistics().mean
     dangle = run_object['DANGLE'].getStatistics().mean
