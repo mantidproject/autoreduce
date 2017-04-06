@@ -46,6 +46,7 @@ def reduce_data(run_number, use_roi=True):
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
         plot_html = "<div>%s</div>\n" % ref_plot
+        plot_html += get_meta_data(reflectivity)
         plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
             plot_html += "<tr><td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1])
@@ -602,8 +603,33 @@ def report(run_number, entry, reflectivity=None):
 
 def get_meta_data(ws):
     run_object = reflectivity.getRun()
-    dangle = run_object.getProperty("DANGLE").value[0]
-    constant_q_binning = run_object.getProperty("constant_q_binning").value
+    constant_q_binning = run_object['constant_q_binning'].value
+    sangle = run_object['SANGLE'].getStatistics().mean
+    dangle = run_object['DANGLE'].getStatistics().mean
+    lambda_min = run_object['lambda_min'].value
+    lambda_max = run_object['lambda_max'].value
+    tth = run_object['two_theta'].value * 90 / 3.1416
+
+    dangle0 = run_object['DANGLE0'].getStatistics().mean
+    dirpix = run_object['DIRPIX'].getStatistics().mean
+    
+    peak = [run_object['scatt_peak_min'].value,
+            run_object['scatt_peak_max'].value]
+
+    bg = [run_object['scatt_bg_min'].value,
+          run_object['scatt_bg_max'].value]
+
+    low_res = [run_object['scatt_low_res_min'].value,
+               run_object['scatt_low_res_max'].value]
+
+    specular_pixel = run_object['specular_pixel'].value
+
+    meta = "<div><b>Run %s</b><div>\n" % run_object['run_number'].value
+    meta += "<table>\n"
+    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th></tr>\n"
+    meta += "<tr><td>%s</th><th>%s</th><td>%s</th><th>%s</th></tr>\n" % (tth, dangle, sangle, dirpix)
+    meta += "</table>\n"
+    return meta
     
 
 if __name__ == '__main__':
