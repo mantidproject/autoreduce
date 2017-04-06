@@ -570,7 +570,7 @@ def report(run_number, entry, reflectivity=None):
     # X-Y plot
     signal = np.log10(mtd['MR_%s' % run_number].extractY())
     z=np.reshape(signal, (n_x, n_y))
-    _plot2d(z=z.T, x=range(n_x), y=range(n_y), x_range=scatt_peak, y_range=scatt_low_res)
+    xy_plot = _plot2d(z=z.T, x=range(n_x), y=range(n_y), x_range=scatt_peak, y_range=scatt_low_res)
 
     # X-TOF plot
     tof_min = mtd['MR_%s' % run_number].getTofMin()
@@ -584,10 +584,11 @@ def report(run_number, entry, reflectivity=None):
     signal = np.log10(direct_summed.extractY())
     tof_axis = direct_summed.extractX()[0]/1000.0
 
-    _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
+    x_tof_plot = _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
             x_range=None, y_range=scatt_peak,
             x_label="TOF (ms)", y_label="X pixel")
-            
+    return [xy_plot, x_tof_plot]
+
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
 
