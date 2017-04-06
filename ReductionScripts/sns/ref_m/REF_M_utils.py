@@ -630,8 +630,8 @@ def get_meta_data(ws):
 
     meta = "<div><b>Run %s</b><div>\n" % run_object['run_number'].value
     meta += "<table>\n"
-    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th></tr>\n"
-    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (theta, dangle, sangle, dirpix)
+    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>lambda range [A]</tr>\n"
+    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr><td>%s - %s</td>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
     meta += "</table>\n"
     return meta
     
