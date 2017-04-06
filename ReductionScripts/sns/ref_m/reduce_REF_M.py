@@ -111,7 +111,7 @@ if __name__=="__main__":
     # The new format is REF_L_xyz.nxs.h5
     run_number = event_file.split('_')[2]
     run_number = run_number.replace('.nxs.h5', '')
-    reduce_data(run_number, use_roi=False)
+    reduce_data(run_number, use_roi=True)
   except:
     logging.warning(sys.exc_value)
     logging.warning("Could not reduce with Mantid")
