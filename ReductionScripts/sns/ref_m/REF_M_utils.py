@@ -24,12 +24,17 @@ def reduce_data(run_number, use_roi=True):
         
         Return False if the data is a direct beam
     """
+    all_plots = []
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
             reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
                 return False
+            else:
+                plots = report(run_number, entry, reflectivity)
+                all_plots.append(plots[0])
+                all_plots.append(plots[1])
         except:
             # No data for this cross-section, skip to the next
             continue
