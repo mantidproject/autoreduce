@@ -197,7 +197,7 @@ def write_reflectivity_cross_section(run, ipts, cross_section, matched_runs, dir
     fd.write(data_buffer)
     fd.close()
 
-def plot_combined(matched_runs, scaling_factors, ipts):
+def plot_combined(matched_runs, scaling_factors, ipts, publish=True):
     data_names = []
     data_list = []
     for i in range(len(matched_runs)):
@@ -213,9 +213,9 @@ def plot_combined(matched_runs, scaling_factors, ipts):
     try:
         from postprocessing.publish_plot import plot1d
         if len(data_names) > 0:
-            plot1d(matched_runs[-1], data_list, data_names=data_names, instrument='REF_M',
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
+            return plot1d(matched_runs[-1], data_list, data_names=data_names, instrument='REF_M',
+                          x_title=u"Q (1/\u212b)", x_log=True,
+                          y_title="Reflectivity", y_log=True, show_dx=False, publish=publish)
         else:
             print "Nothing to plot"
     except:
