@@ -577,8 +577,6 @@ def report(run_number, entry, reflectivity=None):
         bg_max = run_object.getProperty("scatt_bg_max").value
         scatt_low_res = [run_object.getProperty("scatt_low_res_min").value,
                          run_object.getProperty("scatt_low_res_max").value]
-        lambda_min = run_object.getProperty("lambda_min").value
-        lambda_max = run_object.getProperty("lambda_max").value
         
     # X-Y plot
     signal = np.log10(mtd['MR_%s' % run_number].extractY())
