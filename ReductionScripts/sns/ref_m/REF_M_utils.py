@@ -46,7 +46,7 @@ def reduce_data(run_number, use_roi=True):
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
         plot_html = "<div>%s</div>\n" % ref_plot
-        plot_html += get_meta_data(reflectivity)
+        plot_html += "<div>%s</div>\n" % get_meta_data(reflectivity)
         plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
             plot_html += "<tr><td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1])
