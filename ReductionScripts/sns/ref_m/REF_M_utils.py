@@ -612,7 +612,7 @@ def get_meta_data(ws):
     dangle = run_object['DANGLE'].getStatistics().mean
     lambda_min = run_object['lambda_min'].value
     lambda_max = run_object['lambda_max'].value
-    tth = run_object['two_theta'].value * 90 / 3.1416
+    theta = run_object['two_theta'].value / 2
 
     dangle0 = run_object['DANGLE0'].getStatistics().mean
     dirpix = run_object['DIRPIX'].getStatistics().mean
@@ -631,7 +631,7 @@ def get_meta_data(ws):
     meta = "<div><b>Run %s</b><div>\n" % run_object['run_number'].value
     meta += "<table>\n"
     meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th></tr>\n"
-    meta += "<tr><td>%s</th><th>%s</th><td>%s</th><th>%s</th></tr>\n" % (tth, dangle, sangle, dirpix)
+    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (theta, dangle, sangle, dirpix)
     meta += "</table>\n"
     return meta
     
