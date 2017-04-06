@@ -14,6 +14,8 @@ from scipy.optimize import curve_fit
 import json
 import time
 import logging
+import plotly.offline as py
+import plotly.graph_objs as go
 
 tolerance = 0.02
 def reduce_data(run_number, use_roi=True):
@@ -499,6 +501,93 @@ def write_reflectivity(ws_list, output_path, cross_section):
             fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
 
     fd.close()
+    
+def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
+    colorscale=[[0, "rgb(0,0,131)"], [0.125, "rgb(0,60,170)"], [0.375, "rgb(5,255,255)"],
+                [0.625, "rgb(255,255,0)"], [0.875, "rgb(250,0,0)"], [1, "rgb(128,0,0)"]]
+
+    hm = go.Heatmap(x=x, y=y, z=z, autocolorscale=False, type='heatmap', showscale=False,
+                     hoverinfo="none", colorscale=colorscale)
+
+    data = [hm]
+    if x_range is not None:
+        x_left=go.Scatter(name='', x=[x_range[0], x_range[0]], y=[min(y), max(y)],
+                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        x_right=go.Scatter(name='', x=[x_range[1], x_range[1]], y=[min(y), max(y)],
+                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        data.append(x_left)
+        data.append(x_right)
+    
+    if y_range is not None:
+        y_left=go.Scatter(name='', y=[y_range[0], y_range[0]], x=[min(x), max(x)],
+                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        y_right=go.Scatter(name='', y=[y_range[1], y_range[1]], x=[min(x), max(x)],
+                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        data.append(y_left)
+        data.append(y_right)
+    
+    x_layout = dict(title=x_label, zeroline=False, exponentformat="power",
+                    showexponent="all", showgrid=True,
+                    showline=True, mirror="all", ticks="inside")
+    y_layout = dict(title=y_label, zeroline=False, exponentformat="power",
+                    showexponent="all", showgrid=True,
+                    showline=True, mirror="all", ticks="inside")
+    layout = go.Layout(
+        showlegend=False,
+        autosize=True,
+        width=400,
+        height=400,
+        margin=dict(t=40, b=40, l=40, r=40),
+        hovermode='closest',
+        bargap=0,
+        xaxis=x_layout,
+        yaxis=y_layout
+    )
+    fig = go.Figure(data=data, layout=layout)
+    return plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
+
+def report(run_number, entry, reflectivity=None):
+    ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
+                        NXentryName='entry-%s' % entry,
+                        OutputWorkspace="MR_%s" % run_number)
+    n_x = int(ws.getInstrument().getNumberParameter("number-of-x-pixels")[0])
+    n_y = int(ws.getInstrument().getNumberParameter("number-of-y-pixels")[0])
+
+    if reflectivity is None:
+        scatt_peak, scatt_low_res, scatt_pos, is_direct = refm.guess_params(ws, use_roi=False)
+        tof_range = [x/1000.0 for x in refm.get_tof_range(ws)]
+    else:
+        run_object = reflectivity.getRun()
+        scatt_peak = [run_object.getProperty("scatt_peak_min").value,
+                      run_object.getProperty("scatt_peak_max").value]
+        bg_min = run_object.getProperty("scatt_bg_min").value
+        bg_max = run_object.getProperty("scatt_bg_max").value
+        scatt_low_res = [run_object.getProperty("scatt_low_res_min").value,
+                         run_object.getProperty("scatt_low_res_max").value]
+        lambda_min = run_object.getProperty("lambda_min").value
+        lambda_max = run_object.getProperty("lambda_max").value
+        
+    # X-Y plot
+    signal = np.log10(mtd['MR_%s' % run_number].extractY())
+    z=np.reshape(signal, (n_x, n_y))
+    _plot2d(z=z.T, x=range(n_x), y=range(n_y), x_range=scatt_peak, y_range=scatt_low_res)
+
+    # X-TOF plot
+    tof_min = mtd['MR_%s' % run_number].getTofMin()
+    tof_max = mtd['MR_%s' % run_number].getTofMax()
+    ws = Rebin(mtd['MR_%s' % run_number], params="%s, 50, %s" % (tof_min, tof_max))
+
+    direct_summed = RefRoi(InputWorkspace=ws, IntegrateY=True,
+                           NXPixel=n_x, NYPixel=n_y,
+                           ConvertToQ=False, YPixelMin=0, YPixelMax=n_y,
+                           OutputWorkspace="direct_summed")
+    signal = np.log10(direct_summed.extractY())
+    tof_axis = direct_summed.extractX()[0]/1000.0
+
+    _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
+            x_range=None, y_range=scatt_peak,
+            x_label="TOF (ms)", y_label="X pixel")
+            
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
 
