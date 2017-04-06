@@ -547,8 +547,8 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel"):
     layout = go.Layout(
         showlegend=False,
         autosize=True,
-        width=400,
-        height=400,
+        width=250,
+        height=250,
         margin=dict(t=40, b=40, l=40, r=40),
         hovermode='closest',
         bargap=0,
