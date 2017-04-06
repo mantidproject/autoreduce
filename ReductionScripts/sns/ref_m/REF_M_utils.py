@@ -631,10 +631,10 @@ def get_meta_data(ws):
 
     specular_pixel = run_object['specular_pixel'].value
 
-    meta = "<div><b>Run %s</b><br>" % run_object['run_number'].value
-    meta += "<table style='width:100%'>"
+    meta = "<table style='width:100%'>"
+    meta += "<tr><td>Run:</td><td><b>%s</b></td></tr>" % run_object['run_number'].value
     meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
-    meta += "<tr><td>Specular peak:</td><td>%s</td></tr>" % specular_pixel
+    meta += "<tr><td>Specular peak:</td><td>%g</td></tr>" % specular_pixel
     meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
     meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
     meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr></tr>" % (low_res[0], low_res[1])
