@@ -600,6 +600,12 @@ def report(run_number, entry, reflectivity=None):
             x_label="TOF (ms)", y_label="X pixel")
     return [xy_plot, x_tof_plot]
 
+def get_meta_data(ws):
+    run_object = reflectivity.getRun()
+    dangle = run_object.getProperty("DANGLE").value[0]
+    constant_q_binning = run_object.getProperty("constant_q_binning").value
+    
+
 if __name__ == '__main__':
     reduce_data(sys.argv[1])
 
