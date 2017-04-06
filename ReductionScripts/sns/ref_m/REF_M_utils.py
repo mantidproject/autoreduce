@@ -616,6 +616,7 @@ def get_meta_data(ws):
     lambda_min = run_object['lambda_min'].value
     lambda_max = run_object['lambda_max'].value
     theta = run_object['two_theta'].value / 2
+    huber_x = run_object["HuberX"].getStatistics().mean
 
     dangle0 = run_object['DANGLE0'].getStatistics().mean
     dirpix = run_object['DIRPIX'].getStatistics().mean
@@ -641,8 +642,8 @@ def get_meta_data(ws):
     meta += "</table>\n"
     
     meta += "<p><table style='width:100%'>"
-    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th></tr>"
-    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
+    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th><th>Huber X</th></tr>"
+    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td><td>%s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max, huber_x)
     meta += "</table>\n"
     return meta
     
