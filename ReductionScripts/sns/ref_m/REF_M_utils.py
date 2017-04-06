@@ -38,7 +38,8 @@ def reduce_data(run_number, use_roi=True):
             # No data for this cross-section, skip to the next
             continue
     try:
-        from REF_M_merge import combined_curves, plot_combined, publish_plot
+        from REF_M_merge import combined_curves, plot_combined
+        from postprocessing.publish_plot import publish_plot
         ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
         ipts = ipts_long.split('-')[1]
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
@@ -46,6 +47,7 @@ def reduce_data(run_number, use_roi=True):
         plot_html = "<div>%s</div>\n" % ref_plot
         for p in all_plots:
             plot_html += "<div>\n%s\n%s</div>" % (p[0], p[1])
+        
         publish_plot("REF_M", run_number, files={'file': plot_html})
         
     except:
