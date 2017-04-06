@@ -554,8 +554,8 @@ def report(run_number, entry, reflectivity=None):
     n_y = int(ws.getInstrument().getNumberParameter("number-of-y-pixels")[0])
 
     if reflectivity is None:
-        scatt_peak, scatt_low_res, scatt_pos, is_direct = refm.guess_params(ws, use_roi=False)
-        tof_range = [x/1000.0 for x in refm.get_tof_range(ws)]
+        scatt_peak = None
+        scatt_low_res = None
     else:
         run_object = reflectivity.getRun()
         scatt_peak = [run_object.getProperty("scatt_peak_min").value,
