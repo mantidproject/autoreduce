@@ -207,7 +207,7 @@ def plot_combined(matched_runs, scaling_factors, ipts, publish=True):
             if os.path.isfile(file_path):
                 ref_data = pandas.read_csv(file_path,
                                            delim_whitespace=True, comment='#', names=['q','r','dr','dq', 'a'])
-                data_list.append((ref_data['q'], scaling_factors[i]*ref_data['r'], scaling_factors[i]*ref_data['dr']))
+                data_list.append([ref_data['q'], scaling_factors[i]*ref_data['r'], scaling_factors[i]*ref_data['dr']])
                 data_names.append("r%s [%s]" % (run, xs))
 
     try:
