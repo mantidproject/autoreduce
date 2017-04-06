@@ -617,6 +617,7 @@ def get_meta_data(ws):
     lambda_max = run_object['lambda_max'].value
     theta = run_object['two_theta'].value / 2
     huber_x = run_object["HuberX"].getStatistics().mean
+    direct_beam = run_object["normalization_run"].value
 
     dangle0 = run_object['DANGLE0'].getStatistics().mean
     dirpix = run_object['DIRPIX'].getStatistics().mean
@@ -634,6 +635,7 @@ def get_meta_data(ws):
 
     meta = "<table style='width:40%'>"
     meta += "<tr><td>Run:</td><td><b>%s</b></td></tr>" % run_object['run_number'].value
+    meta += "<tr><td>Direct beam:</td><td>%s</td></tr>" % direct_beam
     meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
     meta += "<tr><td>Specular peak:</td><td>%g</td></tr>" % specular_pixel
     meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
