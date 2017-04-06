@@ -46,11 +46,12 @@ def reduce_data(run_number, use_roi=True):
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
         plot_html = "<div>%s</div>\n" % ref_plot
+        plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
-            plot_html += "<div>\n%s\n%s</div>" % (p[0], p[1])
-        
+            plot_html += "<tr><td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1])
+        plot_html += "</table>\n"
         publish_plot("REF_M", run_number, files={'file': plot_html})
-        
+
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
