@@ -631,7 +631,7 @@ def get_meta_data(ws):
     meta = "<div><b>Run %s</b>\n\n" % run_object['run_number'].value
     meta += "<table style='width:100%'>\n"
     meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
-    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>lambda</th></tr>"
+    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th></tr>"
     meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
     meta += "</table>\n"
     return meta
