@@ -637,7 +637,7 @@ def get_meta_data(ws):
     meta += "<tr><td>Specular peak:</td><td>%g</td></tr>" % specular_pixel
     meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
     meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
-    meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr></tr>" % (low_res[0], low_res[1])
+    meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr><p>" % (low_res[0], low_res[1])
     
     meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th></tr>"
     meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
