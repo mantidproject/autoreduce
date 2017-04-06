@@ -33,17 +33,21 @@ def reduce_data(run_number, use_roi=True):
                 return False
             else:
                 plots = report(run_number, entry, reflectivity)
-                all_plots.append(plots[0])
-                all_plots.append(plots[1])
+                all_plots.append(plots)
         except:
             # No data for this cross-section, skip to the next
             continue
     try:
-        from REF_M_merge import combined_curves, plot_combined
+        from REF_M_merge import combined_curves, plot_combined, publish_plot
         ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
         ipts = ipts_long.split('-')[1]
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
-        plot_combined(matched_runs, scaling_factors, ipts)
+        ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
+        plot_html = "<div>%s</div>\n" % ref_plot
+        for p in all_plots:
+            plot_html += "<div>\n%s\n%s</div>" % (p[0], p[1])
+        publish_plot("REF_M", run_number, files={'file': plot_html})
+        
     except:
         logging.error(str(sys.exc_value))
         logging.error("No publisher module found")
