@@ -640,7 +640,7 @@ def get_meta_data(ws):
     meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr>" % (low_res[0], low_res[1])
     meta += "</table>\n"
     
-    meta = "<table style='width:100%'>"
+    meta += "<p><table style='width:100%'>"
     meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th></tr>"
     meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max)
     meta += "</table>\n"
