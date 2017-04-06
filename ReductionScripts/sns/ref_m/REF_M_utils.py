@@ -606,6 +606,9 @@ def report(run_number, entry, reflectivity=None):
     return [xy_plot, x_tof_plot]
 
 def get_meta_data(ws):
+    """
+        TODO: add the run number of the direct beam
+    """
     run_object = ws.getRun()
     constant_q_binning = run_object['constant_q_binning'].value
     sangle = run_object['SANGLE'].getStatistics().mean
