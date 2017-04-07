@@ -46,7 +46,7 @@ def reduce_data(run_number, use_roi=True):
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
         plot_html = "<div>%s</div>\n" % ref_plot
-        plot_html += "<div>%s</div>\n" % get_meta_data(reflectivity)
+        plot_html += "<div>%s</div>\n" % get_meta_data(reflectivity, use_roi=use_roi)
         plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
             plot_html += "<tr><td>%s</td>\n<td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1], p[2])
@@ -652,7 +652,7 @@ def report(run_number, entry, reflectivity=None):
 
     return [xy_plot, x_tof_plot, peak_pixels]
 
-def get_meta_data(ws):
+def get_meta_data(ws, use_roi=True):
     """
         TODO: add the run number of the direct beam
     """
@@ -684,6 +684,7 @@ def get_meta_data(ws):
     meta += "<tr><td>Run:</td><td><b>%s</b></td></tr>" % run_object['run_number'].value
     meta += "<tr><td>Direct beam:</td><td>%s</td></tr>" % direct_beam
     meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
+    meta += "<tr><td>Using ROI:</td><td>%s</td></tr>" % use_roi
     meta += "<tr><td>Specular peak:</td><td>%g</td></tr>" % specular_pixel
     meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
     meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
