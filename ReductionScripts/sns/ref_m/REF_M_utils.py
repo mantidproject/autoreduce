@@ -561,15 +561,15 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", tit
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def _plot1d(x, y, x_title='', y_title="Counts", title=''):
+def _plot1d(x, y, x_label='', y_label="Counts", title=''):
 
     data = [go.Scatter(name='', x=x, y=y)]
 
-    x_layout = dict(title=x_title, zeroline=False, exponentformat="power",
+    x_layout = dict(title=x_label, zeroline=False, exponentformat="power",
                     showexponent="all", showgrid=True,
                     showline=True, mirror="all", ticks="inside")
 
-    y_layout = dict(title=y_title, zeroline=False, exponentformat="power",
+    y_layout = dict(title=y_label, zeroline=False, exponentformat="power",
                     showexponent="all", showgrid=True, type='log',
                     showline=True, mirror="all", ticks="inside")
 
