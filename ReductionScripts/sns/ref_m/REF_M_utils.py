@@ -561,7 +561,7 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", tit
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def _plot1d(x, y, title=''):
+def _plot1d(x, y, x_title='', y_title="Counts", title=''):
 
     data = [go.Scatter(name='', x=x, y=y)]
 
