@@ -30,7 +30,7 @@ def reduce_data(run_number, use_roi=True):
             reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
             if reflectivity is None:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
-                return False
+                continue
             else:
                 plots = report(run_number, entry, reflectivity)
                 all_plots.append(plots)
