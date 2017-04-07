@@ -646,7 +646,9 @@ def report(run_number, entry, reflectivity=None):
     integrated = Transpose(integrated)
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
-    peak_pixels = _plot1d(signal_x,signal_y, x_label="X pixel", y_label="Counts", title="r%s [%s]" % (run_number, entry))
+    peak_pixels = _plot1d(signal_x,signal_y, x_range=scatt_peak,
+                          x_label="X pixel", y_label="Counts",
+                          title="r%s [%s]" % (run_number, entry))
 
     return [xy_plot, x_tof_plot, peak_pixels]
 
