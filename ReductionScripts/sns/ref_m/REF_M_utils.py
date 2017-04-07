@@ -561,9 +561,18 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", tit
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def _plot1d(x, y, x_label='', y_label="Counts", title=''):
+def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title=''):
 
     data = [go.Scatter(name='', x=x, y=y)]
+
+    if x_range is not None:
+        min_y = min([v for v in y if v>0])
+        x_left=go.Scatter(name='', x=[x_range[0], x_range[0]], y=[min_y, max(y)],
+                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        x_right=go.Scatter(name='', x=[x_range[1], x_range[1]], y=[min_y, max(y)],
+                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
+        data.append(x_left)
+        data.append(x_right)
 
     x_layout = dict(title=x_label, zeroline=False, exponentformat="power",
                     showexponent="all", showgrid=True,
