@@ -631,7 +631,15 @@ def report(run_number, entry, reflectivity=None):
                          x_range=None, y_range=scatt_peak,
                          x_label="TOF (ms)", y_label="X pixel",
                          title="r%s [%s]" % (run_number, entry))
-    return [xy_plot, x_tof_plot]
+                         
+    # Count per X pixel
+    integrated = Integration(direct_summed)
+    integrated = Transpose(integrated)
+    signal_y = integrated.readY(0)
+    signal_x = range(len(signal_y))
+    peak_pixels = _plot1d(signal_x,signal_y, x_label="X pixel", y_label="Counts", title="r%s [%s]" % (run_number, entry))
+
+    return [xy_plot, x_tof_plot, peak_pixels]
 
 def get_meta_data(ws):
     """
