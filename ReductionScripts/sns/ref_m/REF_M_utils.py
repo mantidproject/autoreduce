@@ -104,6 +104,8 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
+    if ws.getNumberEvents() < 10000:
+        return None, None
     scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
     tof_range = get_tof_range(ws)
 
@@ -131,7 +133,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                    y_title="Counts", y_log=True, show_dx=False)
         except:
             logging.error("No publisher module found")
-        return None
+        return None, None
         
     apply_norm = True
     if norm_run is None:
