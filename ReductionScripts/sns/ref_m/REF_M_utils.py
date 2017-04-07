@@ -561,6 +561,34 @@ def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", tit
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
+def _plot1d(x, y, title=''):
+
+    data = [go.Scatter(name='', x=x, y=y)]
+
+    x_layout = dict(title=x_title, zeroline=False, exponentformat="power",
+                    showexponent="all", showgrid=True,
+                    showline=True, mirror="all", ticks="inside")
+
+    y_layout = dict(title=y_title, zeroline=False, exponentformat="power",
+                    showexponent="all", showgrid=True, type='log',
+                    showline=True, mirror="all", ticks="inside")
+
+    layout = go.Layout(
+        title=title,
+        showlegend=show_legend,
+        autosize=True,
+        width=600,
+        height=400,
+        margin=dict(t=40, b=40, l=40, r=20),
+        hovermode='closest',
+        bargap=0,
+        xaxis=x_layout,
+        yaxis=y_layout
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
+
 def report(run_number, entry, reflectivity=None):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
