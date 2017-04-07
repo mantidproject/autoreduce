@@ -575,7 +575,7 @@ def _plot1d(x, y, x_label='', y_label="Counts", title=''):
 
     layout = go.Layout(
         title=title,
-        showlegend=show_legend,
+        showlegend=False,
         autosize=True,
         width=600,
         height=400,
