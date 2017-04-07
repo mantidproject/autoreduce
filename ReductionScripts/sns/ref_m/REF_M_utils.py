@@ -49,7 +49,7 @@ def reduce_data(run_number, use_roi=True):
         plot_html += "<div>%s</div>\n" % get_meta_data(reflectivity)
         plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
-            plot_html += "<tr><td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1])
+            plot_html += "<tr><td>%s</td>\n<td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1], p[2])
         plot_html += "</table>\n"
         publish_plot("REF_M", run_number, files={'file': plot_html})
 
