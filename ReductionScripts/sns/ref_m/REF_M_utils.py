@@ -25,10 +25,13 @@ def reduce_data(run_number, use_roi=True):
         Return False if the data is a direct beam
     """
     all_plots = []
+    reflectivity = None
+    ipts_long = ''
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
-            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
-            if reflectivity is None:
+            reflectivity, type_info = reduce_cross_section(run_number, entry, use_roi=use_roi)
+            ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
+            if reflectivity is None and type_info == -1:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
                 continue
             else:
@@ -36,22 +39,32 @@ def reduce_data(run_number, use_roi=True):
                 all_plots.append(plots)
         except:
             # No data for this cross-section, skip to the next
+            try:
+                plots, ipts_long = report(run_number, entry, None, get_ipts=True)
+                all_plots.append(plots)
+            except:
+                # No data for this cross-section
+                logging.error("No data for diagnostics for %s" % entry)
             logging.error(str(sys.exc_value))
-            continue
+
     if len(all_plots) == 0:
         return False
     try:
         from REF_M_merge import combined_curves, plot_combined
         from postprocessing.publish_plot import publish_plot
-        ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
+        
         ipts = ipts_long.split('-')[1]
         matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
         ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
-        plot_html = "<div>%s</div>\n" % ref_plot
-        plot_html += "<div>%s</div>\n" % get_meta_data(reflectivity, use_roi=use_roi)
+        plot_html = ''
+        if ref_plot is not None:
+            plot_html += "<div>%s</div>\n" % ref_plot
+        meta_div = get_meta_data(reflectivity, use_roi=use_roi)
+        if meta_div is not None:
+            plot_html += "<div>%s</div>\n" % meta_div
         plot_html += "<table style='width:100%'>\n"
         for p in all_plots:
-            plot_html += "<tr><td>%s</td>\n<td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1], p[2])
+            plot_html += "<tr><td>%s</td>\n<td>%s</td>\n<td>%s</td>\n<td>%s</td></tr>" % (p[0], p[1], p[2], p[3])
         plot_html += "</table>\n"
         publish_plot("REF_M", run_number, files={'file': plot_html})
 
@@ -61,53 +74,22 @@ def reduce_data(run_number, use_roi=True):
         
     return True
 
-def reduce_data_(run_number, use_roi=True):
-    """
-        Reduce a data run
-        
-        Return False if the data is a direct beam
-    """
-    data_list = []
-    data_names = []
-    for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
-        try:
-            reflectivity, label = reduce_cross_section(run_number, entry, use_roi=use_roi)
-            if reflectivity is None:
-                logging.warning("No reflectivity for %s %s" % (run_number, entry))
-                return False
-            x = reflectivity.readX(0)
-            y = reflectivity.readY(0)
-            dy = reflectivity.readE(0)
-            dx = reflectivity.readDx(0)
-            data_list.append( [x, y, dy, dx] )
-            data_names.append( label )
-        except:
-            # No data for this cross-section, skip to the next
-            continue
-    try:
-        from postprocessing.publish_plot import plot1d
-        if len(data_list) > 0:
-            plot1d(run_number, data_list, data_names=data_names, instrument='REF_M',
-                       x_title=u"Q (1/\u212b)", x_log=True,
-                       y_title="Reflectivity", y_log=True, show_dx=False)
-        else:
-            logging.warning("Nothing to plot")
-    except:
-        logging.error(str(sys.exc_value))
-        logging.error("No publisher module found")
-        
-    return True
-
 def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     """
         Reduce a given cross-section of a data run
+        Returns a reflectivity workspace and an information value
+        
+        Type info:
+            -1: too few counts
+             0: direct beam run
+             1: scattering run
     """
     # Find reflectivity peak of scattering run
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
     if ws.getNumberEvents() < 10000:
-        return None, None
+        return None, -1
     scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
     tof_range = get_tof_range(ws)
 
@@ -119,23 +101,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
             norm_run = find_direct_beam(ws, skip_slits=True)
     else:
         logging.info("This is a direct beam run")
-        tof_min = ws.getTofMin()
-        tof_max = ws.getTofMax()
-        ws = Rebin(ws, Params="%s, 50, %s" % (tof_min, tof_max))
-        ws = SumSpectra(ws)
-        try:
-            from postprocessing.publish_plot import plot1d
-            x = ws.readX(0)
-            y = ws.readY(0)
-            dy = ws.readE(0)
-
-            plot1d(run_number, [(x, y, dy),], data_names=['Direct Beam r%s' % run_number],
-                   instrument='REF_M',
-                   x_title=u"TOF", x_log=False,
-                   y_title="Counts", y_log=True, show_dx=False)
-        except:
-            logging.error("No publisher module found")
-        return None, None
+        return None, 0
         
     apply_norm = True
     if norm_run is None:
@@ -196,7 +162,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
     label = entry
     if not apply_norm:
         label += " [no direct beam]"
-    return mtd["r_%s_%s" % (run_number, entry)], label
+    return mtd["r_%s_%s" % (run_number, entry)], 1
 
 def get_tof_range(workspace):
         """
@@ -320,6 +286,7 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     integrated = Transpose(integrated)
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
+    roi_valid = use_roi
 
     if use_roi and ws.getRun().hasProperty('ROI1StartX'):
         roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
@@ -334,7 +301,26 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
             low_res = [int(roi1_y0), int(roi1_y1)]
         else:
             low_res = [int(roi1_y1), int(roi1_y0)]
-    else:
+        if peak == [0,0] and low_res == [0,0]:
+            roi_valid = False
+    
+    if use_roi and not roi_valid and ws.getRun().hasProperty('ROI2StartX'):
+        roi2_x0 = ws.getRun()['ROI2StartX'].getStatistics().mean
+        roi2_y0 = ws.getRun()['ROI2StartY'].getStatistics().mean
+        roi2_x1 = ws.getRun()['ROI2EndX'].getStatistics().mean
+        roi2_y1 = ws.getRun()['ROI2EndY'].getStatistics().mean
+        if roi2_x1 > roi2_x0:
+            peak = [int(roi2_x0), int(roi2_x1)]
+        else:
+            peak = [int(roi2_x1), int(roi2_x0)]
+        if roi2_y1 > roi2_y0:
+            low_res = [int(roi2_y0), int(roi2_y1)]
+        else:
+            low_res = [int(roi2_y1), int(roi2_y0)]
+        if peak == [0,0] and low_res == [0,0]:
+            roi_valid = False
+    
+    if not roi_valid:
         ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
                                NXPixel=304, NYPixel=256,
                                ConvertToQ=False,
@@ -344,10 +330,21 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
         integrated_low_res = Transpose(integrated_low_res)
 
         # Find reflectivity peak
-        peak, _, _ = LRPeakSelection(InputWorkspace=integrated)
+        offset = 50
+        x_values = integrated.readX(0)
+        y_values = integrated.readY(0)
+        e_values = integrated.readE(0)
+        ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
+        peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
+        peak = [peak[0]+offset, peak[1]+offset]
 
         # Determine low-resolution region
-        _, low_res, _ = LRPeakSelection(InputWorkspace=integrated_low_res)
+        x_values = integrated_low_res.readX(0)
+        y_values = integrated_low_res.readY(0)
+        e_values = integrated_low_res.readE(0)
+        ws_short = CreateWorkspace(DataX=x_values[offset:200], DataY=y_values[offset:200], DataE=e_values[offset:200])
+        _, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
+        low_res = [low_res[0]+offset, low_res[1]+offset]
 
     # Determine reflectivity peak position (center)
     signal_y_crop = signal_y[peak[0]:peak[1]+1]
@@ -602,7 +599,7 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title=''):
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def report(run_number, entry, reflectivity=None):
+def report(run_number, entry, reflectivity=None, get_ipts=False):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
@@ -654,12 +651,25 @@ def report(run_number, entry, reflectivity=None):
                           x_label="X pixel", y_label="Counts",
                           title="r%s [%s]" % (run_number, entry))
 
-    return [xy_plot, x_tof_plot, peak_pixels]
+    # TOF distribution
+    ws = SumSpectra(ws)
+    signal_x = ws.readX(0)/1000.0
+    signal_y = ws.readY(0)
+    tof_dist = _plot1d(signal_x,signal_y, x_range=None,
+                       x_label="TOF (ms)", y_label="Counts",
+                       title="r%s [%s]" % (run_number, entry))
+
+    if get_ipts:
+        ipts_long = ws.getRun().getProperty("experiment_identifier").value
+        return [xy_plot, x_tof_plot, peak_pixels, tof_dist], ipts_long
+    return [xy_plot, x_tof_plot, peak_pixels, tof_dist]
 
 def get_meta_data(ws, use_roi=True):
     """
         TODO: add the run number of the direct beam
     """
+    if ws is None:
+        return ''
     run_object = ws.getRun()
     constant_q_binning = run_object['constant_q_binning'].value
     sangle = run_object['SANGLE'].getStatistics().mean

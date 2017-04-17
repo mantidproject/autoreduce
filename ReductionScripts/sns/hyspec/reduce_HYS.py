@@ -14,7 +14,8 @@ warnings.filterwarnings('ignore',module='numpy')
 
 def do_reduction(filename,output_dir):
     instrument = 'HYS'
-    norm_file = '/SNS/HYS/shared/autoreduce/V_15meV_Sep2016.nxs'
+    #norm_file = '/SNS/HYS/shared/autoreduce/V_15meV_Sep2016.nxs'
+    norm_file = '/SNS/HYS/shared/autoreduce/V_Apr17-2017.nxs'
 
     config['default.facility'] = "SNS"
     data = LoadEventNexus(filename)
@@ -86,7 +87,10 @@ def do_reduction(filename,output_dir):
         additional_pars['DetectorVanadiumInputWorkspace'] = IntegratedIncoh   
     
     #TIB limits
-    tib = SuggestTibHYSPEC(Ei)
+    if Ei==15:
+        tib=[22000.,23000.]
+    else:
+        tib = SuggestTibHYSPEC(Ei)
     
     MaskBTP(data,Pixel="1-8,121-128")
     #MaskBTP(data,Bank="20",Tube="6-8")
