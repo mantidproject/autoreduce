@@ -511,12 +511,12 @@ def write_reflectivity(ws_list, output_path, cross_section):
     quicknxs_scale = (norm_peak_max-norm_peak_min) / (peak_max-peak_min)
     for ws in ws_list:
         x = ws.readX(0)
-        y = ws.readY(0)*quicknxs_scale
-        dy = ws.readE(0)*quicknxs_scale
+        y = ws.readY(0)
+        dy = ws.readE(0)
         dx = ws.readDx(0)
         tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
         for i in range(len(x)):
-            fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i], dy[i], dx[i], tth))
+            fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth))
 
     fd.close()
     
