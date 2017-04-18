@@ -508,7 +508,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
         dx = ws.readDx(0)
         tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
         for i in range(len(x)):
-            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth)
+            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]/quicknxs_scale, dy[i]/quicknxs_scale, dx[i], tth)
 
     logging.error(data_block)
     fd.write("#\n") 
@@ -520,15 +520,6 @@ def write_reflectivity(ws_list, output_path, cross_section):
     toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
     fd.write(u"# %s\n" % '  '.join(toks))
     fd.write(u"# %s\n" % data_block)
-    #quicknxs_scale = (norm_peak_max-norm_peak_min) / (peak_max-peak_min)
-    #for ws in ws_list:
-    #    x = ws.readX(0)
-    #    y = ws.readY(0)
-    #    dy = ws.readE(0)
-    #    dx = ws.readDx(0)
-    #    tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
-    #    for i in range(len(x)):
-    #        fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth))
 
     fd.close()
     
