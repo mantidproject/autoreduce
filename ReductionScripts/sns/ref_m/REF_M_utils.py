@@ -460,6 +460,8 @@ def write_reflectivity(ws_list, output_path, cross_section):
         filename = run_object.getProperty("Filename").value
         constant_q_binning = run_object.getProperty("constant_q_binning").value
         scatt_pos = run_object.getProperty("specular_pixel").value
+        norm_peak_min = run_object.getProperty("norm_peak_min").value
+        norm_peak_max = run_object.getProperty("norm_peak_max").value
 
         # For some reason, the tth value that QuickNXS expects is offset.
         # It seems to be because that same offset is applied later in the QuickNXS calculation.
@@ -505,11 +507,12 @@ def write_reflectivity(ws_list, output_path, cross_section):
     fd.write("# [Data]\n") 
     toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
     fd.write(u"# %s\n" % '  '.join(toks))
-   
+
+    quicknxs_scale = (norm_peak_max-norm_peak_min) / (peak_max-peak_min)
     for ws in ws_list:
         x = ws.readX(0)
-        y = ws.readY(0)
-        dy = ws.readE(0)
+        y = ws.readY(0)*quicknxs_scale
+        dy = ws.readE(0)*quicknxs_scale
         dx = ws.readDx(0)
         tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
         for i in range(len(x)):
