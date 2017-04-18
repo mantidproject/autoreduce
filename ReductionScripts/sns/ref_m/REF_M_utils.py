@@ -462,8 +462,10 @@ def write_reflectivity(ws_list, output_path, cross_section):
         filename = run_object.getProperty("Filename").value
         constant_q_binning = run_object.getProperty("constant_q_binning").value
         scatt_pos = run_object.getProperty("specular_pixel").value
-        norm_peak_min = run_object.getProperty("norm_peak_min").value
-        norm_peak_max = run_object.getProperty("norm_peak_max").value
+        norm_x_min = run_object.getProperty("norm_peak_min").value
+        norm_x_max = run_object.getProperty("norm_peak_max").value
+        norm_y_min = run_object.getProperty("norm_low_res_min").value
+        norm_y_max = run_object.getProperty("norm_low_res_max").value
 
         # For some reason, the tth value that QuickNXS expects is offset.
         # It seems to be because that same offset is applied later in the QuickNXS calculation.
@@ -501,7 +503,8 @@ def write_reflectivity(ws_list, output_path, cross_section):
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
         
-        quicknxs_scale = (float(norm_peak_max)-float(norm_peak_min)) / (float(peak_max)-float(peak_min))
+        quicknxs_scale = (float(norm_x_max)-float(norm_x_min)) * (float(norm_y_max)-float(norm_y_min))
+        quicknxs_scale /= (float(peak_max)-float(peak_min)) * (float(low_res_max)-float(low_res_min))
         x = ws.readX(0)
         y = ws.readY(0)
         dy = ws.readE(0)
