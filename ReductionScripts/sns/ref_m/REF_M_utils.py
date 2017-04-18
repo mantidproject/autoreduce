@@ -508,7 +508,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
         dx = ws.readDx(0)
         tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
         for i in range(len(x)):
-            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]/quicknxs_scale, dy[i]/quicknxs_scale, dx[i], tth)
+            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth)
 
     logging.error(data_block)
     fd.write("#\n") 
