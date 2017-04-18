@@ -80,6 +80,8 @@ def do_reduction(filename,output_dir):
     psda=run_obj['psda'].getStatistics().mean
     psr=run_obj['psr'].getStatistics().mean
     offset=psda*(1.-psr/4200.)
+    if int(run_number) in range(160163,163120):
+        offset*=-1.
     if offset!=0:
         RotateInstrumentComponent(Workspace=data,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
         IntegratedIncoh = Load(norm_file)
