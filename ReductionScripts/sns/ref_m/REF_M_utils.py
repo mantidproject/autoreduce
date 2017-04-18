@@ -446,6 +446,8 @@ def write_reflectivity(ws_list, output_path, cross_section):
     toks = ['%8s' % item for item in dataset_options]
     fd.write("# %s\n" % '  '.join(toks))
     i_direct_beam = 0
+    
+    data_block = ''
     for ws in ws_list:
         i_direct_beam += 1
 
@@ -499,6 +501,16 @@ def write_reflectivity(ws_list, output_path, cross_section):
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
 
+        quicknxs_scale = (norm_peak_max-norm_peak_min) / (peak_max-peak_min)
+        x = ws.readX(0)
+        y = ws.readY(0)
+        dy = ws.readE(0)
+        dx = ws.readDx(0)
+        tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
+        for i in range(len(x)):
+            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth)
+
+
     fd.write("#\n") 
     fd.write("# [Global Options]\n") 
     fd.write("# name           value\n")
@@ -507,16 +519,8 @@ def write_reflectivity(ws_list, output_path, cross_section):
     fd.write("# [Data]\n") 
     toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
     fd.write(u"# %s\n" % '  '.join(toks))
+    fd.write(u"# %s\n" & data_block)
 
-    quicknxs_scale = (norm_peak_max-norm_peak_min) / (peak_max-peak_min)
-    for ws in ws_list:
-        x = ws.readX(0)
-        y = ws.readY(0)
-        dy = ws.readE(0)
-        dx = ws.readDx(0)
-        tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
-        for i in range(len(x)):
-            fd.write("%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth))
 
     fd.close()
     
