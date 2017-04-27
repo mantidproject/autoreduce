@@ -27,16 +27,23 @@ def reduce_data(run_number, use_roi=True):
     all_plots = []
     reflectivity = None
     ipts_long = ''
+    script = '# This script was automatically generated\n'
+    script += '# Reduction time: %s\n' % time.ctime()
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
             reflectivity, type_info = reduce_cross_section(run_number, entry, use_roi=use_roi)
             ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
             if reflectivity is None and type_info == -1:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
+                script += "# No reflectivity for %s %s\n" % (run_number, entry)
                 continue
             else:
                 plots = report(run_number, entry, reflectivity)
                 all_plots.append(plots)
+                script_text = GeneratePythonScript(reflectivity)
+                script += '# Run:%s    Cross-section: %s\n' % (run_number, entry)
+                script += script_text.replace(', ',',\n                                ')
+                script += '\n'
         except:
             # No data for this cross-section, skip to the next
             try:
@@ -46,6 +53,14 @@ def reduce_data(run_number, use_roi=True):
                 # No data for this cross-section
                 logging.error("No data for diagnostics for %s" % entry)
             logging.error(str(sys.exc_value))
+
+    try:
+        output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % ipts_long
+        fd = open(os.path.join(output_dir, 'REF_M_%s_autoreduce.py' % run_number), 'w')
+        fd.write(script)
+        fd.close()
+    except:
+        logging.error("Could not write reduction script: %s" % sys.exc_value)
 
     if len(all_plots) == 0:
         return False
@@ -273,7 +288,56 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
 
     return closest
 
-def guess_params(ws, tolerance=0.02, use_roi=True):
+def process_roi(ws):
+    # Read ROI 1
+    roi1_valid = True
+    roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
+    roi1_y0 = ws.getRun()['ROI1StartY'].getStatistics().mean
+    roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
+    roi1_y1 = ws.getRun()['ROI1EndY'].getStatistics().mean
+    if roi1_x1 > roi1_x0:
+        peak1 = [int(roi1_x0), int(roi1_x1)]
+    else:
+        peak1 = [int(roi1_x1), int(roi1_x0)]
+    if roi1_y1 > roi1_y0:
+        low_res1 = [int(roi1_y0), int(roi1_y1)]
+    else:
+        low_res1 = [int(roi1_y1), int(roi1_y0)]
+    if peak1 == [0,0] and low_res1 == [0,0]:
+        roi1_valid = False
+
+    # Read ROI 2
+    roi2_valid = True
+    roi2_x0 = ws.getRun()['ROI2StartX'].getStatistics().mean
+    roi2_y0 = ws.getRun()['ROI2StartY'].getStatistics().mean
+    roi2_x1 = ws.getRun()['ROI2EndX'].getStatistics().mean
+    roi2_y1 = ws.getRun()['ROI2EndY'].getStatistics().mean
+    if roi2_x1 > roi2_x0:
+        peak2 = [int(roi2_x0), int(roi2_x1)]
+    else:
+        peak2 = [int(roi2_x1), int(roi2_x0)]
+    if roi2_y1 > roi2_y0:
+        low_res2 = [int(roi2_y0), int(roi2_y1)]
+    else:
+        low_res2 = [int(roi2_y1), int(roi2_y0)]
+    if peak2 == [0,0] and low_res2 == [0,0]:
+        roi2_valid = False
+
+    # Pick the ROI that describes the reflectivity peak
+    if roi1_valid and not roi2_valid:
+        return peak1, low_res1
+    elif roi2_valid and not roi1_valid:
+        return peak2, low_res2
+    elif roi1_valid and roi2_valid:
+        # If ROI 2 is within ROI 1, treat it as the peak,
+        # otherwise, use ROI 1
+        if peak2[0] > peak1[0] and peak2[1] < peak1[1]:
+            return peak2, low_res2
+        return peak1, low_res1
+
+    return None, None
+
+def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False):
     """
         Determine peak positions
     """
@@ -288,37 +352,9 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     signal_x = range(len(signal_y))
     roi_valid = use_roi
 
-    if use_roi and ws.getRun().hasProperty('ROI1StartX'):
-        roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
-        roi1_y0 = ws.getRun()['ROI1StartY'].getStatistics().mean
-        roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
-        roi1_y1 = ws.getRun()['ROI1EndY'].getStatistics().mean
-        if roi1_x1 > roi1_x0:
-            peak = [int(roi1_x0), int(roi1_x1)]
-        else:
-            peak = [int(roi1_x1), int(roi1_x0)]
-        if roi1_y1 > roi1_y0:
-            low_res = [int(roi1_y0), int(roi1_y1)]
-        else:
-            low_res = [int(roi1_y1), int(roi1_y0)]
-        if peak == [0,0] and low_res == [0,0]:
-            roi_valid = False
-    
-    if use_roi and not roi_valid and ws.getRun().hasProperty('ROI2StartX'):
-        roi2_x0 = ws.getRun()['ROI2StartX'].getStatistics().mean
-        roi2_y0 = ws.getRun()['ROI2StartY'].getStatistics().mean
-        roi2_x1 = ws.getRun()['ROI2EndX'].getStatistics().mean
-        roi2_y1 = ws.getRun()['ROI2EndY'].getStatistics().mean
-        if roi2_x1 > roi2_x0:
-            peak = [int(roi2_x0), int(roi2_x1)]
-        else:
-            peak = [int(roi2_x1), int(roi2_x0)]
-        if roi2_y1 > roi2_y0:
-            low_res = [int(roi2_y0), int(roi2_y1)]
-        else:
-            low_res = [int(roi2_y1), int(roi2_y0)]
-        if peak == [0,0] and low_res == [0,0]:
-            roi_valid = False
+    if use_roi:
+        peak, low_res = process_roi(ws)
+        roi_valid = peak is not None
     
     if not roi_valid:
         ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
@@ -357,14 +393,20 @@ def guess_params(ws, tolerance=0.02, use_roi=True):
     try:
         coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
         peak_position = coeff[1]
+        peak_width = 3.0*coeff[2]
     except:
         logging.warning("Could not use Gaussian fit to determine peak position")    
         #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
         peak_position = (peak[1]+peak[0])/2.0
+        peak_width = (peak[1]-peak[0])/2.0
+
+    peak_position = float(peak_position)
+    if fit_within_roi:
+        peak[0] = math.floor(peak_position-peak_width)
+        peak[1] = math.ceil(peak_position+peak_width)
 
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
-    peak_position = float(peak_position)
     
     dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
     is_direct_beam = dangle_ < tolerance
