@@ -6,6 +6,7 @@ sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
 from ARLibrary import *
+from simpleflock import SimpleFlock
 numpy.seterr(all='ignore')
 import warnings
 warnings.filterwarnings('ignore',module='numpy')
@@ -13,7 +14,8 @@ warnings.filterwarnings('ignore',module='numpy')
 
 def do_reduction(filename,output_dir):
     instrument = 'HYS'
-    norm_file = '/SNS/HYS/shared/autoreduce/V_15meV_Sep2016.nxs'
+    #norm_file = '/SNS/HYS/shared/autoreduce/V_15meV_Sep2016.nxs'
+    norm_file = '/SNS/HYS/shared/autoreduce/V_Apr17-2017.nxs'
 
     config['default.facility'] = "SNS"
     data = LoadEventNexus(filename)
@@ -78,6 +80,8 @@ def do_reduction(filename,output_dir):
     psda=run_obj['psda'].getStatistics().mean
     psr=run_obj['psr'].getStatistics().mean
     offset=psda*(1.-psr/4200.)
+    if int(run_number) in range(160163,163120):
+        offset*=-1.
     if offset!=0:
         RotateInstrumentComponent(Workspace=data,ComponentName='Tank',X=0, Y=1,Z=0,Angle=offset,RelativeRotation=1)
         IntegratedIncoh = Load(norm_file)
@@ -85,11 +89,14 @@ def do_reduction(filename,output_dir):
         additional_pars['DetectorVanadiumInputWorkspace'] = IntegratedIncoh   
     
     #TIB limits
-    tib = SuggestTibHYSPEC(Ei)
+    if Ei==15:
+        tib=[22000.,23000.]
+    else:
+        tib = SuggestTibHYSPEC(Ei)
     
     MaskBTP(data,Pixel="1-8,121-128")
     #MaskBTP(data,Bank="20",Tube="6-8")
-        
+
     #data for new normalization
     dgs,_=DgsReduction(SampleInputWorkspace=data,
                        IncidentEnergyGuess=Ei,
@@ -113,7 +120,34 @@ def do_reduction(filename,output_dir):
 		                TibTofRangeEnd=tib[1],
 		                **additional_pars)
     SaveNXSPE(Filename=nxspe_filename1, InputWorkspace=dgs4, Psi=str(s1), KiOverKfScaling='1')
-
+    #try to merge MD into sets
+    try:
+        comment=dgs4.getRun()['file_notes'].value.strip().replace(' ','_')
+        if comment!='':
+            UB_DAS=dgs4.getRun()['BL14B:CS:UBMatrix'].value[0]
+            SetUB(dgs4,UB=UB_DAS)
+            minValues,maxValues=ConvertToMDMinMaxGlobal(dgs4,
+                                                        QDimensions='Q3D',
+                                                        dEAnalysisMode='Direct',
+                                                        Q3DFrames='HKL')
+            mdpart=ConvertToMD(dgs4,
+                               QDimensions='Q3D',
+                               dEAnalysisMode='Direct',
+                               Q3DFrames="HKL",
+                               QConversionScales="HKL",
+                               MinValues=minValues,
+                               MaxValues=maxValues)
+            #try to load the corresponding dataset and add to it
+            filenameMD=os.path.join(output_dir, "sqw/" + comment + "_MD.nxs")
+            with SimpleFlock("/SNS/users/inelastic/HYSPEC/locks/"+comment,3600):
+                if os.path.isfile(filenameMD):
+                    mdacc=LoadMD(filenameMD)
+                    mdpart=MergeMD("mdpart,mdacc")
+                SaveMD(mdpart,Filename=filenameMD)
+    except Exception as e:
+        logger.error("Something bad occured during MD processing")
+        logger.error(repr(e))
+        
     #tube nxspe
     MaskBTP(data,Pixel="1-40,89-128")
     #MaskBTP(data,Bank="20",Tube="6-8")

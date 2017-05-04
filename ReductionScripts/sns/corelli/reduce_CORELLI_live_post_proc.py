@@ -1,3 +1,4 @@
+import mantid
 from mantid.simpleapi import mtd, CloneWorkspace
 from finddata import publish_plot
 from plotly.offline import plot
@@ -65,4 +66,8 @@ figure=go.Figure(data=data, layout=layout)
 div=plot(figure,output_type='div',show_link=False,include_plotlyjs=False)
 
 if runNumber > 0:
+    mantid.logger.information('Posting plot of CORELLI_%s' % runNumber)
     request = publish_plot('CORELLI', runNumber, files={'file':div})
+    mantid.logger.information("post returned %d" % request.status_code)
+    mantid.logger.information("resulting document:")
+    mantid.logger.information(str(request.text))

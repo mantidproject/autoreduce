@@ -10,7 +10,7 @@ resamplex=-6000
 wavelengthMin=0.
 wavelengthMax=0.
 calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d89318_2017_03_04_cryostat.h5"
-charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2016_12_13-pdf.txt"
+charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2017_04_15-pdf.txt"
 ########## end of user defined parameters
 
 eventFileAbs=sys.argv[1]

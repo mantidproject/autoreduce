@@ -1697,7 +1697,7 @@ class ReduceVulcanData(object):
         try:
             mantidsimple.SavePlot1D(InputWorkspace=self._reductionSetup.get_reduced_workspace(),
                                     OutputFilename=self._reductionSetup.get_plot_file(),
-                                    YLabel='Intensity')
+                                    YLabel='Intensity', OutputType='plotly')
         except ValueError as err:
             print "Unable to generate 1D plot for run %s caused by %s. " % (str(self._reductionSetup.get_run_number()),
                                                                             str(err))

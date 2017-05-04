@@ -197,7 +197,7 @@ def write_reflectivity_cross_section(run, ipts, cross_section, matched_runs, dir
     fd.write(data_buffer)
     fd.close()
 
-def plot_combined(matched_runs, scaling_factors, ipts):
+def plot_combined(matched_runs, scaling_factors, ipts, publish=True):
     data_names = []
     data_list = []
     for i in range(len(matched_runs)):
@@ -207,15 +207,15 @@ def plot_combined(matched_runs, scaling_factors, ipts):
             if os.path.isfile(file_path):
                 ref_data = pandas.read_csv(file_path,
                                            delim_whitespace=True, comment='#', names=['q','r','dr','dq', 'a'])
-                data_list.append((ref_data['q'], scaling_factors[i]*ref_data['r'], scaling_factors[i]*ref_data['dr']))
+                data_list.append([ref_data['q'], scaling_factors[i]*ref_data['r'], scaling_factors[i]*ref_data['dr']])
                 data_names.append("r%s [%s]" % (run, xs))
 
     try:
         from postprocessing.publish_plot import plot1d
         if len(data_names) > 0:
-            plot1d(matched_runs[-1], data_list, data_names=data_names, instrument='REF_M',
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
+            return plot1d(matched_runs[-1], data_list, data_names=data_names, instrument='REF_M',
+                          x_title=u"Q (1/\u212b)", x_log=True,
+                          y_title="Reflectivity", y_log=True, show_dx=False, publish=publish)
         else:
             print "Nothing to plot"
     except:
