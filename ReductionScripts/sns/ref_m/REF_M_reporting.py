@@ -346,6 +346,11 @@ def get_meta_data(ws, use_roi=True):
 
     specular_pixel = run_object['specular_pixel'].value
 
+    roi1_x0 = ws.getRun()['ROI1StartX'].getStatistics().mean
+    roi2_x0 = ws.getRun()['ROI2StartX'].getStatistics().mean
+    roi1_x1 = ws.getRun()['ROI1EndX'].getStatistics().mean
+    roi2_x1 = ws.getRun()['ROI2EndX'].getStatistics().mean
+
     meta = "<table style='width:40%'>"
     meta += "<tr><td>Run:</td><td><b>%s</b></td></tr>" % run_object['run_number'].value
     meta += "<tr><td>Direct beam:</td><td>%s</td></tr>" % direct_beam
@@ -355,6 +360,8 @@ def get_meta_data(ws, use_roi=True):
     meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
     meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
     meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr>" % (low_res[0], low_res[1])
+    meta += "<tr><td>ROI 1:</td><td>%s - %s</td></tr><tr>" % (roi1_x0, roi1_x1)
+    meta += "<tr><td>ROI 2:</td><td>%s - %s</td></tr><tr>" % (roi2_x0, roi2_x1)
     meta += "</table>\n"
     
     meta += "<p><table style='width:100%'>"
