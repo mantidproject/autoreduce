@@ -148,7 +148,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                     break
             except:
                 # No data in this cross-section
-                pass
+                logging.error("Direct beam %s: %s" % (norm_entry, sys.exc_value))
 
     const_q_binning = False
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
