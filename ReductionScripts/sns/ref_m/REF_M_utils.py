@@ -142,8 +142,9 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                 NXentryName=norm_entry,
                                 OutputWorkspace="MR_%s" % norm_run)
                 if ws.getNumberEvents() > 10000:
-                    logging.warning("Found direct beam entry: %s [%s]" % (norm_entry, norm_entry))
+                    logging.warning("Found direct beam entry: %s" % norm_entry)
                     direct_peak, direct_low_res, _, _, direct_bck = guess_params(ws, use_roi=use_roi)
+                    logging.warning("Direct beam signal: peak=%s low=%s " % (direct_peak, direct_low_res))
                     break
             except:
                 # No data in this cross-section
