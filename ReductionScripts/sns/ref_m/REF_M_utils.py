@@ -446,14 +446,14 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bc
     try:
         coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
         peak_position = coeff[1]
-        peak_width = 3.0*coeff[2]
+        peak_width = math.fabs(3.0*coeff[2])
     except:
         logging.warning("Could not use Gaussian fit to determine peak position")    
         #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
         try:
             coeff, var_matrix = curve_fit(gauss, signal_x, signal_y, p0=p0)
             peak_position = coeff[1]
-            peak_width = 3.0*coeff[2]
+            peak_width = math.fabs(3.0*coeff[2])
             peak = _peak
             low_res = [5, 250]
             fit_within_roi = True
