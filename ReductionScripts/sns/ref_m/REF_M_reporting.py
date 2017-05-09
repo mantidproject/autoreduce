@@ -251,7 +251,7 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title=''):
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def report(run_number, entry, reflectivity=None, get_ipts=False):
+def report(run_number, entry, reflectivity=None):
     ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
                         NXentryName='entry-%s' % entry,
                         OutputWorkspace="MR_%s" % run_number)
@@ -311,10 +311,8 @@ def report(run_number, entry, reflectivity=None, get_ipts=False):
                        x_label="TOF (ms)", y_label="Counts",
                        title="r%s [%s]" % (run_number, entry))
 
-    if get_ipts:
-        ipts_long = ws.getRun().getProperty("experiment_identifier").value
-        return [xy_plot, x_tof_plot, peak_pixels, tof_dist], ipts_long
-    return [xy_plot, x_tof_plot, peak_pixels, tof_dist]
+    ipts_long = ws.getRun().getProperty("experiment_identifier").value
+    return [xy_plot, x_tof_plot, peak_pixels, tof_dist], ipts_long
 
 def get_meta_data(ws, use_roi=True):
     """
