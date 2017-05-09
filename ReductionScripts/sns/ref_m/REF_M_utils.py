@@ -383,6 +383,13 @@ def process_roi(ws):
     return None, None, None
 
 def determine_peaks(ws):
+    ws_summed = RefRoi(InputWorkspace=ws, IntegrateY=True,
+                       NXPixel=304, NYPixel=256,
+                       ConvertToQ=False,
+                       OutputWorkspace="ws_summed")
+
+    integrated = Integration(ws_summed)
+    integrated = Transpose(integrated)
     ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
                            NXPixel=304, NYPixel=256,
                            ConvertToQ=False,
