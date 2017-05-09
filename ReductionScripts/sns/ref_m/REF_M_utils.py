@@ -447,6 +447,7 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bc
             coeff, var_matrix = curve_fit(gauss, signal_x, signal_y, p0=p0)
             peak_position = coeff[1]
             peak_width = 3.0*coeff[2]
+            logging.warning("Peak not in supplied range!")
         except:
             logging.warning("Could not use Gaussian fit to determine peak position over whole detector")    
             peak_position = (peak[1]+peak[0])/2.0
