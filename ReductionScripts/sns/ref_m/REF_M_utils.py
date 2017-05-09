@@ -455,7 +455,8 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bc
             peak_position = coeff[1]
             peak_width = 3.0*coeff[2]
             peak = _peak
-            low_res = _low_res
+            low_res = [5, 250]
+            fit_within_roi = True
             logging.warning("Peak not in supplied range!")
         except:
             logging.warning("Could not use Gaussian fit to determine peak position over whole detector")    
