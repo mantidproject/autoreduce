@@ -168,7 +168,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     QStep=-0.01,
                                     UseWLTimeAxis=False,
                                     TimeAxisStep=40,
-                                    UseSANGLE=True,
+                                    UseSANGLE=False,#True,
                                     TimeAxisRange=tof_range,
                                     SpecularPixel=scatt_pos,
                                     ConstantQBinning=const_q_binning,
