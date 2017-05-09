@@ -382,7 +382,7 @@ def process_roi(ws):
 
     return None, None, None
 
-def determine_low_res_range(ws):
+def determine_low_res_range(ws, offset=50):
     ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
                            NXPixel=304, NYPixel=256,
                            ConvertToQ=False,
