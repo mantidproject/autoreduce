@@ -382,6 +382,33 @@ def process_roi(ws):
 
     return None, None, None
 
+def determine_peaks(ws):
+    ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
+                           NXPixel=304, NYPixel=256,
+                           ConvertToQ=False,
+                           OutputWorkspace="ws_summed")
+
+    integrated_low_res = Integration(ws_low_res)
+    integrated_low_res = Transpose(integrated_low_res)
+
+    # Find reflectivity peak
+    offset = 50
+    x_values = integrated.readX(0)
+    y_values = integrated.readY(0)
+    e_values = integrated.readE(0)
+    ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
+    peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
+    peak = [peak[0]+offset, peak[1]+offset]
+
+    # Determine low-resolution region
+    x_values = integrated_low_res.readX(0)
+    y_values = integrated_low_res.readY(0)
+    e_values = integrated_low_res.readE(0)
+    ws_short = CreateWorkspace(DataX=x_values[offset:200], DataY=y_values[offset:200], DataE=e_values[offset:200])
+    _, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
+    low_res = [low_res[0]+offset, low_res[1]+offset]
+    return peak, low_res
+        
 def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bck=False):
     """
         Determine peak positions
