@@ -43,10 +43,11 @@ def reduce_data(run_number, use_roi=True):
             else:
                 plots = report(run_number, entry, reflectivity)
                 all_plots.append(plots)
-                script_text = GeneratePythonScript(reflectivity)
-                script += '# Run:%s    Cross-section: %s\n' % (run_number, entry)
-                script += script_text.replace(', ',',\n                                ')
-                script += '\n'
+                if reflectivity is not None:
+                    script_text = GeneratePythonScript(reflectivity)
+                    script += '# Run:%s    Cross-section: %s\n' % (run_number, entry)
+                    script += script_text.replace(', ',',\n                                ')
+                    script += '\n'
         except:
             # No data for this cross-section, skip to the next
             try:
