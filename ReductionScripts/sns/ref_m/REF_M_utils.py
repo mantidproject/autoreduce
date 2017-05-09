@@ -163,7 +163,7 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                                     LowResDataAxisPixelRange=scatt_low_res,
                                     CutLowResNormAxis=True,
                                     LowResNormAxisPixelRange=direct_low_res,
-                                    CutTimeAxis=False,#True,
+                                    CutTimeAxis=True,
                                     QMin=0.001,
                                     QStep=-0.01,
                                     UseWLTimeAxis=False,
