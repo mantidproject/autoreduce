@@ -34,14 +34,14 @@ def reduce_data(run_number, use_roi=True):
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
             reflectivity, type_info = reduce_cross_section(run_number, entry, use_roi=use_roi)
-            if reflectivity is not None:
-                ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
+            #if reflectivity is not None:
+            #    ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
             if reflectivity is None and type_info == -1:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
                 script += "# No reflectivity for %s %s\n" % (run_number, entry)
                 continue
             else:
-                plots = report(run_number, entry, reflectivity)
+                plots, ipts_long = report(run_number, entry, reflectivity)
                 all_plots.append(plots)
                 if reflectivity is not None:
                     script_text = GeneratePythonScript(reflectivity)
@@ -51,7 +51,7 @@ def reduce_data(run_number, use_roi=True):
         except:
             # No data for this cross-section, skip to the next
             try:
-                plots, ipts_long = report(run_number, entry, None, get_ipts=True)
+                plots, ipts_long = report(run_number, entry, None)
                 all_plots.append(plots)
             except:
                 # No data for this cross-section
