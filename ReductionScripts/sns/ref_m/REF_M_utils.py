@@ -391,7 +391,6 @@ def determine_low_res_range(ws):
     integrated_low_res = Integration(ws_low_res)
     integrated_low_res = Transpose(integrated_low_res)
 
-
     # Determine low-resolution region
     x_values = integrated_low_res.readX(0)
     y_values = integrated_low_res.readY(0)
@@ -414,6 +413,17 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bc
     integrated = Transpose(integrated)
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
+    
+    # Find reflectivity peak
+    offset = 50
+    x_values = integrated.readX(0)
+    y_values = integrated.readY(0)
+    e_values = integrated.readE(0)
+    ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
+    _peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
+    _peak = [_peak[0]+offset, _peak[1]+offset]
+        
+    _low_res = determine_low_res_range(ws)
     roi_valid = use_roi
     bck_range = None
 
@@ -422,30 +432,8 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bc
         roi_valid = peak is not None
     
     if not roi_valid:
-        ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
-                               NXPixel=304, NYPixel=256,
-                               ConvertToQ=False,
-                               OutputWorkspace="ws_summed")
-
-        integrated_low_res = Integration(ws_low_res)
-        integrated_low_res = Transpose(integrated_low_res)
-
-        # Find reflectivity peak
-        offset = 50
-        x_values = integrated.readX(0)
-        y_values = integrated.readY(0)
-        e_values = integrated.readE(0)
-        ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
-        peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
-        peak = [peak[0]+offset, peak[1]+offset]
-
-        # Determine low-resolution region
-        x_values = integrated_low_res.readX(0)
-        y_values = integrated_low_res.readY(0)
-        e_values = integrated_low_res.readE(0)
-        ws_short = CreateWorkspace(DataX=x_values[offset:200], DataY=y_values[offset:200], DataE=e_values[offset:200])
-        _, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
-        low_res = [low_res[0]+offset, low_res[1]+offset]
+        peak = _peak
+        low_res = _low_res
 
     # Determine reflectivity peak position (center)
     signal_y_crop = signal_y[peak[0]:peak[1]+1]
