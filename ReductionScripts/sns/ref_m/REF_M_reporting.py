@@ -156,7 +156,6 @@ def write_reflectivity(ws_list, output_path, cross_section):
         for i in range(len(x)):
             data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth)
 
-    logging.error(data_block)
     fd.write("#\n") 
     fd.write("# [Global Options]\n") 
     fd.write("# name           value\n")
