@@ -1,6 +1,7 @@
 """
     Merging tools for REF_M
 """
+import sys
 import os
 import pandas
 import time
