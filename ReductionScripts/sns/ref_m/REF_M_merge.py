@@ -6,6 +6,7 @@ import pandas
 import time
 import numpy as np
 import mantid
+import logging
 from mantid.simpleapi import *
 
 def match_run_for_cross_section(run, ipts, cross_section):
