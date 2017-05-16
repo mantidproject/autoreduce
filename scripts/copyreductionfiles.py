@@ -21,7 +21,9 @@ def filesInGit(gitdir, instrument):
     direc = os.path.join(options.gitdir, instrument)
 
     filenames = os.listdir(direc)
-
+    for f in filenames:
+        if os.path.isdir(os.path.join(direc,f)):
+            filenames.extend([os.path.join(f,_f) for _f in os.listdir(os.path.join(direc,f))])
     return filenames
 
 
