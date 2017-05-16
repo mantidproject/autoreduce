@@ -104,14 +104,18 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
 
   try:
-    from REF_M_utils import reduce_data
+    #from REF_M_utils import reduce_data
     event_file_path=sys.argv[1]
     event_file = os.path.split(event_file_path)[-1]
     # The legacy format is REF_L_xyz_event.nxs
     # The new format is REF_L_xyz.nxs.h5
     run_number = event_file.split('_')[2]
     run_number = run_number.replace('.nxs.h5', '')
-    reduce_data(run_number, use_roi=True)
+    #reduce_data(run_number, use_roi=True)
+    from mr_reduction import mr_reduction as refm
+    red = refm.ReductionProcess(run_number, output_dir=outdir,
+                             use_tight_bck=False, bck_offset=10)
+    red.reduce()
   except:
     logging.warning(sys.exc_value)
     logging.warning("Could not reduce with Mantid")
