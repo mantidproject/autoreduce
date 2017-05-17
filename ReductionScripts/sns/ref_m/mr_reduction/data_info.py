@@ -153,7 +153,7 @@ class DataInfo(object):
                 self.roi_low_res = low_res1
                 self.roi_background = [0,0]
 
-    def determine_peak_range(self, ws, specular=True, max_pixel=210):
+    def determine_peak_range(self, ws, specular=True, max_pixel=230):
         ws_summed = RefRoi(InputWorkspace=ws, IntegrateY=specular,
                            NXPixel=self.n_x_pixel, NYPixel=self.n_y_pixel,
                            ConvertToQ=False,
@@ -168,7 +168,12 @@ class DataInfo(object):
         ws_short = CreateWorkspace(DataX=x_values[self.peak_range_offset:max_pixel],
                                    DataY=y_values[self.peak_range_offset:max_pixel],
                                    DataE=e_values[self.peak_range_offset:max_pixel])
-        specular_peak, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
+        try:
+            specular_peak, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
+        except:
+            logging.error("Peak finding error [specular=%s]: %s" % (specular, sys.exc_value))
+            
+            return integrated, [0,0]
         if specular:
             peak = [specular_peak[0]+self.peak_range_offset, specular_peak[1]+self.peak_range_offset]
         else:
