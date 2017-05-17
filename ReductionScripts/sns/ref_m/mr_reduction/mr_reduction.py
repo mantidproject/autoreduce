@@ -117,9 +117,6 @@ class ReductionProcess(object):
         if norm_run is None:
             logging.warning("Run %s [%s]: Could not find direct beam run: skipping" % (run_number, entry))
             apply_norm = False
-            direct_peak = scatt_peak
-            direct_low_res = scatt_low_res
-            direct_bck = bck_range
         else:
             logging.info("Run %s [%s]: Direct beam run: %s" % (run_number, entry, norm_run))
 
