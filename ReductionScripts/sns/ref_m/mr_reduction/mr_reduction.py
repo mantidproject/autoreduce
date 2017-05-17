@@ -192,8 +192,11 @@ class ReductionProcess(object):
 
         closest = None
         for item in os.listdir(data_dir):
-            if item.endswith("_event.nxs") or item.endswith("h5"):
-                summary_path = os.path.join(ar_dir, item+'.json')
+            if item.endswith("_event.nxs") or item.endswith("h5") or item.endswith(".json"):
+                if item.endswith(".json"):
+                    summary_path = os.path.join(ar_dir, item)
+                else:
+                    summary_path = os.path.join(ar_dir, item+'.json')
                 if not os.path.isfile(summary_path):
                     is_valid = False
                     for entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
