@@ -265,6 +265,13 @@ class DataInfo(object):
         try:
             # Try to find the peak position within the peak range we found
             peak_position, peak_width = self.fit_peak(signal_x_crop, signal_y_crop, peak)
+            # If we are more than two sigmas away from the middle of the range,
+            # there's clearly a problem.
+            if np.abs(peak_position - (peak[1]+peak[0])/2.0)  > np.abs(peak[1]-peak[0]):
+                logging.error("Found peak position outside of given range [x=%s], switching to full detector" % peak_position)
+                peak_position = (peak[1]+peak[0])/2.0
+                peak_width = (peak[1]-peak[0])/2.0
+                raise RuntimeError("Bad peak position")
         except:
             # If we can't find a peak, try fitting over the full detector.
             # If we do find a peak, then update the ranges rather than using
