@@ -233,7 +233,13 @@ class ReductionProcess(object):
                     s1 = ws.getRun().getProperty("S1HWidth").getStatistics().mean
                     s2 = ws.getRun().getProperty("S2HWidth").getStatistics().mean
                     s3 = ws.getRun().getProperty("S3HWidth").getStatistics().mean
-                    peak_pos = self.peak_position if self.peak_position is not None else direct_beam_pix
+                    data_info = DataInfo(ws, entry,
+                                         use_roi=self.use_roi,
+                                         update_peak_range=self.update_peak_range,
+                                         use_roi_bck=self.use_roi_bck,
+                                         use_tight_bck=self.use_tight_bck,
+                                         bck_offset=self.bck_offset)
+                    peak_pos = data_info.peak_position if data_info.peak_position is not None else direct_beam_pix
                     theta_d = (dangle - dangle0) / 2.0
                     theta_d += ((direct_beam_pix - peak_pos) * pixel_width) * 180.0 / math.pi / (2.0 * det_distance)
 
