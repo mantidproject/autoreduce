@@ -12,7 +12,7 @@ vanradius=0.58
 #wavelengthMax=2.9
 calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d93150_2017_05_05_shifter_down_banks.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2017_04_15-rietveld.txt"
-expiniFileDefault="/SNS/lustre/NOM/IPTS-17693/shared/autoNOM/exp.ini"
+expiniFileDefault="/SNS/lustre/NOM/IPTS-17776/shared/autoNOM2/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
