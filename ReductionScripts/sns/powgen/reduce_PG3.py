@@ -3,9 +3,9 @@ import sys
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-cal_dir = "/SNS/PG3/shared/CALIBRATION/2016_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d29581_2016_08_29.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt")
+cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_11A_CAL/"
+cal_file  = os.path.join(cal_dir, "PG3_SS_d37616_2017_05_19.h5")
+char_file = ''#os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt")
 #cal_file  = os.path.join(cal_dir, "PG3_MICAS_d36952_2016_11_09.h5")
 #char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt") \
 #    + ',' + os.path.join(cal_dir, "PG3_char_2016_11_22-HR-PAC.txt")
