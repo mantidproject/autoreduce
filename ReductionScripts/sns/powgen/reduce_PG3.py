@@ -3,7 +3,7 @@ import sys
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_11A_CAL/"
+cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_SS_d37616_2017_05_19.h5")
 char_file = ''#os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt")
 #cal_file  = os.path.join(cal_dir, "PG3_MICAS_d36952_2016_11_09.h5")
@@ -26,7 +26,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0008, BinInDspace=True,
+                   Binning=-0.0004, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
