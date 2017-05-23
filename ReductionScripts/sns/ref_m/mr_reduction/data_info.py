@@ -24,7 +24,8 @@ class DataInfo(object):
     
     def __init__(self, ws, cross_section, use_roi=True, update_peak_range=False, use_roi_bck=False,
                  use_tight_bck=False, bck_offset=3, huber_x_cut=4.95,
-                 force_peak_roi=False, peak_roi=[0,0]):
+                 force_peak_roi=False, peak_roi=[0,0],
+                 force_bck_roi=False, bck_roi=[0,0]):
         self.cross_section = cross_section
         self.run_number = ws.getRunNumber()
         self.is_direct_beam = False
@@ -43,6 +44,8 @@ class DataInfo(object):
         # Options to override the ROI
         self.force_peak_roi = force_peak_roi
         self.forced_peak_roi = peak_roi
+        self.force_bck_roi = force_bck_roi
+        self.forced_bck_roi = bck_roi
         
         # Peak found before fitting for the central position
         self.found_peak = [0,0]
