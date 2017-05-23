@@ -109,7 +109,7 @@ if __name__=="__main__":
         Use Const-Q:      False
         Fit peak in roi:  False
         Huber X cut:      4.95
-        Use bck ROI:      False
+        Use bck ROI:      True
         Force peak:       False [155, 165]
         Force background: True [50, 100]
         Use side bck:     False
@@ -132,7 +132,7 @@ if __name__=="__main__":
                                 huber_x_cut=4.95,
                                 const_q_cutoff=None,
                                 update_peak_range=False,
-                                use_roi_bck=False,
+                                use_roi_bck=True,
                                 force_peak_roi=False, peak_roi=[155, 165],
                                 force_bck_roi=True, bck_roi=[50, 100],
                                 use_tight_bck=False, bck_offset=10)
