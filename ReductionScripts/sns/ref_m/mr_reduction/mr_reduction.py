@@ -117,7 +117,10 @@ class ReductionProcess(object):
                              use_roi_bck=self.use_roi_bck,
                              use_tight_bck=self.use_tight_bck,
                              huber_x_cut=self.huber_x_cut,
-                             bck_offset=self.bck_offset)
+                             bck_offset=self.bck_offset,
+                             force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
+                             force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
+        
         if data_info.data_type < 1:
             return Report(ws, data_info, data_info, None)
 
