@@ -24,7 +24,9 @@ class ReductionProcess(object):
     
     def __init__(self, data_run, output_dir=None, const_q_binning=False, const_q_cutoff=0.02,
                  update_peak_range=False, use_roi_bck=False, use_tight_bck=False, bck_offset=3,
-                 huber_x_cut=4.95, use_sangle=True, use_roi=True):
+                 huber_x_cut=4.95, use_sangle=True, use_roi=True,
+                 force_peak_roi=False, peak_roi=[0,0],
+                 force_bck_roi=False, bck_roi=[0,0]):
         """
             @param data_run: run number or file path
         """
@@ -42,6 +44,13 @@ class ReductionProcess(object):
         self.use_roi_bck = use_roi_bck
         self.use_tight_bck = use_tight_bck
         self.bck_offset = bck_offset
+
+        # Options to override the ROI
+        self.force_peak_roi = force_peak_roi
+        self.forced_peak_roi = peak_roi
+        self.force_bck_roi = force_bck_roi
+        self.forced_bck_roi = bck_roi
+        
         self.huber_x_cut = huber_x_cut
         
         # Script for re-running the reduction
