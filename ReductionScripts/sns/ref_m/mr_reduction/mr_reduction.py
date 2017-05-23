@@ -118,8 +118,8 @@ class ReductionProcess(object):
                              use_tight_bck=self.use_tight_bck,
                              huber_x_cut=self.huber_x_cut,
                              bck_offset=self.bck_offset,
-                             force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
-                             force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
+                             force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
+                             force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
         
         if data_info.data_type < 1:
             return Report(ws, data_info, data_info, None)
@@ -153,8 +153,8 @@ class ReductionProcess(object):
                                                use_tight_bck=self.use_tight_bck,
                                                huber_x_cut=self.huber_x_cut,
                                                bck_offset=self.bck_offset,
-                                               force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
-                                               force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
+                                               force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
+                                               force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
                         break
                 except:
                     # No data in this cross-section
@@ -260,8 +260,8 @@ class ReductionProcess(object):
                                              use_tight_bck=self.use_tight_bck,
                                              huber_x_cut=self.huber_x_cut,
                                              bck_offset=self.bck_offset,
-                                             force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
-                                             force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
+                                             force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
+                                             force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
                         peak_pos = data_info.peak_position if data_info.peak_position is not None else direct_beam_pix
                     except:
