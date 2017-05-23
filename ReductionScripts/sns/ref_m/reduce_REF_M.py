@@ -127,7 +127,7 @@ if __name__=="__main__":
     run_number = run_number.replace('.nxs.h5', '')
     from mr_reduction import mr_reduction as refm
     red = refm.ReductionProcess(run_number, output_dir=outdir,
-                                use_sange=True,
+                                use_sangle=True,
                                 const_q_binning=False,
                                 huber_x_cut=4.95,
                                 const_q_cutoff=None,
