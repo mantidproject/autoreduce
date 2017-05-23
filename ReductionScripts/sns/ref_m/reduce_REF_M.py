@@ -104,13 +104,19 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
 
   """
-  TEST: Use SANGLE:       True
+  Options:
+        Use SANGLE:       True
         Use Const-Q:      False
-        Const-Q cutoff:   0.02
         Fit peak in roi:  False
-        Force peak:       False [160, 170]
         Huber X cut:      4.95
-        Force background: False [5, 100]
+        Use bck ROI:      False
+        Use side bck:     False
+        Bck width:        10
+
+  Not used yet:
+        Const-Q cutoff:   None
+        Force peak:       False [None, None]
+        Force background: False [None, None]
   """
   try:
     event_file_path=sys.argv[1]
@@ -123,6 +129,10 @@ if __name__=="__main__":
     red = refm.ReductionProcess(run_number, output_dir=outdir,
                                 use_sange=True,
                                 const_q_binning=False,
+                                huber_x_cut=4.95,
+                                const_q_cutoff=None,
+                                update_peak_range=False,
+                                use_roi_bck=False,
                                 use_tight_bck=False, bck_offset=10)
     red.reduce()
   except:
