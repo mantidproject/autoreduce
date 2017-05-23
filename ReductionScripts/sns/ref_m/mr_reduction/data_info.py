@@ -20,14 +20,17 @@ class DataInfo(object):
     tolerance = 0.02
     pixel_width = 0.0007
     n_events_cutoff = 10000
+    huber_x_cut = 4.95
     
     def __init__(self, ws, cross_section, use_roi=True, update_peak_range=False, use_roi_bck=False,
-                 use_tight_bck=False, bck_offset=3):
+                 use_tight_bck=False, bck_offset=3, huber_x_cut=4.95,
+                 force_peak_roi=False, peak_roi=[0,0]):
         self.cross_section = cross_section
         self.run_number = ws.getRunNumber()
         self.is_direct_beam = False
         self.data_type = 1
         self.peak_position = 0
+        self.huber_x_cut = huber_x_cut
         self.peak_range = [0,0]
         self.low_res_range = [0,0]
         self.background = [0,0]
@@ -36,6 +39,10 @@ class DataInfo(object):
         self.roi_peak = [0,0]
         self.roi_low_res = [0,0]
         self.roi_background = [0,0]
+
+        # Options to override the ROI
+        self.force_peak_roi = force_peak_roi
+        self.forced_peak_roi = peak_roi
         
         # Peak found before fitting for the central position
         self.found_peak = [0,0]
@@ -153,6 +160,10 @@ class DataInfo(object):
                 self.roi_low_res = low_res1
                 self.roi_background = [0,0]
 
+        # After all this, update the ROI according to reduction options
+        if self.force_peak_roi:
+            self.roi_peak = self.forced_peak_roi
+
     def determine_peak_range(self, ws, specular=True, max_pixel=230):
         ws_summed = RefRoi(InputWorkspace=ws, IntegrateY=specular,
                            NXPixel=self.n_x_pixel, NYPixel=self.n_y_pixel,
@@ -220,7 +231,7 @@ class DataInfo(object):
         dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
         sangle = ws.getRun().getProperty("SANGLE").getStatistics().mean
         self.theta_d = self.scattering_angle(ws, peak_position)
-        return not ((self.theta_d > self.tolerance or sangle > self.tolerance) and huber_x < 4.95)
+        return not ((self.theta_d > self.tolerance or sangle > self.tolerance) and huber_x < self.huber_x_cut)
 
     def determine_data_type(self, ws):
         """

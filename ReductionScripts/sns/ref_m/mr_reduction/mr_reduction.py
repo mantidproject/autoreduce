@@ -22,8 +22,9 @@ from web_report import Report, process_collection
 class ReductionProcess(object):
     tolerance=0.02
     
-    def __init__(self, data_run, output_dir=None, const_q_binning=False, use_roi=True,
-                 update_peak_range=False, use_roi_bck=False, use_tight_bck=False, bck_offset=3):
+    def __init__(self, data_run, output_dir=None, const_q_binning=False, const_q_cutoff=0.02,
+                 update_peak_range=False, use_roi_bck=False, use_tight_bck=False, bck_offset=3,
+                 huber_x_cut=4.95, use_sangle=True, use_roi=True):
         """
             @param data_run: run number or file path
         """
@@ -31,13 +32,17 @@ class ReductionProcess(object):
         self.ipts = None
         self.output_dir = output_dir
         self.const_q_binning = const_q_binning
+        # Q-value below which const-q binning will not be used [NOT CURRENTLY IMPLEMENTED]
+        self.const_q_cutoff = const_q_cutoff
         
         # Options
         self.use_roi = use_roi
+        self.use_sangle = use_sangle
         self.update_peak_range = update_peak_range
         self.use_roi_bck = use_roi_bck
         self.use_tight_bck = use_tight_bck
         self.bck_offset = bck_offset
+        self.huber_x_cut = huber_x_cut
         
         # Script for re-running the reduction
         self.script = ''
@@ -102,6 +107,7 @@ class ReductionProcess(object):
                              update_peak_range=self.update_peak_range,
                              use_roi_bck=self.use_roi_bck,
                              use_tight_bck=self.use_tight_bck,
+                             huber_x_cut=self.huber_x_cut,
                              bck_offset=self.bck_offset)
         if data_info.data_type < 1:
             return Report(ws, data_info, data_info, None)
@@ -133,6 +139,7 @@ class ReductionProcess(object):
                                                update_peak_range=self.update_peak_range,
                                                use_roi_bck=self.use_roi_bck,
                                                use_tight_bck=self.use_tight_bck,
+                                               huber_x_cut=self.huber_x_cut,
                                                bck_offset=self.bck_offset)
                         break
                 except:
@@ -160,7 +167,7 @@ class ReductionProcess(object):
                                         QStep=-0.01,
                                         UseWLTimeAxis=False,
                                         TimeAxisStep=40,
-                                        UseSANGLE=True,
+                                        UseSANGLE=self.use_sangle,
                                         TimeAxisRange=data_info.tof_range,
                                         SpecularPixel=data_info.peak_position,
                                         ConstantQBinning=self.const_q_binning,
@@ -179,6 +186,7 @@ class ReductionProcess(object):
     def find_direct_beam(self, scatt_ws, skip_slits=False, allow_later_runs=False):
         """
             Find the appropriate direct beam run
+            #TODO: refactor this
         """
         data_dir = "/SNS/REF_M/%s/data" % self.ipts
         ar_dir = "/SNS/REF_M/%s/shared/autoreduce" % self.ipts
@@ -236,6 +244,7 @@ class ReductionProcess(object):
                                              update_peak_range=self.update_peak_range,
                                              use_roi_bck=self.use_roi_bck,
                                              use_tight_bck=self.use_tight_bck,
+                                             huber_x_cut=self.huber_x_cut,
                                              bck_offset=self.bck_offset)
                         peak_pos = data_info.peak_position if data_info.peak_position is not None else direct_beam_pix
                     except:
@@ -267,7 +276,7 @@ class ReductionProcess(object):
                     else:
                         huber_x = 0
                 #if run_number == run_ or (dangle > self.tolerance and huber_x < 9) :
-                if run_number == run_ or ((theta_d > self.tolerance or sangle > self.tolerance) and huber_x < 4.95):
+                if run_number == run_ or ((theta_d > self.tolerance or sangle > self.tolerance) and huber_x < self.huber_x_cut):
                     continue
                 # If we don't allow runs taken later than the run we are processing...
                 if not allow_later_runs and run_number > run_:
@@ -306,7 +315,7 @@ class ReductionProcess(object):
                     else:
                         huber_x = 0
                     #if run_number == run_ or (dangle > self.tolerance and huber_x < 9) :
-                    if run_number == run_ or ((theta_d > self.tolerance or sangle > self.tolerance) and huber_x < 4.95):
+                    if run_number == run_ or ((theta_d > self.tolerance or sangle > self.tolerance) and huber_x < self.huber_x_cut):
                         continue
                     # If we don't allow runs taken later than the run we are processing...
                     if not allow_later_runs and run_number > run_:
