@@ -111,7 +111,7 @@ if __name__=="__main__":
         Huber X cut:      4.95
         Use bck ROI:      False
         Force peak:       False [155, 165]
-        Force background: False [5, 100]
+        Force background: True [50, 100]
         Use side bck:     False
         Bck width:        10
 
@@ -134,7 +134,7 @@ if __name__=="__main__":
                                 update_peak_range=False,
                                 use_roi_bck=False,
                                 force_peak_roi=False, peak_roi=[155, 165],
-                                force_bck_roi=False, bck_roi=[5, 100],
+                                force_bck_roi=True, bck_roi=[50, 100],
                                 use_tight_bck=False, bck_offset=10)
     red.reduce()
   except:
