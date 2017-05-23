@@ -110,13 +110,13 @@ if __name__=="__main__":
         Fit peak in roi:  False
         Huber X cut:      4.95
         Use bck ROI:      False
+        Force peak:       False [155, 165]
+        Force background: False [5, 100]
         Use side bck:     False
         Bck width:        10
 
   Not used yet:
         Const-Q cutoff:   None
-        Force peak:       False [None, None]
-        Force background: False [None, None]
   """
   try:
     event_file_path=sys.argv[1]
@@ -133,6 +133,8 @@ if __name__=="__main__":
                                 const_q_cutoff=None,
                                 update_peak_range=False,
                                 use_roi_bck=False,
+                                force_peak_roi=False, peak_roi=[155, 165],
+                                force_bck_roi=False, bck_roi=[5, 100],
                                 use_tight_bck=False, bck_offset=10)
     red.reduce()
   except:
