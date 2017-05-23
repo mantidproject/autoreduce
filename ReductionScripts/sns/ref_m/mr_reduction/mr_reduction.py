@@ -152,7 +152,9 @@ class ReductionProcess(object):
                                                use_roi_bck=self.use_roi_bck,
                                                use_tight_bck=self.use_tight_bck,
                                                huber_x_cut=self.huber_x_cut,
-                                               bck_offset=self.bck_offset)
+                                               bck_offset=self.bck_offset,
+                                               force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
+                                               force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
                         break
                 except:
                     # No data in this cross-section
@@ -257,7 +259,10 @@ class ReductionProcess(object):
                                              use_roi_bck=self.use_roi_bck,
                                              use_tight_bck=self.use_tight_bck,
                                              huber_x_cut=self.huber_x_cut,
-                                             bck_offset=self.bck_offset)
+                                             bck_offset=self.bck_offset,
+                                             force_peak_roi=self.force_peak_roi, peak_roi=self.peak_roi,
+                                             force_bck_roi=self.force_bck_roi, bck_roi=self.bck_roi)
+
                         peak_pos = data_info.peak_position if data_info.peak_position is not None else direct_beam_pix
                     except:
                         peak_pos = direct_beam_pix
