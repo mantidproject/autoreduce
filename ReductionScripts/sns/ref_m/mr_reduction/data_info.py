@@ -164,9 +164,9 @@ class DataInfo(object):
                 self.roi_background = [0,0]
 
         # After all this, update the ROI according to reduction options
-        if self.force_peak_roi:
+        if False and self.force_peak_roi:
             self.roi_peak = self.forced_peak_roi
-        if self.force_bck_roi:
+        if False and self.force_bck_roi:
             self.roi_background = self.forced_bck_roi
 
     def determine_peak_range(self, ws, specular=True, max_pixel=230):
