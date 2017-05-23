@@ -104,9 +104,13 @@ if __name__=="__main__":
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
 
   """
-  TEST: True, False, 0.02, False,
-        4.9, False, 160, 170,
-        False, 5, 100
+  TEST: Use SANGLE:       True
+        Use Const-Q:      False
+        Const-Q cutoff:   0.02
+        Fit peak in roi:  False
+        Force peak:       False [160, 170]
+        Huber X cut:      4.95
+        Force background: False [5, 100]
   """
   try:
     event_file_path=sys.argv[1]
@@ -117,7 +121,9 @@ if __name__=="__main__":
     run_number = run_number.replace('.nxs.h5', '')
     from mr_reduction import mr_reduction as refm
     red = refm.ReductionProcess(run_number, output_dir=outdir,
-                             use_tight_bck=False, bck_offset=10)
+                                use_sange=True,
+                                const_q_binning=False,
+                                use_tight_bck=False, bck_offset=10)
     red.reduce()
   except:
     logging.warning(sys.exc_value)
