@@ -48,7 +48,7 @@ def do_reduction(filename,output_dir):
 
     # Work out some energy bins
     emin = -2.0 * Ei
-    emin = -40.0 # temporary
+    emin = -60.0 # temporary
     emax = Ei * 0.95
     if Ei > 10.0:
         emin = -30.0
