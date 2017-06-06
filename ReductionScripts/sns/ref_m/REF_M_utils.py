@@ -17,6 +17,8 @@ import logging
 import plotly.offline as py
 import plotly.graph_objs as go
 
+from REF_M_reporting import get_meta_data, report, _plot1d, _plot2d, write_reflectivity
+
 tolerance = 0.02
 def reduce_data(run_number, use_roi=True):
     """
@@ -32,22 +34,24 @@ def reduce_data(run_number, use_roi=True):
     for entry in ['Off_Off', 'On_Off', 'Off_On', 'On_On']:
         try:
             reflectivity, type_info = reduce_cross_section(run_number, entry, use_roi=use_roi)
-            ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
+            #if reflectivity is not None:
+            #    ipts_long = reflectivity.getRun().getProperty("experiment_identifier").value
             if reflectivity is None and type_info == -1:
                 logging.warning("No reflectivity for %s %s" % (run_number, entry))
                 script += "# No reflectivity for %s %s\n" % (run_number, entry)
                 continue
             else:
-                plots = report(run_number, entry, reflectivity)
+                plots, ipts_long = report(run_number, entry, reflectivity)
                 all_plots.append(plots)
-                script_text = GeneratePythonScript(reflectivity)
-                script += '# Run:%s    Cross-section: %s\n' % (run_number, entry)
-                script += script_text.replace(', ',',\n                                ')
-                script += '\n'
+                if reflectivity is not None:
+                    script_text = GeneratePythonScript(reflectivity)
+                    script += '# Run:%s    Cross-section: %s\n' % (run_number, entry)
+                    script += script_text.replace(', ',',\n                                ')
+                    script += '\n'
         except:
             # No data for this cross-section, skip to the next
             try:
-                plots, ipts_long = report(run_number, entry, None, get_ipts=True)
+                plots, ipts_long = report(run_number, entry, None)
                 all_plots.append(plots)
             except:
                 # No data for this cross-section
@@ -69,8 +73,11 @@ def reduce_data(run_number, use_roi=True):
         from postprocessing.publish_plot import publish_plot
         
         ipts = ipts_long.split('-')[1]
-        matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
-        ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
+        if reflectivity is not None:
+            matched_runs, scaling_factors = combined_curves(run=int(run_number), ipts=ipts)
+            ref_plot = plot_combined(matched_runs, scaling_factors, ipts, publish=False)
+        else:
+            ref_plot = None
         plot_html = ''
         if ref_plot is not None:
             plot_html += "<div>%s</div>\n" % ref_plot
@@ -105,15 +112,15 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
                         OutputWorkspace="MR_%s" % run_number)
     if ws.getNumberEvents() < 10000:
         return None, -1
-    scatt_peak, scatt_low_res, scatt_pos, is_direct = guess_params(ws, use_roi=use_roi)
+    scatt_peak, scatt_low_res, scatt_pos, is_direct, bck_range = guess_params(ws, use_roi=use_roi)
     tof_range = get_tof_range(ws)
 
     # Find direct beam run
     norm_run = None
     if not is_direct:
-        norm_run = find_direct_beam(ws)
+        norm_run = find_direct_beam(ws, peak_position=scatt_pos)
         if norm_run is None:
-            norm_run = find_direct_beam(ws, skip_slits=True)
+            norm_run = find_direct_beam(ws, skip_slits=True, peak_position=scatt_pos)
     else:
         logging.info("This is a direct beam run")
         return None, 0
@@ -124,33 +131,35 @@ def reduce_cross_section(run_number, entry='Off_Off', use_roi=True):
         apply_norm = False
         direct_peak = scatt_peak
         direct_low_res = scatt_low_res
+        direct_bck = bck_range
     else:
         logging.warning("Direct beam run: %s" % norm_run)
 
         # Find peak in direct beam run
         for norm_entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
-            try:         
+            try:
                 ws = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                                 NXentryName=norm_entry,
                                 OutputWorkspace="MR_%s" % norm_run)
                 if ws.getNumberEvents() > 10000:
                     logging.warning("Found direct beam entry: %s" % norm_entry)
-                    direct_peak, direct_low_res, _, _ = guess_params(ws, use_roi=use_roi)
+                    direct_peak, direct_low_res, _, _, direct_bck = guess_params(ws, use_roi=use_roi)
+                    logging.warning("Direct beam signal: peak=%s low=%s " % (direct_peak, direct_low_res))
                     break
             except:
                 # No data in this cross-section
-                pass
+                logging.error("Direct beam %s: %s" % (norm_entry, sys.exc_value))
 
     const_q_binning = False
     MagnetismReflectometryReduction(RunNumbers=[run_number,],
                                     NormalizationRunNumber=norm_run,
                                     SignalPeakPixelRange=scatt_peak,
                                     SubtractSignalBackground=True,
-                                    SignalBackgroundPixelRange=[4, scatt_peak[0]-30],
+                                    SignalBackgroundPixelRange=bck_range,
                                     ApplyNormalization=apply_norm,
                                     NormPeakPixelRange=direct_peak,
                                     SubtractNormBackground=False,
-                                    NormBackgroundPixelRange=[4, direct_peak[0]-30],
+                                    NormBackgroundPixelRange=direct_bck,
                                     CutLowResDataAxis=True,
                                     LowResDataAxisPixelRange=scatt_low_res,
                                     CutLowResNormAxis=True,
@@ -197,8 +206,28 @@ def get_tof_range(workspace):
         tof_min = cst * (wl + wl_offset * 60.0 / chopper_speed - 1.4 * 60.0 / chopper_speed) * 1e-4
         tof_max = cst * (wl + wl_offset * 60.0 / chopper_speed + 1.4 * 60.0 / chopper_speed) * 1e-4
         return [tof_min, tof_max]
-        
-def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False):
+
+def scattering_angle(ws, peak_position=None):
+    dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
+    dangle0 = ws.getRun().getProperty("DANGLE0").getStatistics().mean
+    direct_beam_pix = ws.getRun().getProperty("DIRPIX").getStatistics().mean
+    det_distance = ws.getRun().getProperty("SampleDetDis").getStatistics().mean / 1000.0
+    pixel_width = 0.0007
+
+    peak_pos = peak_position if peak_position is not None else direct_beam_pix
+    theta_d = (dangle - dangle0) / 2.0
+    theta_d += ((direct_beam_pix - peak_pos) * pixel_width) * 180.0 / math.pi / (2.0 * det_distance)
+    
+    return theta_d
+
+def check_direct_beam(ws, peak_position=None):
+    huber_x = ws.getRun().getProperty("HuberX").getStatistics().mean
+    dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
+    sangle = ws.getRun().getProperty("SANGLE").getStatistics().mean
+    theta_d = scattering_angle(ws, peak_position)
+    return not ((theta_d > tolerance or sangle > tolerance) and huber_x < 4.95)
+
+def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_runs=False, peak_position=None):
     """
         Find the appropriate direct beam run
     """
@@ -244,13 +273,23 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                     continue
 
                 run_number = int(ws.getRunNumber())
+                sangle = ws.getRun().getProperty("SANGLE").getStatistics().mean
                 dangle = ws.getRun().getProperty("DANGLE").getStatistics().mean
+                dangle0 = ws.getRun().getProperty("DANGLE0").getStatistics().mean
+                direct_beam_pix = ws.getRun().getProperty("DIRPIX").getStatistics().mean
+                det_distance = ws.getRun().getProperty("SampleDetDis").getStatistics().mean / 1000.0
+                pixel_width = 0.0007
+
                 huber_x = ws.getRun().getProperty("HuberX").getStatistics().mean
                 wl = ws.getRun().getProperty("LambdaRequest").getStatistics().mean
                 s1 = ws.getRun().getProperty("S1HWidth").getStatistics().mean
                 s2 = ws.getRun().getProperty("S2HWidth").getStatistics().mean
                 s3 = ws.getRun().getProperty("S3HWidth").getStatistics().mean
-                meta_data = dict(run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle, huber_x=huber_x)
+                peak_pos = peak_position if peak_position is not None else direct_beam_pix
+                theta_d = (dangle - dangle0) / 2.0
+                theta_d += ((direct_beam_pix - peak_pos) * pixel_width) * 180.0 / math.pi / (2.0 * det_distance)
+
+                meta_data = dict(theta_d=theta_d, run=run_number, wl=wl, s1=s1, s2=s2, s3=s3, dangle=dangle, sangle=sangle, huber_x=huber_x)
                 fd = open(summary_path, 'w')
                 fd.write(json.dumps(meta_data))
                 fd.close()
@@ -262,6 +301,9 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                     continue
                 run_number = meta_data['run']
                 dangle = meta_data['dangle']
+                theta_d = meta_data['theta_d'] if 'theta_d' in meta_data else 0
+                sangle = meta_data['sangle'] if 'sangle' in meta_data else 0
+
                 wl = meta_data['wl']
                 s1 = meta_data['s1']
                 s2 = meta_data['s2']
@@ -270,17 +312,18 @@ def find_direct_beam(scatt_ws, tolerance=0.02, skip_slits=False, allow_later_run
                     huber_x = meta_data['huber_x']
                 else:
                     huber_x = 0
-            if run_number == run_ or (dangle > tolerance and huber_x < 9) :
+            #if run_number == run_ or (dangle > tolerance and huber_x < 9) :
+            if run_number == run_ or ((theta_d > tolerance or sangle > tolerance) and huber_x < 4.95):
                 continue
             # If we don't allow runs taken later than the run we are processing...
             if not allow_later_runs and run_number > run_:
                 continue
             
             if math.fabs(wl-wl_) < tolerance \
-                and skip_slits is True or \
+                and (skip_slits is True or \
                 (math.fabs(s1-s1_) < tolerance \
                 and math.fabs(s2-s2_) < tolerance \
-                and math.fabs(s3-s3_) < tolerance):
+                and math.fabs(s3-s3_) < tolerance)):
                 if closest is None:
                     closest = run_number
                 elif abs(run_number-run_) < abs(closest-run_):
@@ -325,19 +368,39 @@ def process_roi(ws):
 
     # Pick the ROI that describes the reflectivity peak
     if roi1_valid and not roi2_valid:
-        return peak1, low_res1
+        return peak1, low_res1, None
     elif roi2_valid and not roi1_valid:
-        return peak2, low_res2
+        return peak2, low_res2, None
     elif roi1_valid and roi2_valid:
         # If ROI 2 is within ROI 1, treat it as the peak,
         # otherwise, use ROI 1
-        if peak2[0] > peak1[0] and peak2[1] < peak1[1]:
-            return peak2, low_res2
-        return peak1, low_res1
+        if peak1[0] >= peak2[0] and peak1[1] <= peak2[1]:
+            return peak1, low_res1, peak2
+        elif peak2[0] >= peak1[0] and peak2[1] <= peak1[1]:
+            return peak2, low_res2, peak1
+        return peak1, low_res1, None
 
-    return None, None
+    return None, None, None
 
-def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False):
+def determine_low_res_range(ws, offset=50):
+    ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
+                           NXPixel=304, NYPixel=256,
+                           ConvertToQ=False,
+                           OutputWorkspace="ws_summed")
+
+    integrated_low_res = Integration(ws_low_res)
+    integrated_low_res = Transpose(integrated_low_res)
+
+    # Determine low-resolution region
+    x_values = integrated_low_res.readX(0)
+    y_values = integrated_low_res.readY(0)
+    e_values = integrated_low_res.readE(0)
+    ws_short = CreateWorkspace(DataX=x_values[offset:200], DataY=y_values[offset:200], DataE=e_values[offset:200])
+    _, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
+    low_res = [low_res[0]+offset, low_res[1]+offset]
+    return low_res
+        
+def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False, find_bck=False):
     """
         Determine peak positions
     """
@@ -350,37 +413,27 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False):
     integrated = Transpose(integrated)
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
+    
+    # Find reflectivity peak
+    offset = 50
+    x_values = integrated.readX(0)
+    y_values = integrated.readY(0)
+    e_values = integrated.readE(0)
+    ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
+    _peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
+    _peak = [_peak[0]+offset, _peak[1]+offset]
+        
+    _low_res = determine_low_res_range(ws)
     roi_valid = use_roi
+    bck_range = None
 
     if use_roi:
-        peak, low_res = process_roi(ws)
+        peak, low_res, bck_range = process_roi(ws)
         roi_valid = peak is not None
     
     if not roi_valid:
-        ws_low_res = RefRoi(InputWorkspace=ws, IntegrateY=False,
-                               NXPixel=304, NYPixel=256,
-                               ConvertToQ=False,
-                               OutputWorkspace="ws_summed")
-
-        integrated_low_res = Integration(ws_low_res)
-        integrated_low_res = Transpose(integrated_low_res)
-
-        # Find reflectivity peak
-        offset = 50
-        x_values = integrated.readX(0)
-        y_values = integrated.readY(0)
-        e_values = integrated.readE(0)
-        ws_short = CreateWorkspace(DataX=x_values[offset:210], DataY=y_values[offset:210], DataE=e_values[offset:210])
-        peak, _, _ = LRPeakSelection(InputWorkspace=ws_short)
-        peak = [peak[0]+offset, peak[1]+offset]
-
-        # Determine low-resolution region
-        x_values = integrated_low_res.readX(0)
-        y_values = integrated_low_res.readY(0)
-        e_values = integrated_low_res.readE(0)
-        ws_short = CreateWorkspace(DataX=x_values[offset:200], DataY=y_values[offset:200], DataE=e_values[offset:200])
-        _, low_res, _ = LRPeakSelection(InputWorkspace=ws_short)
-        low_res = [low_res[0]+offset, low_res[1]+offset]
+        peak = _peak
+        low_res = _low_res
 
     # Determine reflectivity peak position (center)
     signal_y_crop = signal_y[peak[0]:peak[1]+1]
@@ -393,12 +446,22 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False):
     try:
         coeff, var_matrix = curve_fit(gauss, signal_x_crop, signal_y_crop, p0=p0)
         peak_position = coeff[1]
-        peak_width = 3.0*coeff[2]
+        peak_width = math.fabs(3.0*coeff[2])
     except:
         logging.warning("Could not use Gaussian fit to determine peak position")    
         #peak_position = np.average(signal_x_crop, weights=signal_y_crop)
-        peak_position = (peak[1]+peak[0])/2.0
-        peak_width = (peak[1]-peak[0])/2.0
+        try:
+            coeff, var_matrix = curve_fit(gauss, signal_x, signal_y, p0=p0)
+            peak_position = coeff[1]
+            peak_width = math.fabs(3.0*coeff[2])
+            peak = _peak
+            low_res = [5, 250]
+            fit_within_roi = True
+            logging.warning("Peak not in supplied range! Found peak: %s low: %s" % (peak, low_res))
+        except:
+            logging.warning("Could not use Gaussian fit to determine peak position over whole detector")    
+            peak_position = (peak[1]+peak[0])/2.0
+            peak_width = (peak[1]-peak[0])/2.0
 
     peak_position = float(peak_position)
     if fit_within_roi:
@@ -408,361 +471,18 @@ def guess_params(ws, tolerance=0.02, use_roi=True, fit_within_roi=False):
     peak = [int(peak[0]), int(peak[1])]
     low_res = [int(low_res[0]), int(low_res[1])]
     
+    #TODO: replace this
     dangle_ = abs(ws.getRun().getProperty("DANGLE").getStatistics().mean)
-    is_direct_beam = dangle_ < tolerance
+    is_direct_beam = check_direct_beam(ws, peak_position)# dangle_ < tolerance
 
     logging.warning("Run: %s [direct beam: %s]" % (ws.getRunNumber(), is_direct_beam))
     logging.warning("Peak position: %s" % peak_position)
     logging.warning("Reflectivity peak: %s" % str(peak))
     logging.warning("Low-resolution pixel range: %s" % str(low_res))
-    return peak, low_res, peak_position, is_direct_beam
-
-def write_reflectivity(ws_list, output_path, cross_section):
-    # Sanity check
-    if len(ws_list) == 0:
-        return
-        
-    direct_beam_options=['DB_ID', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
-                         'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
-    dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
-                     'bg_pos', 'bg_width', 'fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
-    cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
-    pol_state = 'x'
-    if cross_section in cross_sections:
-        pol_state = cross_sections[cross_section]
-
-    fd = open(output_path, 'w')
-    fd.write("# Datafile created by QuickNXS 1.0.32\n")
-    fd.write("# Datafile created by Mantid %s\n" % mantid.__version__)
-    fd.write("# Date: %s\n" % time.strftime(u"%Y-%m-%d %H:%M:%S"))
-    fd.write("# Type: Specular\n")
-    run_list = [str(ws.getRunNumber()) for ws in ws_list]
-    fd.write("# Input file indices: %s\n" % ','.join(run_list))
-    fd.write("# Extracted states: %s\n" % pol_state)
-    fd.write("#\n")
-    fd.write("# [Direct Beam Runs]\n")
-    toks = ['%8s' % item for item in direct_beam_options]
-    fd.write("# %s\n" % '  '.join(toks))
-
-    # Direct beam section
-    i_direct_beam = 0
-    for ws in ws_list:
-        i_direct_beam += 1
-        run_object = ws.getRun()
-        normalization_run = run_object.getProperty("normalization_run").value
-        if normalization_run == "None":
-            continue
-        peak_min = run_object.getProperty("norm_peak_min").value
-        peak_max = run_object.getProperty("norm_peak_max").value
-        bg_min = run_object.getProperty("norm_bg_min").value
-        bg_max = run_object.getProperty("norm_bg_max").value
-        low_res_min = run_object.getProperty("norm_low_res_min").value
-        low_res_max = run_object.getProperty("norm_low_res_max").value
-        dpix = run_object.getProperty("normalization_dirpix").value
-        filename = run_object.getProperty("normalization_file_path").value
-
-        item = dict(DB_ID=i_direct_beam, tth=0, P0=0, PN=0,
-                    x_pos=(peak_min+peak_max)/2.0,
-                    x_width=peak_max-peak_min+1,
-                    y_pos=(low_res_max+low_res_min)/2.0,
-                    y_width=low_res_max-low_res_min+1,
-                    bg_pos=(bg_min+bg_max)/2.0,
-                    bg_width=bg_max-bg_min+1,
-                    dpix=dpix,
-                    number=normalization_run,
-                    File=filename)
-
-        par_list = ['{%s}' % p for p in direct_beam_options]
-        template = "# %s\n" % '  '.join(par_list)
-        _clean_dict = {}
-        for key in item:
-            if isinstance(item[key], (bool, str)):
-                _clean_dict[key] = "%8s" % item[key]
-            else:
-                _clean_dict[key] = "%8g" % item[key]
-        fd.write(template.format(**_clean_dict))
-
-    # Scattering data
-    fd.write("#\n") 
-    fd.write("# [Data Runs]\n") 
-    toks = ['%8s' % item for item in dataset_options]
-    fd.write("# %s\n" % '  '.join(toks))
-    i_direct_beam = 0
     
-    data_block = ''
-    for ws in ws_list:
-        i_direct_beam += 1
-
-        run_object = ws.getRun()
-        peak_min = run_object.getProperty("scatt_peak_min").value
-        peak_max = run_object.getProperty("scatt_peak_max").value
-        bg_min = run_object.getProperty("scatt_bg_min").value
-        bg_max = run_object.getProperty("scatt_bg_max").value
-        low_res_min = run_object.getProperty("scatt_low_res_min").value
-        low_res_max = run_object.getProperty("scatt_low_res_max").value
-        dpix = run_object.getProperty("DIRPIX").getStatistics().mean
-        filename = run_object.getProperty("Filename").value
-        constant_q_binning = run_object.getProperty("constant_q_binning").value
-        scatt_pos = run_object.getProperty("specular_pixel").value
-        norm_x_min = run_object.getProperty("norm_peak_min").value
-        norm_x_max = run_object.getProperty("norm_peak_max").value
-        norm_y_min = run_object.getProperty("norm_low_res_min").value
-        norm_y_max = run_object.getProperty("norm_low_res_max").value
-
-        # For some reason, the tth value that QuickNXS expects is offset.
-        # It seems to be because that same offset is applied later in the QuickNXS calculation.
-        # Correct tth here so that it can load properly in QuickNXS and produce the same result.
-        tth = run_object.getProperty("two_theta").value
-        det_distance = run_object['SampleDetDis'].getStatistics().mean / 1000.0
-        direct_beam_pix = run_object['DIRPIX'].getStatistics().mean
-
-        # Get pixel size from instrument properties
-        if ws.getInstrument().hasParameter("pixel_width"):
-            pixel_width = float(ws.getInstrument().getNumberParameter("pixel_width")[0]) / 1000.0
-        else:
-            pixel_width = 0.0007
-        tth -= ((direct_beam_pix - scatt_pos) * pixel_width) / det_distance * 180.0 / math.pi
-        
-        item = dict(scale=1, DB_ID=i_direct_beam, P0=0, PN=0, tth=tth,
-                    fan=constant_q_binning,
-                    x_pos=scatt_pos,
-                    x_width=peak_max-peak_min+1,
-                    y_pos=(low_res_max+low_res_min)/2.0,
-                    y_width=low_res_max-low_res_min+1,
-                    bg_pos=(bg_min+bg_max)/2.0,
-                    bg_width=bg_max-bg_min+1,
-                    dpix=dpix,
-                    number=str(ws.getRunNumber()),
-                    File=filename)
-
-        par_list = ['{%s}' % p for p in dataset_options]
-        template = "# %s\n" % '  '.join(par_list)
-        _clean_dict = {}
-        for key in item:
-            if isinstance(item[key], str):
-                _clean_dict[key] = "%8s" % item[key]
-            else:
-                _clean_dict[key] = "%8g" % item[key]
-        fd.write(template.format(**_clean_dict))
-        
-        x = ws.readX(0)
-        y = ws.readY(0)
-        dy = ws.readE(0)
-        dx = ws.readDx(0)
-        tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
-        quicknxs_scale = (float(norm_x_max)-float(norm_x_min)) * (float(norm_y_max)-float(norm_y_min))
-        quicknxs_scale /= (float(peak_max)-float(peak_min)) * (float(low_res_max)-float(low_res_min))
-        quicknxs_scale *= 0.005 / math.sin(tth)
-        for i in range(len(x)):
-            data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i], y[i]*quicknxs_scale, dy[i]*quicknxs_scale, dx[i], tth)
-
-    logging.error(data_block)
-    fd.write("#\n") 
-    fd.write("# [Global Options]\n") 
-    fd.write("# name           value\n")
-    fd.write("# sample_length  10\n")
-    fd.write("#\n") 
-    fd.write("# [Data]\n") 
-    toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
-    fd.write(u"# %s\n" % '  '.join(toks))
-    fd.write(u"# %s\n" % data_block)
-
-    fd.close()
-    
-def _plot2d(x, y, z, x_range, y_range, x_label="X pixel", y_label="Y pixel", title=''):
-    colorscale=[[0, "rgb(0,0,131)"], [0.125, "rgb(0,60,170)"], [0.375, "rgb(5,255,255)"],
-                [0.625, "rgb(255,255,0)"], [0.875, "rgb(250,0,0)"], [1, "rgb(128,0,0)"]]
-
-    hm = go.Heatmap(x=x, y=y, z=z, autocolorscale=False, type='heatmap', showscale=False,
-                     hoverinfo="none", colorscale=colorscale)
-
-    data = [hm]
-    if x_range is not None:
-        x_left=go.Scatter(name='', x=[x_range[0], x_range[0]], y=[min(y), max(y)],
-                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        x_right=go.Scatter(name='', x=[x_range[1], x_range[1]], y=[min(y), max(y)],
-                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        data.append(x_left)
-        data.append(x_right)
-    
-    if y_range is not None:
-        y_left=go.Scatter(name='', y=[y_range[0], y_range[0]], x=[min(x), max(x)],
-                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        y_right=go.Scatter(name='', y=[y_range[1], y_range[1]], x=[min(x), max(x)],
-                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        data.append(y_left)
-        data.append(y_right)
-    
-    x_layout = dict(title=x_label, zeroline=False, exponentformat="power",
-                    showexponent="all", showgrid=True,
-                    showline=True, mirror="all", ticks="inside")
-    y_layout = dict(title=y_label, zeroline=False, exponentformat="power",
-                    showexponent="all", showgrid=True,
-                    showline=True, mirror="all", ticks="inside")
-    layout = go.Layout(
-        title=title,
-        showlegend=False,
-        autosize=True,
-        width=300,
-        height=300,
-        margin=dict(t=40, b=40, l=40, r=20),
-        hovermode='closest',
-        bargap=0,
-        xaxis=x_layout,
-        yaxis=y_layout
-    )
-    fig = go.Figure(data=data, layout=layout)
-    return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
-
-def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title=''):
-
-    data = [go.Scatter(name='', x=x, y=y)]
-
-    if x_range is not None:
-        min_y = min([v for v in y if v>0])
-        x_left=go.Scatter(name='', x=[x_range[0], x_range[0]], y=[min_y, max(y)],
-                          marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        x_right=go.Scatter(name='', x=[x_range[1], x_range[1]], y=[min_y, max(y)],
-                           marker = dict(color = 'rgba(152, 0, 0, .8)',))
-        data.append(x_left)
-        data.append(x_right)
-
-    x_layout = dict(title=x_label, zeroline=False, exponentformat="power",
-                    showexponent="all", showgrid=True,
-                    showline=True, mirror="all", ticks="inside")
-
-    y_layout = dict(title=y_label, zeroline=False, exponentformat="power",
-                    showexponent="all", showgrid=True, type='log',
-                    showline=True, mirror="all", ticks="inside")
-
-    layout = go.Layout(
-        title=title,
-        showlegend=False,
-        autosize=True,
-        width=300,
-        height=300,
-        margin=dict(t=40, b=40, l=40, r=20),
-        hovermode='closest',
-        bargap=0,
-        xaxis=x_layout,
-        yaxis=y_layout
-    )
-
-    fig = go.Figure(data=data, layout=layout)
-    return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
-
-def report(run_number, entry, reflectivity=None, get_ipts=False):
-    ws = LoadEventNexus(Filename="REF_M_%s" % run_number,
-                        NXentryName='entry-%s' % entry,
-                        OutputWorkspace="MR_%s" % run_number)
-    n_x = int(ws.getInstrument().getNumberParameter("number-of-x-pixels")[0])
-    n_y = int(ws.getInstrument().getNumberParameter("number-of-y-pixels")[0])
-
-    if reflectivity is None:
-        scatt_peak = None
-        scatt_low_res = None
-    else:
-        run_object = reflectivity.getRun()
-        scatt_peak = [run_object.getProperty("scatt_peak_min").value,
-                      run_object.getProperty("scatt_peak_max").value]
-        bg_min = run_object.getProperty("scatt_bg_min").value
-        bg_max = run_object.getProperty("scatt_bg_max").value
-        scatt_low_res = [run_object.getProperty("scatt_low_res_min").value,
-                         run_object.getProperty("scatt_low_res_max").value]
-        
-    # X-Y plot
-    signal = np.log10(mtd['MR_%s' % run_number].extractY())
-    z=np.reshape(signal, (n_x, n_y))
-    xy_plot = _plot2d(z=z.T, x=range(n_x), y=range(n_y),
-                      x_range=scatt_peak, y_range=scatt_low_res,
-                      title="r%s [%s]" % (run_number, entry))
-
-    # X-TOF plot
-    tof_min = mtd['MR_%s' % run_number].getTofMin()
-    tof_max = mtd['MR_%s' % run_number].getTofMax()
-    ws = Rebin(mtd['MR_%s' % run_number], params="%s, 50, %s" % (tof_min, tof_max))
-
-    direct_summed = RefRoi(InputWorkspace=ws, IntegrateY=True,
-                           NXPixel=n_x, NYPixel=n_y,
-                           ConvertToQ=False, YPixelMin=0, YPixelMax=n_y,
-                           OutputWorkspace="direct_summed")
-    signal = np.log10(direct_summed.extractY())
-    tof_axis = direct_summed.extractX()[0]/1000.0
-
-    x_tof_plot = _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
-                         x_range=None, y_range=scatt_peak,
-                         x_label="TOF (ms)", y_label="X pixel",
-                         title="r%s [%s]" % (run_number, entry))
-                         
-    # Count per X pixel
-    integrated = Integration(direct_summed)
-    integrated = Transpose(integrated)
-    signal_y = integrated.readY(0)
-    signal_x = range(len(signal_y))
-    peak_pixels = _plot1d(signal_x,signal_y, x_range=scatt_peak,
-                          x_label="X pixel", y_label="Counts",
-                          title="r%s [%s]" % (run_number, entry))
-
-    # TOF distribution
-    ws = SumSpectra(ws)
-    signal_x = ws.readX(0)/1000.0
-    signal_y = ws.readY(0)
-    tof_dist = _plot1d(signal_x,signal_y, x_range=None,
-                       x_label="TOF (ms)", y_label="Counts",
-                       title="r%s [%s]" % (run_number, entry))
-
-    if get_ipts:
-        ipts_long = ws.getRun().getProperty("experiment_identifier").value
-        return [xy_plot, x_tof_plot, peak_pixels, tof_dist], ipts_long
-    return [xy_plot, x_tof_plot, peak_pixels, tof_dist]
-
-def get_meta_data(ws, use_roi=True):
-    """
-        TODO: add the run number of the direct beam
-    """
-    if ws is None:
-        return ''
-    run_object = ws.getRun()
-    constant_q_binning = run_object['constant_q_binning'].value
-    sangle = run_object['SANGLE'].getStatistics().mean
-    dangle = run_object['DANGLE'].getStatistics().mean
-    lambda_min = run_object['lambda_min'].value
-    lambda_max = run_object['lambda_max'].value
-    theta = run_object['two_theta'].value / 2
-    huber_x = run_object["HuberX"].getStatistics().mean
-    direct_beam = run_object["normalization_run"].value
-
-    dangle0 = run_object['DANGLE0'].getStatistics().mean
-    dirpix = run_object['DIRPIX'].getStatistics().mean
-    
-    peak = [run_object['scatt_peak_min'].value,
-            run_object['scatt_peak_max'].value]
-
-    bg = [run_object['scatt_bg_min'].value,
-          run_object['scatt_bg_max'].value]
-
-    low_res = [run_object['scatt_low_res_min'].value,
-               run_object['scatt_low_res_max'].value]
-
-    specular_pixel = run_object['specular_pixel'].value
-
-    meta = "<table style='width:40%'>"
-    meta += "<tr><td>Run:</td><td><b>%s</b></td></tr>" % run_object['run_number'].value
-    meta += "<tr><td>Direct beam:</td><td>%s</td></tr>" % direct_beam
-    meta += "<tr><td>Q-binning:</td><td>%s</td></tr>" % constant_q_binning
-    meta += "<tr><td>Using ROI:</td><td>%s</td></tr>" % use_roi
-    meta += "<tr><td>Specular peak:</td><td>%g</td></tr>" % specular_pixel
-    meta += "<tr><td>Peak range:</td><td>%s - %s</td></tr>" % (peak[0], peak[1])
-    meta += "<tr><td>Background:</td><td>%s - %s</td></tr>" % (bg[0], bg[1])
-    meta += "<tr><td>Low-res range:</td><td>%s - %s</td></tr><tr>" % (low_res[0], low_res[1])
-    meta += "</table>\n"
-    
-    meta += "<p><table style='width:100%'>"
-    meta += "<tr><th>Theta</th><th>DANGLE</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th><th>Huber X</th></tr>"
-    meta += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s - %s</td><td>%s</td></tr>\n" % (theta, dangle, sangle, dirpix, lambda_min, lambda_max, huber_x)
-    meta += "</table>\n"
-    return meta
-    
+    if not find_bck or bck_range is None:
+        bck_range = [4, peak[0]-30]
+    return peak, low_res, peak_position, is_direct_beam, bck_range
 
 if __name__ == '__main__':
     reduce_data(sys.argv[1])

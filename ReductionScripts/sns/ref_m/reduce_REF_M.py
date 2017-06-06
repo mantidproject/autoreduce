@@ -103,15 +103,40 @@ if __name__=="__main__":
 
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
 
+  """
+  Options:
+        Use SANGLE:       True
+        Use Const-Q:      False
+        Fit peak in roi:  False
+        Huber X cut:      4.95
+        Use bck ROI:      False
+        Force peak:       False [175, 194]
+        Force background: False [50, 100]
+        Use side bck:     False
+        Bck width:        10
+
+  Not used yet:
+        Const-Q cutoff:   None
+  """
   try:
-    from REF_M_utils import reduce_data
     event_file_path=sys.argv[1]
     event_file = os.path.split(event_file_path)[-1]
     # The legacy format is REF_L_xyz_event.nxs
     # The new format is REF_L_xyz.nxs.h5
     run_number = event_file.split('_')[2]
     run_number = run_number.replace('.nxs.h5', '')
-    reduce_data(run_number, use_roi=True)
+    from mr_reduction import mr_reduction as refm
+    red = refm.ReductionProcess(run_number, output_dir=outdir,
+                                use_sangle=True,
+                                const_q_binning=False,
+                                huber_x_cut=4.95,
+                                const_q_cutoff=None,
+                                update_peak_range=False,
+                                use_roi_bck=False,
+                                force_peak_roi=False, peak_roi=[175, 194],
+                                force_bck_roi=False, bck_roi=[50, 100],
+                                use_tight_bck=False, bck_offset=10)
+    red.reduce()
   except:
     logging.warning(sys.exc_value)
     logging.warning("Could not reduce with Mantid")
