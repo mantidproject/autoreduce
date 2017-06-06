@@ -7,6 +7,7 @@ from base import engine, session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import inspect
 from orm_mapping import *
+import traceback
 
 # Set up logging and attach the logging to the right part of the config.
 logging.config.dictConfig(LOGGING)
@@ -14,14 +15,17 @@ logger = logging.getLogger("queue_processor")
 
 class Listener(object):
     def __init__(self, client):
+        logger.info("INIT")
         self._client = client
         self._data_dict = {}
         self._priority = ''
 
     def on_error(self, headers, message):
+        logger.info("ON ERROR")
         logger.error("Error recieved - %s" % str(message))
 
     def on_message(self, headers, message):
+        logger.info("ON MESSAGE")
         destination = headers["destination"]
         self._priority = headers["priority"]
         logger.info("Dest: %s Prior: %s" % (destination, self._priority))
@@ -45,16 +49,29 @@ class Listener(object):
                 logger.warning("Recieved a message on an unknown topic '%s'" % destination)
         except Exception as e:
             logger.error("UNCAUGHT ERROR: %s - %s" % (type(e).__name__, str(e)))
+            logger.error(traceback.format_exc())
 
     def data_ready(self):
+        logger.info("DATA READY")
+        session.rollback()
         from process_utils import InstrumentVariablesUtils
         
         run_no = str(self._data_dict['run_number'])
         instrument_name = str(self._data_dict['instrument'])
         logger.info("Data ready for processing run %s on %s" % (run_no, instrument_name))
-        
+
         # Check if the instrument is active or not in the MySQL database
         instrument = session.query(Instrument).filter_by(name=instrument_name).first()
+
+        # Add the instrument if it doesn't exist
+        if not instrument:
+            instrument = Instrument(name=instrument_name,
+                                    is_active=1,
+                                    is_paused=0
+                                    )
+            session.add(instrument)
+            session.commit()
+            instrument = session.query(Instrument).filter_by(name=instrument_name).first()
         
         # Activate the instrument if it is currently set to inactive
         if not instrument.is_active:
@@ -81,6 +98,7 @@ class Listener(object):
             new_exp = Experiment(reference_number=run_no)
             session.add(new_exp)
             session.commit()
+        experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
         
         # TODO: Send to error if script text = null!
         script_text = InstrumentVariablesUtils().get_current_script_text(instrument.name)[0]
@@ -129,6 +147,7 @@ class Listener(object):
             logger.info("Run %s ready for reduction" % self._data_dict['run_number'])
 
     def reduction_started(self):
+        logger.info("REDUCTION STARTED")
         logger.info("Run %s has started reduction" % self._data_dict['run_number'])
         
         reduction_run = self.find_run()
@@ -145,6 +164,7 @@ class Listener(object):
 
             
     def reduction_complete(self):
+        logger.info("REDUCTION COMPLETE")
         try:
             logger.info("Run %s has completed reduction" % self._data_dict['run_number'])
             
@@ -187,6 +207,7 @@ class Listener(object):
                     
 
     def reduction_error(self):
+        logger.info("REDUCTION ERROR")
         if 'message' in self._data_dict:
             logger.info("Run %s has encountered an error - %s" % (self._data_dict['run_number'], self._data_dict['message']))
         else:
@@ -211,16 +232,18 @@ class Listener(object):
         
         
     def find_run(self):
-        experiment = Experiment.objects.filter(reference_number=self._data_dict['rb_number']).first()
+        logger.info("FIND RUN")
+        experiment = session.query(Experiment).filter_by(reference_number=self._data_dict['rb_number']).first()
         if not experiment:
             logger.error("Unable to find experiment %s" % self._data_dict['rb_number'])
             return None
-
-        reduction_run = ReductionRun.objects.get(experiment=experiment, run_number=int(self._data_dict['run_number']), run_version=int(self._data_dict['run_version']))
+        
+        reduction_run = session.query(ReductionRun).filter_by(experiment=experiment, run_number=int(self._data_dict['run_number']), run_version=int(self._data_dict['run_version'])).first()
         return reduction_run
-        
-        
+
+
     def notifyRunFailure(self, reductionRun):
+        logger.info("NOTIFY RUN FAILURE")
         recipients = EMAIL_ERROR_RECIPIENTS
         localRecipients = filter(lambda addr: addr.split('@')[-1] == BASE_URL, recipients) # this does not parse esoteric (but RFC-compliant) email addresses correctly
         if localRecipients: # don't send local emails
@@ -246,6 +269,7 @@ class Listener(object):
         
         
     def retryRun(self, reductionRun, retryIn):
+        logger.info("RETRY RUN")
     
         if (reductionRun.cancel):
             logger.info("Cancelling run retry")
@@ -329,6 +353,7 @@ class Client(object):
 
 
 def main():
+    logger.info("MAIN")
     client = Client(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Autoreduction_QueueProcessor', False, ACTIVEMQ['SSL'])
     client.connect()
     return client

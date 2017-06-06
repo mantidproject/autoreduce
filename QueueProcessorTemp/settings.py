@@ -3,13 +3,13 @@ import os
 
 MYSQL = {
     'HOST' : 'reducedev2.isis.cclrc.ac.uk',
-    'USER' : 'autoreduce',
-    'PASSWD' : 'activedev',
+    'USER' : 'xx',
+    'PASSWD' : 'xx',
     'DB' : 'autoreduction'
 }
 
 # Logging
-LOG_FILE = '/home/tip22963/autoreduction.log'
+LOG_FILE = '\\Users\\tip22963\\Documents\\TomStuff\\autoreduction.log'
 DEBUG = False
 
 if DEBUG:
@@ -69,8 +69,8 @@ ACTIVEMQ = {
 ICAT = {
     'AUTH' : 'simple',
     'URL' : 'https://icatisis.esc.rl.ac.uk/ICATService/ICAT?wsdl',
-    'USER' : 'autoreduce',
-    'PASSWORD' : '2LzZWdds^QENuBw'
+    'USER' : 'xx',
+    'PASSWORD' : 'xx'
 }
 
 # Directory Locations
