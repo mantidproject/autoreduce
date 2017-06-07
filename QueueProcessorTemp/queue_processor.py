@@ -13,6 +13,7 @@ import traceback
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
 
+
 class Listener(object):
     def __init__(self, client):
         logger.info("INIT")
@@ -22,7 +23,7 @@ class Listener(object):
 
     def on_error(self, headers, message):
         logger.info("ON ERROR")
-        logger.error("Error recieved - %s" % str(message))
+        logger.error("Error received - %s" % str(message))
 
     def on_message(self, headers, message):
         logger.info("ON MESSAGE")
@@ -52,12 +53,14 @@ class Listener(object):
             logger.error(traceback.format_exc())
 
     def data_ready(self):
-        logger.info("DATA READY")
+        # Rollback the session to avoid getting caught in a loop where we have uncommitted changes causing problems
         session.rollback()
         from process_utils import InstrumentVariablesUtils
-        
+
+        # Strip information from the JSON file (_data_dict)
         run_no = str(self._data_dict['run_number'])
         instrument_name = str(self._data_dict['instrument'])
+
         logger.info("Data ready for processing run %s on %s" % (run_no, instrument_name))
 
         # Check if the instrument is active or not in the MySQL database
@@ -81,30 +84,35 @@ class Listener(object):
         # If the instrument is paused, we need to find the 'Skipped' status
         if instrument.is_paused:
             status = session.query(StatusID).filter_by(value='Skipped').first()
+
         # Else we need to find the 'Queued' status number
         else:
             status = session.query(StatusID).filter_by(value='Queued').first()
-        
+
+        # If there has already been an autoreduction job for this run, we need to know it so we can increase the version
+        # by 1 for this job. However, if not then we will set it to -1 which will be incremented to 0
         last_run = session.query(ReductionRun).filter_by(run_number=run_no).order_by('-run_version').first()
-                
         if last_run is not None:
             highest_version = last_run.run_version
         else:
             highest_version = -1
-        
+        run_version = highest_version + 1
+
         # Search for the experiment, if it doesn't exist then add it
         experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
-        if experiment == None:
+        if experiment is None:
             new_exp = Experiment(reference_number=run_no)
             session.add(new_exp)
             session.commit()
-        experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
-        
-        # TODO: Send to error if script text = null!
+            experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
+
+        # Get the script text for the current instrument. If the script text is null then send to error queue
         script_text = InstrumentVariablesUtils().get_current_script_text(instrument.name)[0]
-        run_version = highest_version + 1
+        if script_text is None:
+            self.reduction_error()
+            return
         
-        # Make the new reduction run and add it into the database
+        # Make the new reduction run with the information collected so far and add it into the database
         reduction_run = ReductionRun( run_number=self._data_dict['run_number']
                                     , run_version=run_version
                                     , run_name=''
@@ -120,16 +128,19 @@ class Listener(object):
                                     , status_id=status.id
                                     , script=script_text
                                     )
-                                    
         session.add(reduction_run)
         session.commit()
-        
+
+        # Set our run_version to be the one we have just calculated
         self._data_dict['run_version'] = reduction_run.run_version
-        
+
+        # Create a new data location entry which has a foreign key linking it to the current reduction run. The file
+        # path itself will point to a datafile (e.g. "\isis\inst$\NDXWISH\Instrument\data\cycle_17_1\WISH00038774.nxs")
         data_location = DataLocation(file_path=self._data_dict['data'], reduction_run_id=reduction_run.id)
         session.add(data_location)
         session.commit()
-        
+
+        # We now need to create all of the variables for the run such that the script can run through in the desired way
         logger.info('Creating variables for run')
         variables = InstrumentVariablesUtils().create_variables_for_run(reduction_run)
         if not variables:

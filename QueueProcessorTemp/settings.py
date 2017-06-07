@@ -9,7 +9,7 @@ MYSQL = {
 }
 
 # Logging
-LOG_FILE = '\\Users\\tip22963\\Documents\\TomStuff\\autoreduction.log'
+LOG_FILE = '/home/tip22963/queue_processor_daemon_log/autoreduction.log'
 DEBUG = False
 
 if DEBUG:
@@ -59,8 +59,8 @@ ACTIVEMQ = {
         '/queue/ReductionComplete',
         '/queue/ReductionError'
         ],
-    'username' : 'autoreduce',
-    'password' : 'activedev',
+    'username' : 'xx',
+    'password' : 'xx',
     'broker' : [("autoreducedev2.isis.cclrc.ac.uk", 61613)],
     'SSL' : False
 }

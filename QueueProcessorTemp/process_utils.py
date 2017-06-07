@@ -8,6 +8,10 @@ from sqlalchemy.orm import sessionmaker
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
 
+
+class DataTooLong(ValueError):
+    pass
+
 def log_error_and_notify(message):
     """
     Helper method to log an error and save a notifcation
@@ -30,7 +34,17 @@ class InstrumentUtils(object):
             logger.warn("%s instrument was not found, created it." % instrument_name)
         return instrument
 
+
 class VariableUtils(object):
+    def derive_run_variable(self, instrument_var, reduction_run):
+        return RunJoin(name=instrument_var.name,
+                           value=instrument_var.value,
+                           is_advanced=instrument_var.is_advanced,
+                           type=instrument_var.type,
+                           help_text=instrument_var.help_text,
+                           reduction_run=reduction_run,
+                           )
+
     def save_run_variables(self, instrument_vars, reduction_run):
         logger.info('Saving run variables for ' + str(reduction_run.run_number))
         runVariables = map(lambda iVar: self.derive_run_variable(iVar, reduction_run), instrument_vars)
@@ -39,16 +53,16 @@ class VariableUtils(object):
     
     def copy_variable(self, variable):
         """ Return a temporary copy (unsaved) of the variable, which can be modified and then saved without modifying the original. """
-        return InstrumentVariable( name = variable.name
-                                 , value = variable.value
-                                 , is_advanced = variable.is_advanced
-                                 , type = variable.type
-                                 , help_text = variable.help_text
-                                 , instrument = variable.instrument
-                                 , experiment_reference = variable.experiment_reference
-                                 , start_run = variable.start_run
-                                 , tracks_script = variable.tracks_script
-                                 )
+        return InstrumentVariable(name = variable.name,
+                                  value = variable.value,
+                                  is_advanced = variable.is_advanced,
+                                  type = variable.type,
+                                  help_text = variable.help_text,
+                                  instrument = variable.instrument,
+                                  experiment_reference = variable.experiment_reference,
+                                  start_run = variable.start_run,
+                                  tracks_script = variable.tracks_script,
+                                  )
     
     def get_type_string(self, value):
         """
@@ -71,26 +85,37 @@ class VariableUtils(object):
             return "list_" + list_type
         return "text"
 
+
 class InstrumentVariablesUtils():
     def show_variables_for_run(self, instrument_name, run_number=None):
         """
-        Look for the applicable variables for the given run number. If none are set, return an empty list (or QuerySet) anyway.
-        If run_number isn't given, we'll look for variables for the last run number.
+        Look for the applicable variables for the given run number. If none are set, return an empty list (or QuerySet)
+        anyway.
         """
         instrument = InstrumentUtils().get_instrument(instrument_name)
-        
-        # Find the run number of the latest set of variables that apply to this run; descending order, so the first will be the most recent run number.
-        if run_number:
-            applicable_variables = session.query(InstrumentVariable).filter_by(instrument=instrument, start_run=run_number).order_by('-start_run').all()
-        else:
-            applicable_variables = session.query(InstrumentVariable).filter_by(instrument=instrument).order_by('-start_run').all()
 
-        if len(applicable_variables) != 0:
-            variable_run_number = applicable_variables[0].start_run
-            # Select all variables with that run number.
-            vars = (session.query(InstrumentVariable).filter_by(instrument=instrument, start_run=variable_run_number)).all()
-            self._update_variables(vars)
-            return [VariableUtils().copy_variable(var) for var in vars]
+        # If we haven't been given a run number, we should try to find it.
+        if not run_number:
+            applicable_variables = session.query(InstrumentVariable).filter_by(instrument=instrument)\
+                                                                    .order_by('-start_run').all()
+            if len(applicable_variables) != 0:
+                variable_run_number = applicable_variables[0].start_run
+        else:
+            variable_run_number = run_number
+
+        # Now use the InstrumentJoin class (which is a join of the InstrumentVariable and Variable tables) to make sure
+        # we can make a copy of all the relevant variables with all of the right information.
+        variables = (session.query(InstrumentJoin).filter_by(instrument=instrument,
+                                                             start_run=variable_run_number)).all()
+
+        # If we have found some variables then we want to use them by first making copies of them and sending them back
+        # to be used. This means we don't alter the previous set of variables. If we haven't found any variables, just
+        # return an empty list.
+        if len(variables) != 0:
+            logger.info(len(variables))
+            logger.info(variables[0].name)
+            self._update_variables(variables)
+            return [VariableUtils().copy_variable(variables) for variable in variables]
         else:
             return []
     
@@ -98,6 +123,7 @@ class InstrumentVariablesUtils():
         variables = []
         for key, value in variable_dict.iteritems():
             str_value = str(value).replace('[','').replace(']','')
+            logger.info(str_value)
             max_value = Variable.value.property.columns[0].type.length
             if len(str_value) > max_value:
                 raise DataTooLong
@@ -226,7 +252,7 @@ class InstrumentVariablesUtils():
         for key, value in variable_dict.iteritems():
             str_value = str(value).replace('[','').replace(']','')
             max_value = Variable.value.property.columns[0].type.length
-            if len(str_value) > max_value:
+            if len(str_value) > 300:
                 raise DataTooLong
             
             variable = Variable(name=key,
@@ -279,7 +305,7 @@ class InstrumentVariablesUtils():
         
     def create_variables_for_run(self, reduction_run):
         """
-        Finds the appropriate `InstrumentVariable`s for the given reduction run, and creates `RunVariable`s from them.
+        Finds the appropriate InstrumentVariables for the given reduction run, and creates RunVariables from them.
         If the run is a re-run, use the previous run's variables.
         If instrument variables set for the run's experiment are found, they're used.
         Otherwise if variables set for the run's run number exist, they'll be used.
@@ -288,7 +314,8 @@ class InstrumentVariablesUtils():
         instrument_name = reduction_run.instrument.name
         
         variables = []
-        
+
+        # TODO: Probably need to remove this as I don't think we ever set the experiment ref anyway. Look into it.
         if not variables:
             logger.info('Finding variables from experiment')
             # No previous run versions. Find the instrument variables we want to use.
