@@ -146,7 +146,7 @@ class Listener(object):
         if not variables:
             logger.warning("No instrument variables found on %s for run %s" % (instrument.name, self._data_dict['run_number']))
         
-        logger.info('getting script and arguments')
+        logger.info('Getting script and arguments')
         reduction_script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
         self._data_dict['reduction_script'] = reduction_script
         self._data_dict['reduction_arguments'] = arguments

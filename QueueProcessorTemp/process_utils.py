@@ -38,17 +38,19 @@ class InstrumentUtils(object):
 class VariableUtils(object):
     def derive_run_variable(self, instrument_var, reduction_run):
         return RunJoin(name=instrument_var.name,
-                           value=instrument_var.value,
-                           is_advanced=instrument_var.is_advanced,
-                           type=instrument_var.type,
-                           help_text=instrument_var.help_text,
-                           reduction_run=reduction_run,
-                           )
+                       value=instrument_var.value,
+                       is_advanced=instrument_var.is_advanced,
+                       type=instrument_var.type,
+                       help_text=instrument_var.help_text,
+                       reduction_run=reduction_run,
+                       )
 
     def save_run_variables(self, instrument_vars, reduction_run):
         logger.info('Saving run variables for ' + str(reduction_run.run_number))
         runVariables = map(lambda iVar: self.derive_run_variable(iVar, reduction_run), instrument_vars)
-        map(lambda rVar: rVar.save(), runVariables)
+        for run_variable in runVariables:
+            session.add(run_variable)
+        session.commit()
         return runVariables
     
     def copy_variable(self, variable):
@@ -165,6 +167,15 @@ class InstrumentVariablesUtils():
             
         for var in variables:
             var.tracks_script = True
+
+        applicable_variables = session.query(InstrumentVariable).filter_by(instrument=instrument) \
+            .order_by('-start_run').all()
+        variable_run_number = applicable_variables[0].start_run
+
+        # Now use the InstrumentJoin class (which is a join of the InstrumentVariable and Variable tables) to make sure
+        # we can make a copy of all the relevant variables with all of the right information.
+        variables = (session.query(InstrumentJoin).filter_by(instrument=instrument,
+                                                             start_run=variable_run_number)).all()
         
         return variables
     
@@ -332,7 +343,7 @@ class InstrumentVariablesUtils():
             variables = self.get_default_variables(instrument_name)
             logger.info('Setting the variables for the run')
             self.set_variables_for_runs(instrument_name, variables, reduction_run.run_number)
-        
+
         logger.info('Saving the found variables')
         # Create run variables from these instrument variables, and return them.
         return VariableUtils().save_run_variables(variables, reduction_run)

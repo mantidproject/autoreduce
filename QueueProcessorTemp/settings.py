@@ -3,8 +3,8 @@ import os
 
 MYSQL = {
     'HOST' : 'reducedev2.isis.cclrc.ac.uk',
-    'USER' : 'xx',
-    'PASSWD' : 'xx',
+    'USER' : 'autoreduce',
+    'PASSWD' : 'activedev',
     'DB' : 'autoreduction'
 }
 
@@ -59,8 +59,8 @@ ACTIVEMQ = {
         '/queue/ReductionComplete',
         '/queue/ReductionError'
         ],
-    'username' : 'xx',
-    'password' : 'xx',
+    'username' : 'autoreduce',
+    'password' : 'activedev',
     'broker' : [("autoreducedev2.isis.cclrc.ac.uk", 61613)],
     'SSL' : False
 }
@@ -69,8 +69,8 @@ ACTIVEMQ = {
 ICAT = {
     'AUTH' : 'simple',
     'URL' : 'https://icatisis.esc.rl.ac.uk/ICATService/ICAT?wsdl',
-    'USER' : 'xx',
-    'PASSWORD' : 'xx'
+    'USER' : 'autoreduce',
+    'PASSWORD' : '2LzZWdds^QENuBw'
 }
 
 # Directory Locations

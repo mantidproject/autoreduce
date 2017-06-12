@@ -9,11 +9,14 @@ class Instrument(Base):
 class Experiment(Base):
     __table__ = Table('reduction_viewer_experiment', metadata, autoload=True, autoload_with=engine)
 
+class StatusID(Base):
+    __table__ = Table('reduction_viewer_status', metadata, autoload=True, autoload_with=engine)
+
 class ReductionRun(Base):
     __table__ = Table('reduction_viewer_reductionrun', metadata, autoload=True, autoload_with=engine)
     instrument = relationship('Instrument', foreign_keys='ReductionRun.instrument_id')
     experiment = relationship('Experiment', foreign_keys='ReductionRun.experiment_id')
-    status = relationship('Status', foreign_keys='ReductionRun.status_id')
+    status = relationship('StatusID', foreign_keys='ReductionRun.status_id')
 
 variable_table = Table('reduction_variables_variable', metadata,
                            Column('id', Integer, primary_key=True),
@@ -51,14 +54,11 @@ class RunJoin(Base):
                                       Column('reduction_run_id', Integer, ForeignKey('reduction_viewer_reductionrun.id'))
                                       )
 
-    instrument_variable_join = join(variable_table, reduction_variable_table)
+    reduction_variable_join = join(variable_table, reduction_variable_table)
 
-    __table__ = instrument_variable_join
+    __table__ = reduction_variable_join
     id = column_property(variable_table.c.id, reduction_variable_table.c.variable_ptr_id)
-    instrument = relationship('ReductionRun', foreign_keys='RunJoin.reduction_run_id')
-
-class StatusID(Base):
-    __table__ = Table('reduction_viewer_status', metadata, autoload=True, autoload_with=engine)
+    reduction_run = relationship('ReductionRun', foreign_keys='RunJoin.reduction_run_id')
 
 class Variable(Base):
     __table__ = Table('reduction_variables_variable', metadata, autoload=True, autoload_with=engine)
@@ -70,8 +70,8 @@ class InstrumentVariable(Base):
 
 class RunVariable(Base):
     __table__ = Table('reduction_variables_runvariable', metadata, autoload=True, autoload_with=engine)
+    variable = relationship('Variable', foreign_keys='RunVariable.variable_ptr_id')
     reduction_run = relationship('ReductionRun', foreign_keys='RunVariable.reduction_run_id')
-    variable = relationship('Variable', foreign_keys='InstrumentVariable.variable_ptr_id')
 
 class DataLocation(Base):
     __table__ = Table('reduction_viewer_datalocation', metadata, autoload=True, autoload_with=engine)
