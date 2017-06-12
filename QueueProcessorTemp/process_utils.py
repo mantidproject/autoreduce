@@ -1,4 +1,4 @@
-import os, io, logging, logging.config, chardet, imp, cgi
+import os, io, logging, logging.config, chardet, imp, cgi, datetime, re
 from settings import REDUCTION_DIRECTORY, LOGGING
 from orm_mapping import *
 from base import engine, session
@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 # Set up logging and attach the logging to the right part of the config.
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
-
 
 class DataTooLong(ValueError):
     pass
@@ -20,6 +19,116 @@ def log_error_and_notify(message):
     notification = Notification(is_active=True, is_staff_only=True, severity='e', message=message)
     session.add(notification)
     session.commit()
+
+
+class ReductionRunUtils(object):
+    def cancelRun(self, reductionRun):
+        """
+        Try to cancel the run given, or the run that was scheduled as the next retry of the run. When we cancel, we send a message to the backend queue processor, telling it to ignore this run if it arrives (most likely through a delayed message through ActiveMQ's scheduler). We also set statuses and error messages. If we can't do any of the above, we set the variable (retry_run.cancel) that tells the frontend to not schedule another retry if the next run fails.
+        """
+
+        def setCancelled(run):
+            run.message = "Run cancelled by user"
+            run.status = StatusUtils().get_error()
+            run.finished = datetime.datetime.now()
+            run.retry_when = None
+            run.save()
+
+        if reductionRun.status == StatusUtils().get_queued():  # this is the queued run, send the message to queueProcessor to cancel it
+            MessagingUtils().send_cancel(reductionRun)
+            setCancelled(reductionRun)
+
+        # otherwise this run has already failed, and we're looking at a scheduled rerun of it
+        elif not reductionRun.retry_run:  # we don't actually have a rerun, so just ensure the retry time is set to "Never" (None)
+            reductionRun.retry_when = None
+
+        elif reductionRun.retry_run.status == StatusUtils().get_queued():  # this run is being queued to retry, so send the message to queueProcessor to cancel it, and set it as cancelled
+            MessagingUtils().send_cancel(reductionRun.retry_run)
+            setCancelled(reductionRun.retry_run)
+
+        elif reductionRun.retry_run.status == StatusUtils().get_processing():  # we have a run that's retrying, so just make sure it doesn't retry next time
+            reductionRun.cancel = True
+            reductionRun.retry_run.cancel = True
+
+        else:  # the retry run already completed, so do nothing
+            pass
+
+        # save the run states we modified
+        reductionRun.save()
+        if reductionRun.retry_run:
+            reductionRun.retry_run.save()
+
+    def createRetryRun(self, reductionRun, script=None, variables=None, delay=0, username=None):
+        """
+        Create a run ready for re-running based on the run provided.
+        If variables (RunVariable) are provided, copy them and associate them with the new one, otherwise use the previous run's.
+        If a script (as a string) is supplied then use it, otherwise use the previous run's.
+        """
+        # find the previous run version, so we don't create a duplicate
+        last_version = -1
+        for run in ReductionRun.objects.filter(experiment=reductionRun.experiment, run_number=reductionRun.run_number):
+            last_version = max(last_version, run.run_version)
+
+        try:
+            # get the script to use:
+            script_text = script if script is not None else reductionRun.script
+
+            # create the run object and save it
+            new_job = ReductionRun(instrument=reductionRun.instrument
+                                   , run_number=reductionRun.run_number
+                                   , run_name=""
+                                   , run_version=last_version + 1
+                                   , experiment=reductionRun.experiment
+                                   , started_by=username
+                                   , status=StatusUtils().get_queued()
+                                   , script=script_text
+                                   )
+            new_job.save()
+
+            reductionRun.retry_run = new_job
+            reductionRun.retry_when = datetime.datetime.now() + datetime.timedelta(
+                seconds=delay if delay else 0)
+            reductionRun.save()
+
+            # copy the previous data locations
+            for data_location in reductionRun.data_location.all():
+                new_data_location = DataLocation(file_path=data_location.file_path, reduction_run=new_job)
+                new_data_location.save()
+                new_job.data_location.add(new_data_location)
+
+            if variables is not None:
+                # associate the variables with the new run
+                for var in variables:
+                    var.reduction_run = new_job
+                    var.save()
+            else:
+                # provide variables if they aren't already
+                InstrumentVariablesUtils().create_variables_for_run(new_job)
+
+            return new_job
+
+        except:
+            new_job.delete()
+            raise
+
+    def get_script_and_arguments(self, reductionRun):
+        """
+        Fetch the reduction script from the given run and return it as a string, along with a dictionary of arguments.
+        """
+        script = reductionRun.script
+        run_variables = (session.query(RunJoin).filter_by(reduction_run=reductionRun)).all()
+
+        standard_vars, advanced_vars = {}, {}
+        for variables in run_variables:
+            value = VariableUtils().convert_variable_to_type(variables.value, variables.type)
+            if variables.is_advanced:
+                advanced_vars[variables.name] = value
+            else:
+                standard_vars[variables.name] = value
+
+        arguments = {'standard_vars': standard_vars, 'advanced_vars': advanced_vars}
+
+        return (script, arguments)
 
 class InstrumentUtils(object):
     def get_instrument(self, instrument_name):
@@ -55,16 +164,16 @@ class VariableUtils(object):
     
     def copy_variable(self, variable):
         """ Return a temporary copy (unsaved) of the variable, which can be modified and then saved without modifying the original. """
-        return InstrumentVariable(name = variable.name,
-                                  value = variable.value,
-                                  is_advanced = variable.is_advanced,
-                                  type = variable.type,
-                                  help_text = variable.help_text,
-                                  instrument = variable.instrument,
-                                  experiment_reference = variable.experiment_reference,
-                                  start_run = variable.start_run,
-                                  tracks_script = variable.tracks_script,
-                                  )
+        return InstrumentJoin (name = variable.name,
+                               value = variable.value,
+                               is_advanced = variable.is_advanced,
+                               type = variable.type,
+                               help_text = variable.help_text,
+                               instrument = variable.instrument,
+                               experiment_reference = variable.experiment_reference,
+                               start_run = variable.start_run,
+                               tracks_script = variable.tracks_script,
+                               )
     
     def get_type_string(self, value):
         """
@@ -86,6 +195,43 @@ class VariableUtils(object):
                     list_type = "text"
             return "list_" + list_type
         return "text"
+
+    def convert_variable_to_type(self, value, var_type):
+        """
+        Convert the given value a type matching that of var_type.
+        Options for var_type: text, number, list_text, list_number, boolean
+        If the var_type isn't recognised, the value is returned unchanged
+        """
+        if var_type == "text":
+            return str(value)
+        if var_type == "number":
+            if not value or not re.match('(-)?[0-9]+', str(value)):
+                return None
+            if '.' in str(value):
+                return float(value)
+            else:
+                return int(re.sub("[^0-9]+", "", str(value)))
+        if var_type == "list_text":
+            var_list = str(value).split(',')
+            list_text = []
+            for list_val in var_list:
+                item = list_val.strip().strip("'")
+                if item:
+                    list_text.append(item)
+            return list_text
+        if var_type == "list_number":
+            var_list = value.split(',')
+            list_number = []
+            for list_val in var_list:
+                if list_val:
+                    if '.' in str(list_val):
+                        list_number.append(float(list_val))
+                    else:
+                        list_number.append(int(list_val))
+            return list_number
+        if var_type == "boolean":
+            return value.lower() == 'true'
+        return value
 
 
 class InstrumentVariablesUtils():
@@ -117,7 +263,12 @@ class InstrumentVariablesUtils():
             logger.info(len(variables))
             logger.info(variables[0].name)
             self._update_variables(variables)
-            return [VariableUtils().copy_variable(variables) for variable in variables]
+            for variable in variables:
+                logger.info(variable.name)
+            new_variables = []
+            for variable in variables:
+                new_variables.append(VariableUtils().copy_variable(variable))
+            return new_variables
         else:
             return []
     
@@ -196,10 +347,10 @@ class InstrumentVariablesUtils():
         # Update the existing variables
         def updateVariable(oldVar):
             oldVar.keep = True
-            matchingVars = filter(lambda var: var.variable.name == oldVar.variable.name, defaults) # Find the new variable from the script.
+            matchingVars = filter(lambda var: var.name == oldVar.name, defaults) # Find the new variable from the script.
             if matchingVars and oldVar.tracks_script: # Check whether we should and can update the old one.
                 newVar = matchingVars[0]
-                map(lambda name: setattr(oldVar.variable, name, getattr(newVar.variable, name)),
+                map(lambda name: setattr(oldVar, name, getattr(newVar, name)),
                     ["value", "type", "is_advanced", "help_text"]) # Copy the new one's important attributes onto the old variable.
                 if save: 
                     session.add(oldVar)
@@ -214,8 +365,8 @@ class InstrumentVariablesUtils():
         variables[:] = [var for var in variables if var.keep]
 
         # Add any new ones
-        current_names = [var.variable.name for var in variables]
-        new_vars = [var for var in defaults if var.variable.name not in current_names]
+        current_names = [var.name for var in variables]
+        new_vars = [var for var in defaults if var.name not in current_names]
 
         def copyMetadata(newVar):
             sourceVar = variables[0]
@@ -418,3 +569,80 @@ class InstrumentVariablesUtils():
         help_text = cgi.escape(help_text)  # Remove any HTML already in the help string
         help_text = help_text.replace('\n', '<br>').replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
         return help_text
+
+class MessagingUtils(object):
+    def send_pending(self, reduction_run, delay=None):
+        """ Sends a message to the queue with the details of the job to run. """
+        data_dict = self._make_pending_msg(reduction_run)
+        self._send_pending_msg(data_dict, delay)
+
+    def send_cancel(self, reduction_run):
+        """ Sends a message to the queue telling it to cancel any reruns of the job. """
+        data_dict = self._make_pending_msg(reduction_run)
+        data_dict["cancel"] = True
+        self._send_pending_msg(data_dict)
+
+    def _make_pending_msg(self, reduction_run):
+        """ Creates a dict message from the given run, ready to be sent to ReductionPending. """
+        script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
+
+        data_path = ''
+        # Currently only support single location
+        data_location = reduction_run.data_location.first()
+        if data_location:
+            data_path = data_location.file_path
+        else:
+            raise Exception("No data path found for reduction run")
+
+        data_dict = {
+            'run_number':reduction_run.run_number,
+            'instrument':reduction_run.instrument.name,
+            'rb_number':str(reduction_run.experiment.reference_number),
+            'data':data_path,
+            'reduction_script':script,
+            'reduction_arguments':arguments,
+            'run_version':reduction_run.run_version,
+            'facility':FACILITY,
+            'message':'',
+        }
+
+        return data_dict
+
+    def _send_pending_msg(self, data_dict, delay=None):
+        """ Sends data_dict to ReductionPending (with the specified delay) """
+        from queue_processor import Client as ActiveMQClient # to prevent circular dependencies
+
+        message_client = ActiveMQClient(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Webapp_QueueProcessor', False, ACTIVEMQ['SSL'])
+        message_client.connect()
+        message_client.send('/queue/ReductionPending', json.dumps(data_dict), priority='0', delay=delay)
+        message_client.stop()
+
+
+class StatusUtils(object):
+    def _get_status(self, status_value):
+        """
+        Helper method that will try to get a status matching the given name or create one if it doesn't yet exist
+        """
+        status = session.query(Status).filter_by(value=status_value)[0]
+        if status is None:
+            new_status = Status(value=status_value)
+            session.add(new_status)
+            session.commit()
+            status = session.query(InstrumentVariable).filter_by(value=status_value)[0]
+            logger.warn("%s status was not found, created it." % status_value)
+        return status
+
+    def get_error(self):
+        return self._get_status("Error")
+
+    def get_completed(self):
+        return self._get_status("Completed")
+
+    def get_processing(self):
+        return self._get_status("Processing")
+
+    def get_queued(self):
+        return self._get_status("Queued")
+
+    def get_skipped(self):
+        return self._get_status("Skipped")

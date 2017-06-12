@@ -8,6 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import inspect
 from orm_mapping import *
 import traceback
+from process_utils import InstrumentVariablesUtils, ReductionRunUtils, StatusUtils
+from settings import ACTIVEMQ, LOGGING, EMAIL_HOST, EMAIL_PORT, EMAIL_ERROR_RECIPIENTS, EMAIL_ERROR_SENDER, BASE_URL
 
 # Set up logging and attach the logging to the right part of the config.
 logging.config.dictConfig(LOGGING)
@@ -55,11 +57,11 @@ class Listener(object):
     def data_ready(self):
         # Rollback the session to avoid getting caught in a loop where we have uncommitted changes causing problems
         session.rollback()
-        from process_utils import InstrumentVariablesUtils
 
         # Strip information from the JSON file (_data_dict)
         run_no = str(self._data_dict['run_number'])
         instrument_name = str(self._data_dict['instrument'])
+        rb_number = self._data_dict['rb_number']
 
         logger.info("Data ready for processing run %s on %s" % (run_no, instrument_name))
 
@@ -83,11 +85,11 @@ class Listener(object):
         
         # If the instrument is paused, we need to find the 'Skipped' status
         if instrument.is_paused:
-            status = session.query(StatusID).filter_by(value='Skipped').first()
+            status = session.query(Status).filter_by(value='Skipped').first()
 
         # Else we need to find the 'Queued' status number
         else:
-            status = session.query(StatusID).filter_by(value='Queued').first()
+            status = session.query(Status).filter_by(value='Queued').first()
 
         # If there has already been an autoreduction job for this run, we need to know it so we can increase the version
         # by 1 for this job. However, if not then we will set it to -1 which will be incremented to 0
@@ -99,12 +101,12 @@ class Listener(object):
         run_version = highest_version + 1
 
         # Search for the experiment, if it doesn't exist then add it
-        experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
+        experiment = session.query(Experiment).filter_by(reference_number=rb_number).first()
         if experiment is None:
-            new_exp = Experiment(reference_number=run_no)
+            new_exp = Experiment(reference_number=rb_number)
             session.add(new_exp)
             session.commit()
-            experiment = session.query(Experiment).filter_by(reference_number=run_no).first()
+            experiment = session.query(Experiment).filter_by(reference_number=rb_number).first()
 
         # Get the script text for the current instrument. If the script text is null then send to error queue
         script_text = InstrumentVariablesUtils().get_current_script_text(instrument.name)[0]
@@ -203,8 +205,9 @@ class Listener(object):
                                         reduction_run.graph = [encoded_string]
                                     else:
                                         reduction_run.graph.append(encoded_string)
-                    reduction_run.save()
-                    
+                    session.add(reduction_run)
+                    session.commit()
+
                     # Trigger any post-processing, such as saving data to ICAT
                     with ICATCommunication() as icat:
                         icat.post_process(reduction_run)                    
@@ -231,10 +234,11 @@ class Listener(object):
             return
         
         reduction_run.status = StatusUtils().get_error()
-        reduction_run.finished = timezone.now().replace(microsecond=0)
+        reduction_run.finished = datetime.datetime.now()
         for name in ['message', 'reduction_log', 'admin_log']:
             setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.
-        reduction_run.save()
+        session.add(reduction_run)
+        session.commit()
         
         if 'retry_in' in self._data_dict:
             self.retryRun(reduction_run, self._data_dict["retry_in"])
