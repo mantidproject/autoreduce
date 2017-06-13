@@ -79,4 +79,6 @@ class DataLocation(Base):
 class Notification(Base):
     __table__ = Table('reduction_viewer_notification', metadata, autoload=True, autoload_with=engine)
 
-
+class ReductionLocation(Base):
+    __table__ = Table('reduction_viewer_reductionlocation', metadata, autoload=True, autoload_with=engine)
+    reduction_run = relationship('ReductionRun', foreign_keys='ReductionLocation.reduction_run_id')

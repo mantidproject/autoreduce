@@ -15,7 +15,6 @@ from settings import ACTIVEMQ, LOGGING, EMAIL_HOST, EMAIL_PORT, EMAIL_ERROR_RECI
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
 
-
 class Listener(object):
     def __init__(self, client):
         logger.info("INIT")
@@ -133,6 +132,8 @@ class Listener(object):
         session.add(reduction_run)
         session.commit()
 
+        logger.info(reduction_run.status.id)
+
         # Set our run_version to be the one we have just calculated
         self._data_dict['run_version'] = reduction_run.run_version
 
@@ -166,10 +167,11 @@ class Listener(object):
         reduction_run = self.find_run()
         
         if reduction_run:
-            if str(reduction_run.status) == "Error" or str(reduction_run.status) == "Queued":
+            if str(reduction_run.status.value) == "Error" or str(reduction_run.status.value) == "Queued":
                 reduction_run.status = StatusUtils().get_processing()
-                reduction_run.started = timezone.now().replace(microsecond=0)
-                reduction_run.save()
+                reduction_run.started = datetime.datetime.now()
+                session.add(reduction_run)
+                session.commit()
             else:
                 logger.error("An invalid attempt to re-start a reduction run was captured. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
         else:
@@ -186,14 +188,16 @@ class Listener(object):
             if reduction_run:
                 if reduction_run.status.value == "Processing":
                     reduction_run.status = StatusUtils().get_completed()
-                    reduction_run.finished = timezone.now().replace(microsecond=0)
+                    reduction_run.finished = datetime.datetime.now()
                     for name in ['message', 'reduction_log', 'admin_log']:
                         setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.
                     if 'reduction_data' in self._data_dict:
                         for location in self._data_dict['reduction_data']:
-                            reduction_location = ReductionLocation(file_path=location, reduction_run=reduction_run)
-                            reduction_run.reduction_location.add(reduction_location)
-                            reduction_location.save()
+                            reduction_location = ReductionLocation(file_path=location,
+                                                                   reduction_run=reduction_run
+                                                                   )
+                            session.add(reduction_location)
+                            session.commit()
                             
                             # Get any .png files and store them as base64 strings
                             # Currently doesn't check sub-directories
@@ -234,6 +238,7 @@ class Listener(object):
             return
         
         reduction_run.status = StatusUtils().get_error()
+        #TODO : Here, and in other places where datetime is used, need to make sure we are using GMT.
         reduction_run.finished = datetime.datetime.now()
         for name in ['message', 'reduction_log', 'admin_log']:
             setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.

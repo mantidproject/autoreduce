@@ -617,7 +617,6 @@ class MessagingUtils(object):
         message_client.send('/queue/ReductionPending', json.dumps(data_dict), priority='0', delay=delay)
         message_client.stop()
 
-
 class StatusUtils(object):
     def _get_status(self, status_value):
         """

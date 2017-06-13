@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/QueueProcessorTemp.iml" filepath="$PROJECT_DIR$/.idea/QueueProcessorTemp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ISISPostProcessRPM/rpmbuild/autoreduce-mq/usr/bin/.idea/bin.iml" filepath="$PROJECT_DIR$/../ISISPostProcessRPM/rpmbuild/autoreduce-mq/usr/bin/.idea/bin.iml" />
     </modules>
   </component>
 </project>
