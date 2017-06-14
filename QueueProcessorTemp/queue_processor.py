@@ -182,7 +182,6 @@ class Listener(object):
         logger.info("REDUCTION COMPLETE")
         try:
             logger.info("Run %s has completed reduction" % self._data_dict['run_number'])
-            
             reduction_run = self.find_run()
             
             if reduction_run:
@@ -244,7 +243,7 @@ class Listener(object):
             setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.
         session.add(reduction_run)
         session.commit()
-        
+
         if 'retry_in' in self._data_dict:
             self.retryRun(reduction_run, self._data_dict["retry_in"])
             
@@ -252,12 +251,16 @@ class Listener(object):
         
         
     def find_run(self):
+        # Commit before we attempt to find the run. Committing will sync any values that have been added to the database
+        # from the front end (normally retrying runs).
+        session.commit()
         logger.info("FIND RUN")
         experiment = session.query(Experiment).filter_by(reference_number=self._data_dict['rb_number']).first()
         if not experiment:
             logger.error("Unable to find experiment %s" % self._data_dict['rb_number'])
             return None
-        
+
+        logger.info('Finding a run with an experiment ID %s, run number %s and run version %s' % (experiment.id, int(self._data_dict['run_number']), int(self._data_dict['run_version'])))
         reduction_run = session.query(ReductionRun).filter_by(experiment=experiment, run_number=int(self._data_dict['run_number']), run_version=int(self._data_dict['run_version'])).first()
         return reduction_run
 
