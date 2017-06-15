@@ -1,11 +1,12 @@
-import logging
 import os
 
+FACILITY = 'ISIS'
+
 MYSQL = {
-    'HOST' : 'reducedev2.isis.cclrc.ac.uk',
-    'USER' : 'autoreduce',
-    'PASSWD' : 'activedev',
-    'DB' : 'autoreduction'
+    'HOST': 'reducedev2.isis.cclrc.ac.uk',
+    'USER': 'autoreduce',
+    'PASSWD': 'activedev',
+    'DB': 'autoreduction'
 }
 
 # Logging
@@ -22,8 +23,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -39,53 +40,57 @@ LOGGING = {
     },
     'loggers': {
         'queue_processor': {
-            'handlers':['file'],
+            'handlers': ['file'],
             'propagate': True,
-            'level':LOG_LEVEL,
+            'level': LOG_LEVEL,
         },
-        'app' : {
-            'handlers':['file'],
+        'app': {
+            'handlers': ['file'],
             'propagate': True,
-            'level':'DEBUG',
+            'level': 'DEBUG',
         },
     }
 }
 
 # ActiveMQ 
 ACTIVEMQ = {
-    'topics' : [
+    'topics': [
         '/queue/DataReady',
         '/queue/ReductionStarted',
         '/queue/ReductionComplete',
         '/queue/ReductionError'
         ],
-    'username' : 'autoreduce',
-    'password' : 'activedev',
-    'broker' : [("autoreducedev2.isis.cclrc.ac.uk", 61613)],
-    'SSL' : False
+    'username': 'autoreduce',
+    'password': 'activedev',
+    'broker': [("autoreducedev2.isis.cclrc.ac.uk", 61613)],
+    'SSL': False
 }
 
 # ICAT 
 ICAT = {
-    'AUTH' : 'simple',
-    'URL' : 'https://icatisis.esc.rl.ac.uk/ICATService/ICAT?wsdl',
-    'USER' : 'autoreduce',
-    'PASSWORD' : '2LzZWdds^QENuBw'
+    'AUTH': 'simple',
+    'URL': 'https://icatisis.esc.rl.ac.uk/ICATService/ICAT?wsdl',
+    'USER': 'autoreduce',
+    'PASSWORD': '2LzZWdds^QENuBw'
 }
 
 # Directory Locations
 if os.name == 'nt':
-    REDUCTION_DIRECTORY = r'\\isis\inst$\NDX%s\user\scripts\autoreduction' # %(instrument)
-    ARCHIVE_DIRECTORY = r'\\isis\inst$\NDX%s\Instrument\data\cycle_%s\autoreduced\%s\%s' # %(instrument, cycle, experiment_number, run_number)
+    # %(instrument)
+    REDUCTION_DIRECTORY = r'\\isis\inst$\NDX%s\user\scripts\autoreduction'
+    # %(instrument, cycle, experiment_number, run_number)
+    ARCHIVE_DIRECTORY = r'\\isis\inst$\NDX%s\Instrument\data\cycle_%s\autoreduced\%s\%s'
     
     TEST_REDUCTION_DIRECTORY = r'\\reducedev\isis\output\NDX%s\user\scripts\autoreduction'
     TEST_ARCHIVE_DIRECTORY = '\\isis\inst$\NDX%s\Instrument\data\cycle_%s\autoreduced\%s\%s'
 
 else:
-    REDUCTION_DIRECTORY = '/isis/NDX%s/user/scripts/autoreduction' # %(instrument)
-    ARCHIVE_DIRECTORY = '/isis/NDX%s/Instrument/data/cycle_%s/autoreduced/%s/%s' # %(instrument, cycle, experiment_number, run_number)
+    # %(instrument)
+    REDUCTION_DIRECTORY = '/isis/NDX%s/user/scripts/autoreduction'
+    # %(instrument, cycle, experiment_number, run_number)
+    ARCHIVE_DIRECTORY = '/isis/NDX%s/Instrument/data/cycle_%s/autoreduced/%s/%s'
     
-    TEST_REDUCTION_DIRECTORY ='/reducedev/isis/output/NDX%s/user/scripts/autoreduction'
+    TEST_REDUCTION_DIRECTORY = '/reducedev/isis/output/NDX%s/user/scripts/autoreduction'
     TEST_ARCHIVE_DIRECTORY = '/isis/NDX%s/Instrument/data/cycle_%s/autoreduced/%s/%s'
 
 # Email for notifications

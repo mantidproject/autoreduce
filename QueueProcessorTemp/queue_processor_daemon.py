@@ -1,9 +1,10 @@
 #!/usr/bin/env python
  
-import sys, time
+import sys
 from daemon import Daemon
 import queue_processor
- 
+
+
 class QueueProcessorDaemon(Daemon):
     def run(self):
         queue_processor.main()

@@ -1,40 +1,40 @@
-import stomp, logging, logging.config, smtplib, orm_mapping, datetime
-import time, sys, os, json, glob, base64
-from settings import ACTIVEMQ, LOGGING, MYSQL, ICAT, LOG_FILE
-from icat_communication import ICATCommunication
-from mysql_client import MySQL
-from base import engine, session
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import inspect
+import stomp
+import logging.config
+import smtplib
+import datetime
+import time
+import sys
+import json
+import glob
+import base64
+from base import session
 from orm_mapping import *
 import traceback
-from process_utils import InstrumentVariablesUtils, ReductionRunUtils, StatusUtils
+from utils.messaging_utils import MessagingUtils
+from utils.instrument_variable_utils import InstrumentVariablesUtils
+from utils.status_utils import StatusUtils
+from utils.reduction_run_utils import ReductionRunUtils
 from settings import ACTIVEMQ, LOGGING, EMAIL_HOST, EMAIL_PORT, EMAIL_ERROR_RECIPIENTS, EMAIL_ERROR_SENDER, BASE_URL
 
 # Set up logging and attach the logging to the right part of the config.
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("queue_processor")
 
+
 class Listener(object):
     def __init__(self, client):
-        logger.info("INIT")
         self._client = client
         self._data_dict = {}
         self._priority = ''
 
-    def on_error(self, headers, message):
-        logger.info("ON ERROR")
-        logger.error("Error received - %s" % str(message))
-
     def on_message(self, headers, message):
-        logger.info("ON MESSAGE")
         destination = headers["destination"]
         self._priority = headers["priority"]
-        logger.info("Dest: %s Prior: %s" % (destination, self._priority))
+        logger.info("Destination: %s Priority: %s" % (destination, self._priority))
         # Load the JSON message and header into dictionaries
         try:
             self._data_dict = json.loads(message)
-        except:
+        except ValueError:
             logger.error("Could not decode message from %s" % destination)
             logger.error(sys.exc_value)
             return
@@ -114,25 +114,23 @@ class Listener(object):
             return
         
         # Make the new reduction run with the information collected so far and add it into the database
-        reduction_run = ReductionRun( run_number=self._data_dict['run_number']
-                                    , run_version=run_version
-                                    , run_name=''
-                                    , message=''
-                                    , cancel=0
-                                    , hidden_in_failviewer=0
-                                    , admin_log=''
-                                    , reduction_log=''
-                                    , created=datetime.datetime.now()
-                                    , last_updated=datetime.datetime.now()
-                                    , experiment_id=experiment.id
-                                    , instrument_id=instrument.id
-                                    , status_id=status.id
-                                    , script=script_text
-                                    )
+        reduction_run = ReductionRun(run_number=self._data_dict['run_number'],
+                                     run_version=run_version,
+                                     run_name='',
+                                     message='',
+                                     cancel=0,
+                                     hidden_in_failviewer=0,
+                                     admin_log='',
+                                     reduction_log='',
+                                     created=datetime.datetime.now(),
+                                     last_updated=datetime.datetime.now(),
+                                     experiment_id=experiment.id,
+                                     instrument_id=instrument.id,
+                                     status_id=status.id,
+                                     script=script_text
+                                     )
         session.add(reduction_run)
         session.commit()
-
-        logger.info(reduction_run.status.id)
 
         # Set our run_version to be the one we have just calculated
         self._data_dict['run_version'] = reduction_run.run_version
@@ -147,7 +145,8 @@ class Listener(object):
         logger.info('Creating variables for run')
         variables = InstrumentVariablesUtils().create_variables_for_run(reduction_run)
         if not variables:
-            logger.warning("No instrument variables found on %s for run %s" % (instrument.name, self._data_dict['run_number']))
+            logger.warning("No instrument variables found on %s for run %s" %
+                           (instrument.name, self._data_dict['run_number']))
         
         logger.info('Getting script and arguments')
         reduction_script, arguments = ReductionRunUtils().get_script_and_arguments(reduction_run)
@@ -161,7 +160,6 @@ class Listener(object):
             logger.info("Run %s ready for reduction" % self._data_dict['run_number'])
 
     def reduction_started(self):
-        logger.info("REDUCTION STARTED")
         logger.info("Run %s has started reduction" % self._data_dict['run_number'])
         
         reduction_run = self.find_run()
@@ -173,13 +171,17 @@ class Listener(object):
                 session.add(reduction_run)
                 session.commit()
             else:
-                logger.error("An invalid attempt to re-start a reduction run was captured. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
+                logger.error("An invalid attempt to re-start a reduction run was captured. Experiment: %s, "
+                             "Run Number: %s, Run Version %s" % (self._data_dict['rb_number'],
+                                                                 self._data_dict['run_number'],
+                                                                 self._data_dict['run_version'])
+                             )
         else:
-            logger.error("A reduction run started that wasn't found in the database. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
+            logger.error("A reduction run started that wasn't found in the database. Experiment: %s, Run Number: %s, "
+                         "Run Version %s" %
+                         (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
 
-            
     def reduction_complete(self):
-        logger.info("REDUCTION COMPLETE")
         try:
             logger.info("Run %s has completed reduction" % self._data_dict['run_number'])
             reduction_run = self.find_run()
@@ -189,7 +191,7 @@ class Listener(object):
                     reduction_run.status = StatusUtils().get_completed()
                     reduction_run.finished = datetime.datetime.now()
                     for name in ['message', 'reduction_log', 'admin_log']:
-                        setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.
+                        setattr(reduction_run, name, self._data_dict.get(name, ""))
                     if 'reduction_data' in self._data_dict:
                         for location in self._data_dict['reduction_data']:
                             reduction_location = ReductionLocation(file_path=location,
@@ -211,105 +213,136 @@ class Listener(object):
                     session.add(reduction_run)
                     session.commit()
 
-                    # Trigger any post-processing, such as saving data to ICAT
-                    with ICATCommunication() as icat:
-                        icat.post_process(reduction_run)                    
                 else:
-                    logger.error("An invalid attempt to complete a reduction run that wasn't processing has been captured. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
+                    logger.error("An invalid attempt to complete a reduction run that wasn't processing has been "
+                                 "captured. Experiment: %s, Run Number: %s, Run Version %s" %
+                                 (self._data_dict['rb_number'],
+                                  self._data_dict['run_number'],
+                                  self._data_dict['run_version']))
             else:
-                logger.error("A reduction run completed that wasn't found in the database. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
+                logger.error("A reduction run completed that wasn't found in the database. Experiment: %s, Run Number: "
+                             "%s, Run Version %s" %
+                             (self._data_dict['rb_number'],
+                              self._data_dict['run_number'],
+                              self._data_dict['run_version']))
 
         except BaseException as e:
             logger.error("Error: %s" % e)
-                    
 
     def reduction_error(self):
-        logger.info("REDUCTION ERROR")
         if 'message' in self._data_dict:
-            logger.info("Run %s has encountered an error - %s" % (self._data_dict['run_number'], self._data_dict['message']))
+            logger.info("Run %s has encountered an error - %s" % (self._data_dict['run_number'],
+                                                                  self._data_dict['message']))
         else:
-            logger.info("Run %s has encountered an error - No error message was found" % (self._data_dict['run_number']))
+            logger.info("Run %s has encountered an error - No error message was found" %
+                        (self._data_dict['run_number']))
         
         reduction_run = self.find_run()
                     
         if not reduction_run:
-            logger.error("A reduction run that caused an error wasn't found in the database. Experiment: %s, Run Number: %s, Run Version %s" % (self._data_dict['rb_number'], self._data_dict['run_number'], self._data_dict['run_version']))
+            logger.error("A reduction run that caused an error wasn't found in the database. Experiment: %s, "
+                         "Run Number: %s, Run Version %s" %
+                         (self._data_dict['rb_number'],
+                          self._data_dict['run_number'],
+                          self._data_dict['run_version']))
             return
         
         reduction_run.status = StatusUtils().get_error()
-        #TODO : Here, and in other places where datetime is used, need to make sure we are using GMT.
+        #  TODO : Here, and in other places where datetime is used, need to make sure we are using GMT.
         reduction_run.finished = datetime.datetime.now()
         for name in ['message', 'reduction_log', 'admin_log']:
-            setattr(reduction_run, name, self._data_dict.get(name, "")) # reduction_run.message = self._data_dict['message']; etc.
+            setattr(reduction_run, name, self._data_dict.get(name, ""))
         session.add(reduction_run)
         session.commit()
 
         if 'retry_in' in self._data_dict:
-            self.retryRun(reduction_run, self._data_dict["retry_in"])
+            self.retry_run(reduction_run, self._data_dict["retry_in"])
             
-        self.notifyRunFailure(reduction_run)
-        
-        
+        self.notify_run_failure(reduction_run)
+
     def find_run(self):
         # Commit before we attempt to find the run. Committing will sync any values that have been added to the database
         # from the front end (normally retrying runs).
         session.commit()
-        logger.info("FIND RUN")
         experiment = session.query(Experiment).filter_by(reference_number=self._data_dict['rb_number']).first()
         if not experiment:
             logger.error("Unable to find experiment %s" % self._data_dict['rb_number'])
             return None
 
-        logger.info('Finding a run with an experiment ID %s, run number %s and run version %s' % (experiment.id, int(self._data_dict['run_number']), int(self._data_dict['run_version'])))
-        reduction_run = session.query(ReductionRun).filter_by(experiment=experiment, run_number=int(self._data_dict['run_number']), run_version=int(self._data_dict['run_version'])).first()
+        logger.info('Finding a run with an experiment ID %s, run number %s and run version %s' %
+                    (experiment.id,
+                     int(self._data_dict['run_number']),
+                     int(self._data_dict['run_version'])))
+        reduction_run = session.query(ReductionRun).filter_by(experiment=experiment,
+                                                              run_number=int(self._data_dict['run_number']),
+                                                              run_version=int(self._data_dict['run_version'])).first()
         return reduction_run
 
-
-    def notifyRunFailure(self, reductionRun):
-        logger.info("NOTIFY RUN FAILURE")
+    @staticmethod
+    def notify_run_failure(reduction_run):
         recipients = EMAIL_ERROR_RECIPIENTS
-        localRecipients = filter(lambda addr: addr.split('@')[-1] == BASE_URL, recipients) # this does not parse esoteric (but RFC-compliant) email addresses correctly
-        if localRecipients: # don't send local emails
-            raise Exception("Local email address specified in ERROR_EMAILS - %s match %s" % (localRecipients, BASE_URL))
+        #  This does not parse esoteric (but RFC-compliant) email addresses correctly
+        local_recipients = filter(lambda address: address.split('@')[-1] == BASE_URL, recipients)
+        #  Don't send local emails
+        if local_recipients:
+            raise Exception("Local email address specified in ERROR_EMAILS - %s match %s" %
+                            (local_recipients, BASE_URL))
     
-        senderAddress = EMAIL_ERROR_SENDER
+        sender_address = EMAIL_ERROR_SENDER
         
-        errorMsg = "A reduction run - experiment %s, run %s, version %s - has failed:\n%s\n\n" % (reductionRun.experiment.reference_number, reductionRun.run_number, reductionRun.run_version, reductionRun.message)
-        errorMsg += "The run will not retry automatically.\n" if not reductionRun.retry_when else "The run will automatically retry on %s.\n" % reductionRun.retry_when
-        errorMsg += "Retry manually at %s%i/%i/ or on %sruns/failed/." % (BASE_URL, reductionRun.run_number, reductionRun.run_version, BASE_URL)
-        
-        emailContent = "From: %s\nTo: %s\nSubject:Autoreduction error\n\n%s" % (senderAddress, ", ".join(recipients), errorMsg)
+        error_message = "A reduction run - experiment %s, run %s, version %s - has failed:\n%s\n\n" % \
+                        (reduction_run.experiment.reference_number,
+                         reduction_run.run_number,
+                         reduction_run.run_version,
+                         reduction_run.message)
 
-        logger.info("Sending email: %s" % emailContent)
+        if not reduction_run.retry_when:
+            error_message += "The run will not retry automatically.\n"
+        else:
+            error_message += "The run will automatically retry on %s.\n" % reduction_run.retry_when
+
+        error_message += "Retry manually at %s%i/%i/ or on %sruns/failed/." % \
+                         (BASE_URL,
+                          reduction_run.run_number,
+                          reduction_run.run_version,
+                          BASE_URL)
+        
+        email_content = "From: %s\nTo: %s\nSubject:Autoreduction error\n\n%s" % \
+                        (sender_address,
+                         ", ".join(recipients),
+                         error_message)
+
+        logger.info("Sending email: %s" % email_content)
                        
         try:
             s = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
-            s.sendmail(senderAddress, recipients, emailContent)
+            s.sendmail(sender_address, recipients, email_content)
             s.close()
         except Exception as e:
-            logger.error("Failed to send emails %s" % emailContent)
+            logger.error("Failed to send emails %s" % email_content)
             logger.error("Exception %s - %s" % (type(e).__name__, str(e)))
         
-        
-    def retryRun(self, reductionRun, retryIn):
-        logger.info("RETRY RUN")
-    
-        if (reductionRun.cancel):
+    @staticmethod
+    def retry_run(reduction_run, retry_in):
+        if reduction_run.cancel:
             logger.info("Cancelling run retry")
             return
             
-        logger.info("Retrying run in %i seconds" % retryIn)
+        logger.info("Retrying run in %i seconds" % retry_in)
         
-        new_job = ReductionRunUtils().createRetryRun(reductionRun, delay=retryIn)          
+        new_job = ReductionRunUtils().create_retry_run(reduction_run, delay=retry_in)
         try:
-            MessagingUtils().send_pending(new_job, delay=retryIn*1000) # seconds to ms
+            #  Seconds to Milliseconds
+            MessagingUtils().send_pending(new_job, delay=retry_in*1000)
         except Exception as e:
+            logger.error(traceback.format_exc())
             new_job.delete()
             raise e
         
 
 class Client(object):
-    def __init__(self, brokers, user, password, topics=None, consumer_name='QueueProcessor', client_only=True, use_ssl=ACTIVEMQ['SSL']):
+    def __init__(self, brokers, user, password, topics=None, consumer_name='QueueProcessor',
+                 client_only=True, use_ssl=ACTIVEMQ['SSL']):
         self._brokers = brokers
         self._user = user
         self._password = password
@@ -355,7 +388,7 @@ class Client(object):
         if self._connection is not None and self._connection.is_connected():
             self._connection.disconnect()
         self._connection = None
-        logger.info("[%s] Disconnected" % (self._consumer_name))
+        logger.info("[%s] Disconnected" % self._consumer_name)
 
     def stop(self):
         self._disconnect()
@@ -376,8 +409,13 @@ class Client(object):
 
 
 def main():
-    logger.info("MAIN")
-    client = Client(ACTIVEMQ['broker'], ACTIVEMQ['username'], ACTIVEMQ['password'], ACTIVEMQ['topics'], 'Autoreduction_QueueProcessor', False, ACTIVEMQ['SSL'])
+    client = Client(ACTIVEMQ['broker'],
+                    ACTIVEMQ['username'],
+                    ACTIVEMQ['password'],
+                    ACTIVEMQ['topics'],
+                    'Autoreduction_QueueProcessor',
+                    False,
+                    ACTIVEMQ['SSL'])
     client.connect()
     return client
 
