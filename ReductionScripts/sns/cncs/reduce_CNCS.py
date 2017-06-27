@@ -21,7 +21,7 @@ raw_vanadium="/SNS/CNCS/IPTS-17219/6/213317/NeXus/CNCS_213317_event.nxs"
 processed_vanadium="pow_van_213317.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.95"
+Emin="-1.95"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -99,19 +99,19 @@ def preprocessData(filename):
     dictdata={}
     __IWS=LoadEventNexus(filename)
     #this bit is for the ESS detector prototype
-    xmin,xmax=__IWS.readX(0)
-    __tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
-    __tmp=ConvertToPointData(InputWorkspace=__tmp)
-    x=__tmp.readX(0)
-    y=__tmp.extractY()[-1024:,:]    # the last 1024 pixels but all bins
-    try:
-        import h5py
-        output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
-        with h5py.File(output_filename,'w') as hf:
-            hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
-            hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
-    except:
-        pass
+    #xmin,xmax=__IWS.readX(0)
+    #__tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
+    #__tmp=ConvertToPointData(InputWorkspace=__tmp)
+    #x=__tmp.readX(0)
+    #y=__tmp.extractY()[-1024:,:]    # the last 1024 pixels but all bins
+    #try:
+    #    import h5py
+    #    output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
+    #    with h5py.File(output_filename,'w') as hf:
+    #        hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
+    #        hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
+    #except:
+    #    pass
     Ei=__IWS.getRun()['EnergyRequest'].firstValue()
     t0=preprocesst0(Ei,__IWS)
     tibmin,tibmax=preprocessTIB(Ei,__IWS)

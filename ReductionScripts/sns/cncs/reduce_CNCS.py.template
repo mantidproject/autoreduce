@@ -96,19 +96,19 @@ def preprocessData(filename):
     dictdata={}
     __IWS=LoadEventNexus(filename)
     #this bit is for the ESS detector prototype
-    xmin,xmax=__IWS.readX(0)
-    __tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
-    __tmp=ConvertToPointData(InputWorkspace=__tmp)
-    x=__tmp.readX(0)
-    y=__tmp.extractY()[-1024:,:]    # the last 1024 pixels but all bins
-    try:
-        import h5py
-        output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
-        with h5py.File(output_filename,'w') as hf:
-            hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
-            hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
-    except:
-        pass
+    #xmin,xmax=__IWS.readX(0)
+    #__tmp=Rebin(InputWorkspace=__IWS,Params=str(xmin)+',1,'+str(xmax),PreserveEvents=False)
+    #__tmp=ConvertToPointData(InputWorkspace=__tmp)
+    #x=__tmp.readX(0)
+    #y=__tmp.extractY()[-1024:,:]    # the last 1024 pixels but all bins
+    #try:
+    #    import h5py
+    #    output_filename='/SNS/CNCS/IPTS-17219/shared/ESSdata/dat'+str(__IWS.getRunNumber())+'.h5'
+    #    with h5py.File(output_filename,'w') as hf:
+    #        hf.create_dataset('xarray',data=x,compression="gzip", compression_opts=9)
+    #        hf.create_dataset('yarray',data=y,compression="gzip", compression_opts=9)
+    #except:
+    #    pass
     Ei=__IWS.getRun()['EnergyRequest'].firstValue()
     t0=preprocesst0(Ei,__IWS)
     tibmin,tibmax=preprocessTIB(Ei,__IWS)
