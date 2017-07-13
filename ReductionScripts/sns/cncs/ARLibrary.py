@@ -51,6 +51,8 @@ class ExperimentLog(object):
         parameterList.append(ws.getRun()['end_time'].value)                             #end time
         #self.firstLine+='Duration, '
         #parameterList.append(str(ws.getRun()['duration'].value))                        #duration
+        self.firstLine+='Duration, '
+        parameterList.append(str(ws.getRun().getProtonCharge()))                        #duration
         self.firstLine+='ProtonCharge, '
         parameterList.append(str(ws.getRun().getProtonCharge()))                        #proton charge in microamps*hour
                 
