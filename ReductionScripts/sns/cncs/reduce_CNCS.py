@@ -10,6 +10,7 @@ from mantid.simpleapi import *
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
+MaskBTPParameters.append({'Tube': '6', 'Bank': '3'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
