@@ -21,6 +21,8 @@ vanRun=0
 vanBackRun=0
 ########## end of user defined parameters
 
+print 'Command Line Args: ', sys.argv[1:]
+
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 maxChunkSize=8.
