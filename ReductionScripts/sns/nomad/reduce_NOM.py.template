@@ -28,6 +28,7 @@ if len(sys.argv)>3:
     maxChunkSize=float(sys.argv[3])
 
 eventFile = os.path.split(eventFileAbs)[-1]
+eventFile = eventFile.replace('/lustre', '')
 nexusDir = eventFileAbs.replace(eventFile, '')
 cacheDir = "/tmp" # local disk to (hopefully) reduce issues
 #CleanFileCache(CacheDir=cacheDir, AgeInDays=0) # remove file cache
