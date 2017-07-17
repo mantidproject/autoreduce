@@ -107,12 +107,12 @@ if __name__=="__main__":
   Options:
         Use SANGLE:       True
         Use Const-Q:      False
-        Fit peak in roi:  True
+        Fit peak in roi:  False
         Huber X cut:      4.95
-        Use bck ROI:      True
+        Use bck ROI:      False
         Force peak:       True [158, 190]
-        Force background: True [150, 157]
-        Use side bck:     False
+        Force background: False [150, 157]
+        Use side bck:     True
         Bck width:        10
 
   Not used yet:
@@ -131,11 +131,11 @@ if __name__=="__main__":
                                 const_q_binning=False,
                                 huber_x_cut=4.95,
                                 const_q_cutoff=None,
-                                update_peak_range=True,
-                                use_roi_bck=True,
+                                update_peak_range=False,
+                                use_roi_bck=False,
                                 force_peak_roi=True, peak_roi=[158, 190],
-                                force_bck_roi=True, bck_roi=[150, 157],
-                                use_tight_bck=False, bck_offset=10)
+                                force_bck_roi=False, bck_roi=[150, 157],
+                                use_tight_bck=True, bck_offset=10)
     red.reduce()
   except:
     logging.warning(sys.exc_value)
