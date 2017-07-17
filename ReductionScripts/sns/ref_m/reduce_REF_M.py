@@ -109,11 +109,11 @@ if __name__=="__main__":
         Use Const-Q:      False
         Fit peak in roi:  False
         Huber X cut:      4.95
-        Use bck ROI:      True
-        Force peak:       True [158, 190]
-        Force background: True [150, 157]
-        Use side bck:     False
-        Bck width:        10
+        Use bck ROI:      False
+        Force peak:       True [158, 185]
+        Force background: False [150, 157]
+        Use side bck:     True
+        Bck width:        5
 
   Not used yet:
         Const-Q cutoff:   None
@@ -132,10 +132,10 @@ if __name__=="__main__":
                                 huber_x_cut=4.95,
                                 const_q_cutoff=None,
                                 update_peak_range=False,
-                                use_roi_bck=True,
-                                force_peak_roi=True, peak_roi=[158, 190],
-                                force_bck_roi=True, bck_roi=[150, 157],
-                                use_tight_bck=False, bck_offset=10)
+                                use_roi_bck=False,
+                                force_peak_roi=True, peak_roi=[158, 185],
+                                force_bck_roi=False, bck_roi=[150, 157],
+                                use_tight_bck=True, bck_offset=5)
     red.reduce()
   except:
     logging.warning(sys.exc_value)
