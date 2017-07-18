@@ -7,19 +7,23 @@ from reduction_variables.models import InstrumentVariable, RunVariable
 from reduction_viewer.models import ReductionRun, Notification
 from reduction_viewer.utils import InstrumentUtils, StatusUtils, ReductionRunUtils
 from autoreduce_webapp.icat_cache import ICATCache
+from autoreduce_webapp.icat_communication import ICATCommunication
 
 class DataTooLong(ValueError):
     pass
-
 
 def log_error_and_notify(message):
     """
     Helper method to log an error and save a notifcation
     """
     logger.error(message)
-    notification = Notification(is_active=True, is_staff_only=True, severity='e', message=message)
-    notification.save()
 
+    # Only want to save the notification if there is no message like it already. Otherwise one message could spam the
+    # front page.
+    existing_notifications = Notification.objects.filter(message=message)
+    if existing_notifications == []:
+        notification = Notification(is_active=True, is_staff_only=True, severity='e', message=message)
+        notification.save()
 
 class VariableUtils(object):
     def derive_run_variable(self, instrument_var, reduction_run):
@@ -202,7 +206,7 @@ class InstrumentVariablesUtils(object):
         
         # Get the upcoming experiments, and then select all variables for these experiments.
         upcoming_experiments = []
-        with ICATCache() as icat:
+        with ICATCommunication() as icat:
             upcoming_experiments = list(icat.get_upcoming_experiments_for_instrument(instrument_name))
         upcoming_variables_by_experiment = InstrumentVariable.objects.filter(instrument = instrument, experiment_reference__in = upcoming_experiments).order_by('experiment_reference')
                 
@@ -493,6 +497,7 @@ class MessagingUtils(object):
             'run_version':reduction_run.run_version,
             'facility':FACILITY,
             'message':'',
+			'overwrite':reduction_run.overwrite,
         }
 
         return data_dict

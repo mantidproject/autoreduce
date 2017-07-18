@@ -7,7 +7,7 @@ import sys
 import os
 import time
 import atexit
-from signal import SIGTERM 
+from signal import SIGKILL
 import logging
 
 
@@ -69,7 +69,7 @@ class Daemon(object):
         pid = str(os.getpid())
         file(self.pidfile, 'w+').write("%s\n" % pid)
         logging.info("Started daemon with PID %s" % str(pid))
-
+    
     def delpid(self):
         os.remove(self.pidfile)
 
@@ -92,7 +92,7 @@ class Daemon(object):
         
         # Start the daemon
         self.daemonize()
-        self.run(self)
+        self.run()
 
     def stop(self):
         """
@@ -109,14 +109,15 @@ class Daemon(object):
         if not pid:
             message = "pidfile %s does not exist. Daemon not running?\n"
             logging.error(message % self.pidfile)
-            return  # not an error in a restart
+            # Not an error in a restart
+            return
 
         logging.info("Stopping daemon with PID %s" % str(pid))
 
         # Try killing the daemon process    
         try:
             while 1:
-                os.kill(pid, SIGTERM)
+                os.kill(pid, SIGKILL)
                 time.sleep(0.1)
         except OSError, err:
             err = str(err)
@@ -134,7 +135,6 @@ class Daemon(object):
         self.stop()
         self.start()
 
-    @staticmethod
     def run(self):
         """
         You should override this method when you subclass Daemon. It will be called after the process has been
