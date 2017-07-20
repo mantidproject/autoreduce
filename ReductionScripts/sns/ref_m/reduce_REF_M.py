@@ -106,7 +106,7 @@ if __name__=="__main__":
   Options:
         Use SANGLE:       True
         Use Const-Q:      False
-        Fit peak in roi:  True
+        Fit peak in roi:  False
         Huber X cut:      -1.0
         Use bck ROI:      False
         Force peak:       True [145, 190]
@@ -130,7 +130,7 @@ if __name__=="__main__":
                                 const_q_binning=False,
                                 huber_x_cut=-1.0,
                                 const_q_cutoff=None,
-                                update_peak_range=True,
+                                update_peak_range=False,
                                 use_roi_bck=False,
                                 force_peak_roi=True, peak_roi=[145, 190],
                                 force_bck_roi=False, bck_roi=[150, 157],
