@@ -205,7 +205,6 @@ class DataInfo(object):
             broadening = (low_res[1]-low_res[0])/3.0
             peak = [low_res[0]+self.peak_range_offset-broadening,
                     low_res[1]+self.peak_range_offset+broadening]
-        logging.info("Run %s. Found peak at [%s, %s]  Specular=%s", self.run_number, peak[0], peak[1], specular)
         return integrated, peak
     
     @classmethod
@@ -264,6 +263,7 @@ class DataInfo(object):
         signal_y = integrated.readY(0)
         signal_x = range(len(signal_y))
         _, low_res = self.determine_peak_range(ws, specular=False)
+        logging.info("Run %s [%s]: Low-res found %s" % (self.run_number, self.cross_section, low_res))
         self.found_low_res = low_res
         bck_range = None
         
