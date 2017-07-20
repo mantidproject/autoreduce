@@ -110,7 +110,7 @@ if __name__=="__main__":
         Fit peak in roi:  True
         Huber X cut:      4.95
         Use bck ROI:      False
-        Force peak:       True [135, 212]
+        Force peak:       True [145, 190]
         Force background: False [150, 157]
         Use side bck:     False
         Bck width:        5
@@ -133,7 +133,7 @@ if __name__=="__main__":
                                 const_q_cutoff=None,
                                 update_peak_range=True,
                                 use_roi_bck=False,
-                                force_peak_roi=True, peak_roi=[135, 212],
+                                force_peak_roi=True, peak_roi=[145, 190],
                                 force_bck_roi=False, bck_roi=[150, 157],
                                 use_tight_bck=False, bck_offset=5)
     red.reduce()

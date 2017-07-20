@@ -153,9 +153,7 @@ class ReductionProcess(object):
                                                use_roi_bck=self.use_roi_bck,
                                                use_tight_bck=self.use_tight_bck,
                                                huber_x_cut=self.huber_x_cut,
-                                               bck_offset=self.bck_offset,
-                                               force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
-                                               force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
+                                               bck_offset=self.bck_offset)
                         break
                 except:
                     # No data in this cross-section
