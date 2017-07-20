@@ -108,7 +108,7 @@ if __name__=="__main__":
         Use SANGLE:       True
         Use Const-Q:      False
         Fit peak in roi:  False
-        Huber X cut:      4.95
+        Huber X cut:      -1.0
         Use bck ROI:      False
         Force peak:       True [145, 190]
         Force background: False [150, 157]
@@ -129,7 +129,7 @@ if __name__=="__main__":
     red = refm.ReductionProcess(run_number, output_dir=outdir,
                                 use_sangle=True,
                                 const_q_binning=False,
-                                huber_x_cut=4.95,
+                                huber_x_cut=-1.0,
                                 const_q_cutoff=None,
                                 update_peak_range=False,
                                 use_roi_bck=False,
