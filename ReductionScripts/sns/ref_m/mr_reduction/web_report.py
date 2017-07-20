@@ -74,6 +74,8 @@ class Report(object):
             self.plots = self.generate_plots(ws)
             self.script = self.generate_script(reflectivity_ws)
             self.report = self.generate_web_report(reflectivity_ws)
+        else:
+            logging.error("Invalid data type for report: %s", self.data_info.data_type)
 
     def generate_web_report(self, ws):
         """
