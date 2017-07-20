@@ -11,7 +11,7 @@ import logging
 import plotly.offline as py
 import plotly.graph_objs as go
 
-def process_collection(summary_content=None, report_list=[], publish=True):
+def process_collection(summary_content=None, report_list=[], publish=True, run_number=None):
     """
         Process a collection of reports into on final report
     """
@@ -32,8 +32,7 @@ def process_collection(summary_content=None, report_list=[], publish=True):
         plot_html += "</table>\n"
 
     # Send to the web monitor as needed
-    run_number = None
-    if len(report_list)>0:
+    if run_number is None and len(report_list)>0:
         run_number = report_list[0].data_info.run_number
     if publish:
         try:
