@@ -276,6 +276,7 @@ class DataInfo(object):
             peak = self.roi_peak
             low_res = self.roi_low_res
             bck_range = self.roi_background
+            logging.info("Using ROI peak range: [%s %s]", peak[0], peak[1])
             self.use_roi_actual = True
 
         # Determine reflectivity peak position (center)
@@ -316,6 +317,7 @@ class DataInfo(object):
         if self.update_peak_range:
             peak[0] = math.floor(peak_position-peak_width)
             peak[1] = math.ceil(peak_position+peak_width)
+            logging.info("Updating peak range to: [%s %s]", peak[0], peak[1])
             self.use_roi_actual = False
 
         # Store the information we found
