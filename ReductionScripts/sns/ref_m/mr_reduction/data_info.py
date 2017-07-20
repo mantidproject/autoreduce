@@ -205,6 +205,7 @@ class DataInfo(object):
             broadening = (low_res[1]-low_res[0])/3.0
             peak = [low_res[0]+self.peak_range_offset-broadening,
                     low_res[1]+self.peak_range_offset+broadening]
+        logging.info("Run %s. Found peak at [%s, %s]", self.run_number, peak[0], peak[1])
         return integrated, peak
     
     @classmethod
