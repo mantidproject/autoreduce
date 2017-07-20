@@ -84,7 +84,7 @@ if __name__=="__main__":
   else:
     filename=unicode(sys.argv[1])
     outdir=unicode(sys.argv[2])
-    if not True:
+    if not False:
         logging.info('Analyze dataset and add to sample database')
         result=update_database(filename)
         if result[0]:
@@ -109,7 +109,7 @@ if __name__=="__main__":
         Fit peak in roi:  False
         Huber X cut:      -1.0
         Use bck ROI:      False
-        Force peak:       True [145, 190]
+        Force peak:       False [145, 190]
         Force background: False [150, 157]
         Use side bck:     False
         Bck width:        5
@@ -132,7 +132,7 @@ if __name__=="__main__":
                                 const_q_cutoff=None,
                                 update_peak_range=False,
                                 use_roi_bck=False,
-                                force_peak_roi=True, peak_roi=[145, 190],
+                                force_peak_roi=False, peak_roi=[145, 190],
                                 force_bck_roi=False, bck_roi=[150, 157],
                                 use_tight_bck=False, bck_offset=5)
     red.reduce()
