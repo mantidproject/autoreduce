@@ -273,10 +273,12 @@ class DataInfo(object):
         # Keep track of whether we actually used the ROI
         self.use_roi_actual = False
         
-        if self.use_roi and self.roi_peak is not None:
+        if self.use_roi and not self.roi_peak == [0,0]:
             peak = self.roi_peak
-            low_res = self.roi_low_res
-            bck_range = self.roi_background
+            if not self.roi_low_res == [0,0]:
+                low_res = self.roi_low_res
+            if not self.roi_background == [0,0]:
+                bck_range = self.roi_background
             logging.info("Using ROI peak range: [%s %s]", peak[0], peak[1])
             self.use_roi_actual = True
 
