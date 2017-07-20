@@ -81,25 +81,24 @@ if __name__=="__main__":
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
     logging.error("data file '%s' not found"%sys.argv[1])
-  elif not True:
-  #else:
+  else:
     filename=unicode(sys.argv[1])
     outdir=unicode(sys.argv[2])
-
-    logging.info('Analyze dataset and add to sample database')
-    result=update_database(filename)
-    if result[0]:
-      logging.info('Trigger autorefl script for index %i'%result[1].number)
-      ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
-      trigger_autorefl(result[1].number, filename, ofile)
-      logging.info('Wait for image to be generated.')
-      img_result=wait_image(ofile)
-      if img_result:
-        logging.info('Image created')
-      else:
-        logging.info('No image created')
-    else:
-      logging.warning('Could not add run to database, check logs for details')
+    if not True:
+        logging.info('Analyze dataset and add to sample database')
+        result=update_database(filename)
+        if result[0]:
+          logging.info('Trigger autorefl script for index %i'%result[1].number)
+          ofile=outdir+'REF_M_%i_autoreduced.png'%result[1].number
+          trigger_autorefl(result[1].number, filename, ofile)
+          logging.info('Wait for image to be generated.')
+          img_result=wait_image(ofile)
+          if img_result:
+            logging.info('Image created')
+          else:
+            logging.info('No image created')
+        else:
+          logging.warning('Could not add run to database, check logs for details')
 
   logging.info('*** reduce_REF_M using QuickNXS %s Logging ended ***'%str_version)
 
