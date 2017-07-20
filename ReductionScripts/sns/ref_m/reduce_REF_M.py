@@ -81,8 +81,8 @@ if __name__=="__main__":
     logging.error("autoreduction code requires a filename and an output directory")
   elif not(os.path.isfile(sys.argv[1])):
     logging.error("data file '%s' not found"%sys.argv[1])
-  elif False:
-  #else:
+  #elif False:
+  else:
     filename=unicode(sys.argv[1])
     outdir=unicode(sys.argv[2])
 
@@ -107,7 +107,7 @@ if __name__=="__main__":
   Options:
         Use SANGLE:       True
         Use Const-Q:      False
-        Fit peak in roi:  False
+        Fit peak in roi:  True
         Huber X cut:      4.95
         Use bck ROI:      False
         Force peak:       True [145, 190]
@@ -131,7 +131,7 @@ if __name__=="__main__":
                                 const_q_binning=False,
                                 huber_x_cut=4.95,
                                 const_q_cutoff=None,
-                                update_peak_range=False,
+                                update_peak_range=True,
                                 use_roi_bck=False,
                                 force_peak_roi=True, peak_roi=[145, 190],
                                 force_bck_roi=False, bck_roi=[150, 157],
