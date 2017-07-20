@@ -10,9 +10,9 @@ resamplex=-6000
 vanradius=0.58
 #wavelengthMin=0.1
 #wavelengthMax=2.9
-calFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_d93150_2017_05_05_shifter_down_banks.h5"
+calFile="/SNS/NOM/shared/CALIBRATION/2017_2_1B_CAL/NOM_d94214_2017_07_14_shifter.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2017_04_15-rietveld.txt"
-expiniFileDefault="/SNS/lustre/NOM/IPTS-18314/shared/autoNOM_2017A_standards_cryostat_May/exp.ini"
+expiniFileDefault="/SNS/NOM/IPTS-19565/shared/autoNOM_3_open_slit_1/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
@@ -21,6 +21,8 @@ vanRun=0
 vanBackRun=0
 ########## end of user defined parameters
 
+print 'Command Line Args: ', sys.argv[1:]
+
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
 maxChunkSize=8.
@@ -28,6 +30,7 @@ if len(sys.argv)>3:
     maxChunkSize=float(sys.argv[3])
 
 eventFile = os.path.split(eventFileAbs)[-1]
+eventFile = eventFile.replace('/lustre', '')
 nexusDir = eventFileAbs.replace(eventFile, '')
 cacheDir = "/tmp" # local disk to (hopefully) reduce issues
 #CleanFileCache(CacheDir=cacheDir, AgeInDays=0) # remove file cache
