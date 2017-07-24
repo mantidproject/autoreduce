@@ -59,6 +59,7 @@ else:
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
+                   OutputFilePrefix='IP_',
                    GroupingFile=group_file,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=-0.0004, BinInDspace=True,
