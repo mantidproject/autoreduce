@@ -55,7 +55,7 @@ else:
                OutputFilename=filename)
     print 'saved', filename
 
-# TODO clear out memory
+# clear out memory
 def isSpecialName(name):
     return name in ['characterizations', 'PG3_cal', 'PG3_mask']
 names = [name for name in mtd.getObjectNames()
@@ -63,6 +63,7 @@ names = [name for name in mtd.getObjectNames()
 for name in names:
     DeleteWorkspace(name)
 
+# run second time with other grouping
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
