@@ -56,6 +56,12 @@ else:
     print 'saved', filename
 
 # TODO clear out memory
+def isSpecialName(name):
+    return name in ['characterizations', 'PG3_cal', 'PG3_mask']
+names = [name for name in mtd.getObjectNames()
+         if not isSpecialName(name)]
+for name in names:
+    DeleteWorkspace(name)
 
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
