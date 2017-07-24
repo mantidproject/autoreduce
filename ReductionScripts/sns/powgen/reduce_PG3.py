@@ -9,6 +9,7 @@ char_file = os.path.join(cal_dir, "PG3_char_2017_05_20-HR.txt")
 #cal_file  = os.path.join(cal_dir, "PG3_MICAS_d36952_2016_11_09.h5")
 #char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt") \
 #    + ',' + os.path.join(cal_dir, "PG3_char_2016_11_22-HR-PAC.txt")
+group_file = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 MODE = 0664
 
 eventFileAbs=sys.argv[1]
@@ -53,3 +54,16 @@ else:
     SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
                OutputFilename=filename)
     print 'saved', filename
+
+
+SNSPowderReduction(Filename=eventFileAbs,
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
+                   GroupingFile=group_file,
+                   LowResRef=0, RemovePromptPulseWidth=50,
+                   Binning=-0.0004, BinInDspace=True,
+                   BackgroundSmoothParams="5,2",
+                   FilterBadPulses=10,
+                   ScaleData =100,
+                   SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
+                   FinalDataUnits="dSpacing")
