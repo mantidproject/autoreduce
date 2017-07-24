@@ -55,6 +55,7 @@ else:
                OutputFilename=filename)
     print 'saved', filename
 
+# TODO clear out memory
 
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
