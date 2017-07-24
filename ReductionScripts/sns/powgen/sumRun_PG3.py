@@ -84,9 +84,9 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     instrument, nexus, outfile = sys.argv[1:4]
-    print('instrument:', instrument)
-    print('input:', nexus)
-    print('output:', outfile)
+    #print('instrument:', instrument)
+    #print('input:', nexus)
+    #print('output:', outfile)
     runInfo = RunInfo(instrument.upper(), nexus)
     runInfo.fillRunData()
 
