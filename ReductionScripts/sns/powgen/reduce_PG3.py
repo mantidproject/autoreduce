@@ -7,7 +7,7 @@ cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir, "PG3_PAC_d37828_2017_07_22.h5")
 #char_file = os.path.join(cal_dir, "PG3_char_2017_05_20-HR.txt")
 #cal_file  = os.path.join(cal_dir, "PG3_MICAS_d36952_2016_11_09.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2017_07_24-HR-PAC.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2017_07_24-HR-PAC.txt") \
     + ',' + os.path.join(cal_dir, "PG3_char_2017_07_24-HR.txt")
 group_file = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 MODE = 0664
