@@ -67,6 +67,7 @@ def fixPermissions(filename, instrument):
     permission = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
     print('chmod 644', filename)
     os.chmod(filename, permission)
+    '''
     group = 'sns_%s_team' % instrument.lower()
     try:
         gid = grp.getgrnam(group).gr_gid
@@ -74,6 +75,7 @@ def fixPermissions(filename, instrument):
         os.chown(filename, -1, gid)
     except KeyError:
         print('failed to find group "%s"' % group)
+    '''
 
 if __name__ == "__main__":
     # set up the options
