@@ -31,6 +31,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
+                   CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
 
@@ -74,5 +75,6 @@ SNSPowderReduction(Filename=eventFileAbs,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
+                   CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
