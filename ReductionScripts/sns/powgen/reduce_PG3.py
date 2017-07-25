@@ -4,11 +4,12 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, "PG3_PAC_d37828_2017_07_22.h5")
-char_file = os.path.join(cal_dir, "PG3_char_2017_05_20-HR.txt")
+cal_file  = os.path.join(cal_dir, "PG3_PAC_d37828_2017_07_22_2BANKS.h5")
+#char_file = os.path.join(cal_dir, "PG3_char_2017_05_20-HR.txt")
 #cal_file  = os.path.join(cal_dir, "PG3_MICAS_d36952_2016_11_09.h5")
-#char_file = os.path.join(cal_dir, "PG3_char_2016_08_01-HR.txt") \
-#    + ',' + os.path.join(cal_dir, "PG3_char_2016_11_22-HR-PAC.txt")
+char_file = os.path.join(cal_dir, "PG3_char_2017_07_24-HR-PAC.txt") \
+    + ',' + os.path.join(cal_dir, "PG3_char_2017_07_24-HR.txt")
+group_file = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 MODE = 0664
 
 eventFileAbs=sys.argv[1]
@@ -53,3 +54,25 @@ else:
     SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
                OutputFilename=filename)
     print 'saved', filename
+
+# clear out memory
+def isSpecialName(name):
+    return name in ['characterizations', 'PG3_cal', 'PG3_mask']
+names = [name for name in mtd.getObjectNames()
+         if not isSpecialName(name)]
+for name in names:
+    DeleteWorkspace(name)
+
+# run second time with other grouping
+SNSPowderReduction(Filename=eventFileAbs,
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   CalibrationFile=cal_file, CharacterizationRunsFile=char_file,
+                   OutputFilePrefix='IP_',
+                   GroupingFile=group_file,
+                   LowResRef=0, RemovePromptPulseWidth=50,
+                   Binning=-0.0004, BinInDspace=True,
+                   BackgroundSmoothParams="5,2",
+                   FilterBadPulses=10,
+                   ScaleData =100,
+                   SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
+                   FinalDataUnits="dSpacing")
