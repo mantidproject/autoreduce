@@ -54,6 +54,12 @@ proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
     expiniFilename=expiniFileDefault
+# change permission to 664
+try:
+    permission = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
+    os.chmod(filename, permission)
+except:
+    pass
 print "Using", expiniFilename
 
 # determine information for caching

@@ -12,7 +12,7 @@ vanradius=0.58
 #wavelengthMax=2.9
 calFile="/SNS/NOM/shared/CALIBRATION/2017_2_1B_CAL/NOM_d94214_2017_07_14_shifter.h5"
 charFile="/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2017_04_15-rietveld.txt"
-expiniFileDefault="/SNS/NOM/IPTS-19274/shared/autoNOM/exp.ini"
+expiniFileDefault="/SNS/NOM/IPTS-18018/shared/autoNOM_08032017/exp.ini"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
@@ -54,6 +54,12 @@ proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
 expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
     expiniFilename=expiniFileDefault
+# change permission to 664
+try:
+    permission = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
+    os.chmod(filename, permission)
+except:
+    pass
 print "Using", expiniFilename
 
 # determine information for caching
