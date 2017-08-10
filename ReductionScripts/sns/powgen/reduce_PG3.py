@@ -13,9 +13,10 @@ char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-PAC.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
 char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
-# grou_bank1 exists as the grouping in the calibration file
+# group_bank1 exists as the grouping in the calibration file
 group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
+binning = -0.0008
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]+'/'
@@ -46,7 +47,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_bank1,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0004, BinInDspace=True,
+                   Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
@@ -68,7 +69,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    #OutputFilePrefix='OP_',
                    GroupingFile=group_bank2,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0004, BinInDspace=True,
+                   Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
@@ -132,7 +133,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    OutputFilePrefix='IP_',
                    GroupingFile=group_inplane,
                    LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=-0.0004, BinInDspace=True,
+                   Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
                    ScaleData =100,
