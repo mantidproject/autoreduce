@@ -37,6 +37,15 @@ def computeT0(Ei):
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
+    # uncomment the following if using two monitors
+    getEi_from_monitors_failed = False
+    try:
+        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    except:
+        getEi_from_monitors_failed = True
+        Efixed, T0 = Eguess, computeT0(Eguess)
+        
+    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
@@ -44,16 +53,6 @@ def preprocessData(filename):
     #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS", Offset=500, IndexMin=34816, IndexMax=35839)
     #Fix that all time series log values start at the same time as the proton_charge
     CorrectLogTimes('__IWS')
-
-    # uncomment the following if using two monitors
-    getEi_from_monitors_failed = False
-    try:
-        Efixed, _mp, _mi, T0 = GetEiMonDet(Version=1, DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
-    except:
-        getEi_from_monitors_failed = True
-        Efixed, T0 = Eguess, computeT0(Eguess)
-        
-    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #use detectors and first monitor to get Ei
     #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
