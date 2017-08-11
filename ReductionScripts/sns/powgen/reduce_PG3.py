@@ -16,7 +16,7 @@ char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 # group_bank1 exists as the grouping in the calibration file
 group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
-binning = -0.0008
+binning = -0.0006
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]+'/'
