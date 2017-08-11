@@ -40,9 +40,9 @@ processingParams = {'CalibrationWorkspace':'PG3_cal',
 can = getRunId(manager, 'container')
 if can is not None and not simpleapi.mtd.doesExist(can):
     mantid.logger.information("processing container '%s'" % can)
-    simpleapi.LoadEventNexus(Filename=can, OutputWorkspace=can)
-    simpleapi.AlignAndFocusPowder(InputWorkspace=can, OutputWorkspace=can,
-                                  **processingParams)
+    simpleapi.AlignAndFocusPowderFromFiles(Filename=can, OutputWorkspace=can,
+                                           CacheDir='/tmp',
+                                           **processingParams)
     simpleapi.ConvertUnits(InputWorkspace=can, OutputWorkspace=can,
                            Target='dSpacing', EMode='Elastic')
     simpleapi.NormaliseByCurrent(InputWorkspace=can, OutputWorkspace=can)
@@ -55,17 +55,18 @@ van = getRunId(manager, 'vanadium')
 if van is not None and not simpleapi.mtd.doesExist(van):
     mantid.logger.information("processing vanadium '%s'" % van)
     simpleapi.LoadEventNexus(Filename=van, OutputWorkspace=van)
-    simpleapi.AlignAndFocusPowder(InputWorkspace=van, OutputWorkspace=van,
-                                  **processingParams)
+    simpleapi.AlignAndFocusPowderFromFiles(Filename=van, OutputWorkspace=van,
+                                           CacheDir='/tmp',
+                                           **processingParams)
     simpleapi.NormaliseByCurrent(InputWorkspace=van, OutputWorkspace=van)
 
     vanback = getRunId(manager, 'vanadium_background')
     if vanback is not None:
         mantid.logger.information("processing vanadium background '%s'" % vanback)
-        simpleapi.LoadEventNexus(Filename=vanback, OutputWorkspace='__vanback')
+        simpleapi.AlignAndFocusPowderFromFiles(Filename=vanback, OutputWorkspace='__vanback',
+                                               CacheDir='/tmp',
+                                               **processingParams)
         vanback = '__vanback'
-        simpleapi.AlignAndFocusPowder(InputWorkspace=vanback, OutputWorkspace=vanback,
-                                      **processingParams)
         simpleapi.NormaliseByCurrent(InputWorkspace=vanback, OutputWorkspace=vanback)
 
         mantid.logger.information("subtracting vanadium background")
@@ -87,7 +88,6 @@ if van is not None:
 
 ##### generate plot and post
 div = simpleapi.SavePlot1D(InputWorkspace=output, OutputType='plotly')
-
 runNumber = simpleapi.mtd[output].getRunNumber()
 if runNumber > 0:  # it is 0 between runs
     mantid.logger.information('Posting plot of PG3_%s' % runNumber)
