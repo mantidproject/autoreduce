@@ -9,6 +9,8 @@ import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir,
                          'PG3_PAC_d37861_2017_08_08_BANK1.h5')
+cal_all  = os.path.join(cal_dir,
+                         'PG3_PAC_d37861_2017_07_28-ALL.h5')
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-PAC.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
 char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
@@ -58,6 +60,8 @@ SNSPowderReduction(Filename=eventFileAbs,
 # this will be wrong because it is only bank1
 GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
                      Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
+with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
+    first_pass = input.readlines()
 
 clearmem()
 
@@ -77,6 +81,10 @@ SNSPowderReduction(Filename=eventFileAbs,
                    # don't save gsas here
                    SaveAs="topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
+GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
+                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
+with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
+    second_pass = input.readlines()
 
 # determine values for SaveGSS
 PDDetermineCharacterizations(InputWorkspace='PG3_'+runNumber,
@@ -140,6 +148,26 @@ SNSPowderReduction(Filename=eventFileAbs,
                    CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
+os.unlink(os.path.join(outputDir,'IP_PG3_'+runNumber+'.py'))
+clearmem()
+
+# fourth run for pdfgetn files
+PDToPDFgetN(Filename=eventFileAbs,
+            FilterBadPulses=10,
+            OutputWorkspace='PG3_'+runNumber,
+            CacheDir='/tmp',
+            PDFgetNFile=os.path.join(outputDir, 'PG3_%s.getn' % runNumber),
+            CalibrationFile=cal_all,
+            Binning=binning,
+            CharacterizationRunsFile=char_bank1,
+            RemovePromptPulseWidth=50)
+
+# copy the proper python script in place then append
+with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'w') as output:
+    output.write(''.join(first_pass))
+    output.write('\nmtd.clear() # delete all workspaces\n')
+    output.write(''.join(second_pass))
+
 
 # add the line to the csv file last
 addLineToCsv('PG3', eventFileAbs,
