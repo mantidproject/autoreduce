@@ -23,7 +23,7 @@ simpleapi.Rebin(InputWorkspace=input, OutputWorkspace=input,
 if True: #input.getNumberEvents() > 0:
     simpleapi.AlignAndFocusPowder(InputWorkspace=input, OutputWorkspace=output,
                                   CalFilename=cal_file,
-                                  Params=-0.0008,
+                                  Params=-0.0006,
                                   RemovePromptPulseWidth=0, # should be 50
                                   ReductionProperties='__pd_reduction_properties')
     simpleapi.ConvertUnits(InputWorkspace=output, OutputWorkspace=output,
