@@ -8,16 +8,17 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir,
-                         'PG3_PAC_d37861_2017_08_08_BANK1.h5')
+                         'PG3_OC_d38340_2017_08_23_BANK1.h5')
 cal_all  = os.path.join(cal_dir,
-                         'PG3_PAC_d37861_2017_07_28-ALL.h5')
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-PAC.txt")
+                         'PG3_OC_d38340_2017_08_23-ALL.h5')
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_23-HR-OC.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
 char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 # group_bank1 exists as the grouping in the calibration file
 group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
+group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
 binning = -0.0006
 
 eventFileAbs=sys.argv[1]
@@ -151,7 +152,25 @@ SNSPowderReduction(Filename=eventFileAbs,
 os.unlink(os.path.join(outputDir,'IP_PG3_'+runNumber+'.py'))
 clearmem()
 
-# fourth run for pdfgetn files
+# fourth run with all pixels together
+SNSPowderReduction(Filename=eventFileAbs,
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   CalibrationFile=cal_file,
+                   CharacterizationRunsFile=char_backgrounds+','+char_inplane,
+                   OutputFilePrefix='ALL_',
+                   GroupingFile=group_all,
+                   LowResRef=0, RemovePromptPulseWidth=50,
+                   Binning=binning, BinInDspace=True,
+                   BackgroundSmoothParams="5,2",
+                   FilterBadPulses=10,
+                   ScaleData =100,
+                   CacheDir='/tmp',
+                   SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
+                   FinalDataUnits="dSpacing")
+os.unlink(os.path.join(outputDir,'ALL_PG3_'+runNumber+'.py'))
+clearmem()
+
+# fifth run for pdfgetn files
 PDToPDFgetN(Filename=eventFileAbs,
             FilterBadPulses=10,
             OutputWorkspace='PG3_'+runNumber,
