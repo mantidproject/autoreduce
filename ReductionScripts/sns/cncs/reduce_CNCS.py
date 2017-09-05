@@ -11,12 +11,13 @@ from mantid.simpleapi import *
 #this part changes with web input
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '122-128'})
+MaskBTPParameters.append({'Pixel': '1-7'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-19524/nexus/CNCS_250715.nxs.h5"
-processed_vanadium="pow_van_250715.nxs"
+processed_vanadium="van_250715.nxs"
 VanadiumIntegrationRange=[52000.0,53500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-1.5"
