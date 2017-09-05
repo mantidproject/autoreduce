@@ -10,6 +10,7 @@ from mantid.simpleapi import *
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
+MaskBTPParameters.append({'Pixel': '122-128'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -17,7 +18,7 @@ MaskBTPParameters=[]
 raw_vanadium="/SNS/CNCS/IPTS-19524/nexus/CNCS_250715.nxs.h5"
 processed_vanadium="pow_van_250715.nxs"
 VanadiumIntegrationRange=[52000.0,53500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-1.5"
 Emax="0.95"
 Estep="0.005"
@@ -27,7 +28,7 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot,Sample:Axis2.RBV,omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="6.802"
 b="8.875"
@@ -37,7 +38,7 @@ beta="102.12"
 gamma="90.0"
 uVector="1,0,0"
 vVector="0,1,0"
-sub_directory="/SNS/CNCS/IPTS-19404/shared/autoreduce/CuO/"
+sub_directory=""
 
 #parameters not on the webpage
 #below remains unchanged
