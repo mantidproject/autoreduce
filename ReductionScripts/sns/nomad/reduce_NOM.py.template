@@ -3,38 +3,38 @@ import os
 import stat
 import sys
 sys.path.append("/opt/mantidnightly/bin")
-from mantid.simpleapi import *
-import mantid
+from mantid.simpleapi import *  # noqa: E402
+import mantid  # noqa: E402
 
 ########## user defined parameters
-resamplex=-6000
-vanradius=0.58
-#wavelengthMin=0.1
-#wavelengthMax=2.9
-calFile="%(cal_file)s"
-charFile="%(char_file)s"
-expiniFileDefault="%(expini_file)s"
+resamplex = -6000
+vanradius = 0.58
+#wavelengthMin = 0.1
+#wavelengthMax = 2.9
+calFile = "%(cal_file)s"
+charFile = "%(char_file)s"
+expiniFileDefault = "%(expini_file)s"
 # 0 means use the runs specified in the exp.ini
 # -1 means turn off the correction
 # specify files to be summed as a tuple or list
-sampleBackRun=0
-vanRun=0
-vanBackRun=0
+sampleBackRun = 0
+vanRun = 0
+vanBackRun = 0
 ########## end of user defined parameters
 
 print('Command Line Args: ', sys.argv[1:])
 
-eventFileAbs=sys.argv[1]
-outputDir=sys.argv[2]
-maxChunkSize=8.
-if len(sys.argv)>3:
-    maxChunkSize=float(sys.argv[3])
+eventFileAbs = sys.argv[1]
+outputDir = sys.argv[2]
+maxChunkSize = 8.
+if len(sys.argv) > 3:
+    maxChunkSize = float(sys.argv[3])
 
 eventFile = os.path.split(eventFileAbs)[-1]
 eventFile = eventFile.replace('/lustre', '')
 nexusDir = eventFileAbs.replace(eventFile, '')
-cacheDir = "/tmp" # local disk to (hopefully) reduce issues
-#CleanFileCache(CacheDir=cacheDir, AgeInDays=0) # remove file cache
+cacheDir = "/tmp"  # local disk to (hopefully) reduce issues
+#CleanFileCache(CacheDir=cacheDir, AgeInDays=0)  # remove file cache
 runNumber = eventFile.split('_')[1].split('.')[0]
 configService = mantid.config
 dataSearchPath = configService.getDataSearchDirs()
@@ -43,28 +43,28 @@ configService.setDataSearchDirs(";".join(dataSearchPath))
 
 # setup for MPI
 if AlgorithmFactory.exists('GatherWorkspaces'):
-     from mpi4py import MPI
-     mpiRank = MPI.COMM_WORLD.Get_rank()
+    from mpi4py import MPI
+    mpiRank = MPI.COMM_WORLD.Get_rank()
 else:
-     mpiRank = 0
+    mpiRank = 0
 
 # uncomment next line to delete cache files
 #if mpiRank == 0: CleanFileCache(CacheDir=cacheDir, AgeInDays=0)
 
 proposalDir = '/' + '/'.join(nexusDir.split('/')[1:4])
-expiniFilename=os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
+expiniFilename = os.path.join(proposalDir, 'shared', 'autoNOM', 'exp.ini')
 if not os.path.exists(expiniFilename):
-    expiniFilename=expiniFileDefault
+    expiniFilename = expiniFileDefault
 # change permission to 664
 try:
     permission = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
-    os.chmod(filename, permission)
+    os.chmod(expiniFilename, permission)
 except:
     pass
 print("Using", expiniFilename)
 
 # determine information for caching
-wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
+wksp = LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
 PDLoadCharacterizations(Filename=charFile,
                         ExpIniFilename=expiniFilename,
                         OutputWorkspace="characterizations")
@@ -103,17 +103,18 @@ if sampleBackRun > 0:
 
 # work on vanadium cache file
 if vanRun > 0:
-    vanWkspName="NOM_"+str(vanRun)
-    vanProcessingProperties = ['vanadium', 'vanadium_background', 'd_min', 'd_max',
+    vanWkspName = "NOM_"+str(vanRun)
+    vanProcessingProperties = ['vanadium', 'vanadium_background',
+                               'd_min', 'd_max',
                                'tof_min', 'tof_max']
     vanProcessingOtherProperties = ["ResampleX="+str(resamplex),
                                     "VanadiumRadius="+str(vanradius),
                                     "CalibrationFile="+calFile]
 
-    (vanCacheName, _) =  CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
-                                             PropertyManager='__pd_reduction_properties',
-                                             Properties=vanProcessingProperties,
-                                             OtherProperties=vanProcessingOtherProperties)
+    (vanCacheName, _) = CreateCacheFilename(Prefix=vanWkspName, CacheDir=cacheDir,
+                                            PropertyManager='__pd_reduction_properties',
+                                            Properties=vanProcessingProperties,
+                                            OtherProperties=vanProcessingOtherProperties)
     print("Vanadium cache file:", vanCacheName)
 
     if os.path.exists(vanCacheName):
@@ -122,7 +123,8 @@ if vanRun > 0:
 
 # process the run
 SNSPowderReduction(Filename=eventFile,
-                   MaxChunkSize=maxChunkSize, PreserveEvents=True,PushDataPositive='AddMinimum',
+                   MaxChunkSize=maxChunkSize, PreserveEvents=True,
+                   PushDataPositive='AddMinimum',
                    CalibrationFile=calFile,
                    CharacterizationRunsFile=charFile,
                    BackgroundNumber=str(sampleBackRun),
@@ -143,21 +145,26 @@ SNSPowderReduction(Filename=eventFile,
 if mpiRank == 0:
     # save out the container cache file
     if sampleBackRun > 0 and not os.path.exists(canCacheName):
-        ConvertUnits(InputWorkspace=canWkspName, OutputWorkspace=canWkspName, Target="TOF")
-        SaveNexusProcessed(InputWorkspace=canWkspName, Filename=canCacheName)
+        ConvertUnits(InputWorkspace=canWkspName,
+                     OutputWorkspace=canWkspName, Target="TOF")
+        SaveNexusProcessed(InputWorkspace=canWkspName,
+                           Filename=canCacheName)
 
     # save out the vanadium cache file
     if vanRun > 0 and not os.path.exists(vanCacheName):
-        ConvertUnits(InputWorkspace=vanWkspName, OutputWorkspace=vanWkspName, Target="TOF")
-        SaveNexusProcessed(InputWorkspace=vanWkspName, Filename=vanCacheName)
+        ConvertUnits(InputWorkspace=vanWkspName,
+                     OutputWorkspace=vanWkspName, Target="TOF")
+        SaveNexusProcessed(InputWorkspace=vanWkspName,
+                           Filename=vanCacheName)
 
     wksp_name = "NOM_"+runNumber
 
     # save the processing script
     GeneratePythonScript(InputWorkspace=wksp_name,
-                     Filename=os.path.join(outputDir,wksp_name+'.py'))
+                         Filename=os.path.join(outputDir,wksp_name+'.py'))
 
-    ConvertUnits(InputWorkspace=wksp_name, OutputWorkspace=wksp_name, Target="dSpacing")
+    ConvertUnits(InputWorkspace=wksp_name,
+                 OutputWorkspace=wksp_name, Target="dSpacing")
 
     # save a picture of the normalized ritveld data
     banklabels = ['bank 1 - 15 deg',
@@ -166,7 +173,7 @@ if mpiRank == 0:
                   'bank 4 - 122 deg',
                   'bank 5 - 154 deg',
                   'bank 6 - 7 deg']
-    spectratoshow = [2,3,4,5]
+    spectratoshow = [2, 3, 4, 5]
 
     saveplot1d_args = dict(InputWorkspace=wksp_name,
                            SpectraList=spectratoshow,
@@ -176,7 +183,7 @@ if mpiRank == 0:
     if post_image:
         div = SavePlot1D(OutputType='plotly', **saveplot1d_args)
         from postprocessing.publish_plot import publish_plot
-        request = publish_plot('NOM', runNumber, files={'file':div})
+        request = publish_plot('NOM', runNumber, files={'file': div})
         print("post returned %%d" %% request.status_code)
         print("resulting document:")
         print(request.text)
