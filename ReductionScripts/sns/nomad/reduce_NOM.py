@@ -1,5 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 import os
+import stat
 import sys
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
