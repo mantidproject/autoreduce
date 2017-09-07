@@ -1,3 +1,4 @@
+from __future__ import (absolute_import, division, print_function)
 import os
 import sys
 import shutil
@@ -21,7 +22,7 @@ vanRun=0
 vanBackRun=0
 ########## end of user defined parameters
 
-print 'Command Line Args: ', sys.argv[1:]
+print('Command Line Args: ', sys.argv[1:])
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]
@@ -60,7 +61,7 @@ try:
     os.chmod(filename, permission)
 except:
     pass
-print "Using", expiniFilename
+print("Using", expiniFilename)
 
 # determine information for caching
 wksp=LoadEventNexus(Filename=eventFileAbs, MetaDataOnly=True)
@@ -94,10 +95,10 @@ if sampleBackRun > 0:
                                             PropertyManager='__pd_reduction_properties',
                                             Properties=canProcessingProperties,
                                             OtherProperties=canProcessingOtherProperties)
-    print "Container cache file:", canCacheName
+    print("Container cache file:", canCacheName)
 
     if os.path.exists(canCacheName):
-        print "Loading container cache file '%s'" % canCacheName
+        print("Loading container cache file '%s'" % canCacheName)
         Load(Filename=canCacheName, OutputWorkspace=canWkspName)
 
 # work on vanadium cache file
@@ -113,10 +114,10 @@ if vanRun > 0:
                                              PropertyManager='__pd_reduction_properties',
                                              Properties=vanProcessingProperties,
                                              OtherProperties=vanProcessingOtherProperties)
-    print "Vanadium cache file:", vanCacheName
+    print("Vanadium cache file:", vanCacheName)
 
     if os.path.exists(vanCacheName):
-        print "Loading vanadium cache file '%s'" % vanCacheName
+        print("Loading vanadium cache file '%s'" % vanCacheName)
         Load(Filename=vanCacheName, OutputWorkspace=vanWkspName)
 
 # process the run
@@ -176,11 +177,11 @@ if mpiRank == 0:
         div = SavePlot1D(OutputType='plotly', **saveplot1d_args)
         from postprocessing.publish_plot import publish_plot
         request = publish_plot('NOM', runNumber, files={'file':div})
-        print "post returned %d" % request.status_code
-        print "resulting document:"
-        print request.text
+        print("post returned %d" % request.status_code)
+        print("resulting document:")
+        print(request.text)
     else:
         filename = os.path.join(outputDir, wksp_name + '.html')
         SavePlot1D(OutputFilename=filename, OutputType='plotly-full',
                    **saveplot1d_args)
-        print 'saved', filename
+        print('saved', filename)
