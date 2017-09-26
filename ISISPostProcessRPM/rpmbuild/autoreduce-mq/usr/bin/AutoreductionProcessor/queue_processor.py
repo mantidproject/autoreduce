@@ -102,10 +102,11 @@ class Consumer(object):
         self.consumer_name = "queueProcessor"
 
     def run(self):
+        logger.info('Called run ' + ACTIVEMQ['brokers'].split(':')[0] + ' ' + ACTIVEMQ['brokers'].split(':')[1])
         brokers = [(ACTIVEMQ['brokers'].split(':')[0], int(ACTIVEMQ['brokers'].split(':')[1]))]
         connection = stomp.Connection(host_and_ports=brokers, use_ssl=False)
         connection.set_listener(self.consumer_name, Listener(connection))
-        logger.info("Starting ActiveMQ Connection")
+        logger.info("Starting ActiveMQ Connection to " + ACTIVEMQ['brokers'])
         connection.start()
         logger.info("Completed ActiveMQ Connection")
         connection.connect(ACTIVEMQ['amq_user'],
@@ -119,11 +120,12 @@ class Consumer(object):
                                  ack='client-individual',
                                  header={'activemq.prefetchSize': '1'})
             logger.info("[%s] Subscribing to %s" % (self.consumer_name, queue))
+        logger.info("Successfully subscribed to all of the queues")
 
 
 def main():
     try:
-        config = json.load(open('/etc/autoreduce/post_process_consumer.conf'))
+        config = json.load(open('/home/isisautoreduce/NewQueueProcessing/AutoreductionProcessor/post_process_consumer.conf'))
     except:
         logger.info("Can't open post_process_consumer.conf")
         sys.exit()

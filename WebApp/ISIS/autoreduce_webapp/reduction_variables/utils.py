@@ -17,7 +17,7 @@ def log_error_and_notify(message):
     Helper method to log an error and save a notifcation
     """
     logger.error(message)
-
+    
     # Only want to save the notification if there is no message like it already. Otherwise one message could spam the
     # front page.
     existing_notifications = Notification.objects.filter(message=message)
@@ -497,7 +497,7 @@ class MessagingUtils(object):
             'run_version':reduction_run.run_version,
             'facility':FACILITY,
             'message':'',
-			'overwrite':reduction_run.overwrite,
+            'overwrite':reduction_run.overwrite,
         }
 
         return data_dict

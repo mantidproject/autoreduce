@@ -220,13 +220,12 @@ def instrument_variables(request, instrument=None, start=0, end=0, experiment_re
 def submit_runs(request, instrument=None):
     logger.info('Submitting runs')
     instrument = Instrument.objects.get(name=instrument)
-
     if request.method == 'GET':
         processing_status = StatusUtils().get_processing()
         queued_status = StatusUtils().get_queued()
         skipped_status = StatusUtils().get_skipped()
 
-        last_run = ReductionRun.objects.filter(instrument=instrument).exclude(status=skipped_status).order_by('-run_number')[0]
+        last_run = ReductionRun.objects.filter(instrument=instrument).exclude(status=skipped_status).order_by('-run_number').first()
 
         standard_vars = {}
         advanced_vars = {}
@@ -353,9 +352,13 @@ def run_confirmation(request, instrument=None):
     rb_number = ReductionRun.objects.filter(instrument=instrument, run_number__in=run_numbers).values_list('experiment__reference_number', flat=True).distinct()
     if len(rb_number) > 1:
         context_dictionary['error'] = 'Runs span multiple experiment numbers (' + ','.join(str(i) for i in rb_number) + ') please select a different range.'
-            
+
     for run_number in run_numbers:
         old_reduction_run = ReductionRun.objects.filter(run_number=run_number).order_by('-run_version').first()
+
+        # Check old run exists
+        if old_reduction_run is None:
+            context_dictionary['error'] = "Run number " + str(run_number) + " doesn't exist."
 
         use_current_script = request.POST.get('use_current_script', u"true").lower() == u"true"
         if use_current_script:
@@ -394,7 +397,7 @@ def run_confirmation(request, instrument=None):
         if len(new_variables) == 0:
             context_dictionary['error'] = 'No variables were found to be submitted.'
 
-		# User can choose whether to overwrite with the re-run or create new data
+        # User can choose whether to overwrite with the re-run or create new data
         if request.POST.get('overwrite_checkbox') == 'on':
             overwrite_previous_data = True
         else:
@@ -402,9 +405,9 @@ def run_confirmation(request, instrument=None):
 
         if 'error' in context_dictionary:
             return context_dictionary
-		
+        
         run_description = request.POST.get('run_description')
-        		
+                
         new_job = ReductionRunUtils().createRetryRun(old_reduction_run, script=script_text, overwrite=overwrite_previous_data, variables=new_variables, username=request.user.username, description=run_description)
 
         try:
