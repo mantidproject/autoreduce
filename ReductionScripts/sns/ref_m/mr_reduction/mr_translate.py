@@ -1,6 +1,49 @@
 """
     Translator to be used to process filtered event data and procuce nexus files readable by QuickNXS.
     This translator will be part of the post-processing once REFM moves to Epics.
+
+    For reference, these are the states recognized by QuickNXS
+    
+MAPPING_12FULL=(
+                 (u'++ (0V)', u'entry-off_off_Ezero'),
+                 (u'-- (0V)', u'entry-on_on_Ezero'),
+                 (u'+- (0V)', u'entry-off_on_Ezero'),
+                 (u'-+ (0V)', u'entry-on_off_Ezero'),
+                 (u'++ (+V)', u'entry-off_off_Eplus'),
+                 (u'-- (+V)', u'entry-on_on_Eplus'),
+                 (u'+- (+V)', u'entry-off_on_Eplus'),
+                 (u'-+ (+V)', u'entry-on_off_Eplus'),
+                 (u'++ (-V)', u'entry-off_off_Eminus'),
+                 (u'-- (-V)', u'entry-on_on_Eminus'),
+                 (u'+- (-V)', u'entry-off_on_Eminus'),
+                 (u'-+ (-V)', u'entry-on_off_Eminus'),
+                 )
+MAPPING_12HALF=(
+                 (u'+ (0V)', u'entry-off_off_Ezero'),
+                 (u'- (0V)', u'entry-on_off_Ezero'),
+                 (u'+ (+V)', u'entry-off_off_Eplus'),
+                 (u'- (+V)', u'entry-on_off_Eplus'),
+                 (u'+ (-V)', u'entry-off_off_Eminus'),
+                 (u'- (-V)', u'entry-on_off_Eminus'),
+                 )
+MAPPING_FULLPOL=(
+                 (u'++', u'entry-Off_Off'),
+                 (u'--', u'entry-On_On'),
+                 (u'+-', u'entry-Off_On'),
+                 (u'-+', u'entry-On_Off'),
+                 )
+MAPPING_HALFPOL=(
+                 (u'+', u'entry-Off_Off'),
+                 (u'-', u'entry-On_Off'),
+                 )
+MAPPING_UNPOL=(
+               (u'x', u'entry-Off_Off'),
+               )
+MAPPING_EFIELD=(
+                (u'0V', u'entry-Off_Off'),
+                (u'+V', u'entry-On_Off'),
+                (u'-V', u'entry-Off_On'),
+                )
 """
 import os
 from nexpy.api.nexus.tree import *
