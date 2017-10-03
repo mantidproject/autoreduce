@@ -33,7 +33,7 @@ def smooth(wksp):
 processingParams = {'CalibrationWorkspace':'PG3_cal',
                     'GroupingWorkspace':'PG3_group',
                     'MaskWorkspace':'PG3_mask',
-                    'Params':-0.0006,
+                    'Params':-0.0008,
                     'RemovePromptPulseWidth':0, # should be 50
                     'ReductionProperties':'__pd_reduction_properties'}
 

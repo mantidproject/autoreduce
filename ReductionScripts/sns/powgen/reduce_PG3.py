@@ -11,7 +11,7 @@ cal_file  = os.path.join(cal_dir,
                          'PG3_JANIS-HT_d38667_2017_09_06_Bank1.h5')
 cal_all  = os.path.join(cal_dir,
                          'PG3_JANIS-HT_d38667_2017_09_06-ALL.h5')
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_09_06-HR-JANIS-HT.txt")
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_09_28-HR-JANIS-Battery.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
 char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
@@ -19,7 +19,7 @@ char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
-binning = -0.0006
+binning = -0.0008
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]+'/'
@@ -113,25 +113,6 @@ ConvertUnits(InputWorkspace='PG3_'+runNumber,
              Target='dSpacing',
              EMode='Elastic')
 
-# interactive plots
-try:
-    import plotly
-    post_image = True
-    if post_image:
-        div = SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly')
-        from postprocessing.publish_plot import publish_plot
-        request = publish_plot('PG3', runNumber, files={'file':div})
-        print("post returned %d" % request.status_code)
-        print("resulting document:")
-        print(request.text)
-    else:
-        filename = os.path.join(outputDir, 'PG3_%s.html' % runNumber)
-        SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
-                   OutputFilename=filename)
-        print('saved', filename)
-except ImportError:
-    pass # don't worry
-
 clearmem()
 
 # third run with only in-plane
@@ -168,6 +149,26 @@ SNSPowderReduction(Filename=eventFileAbs,
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
 os.unlink(os.path.join(outputDir,'ALL_PG3_'+runNumber+'.py'))
+
+# interactive plots
+try:
+    import plotly
+    post_image = True
+    if post_image:
+        div = SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly')
+        from postprocessing.publish_plot import publish_plot
+        request = publish_plot('PG3', runNumber, files={'file':div})
+        print("post returned %d" % request.status_code)
+        print("resulting document:")
+        print(request.text)
+    else:
+        filename = os.path.join(outputDir, 'PG3_%s.html' % runNumber)
+        SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
+                   OutputFilename=filename)
+        print('saved', filename)
+except ImportError:
+    pass # don't worry
+
 clearmem()
 
 # fifth run for pdfgetn files

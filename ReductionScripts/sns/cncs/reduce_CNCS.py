@@ -12,15 +12,16 @@ from mantid.simpleapi import *
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '122-128'})
 MaskBTPParameters.append({'Pixel': '1-7'})
+MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-19524/nexus/CNCS_250715.nxs.h5"
-processed_vanadium="van_250715.nxs"
+processed_vanadium="van_250715_2x1.nxs"
 VanadiumIntegrationRange=[52000.0,53500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-1.5"
+grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -31,11 +32,11 @@ Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,T
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
-a="6.802"
-b="8.875"
-c="4.703"
+a="12.204"
+b="12.204"
+c="12.204"
 alpha="90.0"
-beta="102.12"
+beta="90.0"
 gamma="90.0"
 uVector="1,0,0"
 vVector="0,1,0"

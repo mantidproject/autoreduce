@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import sys,os
+sys.path.append("/SNS/CORELLI/shared/autoreduce") # to get csv generation setup
+from sumRun_CORELLI import addLineToCsv
+
 sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
@@ -180,6 +183,7 @@ if __name__ == "__main__":
     nexus_file=sys.argv[1]
     output_directory=sys.argv[2]
     output_file=os.path.split(nexus_file)[-1].replace('.nxs.h5','')
+    ipts = nexus_file.split('/')[3]
 
     # load file
     raw=Load(nexus_file)
@@ -283,3 +287,7 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
+
+    #add the line to the csv file last
+    #addLineToCsv('CORELLI', nexus_file,
+    #             os.path.join(output_directory, 'CORELLI_%s_runsummary.csv' % ipts))

@@ -105,13 +105,13 @@ if __name__=="__main__":
   """
   Options:
         Use SANGLE:       True
-        Use Const-Q:      True
+        Use Const-Q:      False
         Fit peak in roi:  True
         Huber X cut:      0.0
         Use bck ROI:      False
         Force peak:       False [145, 190]
         Force background: False [150, 157]
-        Use side bck:     True
+        Use side bck:     False
         Bck width:        5
 
   Not used yet:
@@ -127,14 +127,14 @@ if __name__=="__main__":
     from mr_reduction import mr_reduction as refm
     red = refm.ReductionProcess(run_number, output_dir=outdir,
                                 use_sangle=True,
-                                const_q_binning=True,
+                                const_q_binning=False,
                                 huber_x_cut=0.0,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
                                 use_roi_bck=False,
                                 force_peak_roi=False, peak_roi=[145, 190],
                                 force_bck_roi=False, bck_roi=[150, 157],
-                                use_tight_bck=True, bck_offset=5)
+                                use_tight_bck=False, bck_offset=5)
     red.reduce()
   except:
     logging.warning(sys.exc_value)
