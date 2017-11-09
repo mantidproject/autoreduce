@@ -1,7 +1,6 @@
 from django.shortcuts import redirect
 from django.contrib.auth import logout as django_logout, authenticate, login
 from django.http import JsonResponse
-from django.core.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from autoreduce_webapp.uows_client import UOWSClient
@@ -12,6 +11,7 @@ from reduction_viewer.utils import StatusUtils, ReductionRunUtils
 from reduction_viewer.view_utils import deactivate_invalid_instruments
 from reduction_variables.utils import MessagingUtils
 from autoreduce_webapp.view_utils import login_and_uows_valid, render_with, require_admin, check_permissions
+
 import operator
 import json
 import logging
@@ -246,8 +246,6 @@ def run_list(request):
     else:
         context_dictionary['default_tab'] = 'experiment'
 
-    context_dictionary.update(csrf(request))
-
     return context_dictionary
 
     
@@ -264,15 +262,20 @@ def load_runs(request, reference_number=None, instrument_name=None):
             runs = ReductionRun.objects.filter(experiment=experiment).order_by('-created')
                 
     elif instrument_name:
-        instruments = Instrument.objects.filter(name=instrument_name)
-        if len(instruments) != 0:
-            instrument = instruments[0]
-            runs = ReductionRun.objects.filter(instrument=instrument).order_by('-created')
+        instrument = Instrument.objects.filter(name=instrument_name)
+
+        if instrument.exists():
+            runs = (ReductionRun.objects.
+                    # Get the foreign key 'status' now. Otherwise many queries made from load_runs which is very slow.
+                    select_related('status')
+                    # Only get these attributes, to speed it up.
+                    .only('status', 'last_updated', 'run_number', 'run_name', 'run_version')
+                    .filter(instrument=instrument.first())
+                    .order_by('-created'))
             
     context_dictionary = { "runs": runs }
     return context_dictionary
 
-    
 @login_and_uows_valid
 @check_permissions
 @render_with('run_summary.html')
@@ -307,8 +310,6 @@ def instrument_summary(request, instrument=None):
     except Exception as e:
         logger.error(e.message)
         context_dictionary = {}
-
-    context_dictionary.update(csrf(request))
 
     return context_dictionary
 
