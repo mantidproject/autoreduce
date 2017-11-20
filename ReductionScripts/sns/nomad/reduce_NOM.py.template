@@ -1,7 +1,9 @@
 from __future__ import (absolute_import, division, print_function)
+import numpy as np
 import os
 import stat
 import sys
+import json
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *  # noqa: E402
 import mantid  # noqa: E402
@@ -73,9 +75,74 @@ PDDetermineCharacterizations(InputWorkspace=wksp,
                              BackRun=sampleBackRun,
                              NormRun=vanRun,
                              NormBackRun=vanBackRun)
+charPM = mantid.PropertyManagerDataService.retrieve('__pd_reduction_properties')
+
+def toJson(json_config, filename):
+    for key in json_config.keys():
+        value = json_config[key]
+        if type(value).__module__ == 'numpy':
+            if type(value[0]) == np.int32 or type(value[0]) == np.int64:
+                value = [int(val) for val in value]
+            else:
+                value = list(value)
+        json_config[key] = value
+
+    print('Writing configuration to', filename)
+    with open(filename, 'w') as handle:
+        json.dump(json_config, handle, indent=2)
+
+json_config = {'Instrument':'NOM',
+               'Title':wksp.getTitle(),
+               'Sample':{'Runs':str(runNumber),
+                         'Background':{'Runs':charPM['container'].valueAsStr,
+                                       'Background':{'Runs':charPM['empty_environment'].valueAsStr,
+                                                     'Background':{'Runs':charPM['empty_instrument'].valueAsStr}},
+                         },
+                         'Material':'Si O2', # TODO
+                         'PackingFraction':0.5,
+                         'Geometry':{'Radius':0.15, # TODO
+                                     'Height': 1.8 }, # TODO
+                         'AbsorptionCorrection':{'Type':'Carpenter'},
+                         'MultipleScatteringCorrection':{'Type':'Carpenter'},
+                         'InelasticCorrection':{'Type':'Placzek',
+                                                'Order':'1st',
+                                                'Self':True,
+                                                'Interference':False,
+                                                'FitSpectrumWith':'GaussConvCubicSpline',
+                                                'LambdaBinningForFit':[0.16,0.04,2.8],
+                                                'LambdaBinningForCalc':[0.16,0.0001,2.9]
+                         },
+               },
+               'Vanadium':{'Runs':charPM['vanadium'].valueAsStr,
+                           'Background':{'Runs':charPM['vanadium_background'].valueAsStr},
+                           'Material':'V',
+                           'MassDensity':6.11, # isn't this already in mantid?
+                           'PackingFraction':1.,
+                           'Geometry':{'Radius':0.2925,
+                                       'Height':1.8},
+                           'AbsorptionCorrection':{'Type':'Carpenter'},
+                           'MultipleScatteringCorrection':{'Type':'Carpenter'},
+                           'InelasticCorrection':{'Type':'Placzek',
+                                                  'Order':'1st',
+                                                  'Self':True,
+                                                  'Interference':False,
+                                                  'FitSpectrumWith':'GaussConvCubicSpline',
+                                                  'LambdaBinningForFit':[0.16,0.04,2.8],
+                                                  'LambdaBinningForCalc':[0.1,0.0001,3.0]}
+               },
+               'Calibration':{'Filename':calFile},
+               'HighQLinearFitRange':.6,
+               'Merging':{
+                   'QBinning': [0.0, 0.02, 40.0],
+                   'Characterizations':{'Filename':charFile},
+                   'SumBanks': [3]},
+               'CacheDir':cacheDir,
+               'OutputDir': outputDir
+}
+
+toJson(json_config, os.path.join(outputDir, 'NOM_%%s.json' %% str(runNumber)))
 DeleteWorkspace(str(wksp))
 DeleteWorkspace("characterizations")
-charPM = mantid.PropertyManagerDataService.retrieve('__pd_reduction_properties')
 
 # get back the runs to use so they can be explicit in the generated python script
 sampleBackRun = charPM['container'].value[0]

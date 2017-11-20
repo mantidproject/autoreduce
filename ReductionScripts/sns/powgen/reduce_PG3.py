@@ -8,18 +8,19 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir,
-                         'PG3_JANIS-HT_d38667_2017_09_06_Bank1.h5')
+                         'PG3_PAC_d37861_2017_08_08_BANK1.h5')
 cal_all  = os.path.join(cal_dir,
-                         'PG3_JANIS-HT_d38667_2017_09_06-ALL.h5')
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_09_28-HR-JANIS-Battery.txt")
+                         'PG3_PAC_d37861_2017_07_28-ALL.h5')
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_30-HR-PAC.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
-char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
+char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-SAJK.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 # group_bank1 exists as the grouping in the calibration file
-group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
+group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping_banks_plane_SAJK_expanded.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
 binning = -0.0008
+QfitRange = [30.,50.]
 
 eventFileAbs=sys.argv[1]
 outputDir=sys.argv[2]+'/'
@@ -150,12 +151,42 @@ SNSPowderReduction(Filename=eventFileAbs,
                    FinalDataUnits="dSpacing")
 os.unlink(os.path.join(outputDir,'ALL_PG3_'+runNumber+'.py'))
 
+# create arbitrary normalized, correction-free S(Q)
+# this is hard-coded to the wavelength log
+createPDF = bool(abs(mtd['PG3_'+runNumber].run()['LambdaRequest'].value[0] - .7) < .1)
+
+if createPDF:
+    ConvertUnits(InputWorkspace='PG3_'+runNumber,
+                 OutputWorkspace='PG3_'+runNumber+'_SQ',
+                 Target='MomentumTransfer',
+                 EMode='Elastic')
+    mtd['PG3_'+runNumber+'_SQ'] /= 100. # should match ScaleDataParameter
+    Fit(InputWorkspace='PG3_'+runNumber+'_SQ',
+        Function='name=FlatBackground,A0=1',
+        StartX=QfitRange[0], EndX=QfitRange[1],
+        CreateOutput=True)
+    scale = mtd['PG3_'+runNumber+'_SQ_Parameters'].row(0)['Value']
+    print('high-Q scale is', scale)
+    mtd['PG3_'+runNumber+'_SQ'] /= scale # should match ScaleDataParameter
+    SaveNexusProcessed(InputWorkspace='PG3_'+runNumber+'_SQ',
+                       Filename=os.path.join(outputDir,'PG3_'+runNumber+'_SQ.nxs'))
+else: 
+    print('not creating S(Q)')
+
 # interactive plots
 try:
     import plotly
     post_image = True
+
+    plotting_workspace_name = 'PG3_'+runNumber
+    if createPDF:
+        plotting_workspace_name = 'group_for_plotting'
+        GroupWorkspaces(InputWorkspaces=('PG3_'+runNumber, 'PG3_'+runNumber+'_SQ'),
+                        OutputWorkspace=plotting_workspace_name)
+
     if post_image:
-        div = SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly')
+        div = SavePlot1D(InputWorkspace=plotting_workspace_name,
+                         OutputType='plotly')
         from postprocessing.publish_plot import publish_plot
         request = publish_plot('PG3', runNumber, files={'file':div})
         print("post returned %d" % request.status_code)
@@ -166,11 +197,16 @@ try:
         SavePlot1D(InputWorkspace='PG3_'+runNumber, OutputType='plotly-full',
                    OutputFilename=filename)
         print('saved', filename)
+
+    if createPDF:
+        UnGroupWorkspace(InputWorkspace=plotting_workspace_name)
+
 except ImportError:
     pass # don't worry
 
 clearmem()
 
+'''
 # fifth run for pdfgetn files
 PDToPDFgetN(Filename=eventFileAbs,
             FilterBadPulses=10,
@@ -181,6 +217,7 @@ PDToPDFgetN(Filename=eventFileAbs,
             Binning=binning,
             CharacterizationRunsFile=char_bank1,
             RemovePromptPulseWidth=50)
+'''
 
 # copy the proper python script in place then append
 with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'w') as output:

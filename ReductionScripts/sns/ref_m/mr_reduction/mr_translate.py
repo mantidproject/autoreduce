@@ -283,3 +283,4 @@ if __name__ == '__main__':
     # /SNS/REF_M/IPTS-17695/data/REF_M_26403_event.nxs
     translate('REF_M_26403_event.nxs', histo=False)
     translate('REF_M_26403_event.nxs', histo=True)
+
