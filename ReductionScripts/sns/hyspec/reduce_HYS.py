@@ -170,7 +170,7 @@ def do_reduction(filename,output_dir):
         comment=dgs.getRun()['file_notes'].value.strip().replace(' ','_')
         if comment!='' and comment!='(unset)' and ('powder' not in comment):
             #UB_DAS=dgs.getRun()['BL14B:CS:UBMatrix'].value[0]
-            SetUB(dgs,a=6.12,b=6.12,c=6.12,alpha=90,beta=90,gamma=90,u="1,1,0",v="0,0,1")
+            SetUB(dgs,a=3.81,b=3.81,c=6.26,alpha=90,beta=90,gamma=90,u="1,0,0",v="0,1,0")
             minValues,maxValues="-2.5,-1,-1,-1","2.5,4.5,1,16"
             
             mdpart=ConvertToMD(dgs,
@@ -180,9 +180,9 @@ def do_reduction(filename,output_dir):
                                QConversionScales="HKL",
                                MinValues=minValues,
                                MaxValues=maxValues,
-                               UProj="1,1,0",
-                               VProj="0,0,1",
-                               WProj="1,-1,0")
+                               UProj="1,0,0",
+                               VProj="0,1,0",
+                               WProj="0,0,1")
             #try to load the corresponding dataset and add to it
             d,n=generate_slice(mdpart,mdh_base_filename,comment+"_HHL_0meV","[H,H,0],-2.5,2.5,200",
                                "[0,0,L],-1,4.5,250","DeltaE,-0.5,0.5,1","[H,-H,0],-0.5,0.5,1")
