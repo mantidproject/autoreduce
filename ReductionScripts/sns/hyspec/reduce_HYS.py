@@ -190,9 +190,9 @@ def do_reduction(filename,output_dir):
             d1,n1=generate_slice(mdpart,mdh_base_filename,comment+"_HK0_8meV","[H,0,0],-2.0,2.0,200",
                                "[0,K,0],-2,2,200","DeltaE,7,9,1","[0,0,L],-0.5,0.5,1")
             DivideMD(d1,n1,OutputWorkspace='hk0_8meV')
-            d2,n2=generate_slice(mdpart,mdh_base_filename,comment+"_OKE","[0,K,0],-2,2,200",
-                               "DeltaE,0,18,100","[0,0,L],-0.1,0.1,1","[H,0,0],-0.1,0.1,1")
-            DivideMD(d2,n2,OutputWorkspace='0kE')
+            d2,n2=generate_slice(mdpart,mdh_base_filename,comment+"_OKE","[H,0,0],-2,2,200",
+                               "DeltaE,0,18,100","[0,0,L],-0.1,0.1,1","[0,K,0],-0.1,0.1,1")
+            DivideMD(d2,n2,OutputWorkspace='h0E')
     except Exception as e:
         logger.error("Something bad occured during MD processing")
         logger.error(repr(e))
@@ -304,7 +304,7 @@ def do_reduction(filename,output_dir):
             pass
             
         try:
-            lE=mtd['0kE']
+            lE=mtd['h0E']
             xmin=lE.getDimension(0).getMinimum()
             xmax=lE.getDimension(0).getMaximum()
             xstep=lE.getDimension(0).getX(1)-xmin
@@ -317,7 +317,7 @@ def do_reduction(filename,output_dir):
             darray=lE.getSignalArray()[:,:,0,0]
             Zm=numpy.ma.masked_where(numpy.isnan(darray),darray)
             Zm = numpy.log(numpy.transpose(Zm))
-            myplot3=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='0K0', y_title='E(meV)',
+            myplot3=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='E(meV)',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot3)        
         except:
