@@ -280,8 +280,9 @@ def do_reduction(filename,output_dir):
             myplot1=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot1)        
-        except:
-            pass
+        except Exception as e:
+            logger.error("Something bad occured during the image processing")
+            logger.error(repr(e))
 
         try:
             hhE=mtd['hk0_8meV']
@@ -300,8 +301,9 @@ def do_reduction(filename,output_dir):
             myplot2=plotdgs_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot2)        
-        except:
-            pass
+        except Exception as e:
+            logger.error("Something bad occured during the image processing")
+            logger.error(repr(e))
             
         try:
             lE=mtd['h0E']
@@ -320,8 +322,9 @@ def do_reduction(filename,output_dir):
             myplot3=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='E(meV)',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot3)        
-        except:
-            pass        
+        except Exception as e:
+            logger.error("Something bad occured during the image processing")
+            logger.error(repr(e))        
         publish_plot("HYS", run_number, files={'file': plot_html})  
     except Exception as e:
         logger.error("Something bad occured during the image processing")
