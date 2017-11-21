@@ -44,7 +44,7 @@ if __name__ == "__main__":
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
-    elog.setSERotOptions('Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot')
+    elog.setSERotOptions('Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot,SE100mm')
     elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorB, SensorC, SensorD')
     elog.setFilename(outdir+'experiment_log.csv')
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
