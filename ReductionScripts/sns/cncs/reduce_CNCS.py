@@ -21,7 +21,7 @@ MaskBTPParameters.append({'Bank': '36-50'})
 raw_vanadium="/SNS/CNCS/IPTS-19524/nexus/CNCS_265987.nxs.h5"
 processed_vanadium="van_265987.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.1"
 Emax="0.95"
 Estep="0.005"
@@ -41,7 +41,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,1,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-19524/shared/autoreduce/YbAlO3_FitSam/"
+sub_directory=""
 
 #parameters not on the webpage
 #below remains unchanged
