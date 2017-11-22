@@ -298,7 +298,7 @@ def do_reduction(filename,output_dir):
             darray=hhE.getSignalArray()[:,:,0,0]
             Zm=numpy.ma.masked_where(numpy.isnan(darray),darray)
             Zm = numpy.log(numpy.transpose(Zm))
-            myplot2=plotdgs_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
+            myplot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot2)        
         except Exception as e:
