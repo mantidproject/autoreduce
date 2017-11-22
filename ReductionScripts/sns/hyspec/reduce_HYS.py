@@ -171,7 +171,7 @@ def do_reduction(filename,output_dir):
         if comment!='' and comment!='(unset)' and ('powder' not in comment):
             #UB_DAS=dgs.getRun()['BL14B:CS:UBMatrix'].value[0]
             SetUB(dgs,a=3.81,b=3.81,c=6.26,alpha=90,beta=90,gamma=90,u="1,0,0",v="0,1,0")
-            minValues,maxValues="-2.5,-1,-1,-1","2.5,4.5,1,16"
+            minValues,maxValues="-2.5,-2.5,-2.5,-1","2.5,4.5,1,16"
             
             mdpart=ConvertToMD(dgs,
                                QDimensions='Q3D',
