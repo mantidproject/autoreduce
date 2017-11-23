@@ -13,10 +13,10 @@ cal_all  = os.path.join(cal_dir,
                          'PG3_PAC_d37861_2017_07_28-ALL.h5')
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_30-HR-PAC.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
-char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-SAJK.txt")
+char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 # group_bank1 exists as the grouping in the calibration file
-group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping_banks_plane_SAJK_expanded.xml')
+group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
 group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
 binning = -0.0008
@@ -161,11 +161,9 @@ if createPDF:
                  Target='MomentumTransfer',
                  EMode='Elastic')
     mtd['PG3_'+runNumber+'_SQ'] /= 100. # should match ScaleDataParameter
-    Fit(InputWorkspace='PG3_'+runNumber+'_SQ',
-        Function='name=FlatBackground,A0=1',
-        StartX=QfitRange[0], EndX=QfitRange[1],
-        CreateOutput=True)
-    scale = mtd['PG3_'+runNumber+'_SQ_Parameters'].row(0)['Value']
+    scale = Fit(InputWorkspace='PG3_'+runNumber+'_SQ',
+                Function='name=FlatBackground,A0=1',
+                StartX=QfitRange[0], EndX=QfitRange[1])[1]
     print('high-Q scale is', scale)
     mtd['PG3_'+runNumber+'_SQ'] /= scale # should match ScaleDataParameter
     SaveNexusProcessed(InputWorkspace='PG3_'+runNumber+'_SQ',
