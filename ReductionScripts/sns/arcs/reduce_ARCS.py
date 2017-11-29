@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #this worked for smaller files DLA
-    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml"
+    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml"
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
@@ -63,7 +63,7 @@ if __name__ == "__main__":
             processed_van_file = os.path.join(outdir, ProcessedVanadium)
         DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
 
-        EnergyTransferRange = [-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        EnergyTransferRange = [-0.15*EGuess,0.01*EGuess,0.85*EGuess] #Energy Binning
         reduceMono(
             DGSdict, Ei, T0, EnergyTransferRange, 
             HardMaskFile, groupingFile, IntegrationRange,
