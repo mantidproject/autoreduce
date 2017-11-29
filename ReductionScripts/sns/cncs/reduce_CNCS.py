@@ -13,7 +13,7 @@ MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '114-128'})
 MaskBTPParameters.append({'Pixel': '1-14'})
 MaskBTPParameters.append({'Bank': '1-3'})
-MaskBTPParameters.append({'Bank': '36-50'})
+MaskBTPParameters.append({'Bank': '35-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
