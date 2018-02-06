@@ -8,10 +8,10 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
 cal_file  = os.path.join(cal_dir,
-                         'PG3_PAC_d37861_2017_08_08_BANK1.h5')
+                         'PG3_MICAS_d39808_2017_12_06_Bank1.h5')
 cal_all  = os.path.join(cal_dir,
-                         'PG3_PAC_d37861_2017_07_28-ALL.h5')
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_08_30-HR-PAC.txt")
+                         'PG3_MICAS_d39808_2017_12_06_ALL.h5')
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_12_06-HR-MICAS.txt")
 char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
 char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
@@ -52,7 +52,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    CharacterizationRunsFile=char_backgrounds+','+char_bank1,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=binning, BinInDspace=True,
-                   BackgroundSmoothParams="5,2",
+                   BackgroundSmoothParams="40,10",
                    FilterBadPulses=10,
                    ScaleData =100,
                    CacheDir='/tmp',

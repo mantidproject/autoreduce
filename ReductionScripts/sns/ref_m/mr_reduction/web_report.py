@@ -104,6 +104,7 @@ class Report(object):
 
         dangle0 = run_object['DANGLE0'].getStatistics().mean
         dirpix = run_object['DIRPIX'].getStatistics().mean
+        p_charge = run_object['gd_prtn_chrg'].value
         
         meta = "<p>\n<table style='width:80%'>"
         meta += "<tr><td>Run:</td><td><b>%s</b></td></td><td><b>Direct beam: %s</b></td></tr>" % (run_object['run_number'].value, direct_beam)
@@ -124,8 +125,8 @@ class Report(object):
         meta += "</table>\n"
         
         meta += "<p><table style='width:100%'>"
-        meta += "<tr><th>Theta (actual)</th><th>DANGLE [DANGLE0]</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th><th>Huber X</th></tr>"
-        meta += "<tr><td>%s</td><td>%s [%s]</td><td>%s</td><td>%s</td><td>%s - %s</td><td>%s</td></tr>\n" % (theta, dangle, dangle0, sangle, dirpix, lambda_min, lambda_max, huber_x)
+        meta += "<tr><th>Theta (actual)</th><th>DANGLE [DANGLE0]</th><th>SANGLE</th><th>DIRPIX</th><th>Wavelength</th><th>Huber X</th><th>p-charge [uAh]</th></tr>"
+        meta += "<tr><td>%s</td><td>%s [%s]</td><td>%s</td><td>%s</td><td>%s - %s</td><td>%s</td><td>%s</td></tr>\n" % (theta, dangle, dangle0, sangle, dirpix, lambda_min, lambda_max, huber_x, p_charge)
         meta += "</table>\n<p>\n"
         return meta
 

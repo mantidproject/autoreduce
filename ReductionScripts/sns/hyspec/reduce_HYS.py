@@ -15,6 +15,12 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt 
 
 
+def get_colorscale_minimum(arr):
+    x=arr[numpy.isfinite(arr)]
+    x=x[x>0]
+    xc=x[numpy.argsort(x)][len(x)*0.02] #ignore the bottom 2%
+    return xc
+
 def CorrectTransmissionPolarizer(WS,EFixed):
 	#DeltaE-Ei=-Ef
 	WS=ScaleX(WS,Factor=-EFixed,Operation="Add")
@@ -50,10 +56,10 @@ def generate_slice(ws,mdh_base_filename,extra_name,ad0,ad1,ad2,ad3):
     
 def do_reduction(filename,output_dir):
     instrument = 'HYS'
-    norm_file = '/SNS/HYS/shared/autoreduce/Vrod_15meV_Nov17_2017.nxs'
-    #norm_file = '/SNS/HYS/shared/autoreduce/V_3p8meV_Aug31_2017.nxs'
+    #norm_file = '/SNS/HYS/shared/autoreduce/Vrod_15meV_Nov17_2017.nxs'
+    norm_file = '/SNS/HYS/shared/autoreduce/V_3p8meV_Aug31_2017.nxs'
 
-    correct_transmission=True
+    correct_transmission=False
 
     config['default.facility'] = "SNS"
     data = LoadEventNexus(filename)
@@ -170,8 +176,8 @@ def do_reduction(filename,output_dir):
         comment=dgs.getRun()['file_notes'].value.strip().replace(' ','_')
         if comment!='' and comment!='(unset)' and ('powder' not in comment):
             #UB_DAS=dgs.getRun()['BL14B:CS:UBMatrix'].value[0]
-            SetUB(dgs,a=3.81,b=3.81,c=6.26,alpha=90,beta=90,gamma=90,u="1,0,0",v="0,1,0")
-            minValues,maxValues="-2.5,-2.5,-2.5,-1","2.5,4.5,1,16"
+            SetUB(dgs,a=5.32,b=5.32,c=5.5,alpha=90,beta=90,gamma=90,u="1,0,0",v="0,0,1")
+            minValues,maxValues="0,-1,-1,-1","2,1,1,7"
             
             mdpart=ConvertToMD(dgs,
                                QDimensions='Q3D',
@@ -181,18 +187,18 @@ def do_reduction(filename,output_dir):
                                MinValues=minValues,
                                MaxValues=maxValues,
                                UProj="1,0,0",
-                               VProj="0,1,0",
-                               WProj="0,0,1")
+                               VProj="0,0,1",
+                               WProj="0,1,0")
             #try to load the corresponding dataset and add to it
-            d,n=generate_slice(mdpart,mdh_base_filename,comment+"_HK0_0meV","[H,0,0],-2.0,2.0,200",
-                               "[0,K,0],-2,2,200","DeltaE,-0.5,0.5,1","[0,0,L],-0.5,0.5,1")
-            DivideMD(d,n,OutputWorkspace='hk0_0meV')
-            d1,n1=generate_slice(mdpart,mdh_base_filename,comment+"_HK0_8meV","[H,0,0],-2.0,2.0,200",
-                               "[0,K,0],-2,2,200","DeltaE,7,9,1","[0,0,L],-0.5,0.5,1")
-            DivideMD(d1,n1,OutputWorkspace='hk0_8meV')
-            d2,n2=generate_slice(mdpart,mdh_base_filename,comment+"_OKE","[H,0,0],-2,2,200",
-                               "DeltaE,0,18,100","[0,0,L],-0.1,0.1,1","[0,K,0],-0.1,0.1,1")
-            DivideMD(d2,n2,OutputWorkspace='h0E')
+            d,n=generate_slice(mdpart,mdh_base_filename,comment+"_H0L_0meV","[H,0,0],0.5,1.5,100",
+                               "[0,0,L],-1,1,100","DeltaE,-0.5,0.5,1","[0,K,0],-0.5,0.5,1")
+            DivideMD(d,n,OutputWorkspace='h0l_0meV')
+            d1,n1=generate_slice(mdpart,mdh_base_filename,comment+"_H0L_4meV","[H,0,0],0.5,1.5,100",
+                               "[0,0,L],-1,1,100","DeltaE,3,6,1","[0,K,0],-0.5,0.5,1")
+            DivideMD(d1,n1,OutputWorkspace='h0l_4meV')
+            d2,n2=generate_slice(mdpart,mdh_base_filename,comment+"_HE","[H,0,0],0.5,1.5,100",
+                               "DeltaE,0,7,70","[0,0,L],-0.25,0.25,1","[0,K,0],-0.5,0.5,1")
+            DivideMD(d2,n2,OutputWorkspace='hE')
     except Exception as e:
         logger.error("Something bad occured during MD processing")
         logger.error(repr(e))
@@ -264,7 +270,7 @@ def do_reduction(filename,output_dir):
         plot_html+="<div>{0}</div>\n".format(myplot)
       
         try:
-            hhl=mtd['hk0_0meV']
+            hhl=mtd['h0l_0meV']
             xmin=hhl.getDimension(0).getMinimum()
             xmax=hhl.getDimension(0).getMaximum()
             xstep=hhl.getDimension(0).getX(1)-xmin
@@ -274,10 +280,12 @@ def do_reduction(filename,output_dir):
             x=numpy.arange(xmin,xmax,xstep)
             y=numpy.arange(ymin,ymax,ystep)
             Y,X=numpy.meshgrid(y,x)
-            darray=hhl.getSignalArray()[:,:,0,0]
+            darray=hhl.getSignalArray()[:,:,0,0]*1.0
+            cmin=get_colorscale_minimum(darray)
+            darray[darray<cmin]=numpy.nan
             Zm=numpy.ma.masked_where(numpy.isnan(darray),darray)
             Zm = numpy.log(numpy.transpose(Zm))
-            myplot1=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
+            myplot1=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='00L',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot1)        
         except Exception as e:
@@ -285,7 +293,7 @@ def do_reduction(filename,output_dir):
             logger.error(repr(e))
 
         try:
-            hhE=mtd['hk0_8meV']
+            hhE=mtd['h0l_4meV']
             xmin=hhE.getDimension(0).getMinimum()
             xmax=hhE.getDimension(0).getMaximum()
             xstep=hhE.getDimension(0).getX(1)-xmin
@@ -298,7 +306,7 @@ def do_reduction(filename,output_dir):
             darray=hhE.getSignalArray()[:,:,0,0]
             Zm=numpy.ma.masked_where(numpy.isnan(darray),darray)
             Zm = numpy.log(numpy.transpose(Zm))
-            myplot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='0K0',
+            myplot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title='H00', y_title='00L',
                      x_log=False, y_log=False, instrument='HYS', publish=False)
             plot_html+="<div>{0}</div>\n".format(myplot2)        
         except Exception as e:
@@ -306,7 +314,7 @@ def do_reduction(filename,output_dir):
             logger.error(repr(e))
             
         try:
-            lE=mtd['h0E']
+            lE=mtd['hE']
             xmin=lE.getDimension(0).getMinimum()
             xmax=lE.getDimension(0).getMaximum()
             xstep=lE.getDimension(0).getX(1)-xmin

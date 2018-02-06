@@ -203,6 +203,7 @@ class ReductionProcess(object):
         """
         data_dir = "/SNS/REF_M/%s/data" % self.ipts
         ar_dir = "/SNS/REF_M/%s/shared/autoreduce" % self.ipts
+        db_dir = "/SNS/REF_M/shared/autoreduce/direct_beams/"
 
         wl_ = scatt_ws.getRun().getProperty("LambdaRequest").getStatistics().mean
         s1_ = scatt_ws.getRun().getProperty("S1HWidth").getStatistics().mean
@@ -212,6 +213,7 @@ class ReductionProcess(object):
         dangle_ = abs(scatt_ws.getRun().getProperty("DANGLE").getStatistics().mean)
 
         closest = None
+        #TODO: If we don't find anything, look into /SNS/REF_M/shared/autoreduce/direct_beams
         for item in os.listdir(data_dir):
             if item.endswith("_event.nxs") or item.endswith("h5"):
                 summary_path = os.path.join(ar_dir, item+'.json')
@@ -264,6 +266,7 @@ class ReductionProcess(object):
 
                         peak_pos = data_info.peak_position if data_info.peak_position is not None else direct_beam_pix
                     except:
+                        data_info = None
                         peak_pos = direct_beam_pix
                     theta_d = (dangle - dangle0) / 2.0
                     theta_d += ((direct_beam_pix - peak_pos) * pixel_width) * 180.0 / math.pi / (2.0 * det_distance)
@@ -272,6 +275,11 @@ class ReductionProcess(object):
                     fd = open(summary_path, 'w')
                     fd.write(json.dumps(meta_data))
                     fd.close()
+                    if data_info is not None and data_info.data_type == 0:
+                        standard_path = os.path.join(db_dir, item+'.json')
+                        fd = open(standard_path, 'w')
+                        fd.write(json.dumps(meta_data))
+                        fd.close()
                 else:
                     fd = open(summary_path, 'r')
                     meta_data = json.loads(fd.read())
@@ -312,6 +320,46 @@ class ReductionProcess(object):
             for item in os.listdir(ar_dir):
                 if item.endswith(".json"):
                     summary_path = os.path.join(ar_dir, item)
+                    fd = open(summary_path, 'r')
+                    meta_data = json.loads(fd.read())
+                    fd.close()
+                    if 'invalid' in meta_data.keys():
+                        continue
+                    run_number = meta_data['run']
+                    dangle = meta_data['dangle']
+                    theta_d = meta_data['theta_d'] if 'theta_d' in meta_data else 0
+                    sangle = meta_data['sangle'] if 'sangle' in meta_data else 0
+
+                    wl = meta_data['wl']
+                    s1 = meta_data['s1']
+                    s2 = meta_data['s2']
+                    s3 = meta_data['s3']
+                    if 'huber_x' in meta_data:
+                        huber_x = meta_data['huber_x']
+                    else:
+                        huber_x = 0
+                    #if run_number == run_ or (dangle > self.tolerance and huber_x < 9) :
+                    if run_number == run_ or ((theta_d > self.tolerance or sangle > self.tolerance) and huber_x < self.huber_x_cut):
+                        continue
+                    # If we don't allow runs taken later than the run we are processing...
+                    if not allow_later_runs and run_number > run_:
+                        continue
+                    
+                    if math.fabs(wl-wl_) < self.tolerance \
+                        and (skip_slits is True or \
+                        (math.fabs(s1-s1_) < self.tolerance \
+                        and math.fabs(s2-s2_) < self.tolerance \
+                        and math.fabs(s3-s3_) < self.tolerance)):
+                        if closest is None:
+                            closest = run_number
+                        elif abs(run_number-run_) < abs(closest-run_):
+                            closest = run_number
+
+        #TODO: refactor this
+        if closest is None:
+            for item in os.listdir(db_dir):
+                if item.endswith(".json"):
+                    summary_path = os.path.join(db_dir, item)
                     fd = open(summary_path, 'r')
                     meta_data = json.loads(fd.read())
                     fd.close()

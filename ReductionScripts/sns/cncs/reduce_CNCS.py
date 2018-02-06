@@ -22,7 +22,7 @@ raw_vanadium="/SNS/CNCS/IPTS-19524/nexus/CNCS_265987.nxs.h5"
 processed_vanadium="van_265987.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.15"
+Emin="-0.1"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -31,17 +31,17 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot,Sample:Axis2.RBV,omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
-a="13.452"
-b="13.452"
-c="13.452"
+a="3.45"
+b="3.45"
+c="24.2"
 alpha="90.0"
 beta="90.0"
-gamma="90.0"
-uVector="1,1,0"
-vVector="0,0,1"
-sub_directory=""
+gamma="120.0"
+uVector="1,0,0"
+vVector="0,1,0"
+sub_directory="/SNS/CNCS/IPTS-19524/shared/autoreduce/DarkCurrentv2/"
 
 #parameters not on the webpage
 #below remains unchanged

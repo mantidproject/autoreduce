@@ -99,3 +99,5 @@ if runNumber > 0:  # it is 0 between runs
     mantid.logger.information("post returned %d" % request.status_code)
     mantid.logger.information("resulting document:")
     mantid.logger.information(str(request.text))
+else:
+    mantid.logger.information('Not posting becuase run number is not greater than zero: %s' % runNumber)
