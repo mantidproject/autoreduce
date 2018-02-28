@@ -4,11 +4,7 @@ import sys, os
 import time
 #sys.path.append("/opt/mantidnightly/bin")
 
-import warnings
-warnings.simplefilter('ignore', RuntimeWarning)
-
-filtered_logs = ["Optimal parameters not found",
-                 "WARNING:roo:Run"]
+filtered_logs = ["Optimal parameters not found"]
 import logging
 class ContextFilter(logging.Filter):
     def filter(self, record):
@@ -20,12 +16,7 @@ class ContextFilter(logging.Filter):
                 return 0
         return 1
 
-
-
-levels = (logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL)
-#logging.basicConfig(level=logging.ERROR)
 a1 = logging.getLogger()
-
 f = ContextFilter()
 a1.addFilter(f)
 
