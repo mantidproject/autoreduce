@@ -1,4 +1,4 @@
-#pylint: disable=line-too-long
+#pylint: disable=line-too-long,unused-variable, exec-used
 """
     Translator to be used to process filtered event data and produce
     nexus files readable by QuickNXS.
@@ -6,28 +6,6 @@
 
     For reference, these are the states recognized by QuickNXS
 
-MAPPING_12FULL=(
-                 (u'++ (0V)', u'entry-off_off_Ezero'),
-                 (u'-- (0V)', u'entry-on_on_Ezero'),
-                 (u'+- (0V)', u'entry-off_on_Ezero'),
-                 (u'-+ (0V)', u'entry-on_off_Ezero'),
-                 (u'++ (+V)', u'entry-off_off_Eplus'),
-                 (u'-- (+V)', u'entry-on_on_Eplus'),
-                 (u'+- (+V)', u'entry-off_on_Eplus'),
-                 (u'-+ (+V)', u'entry-on_off_Eplus'),
-                 (u'++ (-V)', u'entry-off_off_Eminus'),
-                 (u'-- (-V)', u'entry-on_on_Eminus'),
-                 (u'+- (-V)', u'entry-off_on_Eminus'),
-                 (u'-+ (-V)', u'entry-on_off_Eminus'),
-                 )
-MAPPING_12HALF=(
-                 (u'+ (0V)', u'entry-off_off_Ezero'),
-                 (u'- (0V)', u'entry-on_off_Ezero'),
-                 (u'+ (+V)', u'entry-off_off_Eplus'),
-                 (u'- (+V)', u'entry-on_off_Eplus'),
-                 (u'+ (-V)', u'entry-off_off_Eminus'),
-                 (u'- (-V)', u'entry-on_off_Eminus'),
-                 )
 MAPPING_FULLPOL=(
                  (u'++', u'entry-Off_Off'),
                  (u'--', u'entry-On_On'),
@@ -41,18 +19,15 @@ MAPPING_HALFPOL=(
 MAPPING_UNPOL=(
                (u'x', u'entry-Off_Off'),
                )
-MAPPING_EFIELD=(
-                (u'0V', u'entry-Off_Off'),
-                (u'+V', u'entry-On_Off'),
-                (u'-V', u'entry-Off_On'),
-                )
 
+    TODO: Use PolarizerLabel and AnalyzerLabel PVs to make sure Off is +
 """
+from __future__ import (absolute_import, division, print_function)
 import os
 import nxs
 from nxs import NXfield, NXgroup
 import numpy as np
-import mr_filter_events
+from . import mr_filter_events
 
 
 def translate_entry(raw_event_file, filtered_file, entry_name, histo=True):
@@ -253,14 +228,14 @@ def translate(raw_event_file, identifier='quick', events=True, histo=True, sub_d
     """
     # Create a filtered file
     xs_event_files, xs_histo_files = mr_filter_events.filter_cross_sections(raw_event_file, events=events, histo=histo)
-    print xs_event_files
-    print xs_histo_files
+    print(xs_event_files)
+    print(xs_histo_files)
     if events:
         process(raw_event_file, xs_event_files, histo=False, sub_dir=sub_dir)
     if histo:
         process(raw_event_file, xs_histo_files, histo=True, sub_dir=sub_dir)
 
-def process(raw_event_file, filtered_files, histo=False, sub_dir=None):
+def process(raw_event_file, filtered_files, histo=False, sub_dir=None, identifier='quicknxs'):
     # Assemble the entries
     tree = nxs.NXroot()
     for entry_name, filtered_file in filtered_files.items():
@@ -300,7 +275,9 @@ if __name__ == '__main__':
 
     #translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_25631.nxs.h5', histo=False, sub_dir='translation_output')
     #translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_28722.nxs.h5', histo=False, sub_dir='translation_output')
-    translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_28144.nxs.h5', histo=False, sub_dir='translation_output')
+    #translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_28144.nxs.h5', histo=False, sub_dir='translation_output')
+    #translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_27800.nxs.h5', histo=False, sub_dir='translation_output')
+    translate('/SNS/REF_M/shared/ADARA.Test.Data.2018/REF_M_25636.nxs.h5', histo=False, sub_dir='translation_output2')
     
     if False:
         data_dir = '/SNS/REF_M/shared/ADARA.Test.Data.2018'
