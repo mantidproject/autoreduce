@@ -5,8 +5,7 @@ import time
 #sys.path.append("/opt/mantidnightly/bin")
 
 import warnings
-warnings.filterwarnings("ignore")
-#warnings.simplefilter('ignore', RuntimeWarning)
+warnings.simplefilter('ignore', RuntimeWarning)
 
 from mr_reduction import mr_reduction as refm
 from mr_reduction import mr_translate
