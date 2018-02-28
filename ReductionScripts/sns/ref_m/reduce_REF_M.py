@@ -5,7 +5,6 @@ import time
 #sys.path.append("/opt/mantidnightly/bin")
 
 import warnings
-warnings.simplefilter('ignore', Warning)
 warnings.simplefilter('ignore', RuntimeWarning)
 
 from mr_reduction import mr_reduction as refm
