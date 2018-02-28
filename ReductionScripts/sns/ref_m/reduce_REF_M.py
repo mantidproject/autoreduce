@@ -7,11 +7,15 @@ import time
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
+filtered_logs = ["Optimal parameters not found",
+                 "Could not find direct beam"]
 import logging
 class ContextFilter(logging.Filter):
     def filter(self, record):
-        if "Optimal parameters not found" in record.getMessage():
-            return 0
+        msg = record.getMessage()
+        for item in filtered_logs:
+            if item in msg:
+                return 0
         return 1
 
 
