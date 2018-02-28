@@ -7,6 +7,22 @@ import time
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
+import logging
+class ContextFilter(logging.Filter):
+    def filter(self, record):
+        if "Optimal parameters not found" in record.message:
+            return 0
+        return 1
+
+
+
+levels = (logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL)
+#logging.basicConfig(level=logging.ERROR)
+a1 = logging.getLogger('root')
+
+f = ContextFilter()
+a1.addFilter(f)
+
 from mr_reduction import mr_reduction as refm
 from mr_reduction import mr_translate
 
