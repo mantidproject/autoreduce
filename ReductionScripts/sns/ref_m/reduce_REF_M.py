@@ -13,6 +13,8 @@ import logging
 class ContextFilter(logging.Filter):
     def filter(self, record):
         msg = record.getMessage()
+        if record.levelname == 'WARNING':
+            return 0
         for item in filtered_logs:
             if item in msg:
                 return 0
