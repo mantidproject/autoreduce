@@ -10,7 +10,7 @@ warnings.simplefilter('ignore', RuntimeWarning)
 import logging
 class ContextFilter(logging.Filter):
     def filter(self, record):
-        if "Optimal parameters not found" in record.message:
+        if "Optimal parameters not found" in record.getMessage():
             return 0
         return 1
 
