@@ -8,7 +8,7 @@ import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
 filtered_logs = ["Optimal parameters not found",
-                 "Could not find direct beam"]
+                 "WARNING:roo:Run"]
 import logging
 class ContextFilter(logging.Filter):
     def filter(self, record):
