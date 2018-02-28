@@ -18,7 +18,7 @@ class ContextFilter(logging.Filter):
 
 levels = (logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL)
 #logging.basicConfig(level=logging.ERROR)
-a1 = logging.getLogger('root')
+a1 = logging.getLogger()
 
 f = ContextFilter()
 a1.addFilter(f)
