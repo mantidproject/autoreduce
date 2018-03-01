@@ -4,10 +4,13 @@ import sys, os
 import time
 #sys.path.append("/opt/mantidnightly/bin")
 
-filtered_logs = ["Optimal parameters not found"]
 import logging
+
 class ContextFilter(logging.Filter):
+    """ Simple log filter to take out non-Mantid logs from .err file """
+
     def filter(self, record):
+        filtered_logs = ["Optimal parameters not found"]
         msg = record.getMessage()
         if record.levelname == 'WARNING':
             return 0
@@ -16,9 +19,9 @@ class ContextFilter(logging.Filter):
                 return 0
         return 1
 
-a1 = logging.getLogger()
+logger = logging.getLogger()
 f = ContextFilter()
-a1.addFilter(f)
+logger.addFilter(f)
 
 from mr_reduction import mr_reduction as refm
 from mr_reduction import mr_translate
@@ -61,4 +64,5 @@ if __name__=="__main__":
     red.reduce()
 
     # Translate event data to legacy QuickNXS-compatible files.
-    # mr_translate.translate(event_file_path, histo=False)
+    if event_file_path.endswith('.h5'):
+        mr_translate.translate(event_file_path, histo=False)
