@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 import logging
 import sys, os
-import time
-#sys.path.append("/opt/mantidnightly/bin")
-
-import logging
 
 class ContextFilter(logging.Filter):
     """ Simple log filter to take out non-Mantid logs from .err file """
