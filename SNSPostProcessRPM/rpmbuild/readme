@@ -1,9 +1,0 @@
-Instructions for creating autoreduce rpm package in your home area and installing the autoreduce package on SNS analysis machines:
-
-1. check out the latest autoreduce project
-2. cd SNSPostProcessRPM
-3. make rpm
-4. uninstall autoreduce rpm:
-   sudo rpm -e autoreduce
-5. install autoreduce rpm:
-   sudo rpm -i ~/rpmbuild/RPMS/x86_64/autoreduce-1-.1.x86_64.rpm
