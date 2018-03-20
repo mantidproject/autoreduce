@@ -139,6 +139,7 @@ class ReductionProcess(object):
                                                    direct_info=direct_info)
                 report_list.append(report)
             except:
+                raise
                 # No data for this cross-section, skip to the next
                 logging.info("Cross section: %s", str(sys.exc_value))
 
