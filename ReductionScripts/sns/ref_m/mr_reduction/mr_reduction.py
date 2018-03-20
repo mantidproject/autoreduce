@@ -124,6 +124,7 @@ class ReductionProcess(object):
         else:
             xs_list = dummy_filter_cross_sections(self.data_ws)
 
+        print(len(xs_list))
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
         data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
@@ -139,7 +140,6 @@ class ReductionProcess(object):
                                                    direct_info=direct_info)
                 report_list.append(report)
             except:
-                raise
                 # No data for this cross-section, skip to the next
                 logging.info("Cross section: %s", str(sys.exc_value))
 
