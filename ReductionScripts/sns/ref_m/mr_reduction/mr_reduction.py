@@ -17,6 +17,7 @@ from .reflectivity_output import write_reflectivity
 from .data_info import DataInfo
 from .web_report import Report, process_collection
 from .mr_direct_beam_finder import DirectBeamFinder
+from .mr_filter_events import dummy_filter_cross_sections
 
 
 class ReductionProcess(object):
@@ -114,11 +115,14 @@ class ReductionProcess(object):
 
         # Load cross-sections
         _filename = None if self.data_ws is not None else self.file_path
-        xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
-                                        PolState=self.pol_state,
-                                        AnaState=self.ana_state,
-                                        PolVeto=self.pol_veto,
-                                        AnaVeto=self.ana_veto)
+        if self.data_ws is None:
+            xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
+                                            PolState=self.pol_state,
+                                            AnaState=self.ana_state,
+                                            PolVeto=self.pol_veto,
+                                            AnaVeto=self.ana_veto)
+        else:
+            xs_list = dummy_filter_cross_sections(self.data_ws)
 
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
