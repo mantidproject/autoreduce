@@ -138,6 +138,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
                 _clean_dict[key] = "%8g" % item[key]
         fd.write(template.format(**_clean_dict))
 
+        # TODO: Mantid should now return dQ
         x = ws.readX(0)
         y = ws.readY(0)
         dy = ws.readE(0)
