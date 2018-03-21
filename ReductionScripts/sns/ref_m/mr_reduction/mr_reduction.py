@@ -155,7 +155,7 @@ class ReductionProcess(object):
             logging.error(str(sys.exc_value))
 
         # Generate report and script
-        logging.info("Processing collection of %s reports", len(report_list))
+        logging.error("Processing collection of %s reports", len(report_list))
         html_report, script = process_collection(summary_content=ref_plot, report_list=report_list, publish=True, run_number=self.run_number)
 
         try:
