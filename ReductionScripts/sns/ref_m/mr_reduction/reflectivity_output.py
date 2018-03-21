@@ -94,7 +94,11 @@ def write_reflectivity(ws_list, output_path, cross_section):
         low_res_min = run_object.getProperty("scatt_low_res_min").value
         low_res_max = run_object.getProperty("scatt_low_res_max").value
         dpix = run_object.getProperty("DIRPIX").getStatistics().mean
-        filename = run_object.getProperty("Filename").value
+        # For live data, we might not have a file name
+        if 'Filename' in run_object:
+            filename = run_object.getProperty("Filename").value
+        else:
+            filename = "live data"
         constant_q_binning = run_object.getProperty("constant_q_binning").value
         scatt_pos = run_object.getProperty("specular_pixel").value
         norm_x_min = run_object.getProperty("norm_peak_min").value
