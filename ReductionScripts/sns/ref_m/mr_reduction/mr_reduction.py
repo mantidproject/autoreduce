@@ -131,7 +131,6 @@ class ReductionProcess(object):
         # Reduce each cross-section
         for ws in xs_list:
             try:
-                logging.error(str(ws))
                 self.run_number = ws.getRunNumber()
                 report = self.reduce_cross_section(self.run_number, ws=ws,
                                                    data_info=data_info,
