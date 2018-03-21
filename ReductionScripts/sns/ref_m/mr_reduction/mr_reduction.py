@@ -151,6 +151,7 @@ class ReductionProcess(object):
             matched_runs, scaling_factors = combined_curves(run=int(self.run_number), ipts=ipts_number)
             ref_plot = plot_combined(matched_runs, scaling_factors, ipts_number, publish=False)
         except:
+            logging.error("Could not generate combined curve")
             logging.error(str(sys.exc_value))
 
         # Generate report and script
