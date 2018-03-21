@@ -115,6 +115,10 @@ class ReductionProcess(object):
 
         # Load cross-sections
         _filename = None if self.data_ws is not None else self.file_path
+        # For live data, we use a workspace directly. Filtered out logs are
+        # currently saved as zero-length time series but the filtering, which
+        # creates problems when applying several filters in a row.
+        # Use a temporary version until FilterEvents is fixed.
         if self.data_ws is None:
             xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
                                             PolState=self.pol_state,
@@ -140,7 +144,7 @@ class ReductionProcess(object):
                 report_list.append(report)
             except:
                 # No data for this cross-section, skip to the next
-                logging.error("Cross section: %s", str(sys.exc_value))
+                logging.warning("Cross section: %s", str(sys.exc_value))
 
         # Generate stitched plot
         ref_plot = None
@@ -155,7 +159,7 @@ class ReductionProcess(object):
             logging.error(str(sys.exc_value))
 
         # Generate report and script
-        logging.error("Processing collection of %s reports", len(report_list))
+        logging.info("Processing collection of %s reports", len(report_list))
         html_report, script = process_collection(summary_content=ref_plot, report_list=report_list, publish=True, run_number=self.run_number)
 
         try:
