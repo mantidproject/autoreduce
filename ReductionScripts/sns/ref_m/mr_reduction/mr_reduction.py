@@ -17,7 +17,7 @@ from .reflectivity_output import write_reflectivity
 from .data_info import DataInfo
 from .web_report import Report, process_collection
 from .mr_direct_beam_finder import DirectBeamFinder
-from .mr_filter_events import dummy_filter_cross_sections
+from .dummy_mr_filter_cross_sections import dummy_filter_cross_sections
 
 
 class ReductionProcess(object):
@@ -124,7 +124,6 @@ class ReductionProcess(object):
         else:
             xs_list = dummy_filter_cross_sections(self.data_ws)
 
-        print(len(xs_list))
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
         data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
