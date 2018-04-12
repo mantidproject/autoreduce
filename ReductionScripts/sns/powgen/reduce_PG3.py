@@ -69,7 +69,7 @@ clearmem()
 
 # second run through is out-of-plane
 SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_bank2,
                    #OutputFilePrefix='OP_',
@@ -118,7 +118,7 @@ clearmem()
 
 # third run with only in-plane
 SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
                    OutputFilePrefix='IP_',
@@ -136,7 +136,7 @@ clearmem()
 
 # fourth run with all pixels together
 SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
+                   PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
                    OutputFilePrefix='ALL_',
