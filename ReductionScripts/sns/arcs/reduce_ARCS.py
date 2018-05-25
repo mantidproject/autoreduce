@@ -18,7 +18,6 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-7,122-128'})
     MaskBTPParameters.append({'Pixel': '1-12,117-128', 'Bank': '70'})
     MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
-    MaskBTPParameters.append({'Tube': '5', 'Bank': '21'})
 
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
@@ -44,7 +43,7 @@ if __name__ == "__main__":
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
-    elog.setSERotOptions('omega, Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot,SE100mm')
+    elog.setSERotOptions('omega,Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot,SE100mm')
     elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorB, SensorC, SensorD')
     elog.setFilename(outdir+'experiment_log.csv')
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
