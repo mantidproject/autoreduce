@@ -16,8 +16,8 @@ group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
 
-eventFileAbs=sys.argv[1]
-outputDir=sys.argv[2]+'/'
+eventFileAbs = sys.argv[1]
+outputDir = sys.argv[2]+'/'
 
 eventFile = os.path.split(eventFileAbs)[-1]
 nexusDir = eventFileAbs.replace(eventFile, '')
