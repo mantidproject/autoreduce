@@ -1,18 +1,18 @@
 import sys,os,glob, subprocess, shutil
 
 def do_reduction(path,outdir):
-    reduction_files=glob.glob(os.path.join(folder,'reduce_HYS_*.py'))
+    reduction_files=glob.glob(os.path.join(outdir,'reduce_HYS_*.py'))
     if reduction_files!=[]:
         latest_reduction=max(reduction_files,key=os.path.getmtime)
     else:
         reduction_files=glob.glob(os.path.join('/SNS/HYS/shared/templates/reduce_HYS_*.py'))
         latest_default_reduction=max(reduction_files,key=os.path.getmtime)
-        latest_reduction=os.path.join(folder,os.path.basename(latest_default_reduction))
+        latest_reduction=os.path.join(outdir,os.path.basename(latest_default_reduction))
         shutil.copy2(latest_default_reduction, latest_reduction)
-    cmd = "python {0} {1} {2}".format(latest_reduction, path, folder)
+    cmd = "python {0} {1} {2}".format(latest_reduction, path, outdir)
     proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
                             universal_newlines = True,
-                            cwd=folder)
+                            cwd=outdir)
     proc.communicate()
         
 
