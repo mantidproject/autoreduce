@@ -39,80 +39,7 @@ def clearmem(keepname=None):
             continue
         DeleteWorkspace(name)
 
-'''
-# first run through is only bank1
-SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
-                   CalibrationFile=cal_file,
-                   CharacterizationRunsFile=char_backgrounds+','+char_bank1,
-                   LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=binning, BinInDspace=True,
-                   BackgroundSmoothParams="40,10",
-                   FilterBadPulses=10,
-                   ScaleData =100,
-                   CacheDir='/tmp',
-                   SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
-                   FinalDataUnits="dSpacing")
-
-# this will be wrong because it is only bank1
-GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
-                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
-with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
-    first_pass = input.readlines()
-
-clearmem()
-
-# second run through is out-of-plane
-SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="ResetToZero",
-                   CalibrationFile=cal_file,
-                   CharacterizationRunsFile=char_backgrounds+','+char_bank2,
-                   #OutputFilePrefix='OP_',
-                   GroupingFile=group_bank2,
-                   LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=binning, BinInDspace=True,
-                   BackgroundSmoothParams="5,2",
-                   FilterBadPulses=10,
-                   ScaleData =100,
-                   CacheDir='/tmp',
-                   # don't save gsas here
-                   SaveAs="topas and fullprof", OutputDirectory=outputDir,
-                   FinalDataUnits="dSpacing")
-GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
-                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
-with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
-    second_pass = input.readlines()
-
-# determine values for SaveGSS
-PDDetermineCharacterizations(InputWorkspace='PG3_'+runNumber,
-                             Characterizations='characterizations',
-                             ReductionProperties="__snspowderreduction")
-info = PropertyManagerDataService.retrieve("__snspowderreduction")
-# gsas only accepts time-of-flight
-ConvertUnits(InputWorkspace='PG3_'+runNumber,
-             OutputWorkspace='PG3_'+runNumber,
-             Target='TOF',
-             EMode='Elastic')
-SaveGSS(InputWorkspace='PG3_'+runNumber,
-        Filename=os.path.join(outputDir, 'PG3_'+runNumber+'.gsa'),
-                              SplitFiles=False, Append=True,
-                              MultiplyByBinWidth=(len(info['vanadium'].value) > 0),
-                              Bank=info["bank"].value,
-                              Format="SLOG", ExtendedHeader=True)
-
-LoadGSS(Filename=os.path.join(outputDir, 'PG3_'+runNumber+'.gsa'),
-        OutputWorkspace='PG3_'+runNumber,
-        UseBankIDasSpectrumNumber=True)
-
-ConvertUnits(InputWorkspace='PG3_'+runNumber,
-             OutputWorkspace='PG3_'+runNumber,
-             Target='dSpacing',
-             EMode='Elastic')
-
-clearmem()
-'''
-
-# third run with only in-plane
+# first run with only in-plane
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
@@ -135,13 +62,12 @@ with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
 os.unlink(os.path.join(outputDir,'IP_PG3_'+runNumber+'.py'))
 clearmem()
 
-# fourth run with all pixels together
+# second run with all pixels together - use calibration file grouping
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
                    #OutputFilePrefix='ALL_',
-                   GroupingFile=group_all,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
@@ -210,7 +136,7 @@ except ImportError:
 clearmem()
 
 '''
-# fifth run for pdfgetn files
+# finally run for pdfgetn files
 PDToPDFgetN(Filename=eventFileAbs,
             FilterBadPulses=10,
             OutputWorkspace='PG3_'+runNumber,
