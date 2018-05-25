@@ -133,6 +133,11 @@ SNSPowderReduction(Filename=eventFileAbs,
                    CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
+
+GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
+                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
+with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
+    first_pass = input.readlines()
 os.unlink(os.path.join(outputDir,'IP_PG3_'+runNumber+'.py'))
 clearmem()
 
@@ -151,7 +156,11 @@ SNSPowderReduction(Filename=eventFileAbs,
                    CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
-os.unlink(os.path.join(outputDir,'ALL_PG3_'+runNumber+'.py'))
+GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
+                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
+with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
+    second_pass = input.readlines()
+os.unlink(os.path.join(outputDir,'PG3_'+runNumber+'.py'))
 
 # create arbitrary normalized, correction-free S(Q)
 # this is hard-coded to the wavelength log
