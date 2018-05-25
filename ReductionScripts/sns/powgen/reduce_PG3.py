@@ -104,7 +104,6 @@ else:
 
 # interactive plots
 try:
-    import plotly
     post_image = True
 
     plotting_workspace_name = 'PG3_'+runNumber
