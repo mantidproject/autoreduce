@@ -6,19 +6,19 @@ from sumRun_PG3 import addLineToCsv
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
+cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,
-                         'PG3_MICAS_d39808_2017_12_06_Bank1.h5')
-cal_all  = os.path.join(cal_dir,
-                         'PG3_MICAS_d39808_2017_12_06_ALL.h5')
+                         'PG3_PAC_d40104_2018_05_22.h5') # 'PG3_MICAS_d39808_2017_12_06_Bank1.h5')
+#cal_all  = os.path.join(cal_dir,
+#                         'PG3_MICAS_d39808_2017_12_06_ALL.h5')
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_12_06-HR-MICAS.txt")
-char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
-char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
+#char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
+#char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
 # group_bank1 exists as the grouping in the calibration file
-group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
+#group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
 group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
-group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
+#group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
 
@@ -45,6 +45,7 @@ def clearmem(keepname=None):
             continue
         DeleteWorkspace(name)
 
+'''
 # first run through is only bank1
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
@@ -115,6 +116,7 @@ ConvertUnits(InputWorkspace='PG3_'+runNumber,
              EMode='Elastic')
 
 clearmem()
+'''
 
 # third run with only in-plane
 SNSPowderReduction(Filename=eventFileAbs,
@@ -139,7 +141,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="ResetToZero",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
-                   OutputFilePrefix='ALL_',
+                   #OutputFilePrefix='ALL_',
                    GroupingFile=group_all,
                    LowResRef=0, RemovePromptPulseWidth=50,
                    Binning=binning, BinInDspace=True,
