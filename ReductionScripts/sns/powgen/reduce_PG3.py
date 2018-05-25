@@ -8,17 +8,11 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,
-                         'PG3_PAC_d40104_2018_05_22.h5') # 'PG3_MICAS_d39808_2017_12_06_Bank1.h5')
-#cal_all  = os.path.join(cal_dir,
-#                         'PG3_MICAS_d39808_2017_12_06_ALL.h5')
+                         'PG3_d40236_2018_05_25.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_12_06-HR-MICAS.txt")
-#char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
-#char_bank2 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-OP.txt")
+
 char_inplane = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-IP.txt")
-# group_bank1 exists as the grouping in the calibration file
-#group_bank2 = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-OP.xml')
-group_inplane = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-IP.xml')
-#group_all = os.path.join(cal_dir, 'Grouping', 'PG3_Grouping-ALL.xml')
+group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
 
