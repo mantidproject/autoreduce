@@ -20,7 +20,7 @@ MaskBTPParameters.append({'Bank': '36-37'})
 raw_vanadium="/SNS/CNCS/IPTS-20360/nexus/CNCS_273266.nxs.h5"
 processed_vanadium="van_273266.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.1"
 Emax="0.95"
 Estep="0.005"
@@ -40,7 +40,7 @@ beta="90.0"
 gamma="120.0"
 uVector="1,0,0"
 vVector="0,1,0"
-sub_directory="/SNS/CNCS/IPTS-20360/shared/autoreduce/GetLost/"
+sub_directory="/SNS/CNCS/IPTS-20360/shared/autoreduce/PressureCell/"
 
 #parameters not on the webpage
 #below remains unchanged
