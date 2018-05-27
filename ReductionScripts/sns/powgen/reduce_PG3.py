@@ -11,7 +11,7 @@ cal_file  = os.path.join(cal_dir,
                          'PG3_PAC_d40261_2018_05_26.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_05_26-HR-PAC.txt")
 
-char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26-HR-PAC.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26-HR.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0002
 QfitRange = [30.,50.]
