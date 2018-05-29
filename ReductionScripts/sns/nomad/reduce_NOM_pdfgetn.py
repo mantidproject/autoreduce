@@ -10,7 +10,7 @@ resamplex = -6000
 wavelengthMin = 0.
 wavelengthMax = 0.
 calFile = "/SNS/NOM/shared/CALIBRATION/2017_2_1B_CAL/NOM_d94214_2017_07_14_shifter.h5"
-charFile = "/SNS/NOM/shared/CALIBRATION/2017_1_1B_CAL/NOM_char_2017_04_15-pdf.txt"
+charFile = "/SNS/NOM/shared/CALIBRATION/2018_2_1B_CAL/NOM_char_2018_05_29-pdf.txt"
 ########## end of user defined parameters
 
 eventFileAbs = sys.argv[1]
