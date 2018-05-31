@@ -39,7 +39,7 @@ beta="90.0"
 gamma="120.0"
 uVector="1,0,0"
 vVector="0,1,0"
-sub_directory="/SNS/CNCS/IPTS-20360/shared/autoreduce/Tzero/"
+sub_directory=""
 
 #parameters not on the webpage
 #below remains unchanged
