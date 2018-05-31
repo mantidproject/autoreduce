@@ -30,15 +30,15 @@ T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot,Sample:Axis2.RBV,omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=True #+-0.1Ei, 5 steps
-create_MDnxs=False
-a="3.45"
-b="3.45"
-c="24.2"
+create_MDnxs=True
+a="5.5"
+b="5.5"
+c="25.78"
 alpha="90.0"
 beta="90.0"
-gamma="120.0"
+gamma="90.0"
 uVector="1,0,0"
-vVector="0,1,0"
+vVector="0,0,1"
 sub_directory=""
 
 #parameters not on the webpage
