@@ -106,6 +106,8 @@ class ReductionProcess(object):
         apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
         if direct_info is None:
             direct_info = data_info
+        # Important note: data_info is created from the cross-section with the most
+        # data, so data_info.cross_section indicates which one that was.
         return data_info, direct_info, apply_norm, norm_run
 
     def reduce(self):
@@ -205,7 +207,7 @@ class ReductionProcess(object):
                                  force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
                                  force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
-        logger.error("R%s [%s] DATA TYPE: %s [%s]" % (run_number, entry, data_info.data_type, data_info.cross_section))
+        logger.error("R%s [%s] DATA TYPE: %s [ref=%s]" % (run_number, entry, data_info.data_type, data_info.cross_section))
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
             return Report(ws, data_info, data_info, None)
 
