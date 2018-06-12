@@ -164,7 +164,7 @@ class ReductionProcess(object):
             logger.error(str(sys.exc_value))
 
         # Generate report and script
-        logging.info("Processing collection of %s reports", len(report_list))
+        logger.notice("Processing collection of %s reports" % len(report_list))
         html_report, script = process_collection(summary_content=ref_plot, report_list=report_list, publish=True, run_number=self.run_number)
 
         try:
@@ -205,7 +205,7 @@ class ReductionProcess(object):
                                  force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
                                  force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
-        logger.error("R%s DATA TYPE: %s" % (run_number, data_info.data_type))
+        logger.error("R%s [%s] DATA TYPE: %s [%s]" % (run_number, entry, data_info.data_type, data_info.cross_section))
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
             return Report(ws, data_info, data_info, None)
 
