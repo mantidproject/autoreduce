@@ -19,6 +19,7 @@ from .web_report import Report, process_collection
 from .mr_direct_beam_finder import DirectBeamFinder
 from .dummy_mr_filter_cross_sections import dummy_filter_cross_sections
 
+DIRECT_BEAM_EVTS_MIN = 1000
 
 class ReductionProcess(object):
     """
@@ -130,22 +131,15 @@ class ReductionProcess(object):
         else:
             xs_list = dummy_filter_cross_sections(self.data_ws)
 
-        logger.error("WS LIST: %s" % len(xs_list))
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
 
         self.ipts = ws.getRun().getProperty("experiment_identifier").value
-
-        try:
-            data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
-        except:
-            logger.error("\n\n %s \n\n" % sys.exc_value)
+        data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
 
         # Reduce each cross-section
-        logger.error("looping")
         for ws in xs_list:
             try:
-                logger.error("XS: %s" % str(ws))
                 self.run_number = ws.getRunNumber()
                 report = self.reduce_cross_section(self.run_number, ws=ws,
                                                    data_info=data_info,
@@ -271,7 +265,6 @@ class ReductionProcess(object):
             logger.warning("Run %s [%s]: Could not find direct beam with matching slit, trying with wl only" % (run_number, entry))
             norm_run = db_finder.search(skip_slits=True)
 
-        logger.error("NORMA: %s" % norm_run)
         apply_norm = False
         direct_info = None
         if norm_run is None:
@@ -285,7 +278,7 @@ class ReductionProcess(object):
                     ws_direct = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                                                NXentryName=norm_entry,
                                                OutputWorkspace="MR_%s" % norm_run)
-                    if ws_direct.getNumberEvents() > 10000:
+                    if ws_direct.getNumberEvents() > DIRECT_BEAM_EVTS_MIN:
                         logging.info("Found direct beam entry: %s [%s]", norm_run, norm_entry)
                         direct_info = DataInfo(ws_direct, norm_entry,
                                                use_roi=self.use_roi,
