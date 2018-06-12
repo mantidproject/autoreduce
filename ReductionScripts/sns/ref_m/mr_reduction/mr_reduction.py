@@ -120,21 +120,32 @@ class ReductionProcess(object):
         # creates problems when applying several filters in a row.
         # Use a temporary version until FilterEvents is fixed.
         if self.data_ws is None:
-            xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
-                                            PolState=self.pol_state,
-                                            AnaState=self.ana_state,
-                                            PolVeto=self.pol_veto,
-                                            AnaVeto=self.ana_veto)
+            ws = LoadEventNexus(Filename=_filename, OutputWorkspace="raw_events")
+            xs_list = dummy_filter_cross_sections(ws)
+            #xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
+            #                                PolState=self.pol_state,
+            #                                AnaState=self.ana_state,
+            #                                PolVeto=self.pol_veto,
+            #                                AnaVeto=self.ana_veto)
         else:
             xs_list = dummy_filter_cross_sections(self.data_ws)
 
+        logger.error("WS LIST: %s" % len(xs_list))
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
-        data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
+
+        self.ipts = ws.getRun().getProperty("experiment_identifier").value
+
+        try:
+            data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
+        except:
+            logger.error("\n\n %s \n\n" % sys.exc_value)
 
         # Reduce each cross-section
+        logger.error("looping")
         for ws in xs_list:
             try:
+                logger.error("XS: %s" % str(ws))
                 self.run_number = ws.getRunNumber()
                 report = self.reduce_cross_section(self.run_number, ws=ws,
                                                    data_info=data_info,
@@ -144,7 +155,7 @@ class ReductionProcess(object):
                 report_list.append(report)
             except:
                 # No data for this cross-section, skip to the next
-                logging.warning("Cross section: %s", str(sys.exc_value))
+                logger.error("Cross section: %s" % str(sys.exc_value))
 
         # Generate stitched plot
         ref_plot = None
@@ -155,8 +166,8 @@ class ReductionProcess(object):
             matched_runs, scaling_factors = combined_curves(run=int(self.run_number), ipts=ipts_number)
             ref_plot = plot_combined(matched_runs, scaling_factors, ipts_number, publish=False)
         except:
-            logging.error("Could not generate combined curve")
-            logging.error(str(sys.exc_value))
+            logger.error("Could not generate combined curve")
+            logger.error(str(sys.exc_value))
 
         # Generate report and script
         logging.info("Processing collection of %s reports", len(report_list))
@@ -169,7 +180,7 @@ class ReductionProcess(object):
             fd.write(script)
             fd.close()
         except:
-            logging.error("Could not write reduction script: %s", sys.exc_value)
+            logger.error("Could not write reduction script: %s" % sys.exc_value)
         return html_report
 
     def reduce_cross_section(self, run_number, ws, data_info=None,
@@ -200,6 +211,7 @@ class ReductionProcess(object):
                                  force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
                                  force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
+        logger.error("R%s DATA TYPE: %s" % (run_number, data_info.data_type))
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
             return Report(ws, data_info, data_info, None)
 
@@ -256,16 +268,16 @@ class ReductionProcess(object):
                                      experiment=self.ipts)
         norm_run = db_finder.search()
         if norm_run is None:
-            logging.warning("Run %s [%s]: Could not find direct beam with matching slit, trying with wl only", run_number, entry)
+            logger.warning("Run %s [%s]: Could not find direct beam with matching slit, trying with wl only" % (run_number, entry))
             norm_run = db_finder.search(skip_slits=True)
 
-        apply_norm = True
+        logger.error("NORMA: %s" % norm_run)
+        apply_norm = False
         direct_info = None
         if norm_run is None:
-            logging.warning("Run %s [%s]: Could not find direct beam run: skipping", run_number, entry)
-            apply_norm = False
+            logger.warning("Run %s [%s]: Could not find direct beam run: skipping" % (run_number, entry))
         else:
-            logging.info("Run %s [%s]: Direct beam run: %s", run_number, entry, norm_run)
+            logger.notice("Run %s [%s]: Direct beam run: %s" % (run_number, entry, norm_run))
 
             # Find peak in direct beam run
             for norm_entry in ['entry', 'entry-Off_Off', 'entry-On_Off', 'entry-Off_On', 'entry-On_On']:
@@ -282,9 +294,10 @@ class ReductionProcess(object):
                                                use_tight_bck=self.use_tight_bck,
                                                huber_x_cut=self.huber_x_cut,
                                                bck_offset=self.bck_offset)
+                        apply_norm = True
                         break
                 except:
                     # No data in this cross-section
-                    logging.debug("Direct beam %s: %s", norm_entry, sys.exc_value)
+                    logger.error("Direct beam %s: %s" % (norm_entry, sys.exc_value))
 
         return apply_norm, norm_run, direct_info

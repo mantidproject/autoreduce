@@ -7,12 +7,12 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_PAC_d40261_2018_05_31.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_05_26-HR-PAC.txt")
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_06.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_06_11-HR-PAC.txt")
 
 char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
-binning = -0.0002
+binning = -0.0008
 QfitRange = [30.,50.]
 
 eventFileAbs = sys.argv[1]
@@ -83,7 +83,7 @@ os.unlink(os.path.join(outputDir,'PG3_'+runNumber+'.py'))
 
 # create arbitrary normalized, correction-free S(Q)
 # this is hard-coded to the wavelength log
-createPDF = bool(abs(mtd['PG3_'+runNumber].run()['LambdaRequest'].value[0] - .7) < .1)
+createPDF = bool(abs(mtd['PG3_'+runNumber].run()['LambdaRequest'].value[0] - .7) < .1) or bool(abs(mtd['PG3_'+runNumber].run()['LambdaRequest'].value[0] - .8) < .1)
 
 if createPDF:
     ConvertUnits(InputWorkspace='PG3_'+runNumber,
@@ -91,11 +91,13 @@ if createPDF:
                  Target='MomentumTransfer',
                  EMode='Elastic')
     mtd['PG3_'+runNumber+'_SQ'] /= 100. # should match ScaleDataParameter
+    Rebin(InputWorkspace='PG3_'+runNumber+'_SQ', OutputWorkspace='PG3_'+runNumber+'_SQ',
+          Params=.01)
     scale = Fit(InputWorkspace='PG3_'+runNumber+'_SQ',
                 Function='name=FlatBackground,A0=1',
                 StartX=QfitRange[0], EndX=QfitRange[1])[1]
     print('high-Q scale is', scale)
-    mtd['PG3_'+runNumber+'_SQ'] /= scale # should match ScaleDataParameter
+    mtd['PG3_'+runNumber+'_SQ'] /= scale
     SaveNexusProcessed(InputWorkspace='PG3_'+runNumber+'_SQ',
                        Filename=os.path.join(outputDir,'PG3_'+runNumber+'_SQ.nxs'))
 else: 
