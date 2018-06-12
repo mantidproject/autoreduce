@@ -35,8 +35,7 @@ def match_run_for_cross_section(run, ipts, cross_section):
             q_max = max(ref_data['q'])
             logger.notice("%s: [%s %s]" % (i_run, q_min, q_max))
 
-            #if (q_max < _previous_q_max and q_max > _previous_q_min ) or _previous_q_max == 0:
-            if (q_max < _previous_q_max) or _previous_q_max == 0:
+            if (q_max < _previous_q_max and q_max > _previous_q_min ) or _previous_q_max == 0:
                 _previous_q_max = q_max
                 _previous_q_min = q_min
                 matched_runs.insert(0, str(i_run))
