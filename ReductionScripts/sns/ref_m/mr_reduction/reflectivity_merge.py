@@ -23,6 +23,7 @@ def match_run_for_cross_section(run, ipts, cross_section):
     _previous_q_min = 0
     _previous_q_max = 0
 
+    logger.notice("Matching for %s r%s [%s]" % (ipts, run, cross_section))
     matched_runs = []
     for i in range(10):
         i_run = run - i
