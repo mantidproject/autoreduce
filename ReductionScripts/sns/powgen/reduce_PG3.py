@@ -7,7 +7,7 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_06.h5') # contains ALL grouping
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_13.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_06_11-HR-PAC.txt")
 
 char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
@@ -40,7 +40,7 @@ def clearmem(keepname=None):
 
 # first run with only in-plane
 SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="ResetToZero",
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
                    OutputFilePrefix='IP_',
