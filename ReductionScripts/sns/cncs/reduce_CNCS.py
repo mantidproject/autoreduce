@@ -40,7 +40,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,0,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-20360/shared/autoreduce/NanoTriton/"
+sub_directory="/SNS/CNCS/IPTS-21088/shared/autoreduce/NanoTriton/"
 
 #parameters not on the webpage
 #below remains unchanged
