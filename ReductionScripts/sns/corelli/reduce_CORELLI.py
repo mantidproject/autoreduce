@@ -15,14 +15,15 @@ import matplotlib.pyplot as plt
 class processInputs(object):
     def __init__(self):
         #templated stuff
-        self.ub_matrix_file=''
-        self.vanadium_SA_file=''
-        self.vanadium_flux_file=''
-        self.mask=[]
-        self.plot_requests=[]
-        self.useCC="0"
+        self.ub_matrix_file='' #'/SNS/CORELLI/IPTS-12310/shared/Sr214-Tb1000-2nd-20150512/UB-H0L-may12.mat'
+        self.vanadium_SA_file='/SNS/CORELLI/shared/Vanadium/2017B/SolidAngle20160720NoCC.nxs' #'/SNS/CORELLI/shared/Vanadium/SolidAngle20150411.nxs'
+        self.vanadium_flux_file='/SNS/CORELLI/shared/Vanadium/2016B/Spectrum20160720NoCC.nxs' #'/SNS/CORELLI/shared/Vanadium/Spectrum20150411.nxs'
+        self.mask=[] #[{'Tube':'1,2,3,4','Bank':'','Pixel':''}]
+        self.plot_requests=[{'Minimum': '-0.05', 'PerpendicularTo': '[0,0,L]', 'Maximum': '0.05'}] #[{'PerpendicularTo':"[0,K,0]",'Minimum':'-0.05','Maximum':'0.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'10.95','Maximum':'11.05'},{'PerpendicularTo':"[0,K,0]",'Minimum':'0.95','Maximum':'1.05'}]
+        self.useCC='True' #"True"
         #other
         self.can_do_HKL=False
+        self.saveMD=False
         self.can_do_norm=False
         self.good_mask=False
         self.plots=[]
@@ -37,6 +38,17 @@ class processInputs(object):
             except:
                 logger.warning("Could not load normalization vanadium")
                 self.can_do_norm=False
+        # if ub_matrix_file not given us newest *.mat in IPTS shared directory
+        if self.ub_matrix_file == '':
+            mat_list=[]
+            for root, dirs, files in os.walk(os.path.abspath(os.path.join(sys.argv[2],".."))): # Look in IPTS shared
+                for f in files:
+                    if f.endswith(".mat"):
+                        mat_list.append(os.path.join(root, f))
+            if len(mat_list)==0:
+                self.ub_matrix_file = ''
+            else:
+                self.ub_matrix_file = max(mat_list,key=os.path.getctime)
         # validate UB
         if os.path.isfile(self.ub_matrix_file):
             try:
@@ -57,7 +69,7 @@ class processInputs(object):
             self.good_mask=True
             for i in range(lenMask):
                 dicti=self.mask[i]
-                if not isinstance(dicti,dict) or set(dicti.keys())!={'Bank','Tube','Pixel'}:
+                if not isinstance(dicti,dict) or set(dicti.keys()).issubset(set(['Bank','Tube','Pixel'])):
                     self.good_mask=False
         if not self.good_mask:
             logger.warning("BTP mask is missing or invalid. It will be ignored")
@@ -66,7 +78,7 @@ class processInputs(object):
             if not isinstance(pl,dict):
                 logger.warning("this is not a dict: "+str(pl))
                 continue
-            if set(pl.keys())!={'PerpendicularTo','Minimum','Maximum'}:
+            if set(pl.keys())!=set(['PerpendicularTo','Minimum','Maximum']):
                 logger.warning("There are not enough or some invalid keys: "+str(pl.keys()))
                 continue
             if pl['PerpendicularTo'] not in ['Q_sample_x','Q_sample_y','Q_sample_z','[H,0,0]','[0,K,0]','[0,0,L]']:
@@ -152,7 +164,7 @@ def makePlot(mdws,plotConfig,normalize):
         plt.pcolormesh(X,Y,normmasked,shading='gouraud')
     plt.xlabel(dim0.getName())
     plt.ylabel(dim1.getName())
-    plt.title(dim2.getName()+' integrated from '+"{:.3f}".format(d2min)+' to '+"{:.3f}".format(d2max)) 
+    plt.title(dim2.getName()+' integrated from '+"{0:.3f}".format(d2min)+' to '+"{0:.3f}".format(d2max)) 
 
 if __name__ == "__main__":
     # check number of arguments
@@ -172,14 +184,19 @@ if __name__ == "__main__":
     # load file
     raw=Load(nexus_file)
     
-    # Do the cross-correlation and save the file.
-    cc=CorelliCrossCorrelate(raw,56000)
-    SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+    # Do the cross-correlation and save the file
+    try:
+        cc=CorelliCrossCorrelate(raw,56000)
+    except RuntimeError, e:
+        logger.warning("Cross Correlation failed because: " + str(e))
+        CCsucceded=False
+    else:
+        SaveNexus(cc, Filename=output_directory+output_file+"_elastic.nxs")
+        CCsucceded=True
 
     # validate inputs
     config=processInputs()
     config.validate()
-
 
     # Masking - use vanadium, then add extra masks
     if config.can_do_norm:
@@ -188,23 +205,28 @@ if __name__ == "__main__":
         for d in config.mask:
             if d.values()!=['', '', '']:
                 MaskBTP(raw,**d)
-    MaskDetectors(Workspace=cc,MaskedWorkspace=raw)
+    if CCsucceded:
+        MaskDetectors(Workspace=cc,MaskedWorkspace=raw)
     
     # convert to momentum add goniometer and UB
     raw=ConvertUnits(raw,Target="Momentum",EMode="Elastic")
-    cc=ConvertUnits(cc,Target="Momentum",EMode="Elastic")
+    if CCsucceded:
+        cc=ConvertUnits(cc,Target="Momentum",EMode="Elastic")
     kmin=2.5
     kmax=10.
     if config.can_do_norm:
         kmin=mtd['autoreduction_flux'].readX(0)[0]
         kmax=mtd['autoreduction_flux'].readX(0)[-1]
     raw=CropWorkspace(raw,XMin=kmin,XMax=kmax)
-    cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
+    if CCsucceded:
+        cc=CropWorkspace(cc,XMin=kmin,XMax=kmax)
     SetGoniometer(raw,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
-    SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
+    if CCsucceded:
+        SetGoniometer(cc,Axis0="BL9:Mot:Sample:Axis1,0,1,0,1")
     if config.can_do_HKL:
         CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=raw,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
-        CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
+        if CCsucceded:
+            CopySample(InputWorkspace='autoreduction_ub',OutputWorkspace=cc,CopyName=0,CopyMaterial=0,CopyEnvironment=0,CopyShape=0,CopyLattice=1)
 
     # convert to MD
     if config.can_do_norm:
@@ -220,11 +242,12 @@ if __name__ == "__main__":
     minn,maxx = ConvertToMDMinMaxGlobal(InputWorkspace=raw,QDimensions='Q3D',dEAnalysisMode='Elastic')
     mdraw = ConvertToMD(raw,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
                         LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)
-    mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
-                        LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
+    if CCsucceded:
+        mdcc  = ConvertToMD(cc,QDimensions="Q3D",dEAnalysisMode="Elastic",Q3DFrames=Q3DFrames,
+                            LorentzCorrection=LorentzCorrection,MinValues=minn,MaxValues=maxx)   
 
     # Save normalized MDs, if possible
-    if config.can_do_norm:
+    if config.can_do_norm and config.saveMD:
         if config.can_do_HKL:
             AlignedDim0='[H,0,0],'+str(minn[0])+','+str(maxx[0])+',300'
             AlignedDim1='[0,K,0],'+str(minn[1])+','+str(maxx[1])+',300'
@@ -236,18 +259,22 @@ if __name__ == "__main__":
         mdrawgrid,mdnorm=MDNormSCD(InputWorkspace=mdraw,
                                    AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2,
                                    FluxWorkspace='autoreduction_flux',SolidAngleWorkspace='autoreduction_sa')
-        mdccgrid=BinMD(InputWorkspace=mdcc,AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2)
+        if CCsucceded:
+            mdccgrid=BinMD(InputWorkspace=mdcc,AlignedDim0=AlignedDim0,AlignedDim1=AlignedDim1,AlignedDim2=AlignedDim2)
         SaveMD(mdrawgrid,Filename=os.path.join(output_directory,output_file+"_data_MD.nxs"))
-        SaveMD(mdccgrid,Filename=os.path.join(output_directory,output_file+"_datacc_MD.nxs"))
+        if CCsucceded:
+            SaveMD(mdccgrid,Filename=os.path.join(output_directory,output_file+"_datacc_MD.nxs"))
+            SaveMD(mdcc,Filename=os.path.join(output_directory,output_file+"_datacc_MDE.nxs"))
         SaveMD(mdnorm,Filename=os.path.join(output_directory,output_file+"_norm_MD.nxs"))
-
+        SaveMD(mdraw,Filename=os.path.join(output_directory,output_file+"_data_MDE.nxs"))
+        
     # do some plots
     fig = plt.gcf()
     numfig=len(config.plots)
-    fig.set_size_inches(6.0,6.0*(numfig+1))
+    fig.set_size_inches(5.0,5.0*(numfig+1))
     for i in range(numfig):
         plt.subplot(numfig+1,1,i+2)
-        if config.useCC=="1":
+        if config.useCC=="True" and CCsucceded:
             makePlot(mdcc,config.plots[i],config.can_do_norm)
         else:
             makePlot(mdraw,config.plots[i],config.can_do_norm)
@@ -256,8 +283,3 @@ if __name__ == "__main__":
     makeInstrumentView(raw)
     plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
     plt.close()
-
-
-
-
-
