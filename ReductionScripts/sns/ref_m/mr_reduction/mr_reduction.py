@@ -240,6 +240,7 @@ class ReductionProcess(object):
                                         SpecularPixel=data_info.peak_position,
                                         ConstantQBinning=self.const_q_binning,
                                         EntryName='entry-%s' % entry,
+                                        CropFirstAndLastPoints=False,
                                         OutputWorkspace="r_%s_%s" % (run_number, entry))
 
         # Write output file
