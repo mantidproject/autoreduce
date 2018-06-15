@@ -5,8 +5,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/IPTS-21387/nexus/ARCS_107028.nxs.h5"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van107028.nxs"
+    RawVanadium="/SNS/ARCS/IPTS-21387/nexus/ARCS_108467.nxs.h5"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van108467.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     elog=ExperimentLog()
     elog.setLogList('vChTrans,Speed1,Phase1,Speed2,Phase2,Speed3,Phase3,EnergyRequest,s1t,s1r,s1l,s1b,s2t,s2r,s2l,s2b')
     elog.setSimpleLogList("vChTrans, EnergyRequest, s1t, s1r, s1l, s1b,s2t,s2r,s2l,s2b")
-    elog.setSERotOptions('omega,Sample:Axis1,Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot,SE100mm')
+    elog.setSERotOptions('omega,Mag05Rot, CCR12Rot, SEOCRot, CCR16Rot, SEHOT11, micas70mmRot,SE70mmRot,SE100mm')
     elog.setSETempOptions('SampleTemp, sampletemp, SensorA, SensorB, SensorC, SensorD')
     elog.setFilename(outdir+'experiment_log.csv')
     angle=elog.save_line('__MonWS',CalculatedEi=Ei,CalculatedT0=T0)  
