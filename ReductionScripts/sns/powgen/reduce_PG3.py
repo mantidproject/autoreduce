@@ -63,7 +63,7 @@ clearmem()
 
 # second run with all pixels together - use calibration file grouping
 SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="ResetToZero",
+                   PreserveEvents=True,PushDataPositive="AddMinimum",
                    CalibrationFile=cal_file,
                    CharacterizationRunsFile=char_backgrounds+','+char_inplane,
                    #OutputFilePrefix='ALL_',
