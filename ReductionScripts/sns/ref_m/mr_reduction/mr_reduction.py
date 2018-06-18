@@ -152,6 +152,7 @@ class ReductionProcess(object):
             except:
                 # No data for this cross-section, skip to the next
                 logger.error("Cross section: %s" % str(sys.exc_value))
+                raise
 
         # Generate stitched plot
         ref_plot = None
@@ -207,7 +208,7 @@ class ReductionProcess(object):
                                  force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
                                  force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
-        logger.error("R%s [%s] DATA TYPE: %s [ref=%s]" % (run_number, entry, data_info.data_type, data_info.cross_section))
+        logger.notice("R%s [%s] DATA TYPE: %s [ref=%s] [%s events]" % (run_number, entry, data_info.data_type, data_info.cross_section, ws.getNumberEvents()))
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
             return Report(ws, data_info, data_info, None)
 
@@ -240,7 +241,6 @@ class ReductionProcess(object):
                                         SpecularPixel=data_info.peak_position,
                                         ConstantQBinning=self.const_q_binning,
                                         EntryName='entry-%s' % entry,
-                                        #CropFirstAndLastPoints=False,
                                         OutputWorkspace="r_%s_%s" % (run_number, entry))
 
         # Write output file
