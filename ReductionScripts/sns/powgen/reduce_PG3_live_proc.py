@@ -3,14 +3,14 @@ from mantid import simpleapi
 import os
 
 # get information from autoreduction
-cal_dir = "/SNS/PG3/shared/CALIBRATION/2017_1_2_11A_CAL/"
-cal_file  = os.path.join(cal_dir, 'PG3_JANIS-HT_d38667_2017_09_06_Bank1.h5')
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2017_09_06-HR-JANIS-HT.txt")
-char_bank1 = os.path.join(cal_dir, "PG3_char_2017_08_08-HR-BANK1.txt")
+cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_13.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_06_11-HR-PAC.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
 
 mantid.logger.information('Number events = %d' % input.getNumberEvents())
 
-simpleapi.PDLoadCharacterizations(Filename=char_backgrounds+','+char_bank1,
+simpleapi.PDLoadCharacterizations(Filename=char_backgrounds+','+char_inplane,
                                   OutputWorkspace='characterizations')
 simpleapi.PDDetermineCharacterizations(InputWorkspace=input,
                                        Characterizations='characterizations',
