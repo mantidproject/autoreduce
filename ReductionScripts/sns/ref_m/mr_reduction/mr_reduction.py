@@ -126,7 +126,7 @@ class ReductionProcess(object):
         #if self.data_ws is None:
             #ws = LoadEventNexus(Filename=_filename, OutputWorkspace="raw_events")
             #xs_list = dummy_filter_cross_sections(ws)
-        xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
+        _xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
                                             PolState=self.pol_state,
                                             AnaState=self.ana_state,
                                             PolVeto=self.pol_veto,
