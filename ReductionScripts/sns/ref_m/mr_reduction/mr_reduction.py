@@ -237,10 +237,10 @@ class ReductionProcess(object):
         reflectivity = mtd["r_%s_%s" % (run_number, entry)]
         if self.output_dir is None:
             self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
-        write_reflectivity([mtd[reflectivity]],
+        write_reflectivity([reflectivity],
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
 
-        return Report(ws, data_info, direct_info, mtd[reflectivity])
+        return Report(ws, data_info, direct_info, reflectivity)
 
     def find_direct_beam(self, scatt_ws):
         """
