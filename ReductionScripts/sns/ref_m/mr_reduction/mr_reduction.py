@@ -1,4 +1,4 @@
-#pylint: disable=bare-except, dangerous-default-value
+#pylint: disable=bare-except, dangerous-default-value, wrong-import-position, wrong-import-order, too-many-arguments, too-many-instance-attributes
 """
     Reduction for MR
 """
@@ -93,14 +93,14 @@ class ReductionProcess(object):
         self.ipts = xs_list[i_main].getRun().getProperty("experiment_identifier").value
         entry = xs_list[i_main].getRun().getProperty("cross_section_id").value
         data_info = DataInfo(xs_list[i_main], entry,
-                     use_roi=self.use_roi,
-                     update_peak_range=self.update_peak_range,
-                     use_roi_bck=self.use_roi_bck,
-                     use_tight_bck=self.use_tight_bck,
-                     huber_x_cut=self.huber_x_cut,
-                     bck_offset=self.bck_offset,
-                     force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
-                     force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
+                             use_roi=self.use_roi,
+                             update_peak_range=self.update_peak_range,
+                             use_roi_bck=self.use_roi_bck,
+                             use_tight_bck=self.use_tight_bck,
+                             huber_x_cut=self.huber_x_cut,
+                             bck_offset=self.bck_offset,
+                             force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
+                             force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
         # Find direct beam information
         apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
@@ -119,10 +119,10 @@ class ReductionProcess(object):
         # Load cross-sections
         _filename = None if self.data_ws is not None else self.file_path
         _xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
-                                            PolState=self.pol_state,
-                                            AnaState=self.ana_state,
-                                            PolVeto=self.pol_veto,
-                                            AnaVeto=self.ana_veto)
+                                         PolState=self.pol_state,
+                                         AnaState=self.ana_state,
+                                         PolVeto=self.pol_veto,
+                                         AnaVeto=self.ana_veto)
         xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
 
         # Extract data info (find peaks, etc...)
@@ -237,10 +237,10 @@ class ReductionProcess(object):
         reflectivity = mtd["r_%s_%s" % (run_number, entry)]
         if self.output_dir is None:
             self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
-        write_reflectivity([mtd["r_%s_%s" % (run_number, entry)]],
+        write_reflectivity([mtd[reflectivity]],
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
 
-        return Report(ws, data_info, direct_info, mtd["r_%s_%s" % (run_number, entry)])
+        return Report(ws, data_info, direct_info, mtd[reflectivity])
 
     def find_direct_beam(self, scatt_ws):
         """
