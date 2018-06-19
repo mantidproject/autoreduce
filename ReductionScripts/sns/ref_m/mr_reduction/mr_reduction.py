@@ -118,20 +118,11 @@ class ReductionProcess(object):
 
         # Load cross-sections
         _filename = None if self.data_ws is not None else self.file_path
-        # For live data, we use a workspace directly. Filtered out logs are
-        # currently saved as zero-length time series but the filtering, which
-        # creates problems when applying several filters in a row.
-        # Use a temporary version until FilterEvents is fixed.
-        if self.data_ws is None:
-            ws = LoadEventNexus(Filename=_filename, OutputWorkspace="raw_events")
-            xs_list = dummy_filter_cross_sections(ws)
-            #xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
-            #                                PolState=self.pol_state,
-            #                                AnaState=self.ana_state,
-            #                                PolVeto=self.pol_veto,
-            #                                AnaVeto=self.ana_veto)
-        else:
-            xs_list = dummy_filter_cross_sections(self.data_ws)
+        xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
+                                        PolState=self.pol_state,
+                                        AnaState=self.ana_state,
+                                        PolVeto=self.pol_veto,
+                                        AnaVeto=self.ana_veto)
 
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
@@ -215,7 +206,7 @@ class ReductionProcess(object):
         # Determine the name of the direct beam workspace as needed
         ws_norm = ''
         if apply_norm and norm_run is not None:
-            ws_norm = CloneWorkspace(InputWorkspace=direct_info.workspace_name)
+            ws_norm = direct_info.workspace_name
 
         MagnetismReflectometryReduction(InputWorkspace=ws,
                                         NormalizationWorkspace=ws_norm,
