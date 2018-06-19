@@ -131,7 +131,7 @@ class ReductionProcess(object):
                                             AnaState=self.ana_state,
                                             PolVeto=self.pol_veto,
                                             AnaVeto=self.ana_veto)
-            xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
+        xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
         #else:
         #    xs_list = dummy_filter_cross_sections(self.data_ws)
 
