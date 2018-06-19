@@ -17,7 +17,6 @@ from .reflectivity_output import write_reflectivity
 from .data_info import DataInfo
 from .web_report import Report, process_collection
 from .mr_direct_beam_finder import DirectBeamFinder
-from .dummy_mr_filter_cross_sections import dummy_filter_cross_sections
 
 DIRECT_BEAM_EVTS_MIN = 1000
 
@@ -119,21 +118,12 @@ class ReductionProcess(object):
 
         # Load cross-sections
         _filename = None if self.data_ws is not None else self.file_path
-        # For live data, we use a workspace directly. Filtered out logs are
-        # currently saved as zero-length time series but the filtering, which
-        # creates problems when applying several filters in a row.
-        # Use a temporary version until FilterEvents is fixed.
-        #if self.data_ws is None:
-            #ws = LoadEventNexus(Filename=_filename, OutputWorkspace="raw_events")
-            #xs_list = dummy_filter_cross_sections(ws)
         _xs_list = MRFilterCrossSections(Filename=_filename, InputWorkspace=self.data_ws,
                                             PolState=self.pol_state,
                                             AnaState=self.ana_state,
                                             PolVeto=self.pol_veto,
                                             AnaVeto=self.ana_veto)
         xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
-        #else:
-        #    xs_list = dummy_filter_cross_sections(self.data_ws)
 
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
