@@ -91,6 +91,7 @@ class ReductionProcess(object):
                 n_max_events = n_events
                 i_main = i
 
+        self.ipts = xs_list[i_main].getRun().getProperty("experiment_identifier").value
         entry = xs_list[i_main].getRun().getProperty("cross_section_id").value
         data_info = DataInfo(xs_list[i_main], entry,
                      use_roi=self.use_roi,
@@ -126,8 +127,6 @@ class ReductionProcess(object):
 
         # Extract data info (find peaks, etc...)
         # Set data_info to None for re-extraction with each cross-section
-
-        self.ipts = ws.getRun().getProperty("experiment_identifier").value
         data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
 
         # Reduce each cross-section
