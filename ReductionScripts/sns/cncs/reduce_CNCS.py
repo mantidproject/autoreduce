@@ -40,7 +40,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,0,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-21385/shared/autoreduce/"
+sub_directory="/SNS/CNCS/IPTS-21374/shared/autoreduce/"
 
 #parameters not on the webpage
 #below remains unchanged
