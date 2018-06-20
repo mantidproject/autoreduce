@@ -126,7 +126,8 @@ class ReductionProcess(object):
         xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
 
         # Extract data info (find peaks, etc...)
-        # Set data_info to None for re-extraction with each cross-section
+        # This can be moved within the for-loop below re-extraction with each cross-section.
+        # Generally, the peak ranges should be consistent between cross-section.
         data_info, direct_info, apply_norm, norm_run = self._extract_data_info(xs_list)
 
         # Reduce each cross-section
@@ -142,7 +143,6 @@ class ReductionProcess(object):
             except:
                 # No data for this cross-section, skip to the next
                 logger.error("Cross section: %s" % str(sys.exc_value))
-                raise
 
         # Generate stitched plot
         ref_plot = None
@@ -183,29 +183,14 @@ class ReductionProcess(object):
         """
         # Find reflectivity peak of scattering run
         entry = ws.getRun().getProperty("cross_section_id").value
-
         self.ipts = ws.getRun().getProperty("experiment_identifier").value
-
-        # Determine peak position and ranges
-        if data_info is None:
-            data_info = DataInfo(ws, entry,
-                                 use_roi=self.use_roi,
-                                 update_peak_range=self.update_peak_range,
-                                 use_roi_bck=self.use_roi_bck,
-                                 use_tight_bck=self.use_tight_bck,
-                                 huber_x_cut=self.huber_x_cut,
-                                 bck_offset=self.bck_offset,
-                                 force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
-                                 force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
-
         logger.notice("R%s [%s] DATA TYPE: %s [ref=%s] [%s events]" % (run_number, entry, data_info.data_type, data_info.cross_section, ws.getNumberEvents()))
+
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
             return Report(ws, data_info, data_info, None)
 
         # Determine the name of the direct beam workspace as needed
-        ws_norm = ''
-        if apply_norm and norm_run is not None:
-            ws_norm = direct_info.workspace_name
+        ws_norm = direct_info.workspace_name if apply_norm and norm_run is not None else ''
 
         MagnetismReflectometryReduction(InputWorkspace=ws,
                                         NormalizationWorkspace=ws_norm,
