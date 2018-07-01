@@ -5,7 +5,6 @@
 from __future__ import (absolute_import, division, print_function)
 import sys
 import os
-import logging
 
 from .settings import MANTID_PATH
 sys.path.insert(0, MANTID_PATH)
@@ -82,6 +81,7 @@ class ReductionProcess(object):
             Extract data info for the cross-section with the most events
             :param list xs_list: workspace group
         """
+        # Find the cross-section with the most events
         n_max_events = 0
         i_main = 0
         for i in range(len(xs_list)):
@@ -103,9 +103,13 @@ class ReductionProcess(object):
                              force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
 
         # Find direct beam information
-        apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
-        if direct_info is None:
-            direct_info = data_info
+        norm_run = None
+        direct_info = data_info
+        apply_norm = False
+        if not data_info.is_direct_beam:
+            apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
+            if direct_info is None:
+                direct_info = data_info
         # Important note: data_info is created from the cross-section with the most
         # data, so data_info.cross_section indicates which one that was.
         return data_info, direct_info, apply_norm, norm_run
@@ -170,7 +174,7 @@ class ReductionProcess(object):
             logger.error("Could not write reduction script: %s" % sys.exc_value)
         return html_report
 
-    def reduce_cross_section(self, run_number, ws, data_info=None,
+    def reduce_cross_section(self, run_number, ws, data_info,
                              apply_norm=False, norm_run=None, direct_info=None):
         """
             Reduce a given cross-section of a data run
@@ -194,7 +198,6 @@ class ReductionProcess(object):
 
         MagnetismReflectometryReduction(InputWorkspace=ws,
                                         NormalizationWorkspace=ws_norm,
-                                        #NormalizationRunNumber=norm_run,
                                         SignalPeakPixelRange=data_info.peak_range,
                                         SubtractSignalBackground=True,
                                         SignalBackgroundPixelRange=data_info.background,
@@ -215,7 +218,6 @@ class ReductionProcess(object):
                                         TimeAxisRange=data_info.tof_range,
                                         SpecularPixel=data_info.peak_position,
                                         ConstantQBinning=self.const_q_binning,
-                                        EntryName='entry-%s' % entry,
                                         OutputWorkspace="r_%s_%s" % (run_number, entry))
 
         # Write output file
@@ -224,7 +226,8 @@ class ReductionProcess(object):
             self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
         write_reflectivity([reflectivity],
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
-
+        SaveNexus(InputWorkspace=reflectivity,
+                  Filename=os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.nxs.h5' % (run_number, entry)))
         return Report(ws, data_info, direct_info, reflectivity)
 
     def find_direct_beam(self, scatt_ws):
@@ -257,7 +260,6 @@ class ReductionProcess(object):
                                                NXentryName=norm_entry,
                                                OutputWorkspace="MR_%s" % norm_run)
                     if ws_direct.getNumberEvents() > DIRECT_BEAM_EVTS_MIN:
-                        logging.info("Found direct beam entry: %s [%s]", norm_run, norm_entry)
                         direct_info = DataInfo(ws_direct, norm_entry,
                                                use_roi=self.use_roi,
                                                update_peak_range=self.update_peak_range,

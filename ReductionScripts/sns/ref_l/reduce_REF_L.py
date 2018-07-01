@@ -47,7 +47,9 @@ elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
 
 print("Using template: %s" % template_file)
 # Run the auto-reduction
-output = LRAutoReduction(Filename=event_file_path,
+ws = LoadEventNexus(Filename=event_file_path)
+output = LRAutoReduction(#Filename=event_file_path,
+                         InputWorkspace=ws,
                          ScaleToUnity=NORMALIZE_TO_UNITY,
                          ScalingWavelengthCutoff=WL_CUTOFF,
                          PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
