@@ -12,7 +12,7 @@ from mantid.simpleapi import *
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '122-128'})
 MaskBTPParameters.append({'Pixel': '1-7'})
-MaskBTPParameters.append({'Bank': '36-50'})
+MaskBTPParameters.append({'Bank': '35-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -20,7 +20,7 @@ MaskBTPParameters.append({'Bank': '36-50'})
 raw_vanadium="/SNS/CNCS/IPTS-21344/nexus/CNCS_277537.nxs.h5"
 processed_vanadium="van_277537.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.5"
 Emax="0.95"
 Estep="0.005"
@@ -30,7 +30,7 @@ TIB_max=""
 T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot,Sample:Axis2.RBV,omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="2.46"
 b="2.46"
