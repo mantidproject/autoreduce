@@ -132,6 +132,7 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title='', bck_rang
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
 def reduce(ws):
+    output_dir = "/SNS/REF_L/IPTS-18965/shared/autoreduce"
     # Locate the template file
     # If no template file is available, the automated reduction will generate one
     template_file = ""
