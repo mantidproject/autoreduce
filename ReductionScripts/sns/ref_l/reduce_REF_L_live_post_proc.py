@@ -153,7 +153,7 @@ def reduce_data(ws):
 
     NORMALIZE_TO_UNITY = False
 
-    output = LRAutoReduction(#Filename=event_file_path,
+    output = api.LRAutoReduction(#Filename=event_file_path,
                              InputWorkspace=ws,
                              ScaleToUnity=NORMALIZE_TO_UNITY,
                              ScalingWavelengthCutoff=WL_CUTOFF,
