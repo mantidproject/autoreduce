@@ -215,4 +215,4 @@ except ImportError: # version on instrument computers
     from finddata import publish_plot
 request = publish_plot('REF_L', run_number, files={'file':plot_html})
 mantid.logger.information("post returned %d" % request.status_code)
-return 0
+return
