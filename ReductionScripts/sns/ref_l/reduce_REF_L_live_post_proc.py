@@ -173,22 +173,7 @@ def reduce(ws):
         print("Loading %s" % os.path.join(output_dir, default_file_name))
         reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
 
-        from postprocessing.publish_plot import plot1d
-        x = reflectivity.readX(0)
-        y = reflectivity.readY(0)
-        dy = reflectivity.readE(0)
-        dx = reflectivity.readDx(0)
-        
-        if int(run_number) - first_run_of_set < 10:
-            for r in range(0, 10):
-                if os.path.isfile('REFL_%s_%s_%s_auto.nxs' % (first_run_of_set, r+1, first_run_of_set+r)):
-                    plot1d(first_run_of_set+r, [[x, y, dy, dx]], instrument='REF_L', 
-                           x_title=u"Q (1/\u212b)", x_log=True,
-                           y_title="Reflectivity", y_log=True, show_dx=False)
-        else:
-            plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
-                   x_title=u"Q (1/\u212b)", x_log=True,
-                   y_title="Reflectivity", y_log=True, show_dx=False)
+        return reflectivity
 
 
 
