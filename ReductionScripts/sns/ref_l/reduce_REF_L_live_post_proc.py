@@ -2,7 +2,6 @@ import sys
 import mantid.simpleapi as api
 import numpy as np
 
-
 import plotly.offline as py
 import plotly.graph_objs as go
 
@@ -197,7 +196,7 @@ try:
     info += "<div>Sequence: %s of %s</div>\n" % (seq_number, seq_total) 
 except:
     info = "<div>Error: %s</div>\n" % sys.exc_value
-    
+
 plot_html = "<div>Live data</div>\n"
 plot_html += info
 plot_html += "<table style='width:100%'>\n"
