@@ -241,7 +241,7 @@ try:
                        x_label="Q", y_label="R",
                        title="r%s" % run_number)
 except:
-    refl_info = "<div>Could not reduce data</div>\n"
+    refl_info = "<div>Could not reduce data: %s</div>\n" % sys.exc_value
 
 plots = generate_plots(run_number, input)
 info = ''
