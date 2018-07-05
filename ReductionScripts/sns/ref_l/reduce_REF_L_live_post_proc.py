@@ -151,7 +151,7 @@ def generate_plots(run_number, workspace):
     tof_axis = direct_summed.extractX()[0]/1000.0
 
     x_tof_plot = _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
-                         x_label="TOF (ms)", y_label="X pixel",
+                         x_label="TOF (ms)", y_label="Y pixel",
                          title="r%s" % run_number)
 
     # X-Y plot
