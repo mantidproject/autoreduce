@@ -187,7 +187,17 @@ except:
     run_number = 0
     
 plots = generate_plots(run_number, input)
+info = ''
+try:
+    n_evts = input.getNumberEvents()
+    duration = input.getRun()['duration'].value
+    info = "<div>Events: %s</div>\n" % n_evts
+    info += "<div>Duration: %s sec</div>\n" % duration 
+except:
+    info = "<div>Error: %s</div>\n" % sys.exc_value()
+    
 plot_html = "<div>Live data</div>\n"
+plot_html += info
 plot_html += "<table style='width:100%'>\n"
 plot_html += "<tr>\n"
 for plot in plots:
