@@ -169,9 +169,10 @@ def reduce_data(ws):
     #-------------------------------------------------------------------------
     # Produce plot for the web monitor
     default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
-    if os.path.isfile(default_file_name):
+    default_file_path = os.path.join(output_dir. default_file_name)
+    if os.path.isfile(default_file_path):
         print("Loading %s" % os.path.join(output_dir, default_file_name))
-        reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
+        reflectivity = LoadAscii(Filename=default_file_path, Unit="MomentumTransfer")
 
         return reflectivity
 
