@@ -234,7 +234,7 @@ except:
 
 refl_info = ""
 try:
-    refl = reduce_data(input)
+    reflectivity = reduce_data(input)
     x = reflectivity.readX(0)
     y = reflectivity.readY(0)
     refl_info = _plot1d(x, y, x_range=None,
