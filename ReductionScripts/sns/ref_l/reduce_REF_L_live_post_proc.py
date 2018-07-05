@@ -131,7 +131,7 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title='', bck_rang
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
-def reduce(ws):
+def reduce_data(ws):
     output_dir = "/SNS/REF_L/IPTS-18965/shared/autoreduce"
     # Locate the template file
     # If no template file is available, the automated reduction will generate one
@@ -231,7 +231,18 @@ try:
     run_number = input.getRunNumber()
 except:
     run_number = 0
-    
+
+refl_info = ""
+try:
+    refl = reduce_data(input)
+    x = reflectivity.readX(0)
+    y = reflectivity.readY(0)
+    refl_info = _plot1d(x, y, x_range=None,
+                       x_label="Q", y_label="R",
+                       title="r%s" % run_number)
+except:
+    refl_info = "<div>Could not reduce data</div>\n"
+
 plots = generate_plots(run_number, input)
 info = ''
 try:
@@ -245,6 +256,7 @@ except:
 
 plot_html = "<div>Live data</div>\n"
 plot_html += info
+plot_html += refl_info
 plot_html += "<table style='width:100%'>\n"
 plot_html += "<tr>\n"
 for plot in plots:
