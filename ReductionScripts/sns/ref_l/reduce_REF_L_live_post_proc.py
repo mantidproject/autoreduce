@@ -131,6 +131,56 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title='', bck_rang
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
+def reduce(ws):
+    # Reduction options
+    #-------------------------------------------------------------------------
+    # Wavelength below which we don't need the absolute normalization
+    WL_CUTOFF = 10.0  
+
+    # Default primary fraction range to be used if it is not defined in the template
+    PRIMARY_FRACTION_RANGE = [116, 197]
+
+    NORMALIZE_TO_UNITY = False
+
+    output = LRAutoReduction(#Filename=event_file_path,
+                             InputWorkspace=ws,
+                             ScaleToUnity=NORMALIZE_TO_UNITY,
+                             ScalingWavelengthCutoff=WL_CUTOFF,
+                             PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
+                             OutputDirectory=output_dir,
+                             SlitTolerance=0.06,
+                             ReadSequenceFromFile=True,
+                             OrderDirectBeamsByRunNumber=True,
+                             TemplateFile=template_file, FindPeaks=False)
+    first_run_of_set=int(output[1])
+
+
+    #-------------------------------------------------------------------------
+    # Produce plot for the web monitor
+    default_file_name = 'REFL_%s_combined_data_auto.txt' % first_run_of_set
+    if os.path.isfile(default_file_name):
+        print("Loading %s" % os.path.join(output_dir, default_file_name))
+        reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
+
+        from postprocessing.publish_plot import plot1d
+        x = reflectivity.readX(0)
+        y = reflectivity.readY(0)
+        dy = reflectivity.readE(0)
+        dx = reflectivity.readDx(0)
+        
+        if int(run_number) - first_run_of_set < 10:
+            for r in range(0, 10):
+                if os.path.isfile('REFL_%s_%s_%s_auto.nxs' % (first_run_of_set, r+1, first_run_of_set+r)):
+                    plot1d(first_run_of_set+r, [[x, y, dy, dx]], instrument='REF_L', 
+                           x_title=u"Q (1/\u212b)", x_log=True,
+                           y_title="Reflectivity", y_log=True, show_dx=False)
+        else:
+            plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
+                   x_title=u"Q (1/\u212b)", x_log=True,
+                   y_title="Reflectivity", y_log=True, show_dx=False)
+
+
+
 def generate_plots(run_number, workspace):
     """
         Generate diagnostics plots
