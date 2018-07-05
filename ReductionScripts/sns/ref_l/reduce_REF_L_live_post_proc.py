@@ -173,7 +173,7 @@ def reduce_data(ws):
     default_file_path = os.path.join(output_dir, default_file_name)
     if os.path.isfile(default_file_path):
         print("Loading %s" % os.path.join(output_dir, default_file_name))
-        reflectivity = LoadAscii(Filename=default_file_path, Unit="MomentumTransfer")
+        reflectivity = api.LoadAscii(Filename=default_file_path, Unit="MomentumTransfer")
 
         return reflectivity
 
