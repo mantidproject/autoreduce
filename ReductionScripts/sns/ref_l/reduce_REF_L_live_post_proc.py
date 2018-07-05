@@ -181,7 +181,7 @@ def generate_plots(run_number, workspace):
 
     return [xy_plot, x_tof_plot, peak_pixels, tof_dist]
     
-
+output = input
 try:
     run_number = input.getRunNumber()
 except:
@@ -215,4 +215,4 @@ except ImportError: # version on instrument computers
     from finddata import publish_plot
 request = publish_plot('REF_L', run_number, files={'file':plot_html})
 mantid.logger.information("post returned %d" % request.status_code)
-return [0]
+
