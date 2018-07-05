@@ -167,7 +167,7 @@ def generate_plots(run_number, workspace):
     signal_y = integrated.readY(0)
     signal_x = range(len(signal_y))
     peak_pixels = _plot1d(signal_x,signal_y,
-                          x_label="X pixel", y_label="Counts",
+                          x_label="Y pixel", y_label="Counts",
                           title="r%s" % run_number)
 
     # TOF distribution
