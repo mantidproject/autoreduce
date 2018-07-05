@@ -191,7 +191,7 @@ plots = generate_plots(run_number, input)
 info = ''
 try:
     n_evts = input.getNumberEvents()
-    duration = input.getRun()['duration'].value
+    seq_number = input.getRun()['sequence_number'].value
     info = "<div>Events: %s</div>\n" % n_evts
     #info += "<div>Duration: %s sec</div>\n" % duration 
 except:
