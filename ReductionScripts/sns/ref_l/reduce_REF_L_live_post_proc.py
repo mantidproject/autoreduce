@@ -132,6 +132,16 @@ def _plot1d(x, y, x_range=None, x_label='', y_label="Counts", title='', bck_rang
     return py.plot(fig, output_type='div', include_plotlyjs=False, show_link=False)
 
 def reduce(ws):
+    # Locate the template file
+    # If no template file is available, the automated reduction will generate one
+    template_file = ""
+    if os.path.isfile("template.xml"):
+        template_file = "template.xml"
+    elif os.path.isfile(os.path.join(output_dir, "template.xml")):
+        template_file = os.path.join(output_dir, "template.xml")
+    elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
+        template_file = "/SNS/REF_L/shared/autoreduce/template.xml"
+    
     # Reduction options
     #-------------------------------------------------------------------------
     # Wavelength below which we don't need the absolute normalization
