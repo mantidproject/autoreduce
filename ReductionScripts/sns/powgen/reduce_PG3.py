@@ -10,7 +10,7 @@ cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_OC_d40895_2018_07_03.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_07_04-HighInt-OC.txt")
 
-char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2018_07_05.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
