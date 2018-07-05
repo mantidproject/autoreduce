@@ -1,3 +1,4 @@
+import sys
 import mantid.simpleapi as api
 import numpy as np
 
@@ -192,9 +193,9 @@ try:
     n_evts = input.getNumberEvents()
     duration = input.getRun()['duration'].value
     info = "<div>Events: %s</div>\n" % n_evts
-    info += "<div>Duration: %s sec</div>\n" % duration 
+    #info += "<div>Duration: %s sec</div>\n" % duration 
 except:
-    info = "<div>Error: %s</div>\n" % sys.exc_value()
+    info = "<div>Error: %s</div>\n" % sys.exc_value
     
 plot_html = "<div>Live data</div>\n"
 plot_html += info
