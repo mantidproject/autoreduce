@@ -238,7 +238,7 @@ refl_info = ""
 try:
     reflectivity = reduce_data(input)
     x = reflectivity.readX(0)
-    y = reflectivity.readY(0)
+    y = np.log10(reflectivity.readY(0))
     refl_info = _plot1d(x, y, x_range=None,
                        x_label="Q", y_label="R",
                        title="r%s" % run_number)
