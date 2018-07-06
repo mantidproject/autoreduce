@@ -235,26 +235,27 @@ except:
     run_number = 0
 
 refl_info = ""
-try:
-    reflectivity = reduce_data(input)
-    #from postprocessing.publish_plot import plot1d
-    x = reflectivity.readX(0)
-    y = reflectivity.readY(0)
-    dy = reflectivity.readE(0)
-    dx = reflectivity.readDx(0)
-    
+if False:
+    try:
+        reflectivity = reduce_data(input)
+        #from postprocessing.publish_plot import plot1d
+        x = reflectivity.readX(0)
+        y = reflectivity.readY(0)
+        dy = reflectivity.readE(0)
+        dx = reflectivity.readDx(0)
+        
 
-    #refl_info = plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
-    #           x_title=u"Q (1/\u212b)", x_log=True, publish=False,
-    #           y_title="Reflectivity", y_log=True, show_dx=False)
-               
-    x = reflectivity.readX(0)
-    y = reflectivity.readY(0)
-    refl_info = _plot1d(x, y, x_range=None,
-                       x_label="Q", y_label="R",
-                       title="r%s" % run_number)
-except:
-    refl_info = "<div>Could not reduce data: %s</div>\n" % sys.exc_value
+        #refl_info = plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
+        #           x_title=u"Q (1/\u212b)", x_log=True, publish=False,
+        #           y_title="Reflectivity", y_log=True, show_dx=False)
+                   
+        x = reflectivity.readX(0)
+        y = reflectivity.readY(0)
+        refl_info = _plot1d(x, y, x_range=None,
+                           x_label="Q", y_label="R",
+                           title="r%s" % run_number)
+    except:
+        refl_info = "<div>Could not reduce data: %s</div>\n" % sys.exc_value
 
 plots = generate_plots(run_number, input)
 info = ''
