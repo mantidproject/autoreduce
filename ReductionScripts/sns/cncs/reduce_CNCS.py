@@ -12,7 +12,7 @@ from mantid.simpleapi import *
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '122-128'})
 MaskBTPParameters.append({'Pixel': '1-7'})
-MaskBTPParameters.append({'Bank': '35-37'})
+MaskBTPParameters.append({'Bank': '35-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -20,7 +20,7 @@ MaskBTPParameters.append({'Bank': '35-37'})
 raw_vanadium="/SNS/CNCS/IPTS-21344/nexus/CNCS_277537.nxs.h5"
 processed_vanadium="van_277537.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.1"
 Emax="0.95"
 Estep="0.005"
@@ -40,7 +40,7 @@ beta="90.0"
 gamma="120.0"
 uVector="1,0,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-21441/shared/autoreduce/"
+sub_directory="/SNS/CNCS/IPTS-21247/shared/autoreduce/"
 
 #parameters not on the webpage
 #below remains unchanged
