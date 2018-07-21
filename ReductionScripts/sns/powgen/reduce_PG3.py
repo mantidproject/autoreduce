@@ -7,8 +7,8 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_13.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_06_11-HighRes-PAC.txt")
+cal_file  = os.path.join(cal_dir,'PG3_JANIS_LT_d41083_2018_07_19.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_07_19-HighRes-JANIS_LT.txt")
 
 char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
@@ -37,6 +37,17 @@ def clearmem(keepname=None):
         if keepname is not None and name == keepname:
             continue
         DeleteWorkspace(name)
+
+# get which guide is being used
+LoadEventNexus(Filename=eventFileAbs, OutputWorkspace='PG3_'+runNumber+'_meta', MetaDataOnly=True)
+guide = mtd['PG3_'+runNumber+'_meta'].run()['BL11A:Mot:Guides:Gantry.RBV'].timeAverageValue()
+if abs(guide+54) < 1: # within 1mm of 54
+    guide = "highresolution"
+elif abs(guide-166) < 1: # within 1mm of 54
+    guide = "highresolution"
+else:
+    guide = None
+print(guide)
 
 # first run with only in-plane
 SNSPowderReduction(Filename=eventFileAbs,
@@ -95,7 +106,7 @@ if createPDF:
           Params=.01)
     scale = Fit(InputWorkspace='PG3_'+runNumber+'_SQ',
                 Function='name=FlatBackground,A0=1',
-                StartX=QfitRange[0], EndX=QfitRange[1])[1]
+                StartX=QfitRange[0], EndX=QfitRange[1], Output='fittable').OutputParameters.column(1)[0]
     print('high-Q scale is', scale)
     mtd['PG3_'+runNumber+'_SQ'] /= scale
     SaveNexusProcessed(InputWorkspace='PG3_'+runNumber+'_SQ',
