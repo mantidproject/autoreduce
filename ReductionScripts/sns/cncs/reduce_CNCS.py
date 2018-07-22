@@ -12,7 +12,7 @@ from mantid.simpleapi import *
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '122-128'})
 MaskBTPParameters.append({'Pixel': '1-7'})
-MaskBTPParameters.append({'Bank': '35-39'})
+MaskBTPParameters.append({'Bank': '35-38'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -40,7 +40,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,1,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-20550/shared/autoreduce/"
+sub_directory="/SNS/CNCS/IPTS-21503/shared/autoreduce/"
 
 #parameters not on the webpage
 #below remains unchanged
