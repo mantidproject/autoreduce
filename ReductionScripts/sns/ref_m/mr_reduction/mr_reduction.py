@@ -110,9 +110,12 @@ class ReductionProcess(object):
         direct_info = data_info
         apply_norm = False
         if not data_info.is_direct_beam:
-            apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
-            if direct_info is None:
-                direct_info = data_info
+            try:
+                apply_norm, norm_run, direct_info = self.find_direct_beam(xs_list[i_main])
+                if direct_info is None:
+                    direct_info = data_info
+            except:
+                logger.error("Could not process direct beam [%s]: %s" % (norm_run, sys.exc_info()[0]))
         # Important note: data_info is created from the cross-section with the most
         # data, so data_info.cross_section indicates which one that was.
         return data_info, direct_info, apply_norm, norm_run
