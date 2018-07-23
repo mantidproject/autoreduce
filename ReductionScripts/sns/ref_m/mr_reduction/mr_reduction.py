@@ -241,10 +241,6 @@ class ReductionProcess(object):
         # Determine the name of the direct beam workspace as needed
         ws_norm = direct_info.workspace_name if apply_norm and norm_run is not None else ''
 
-        tof_min = input.getTofMin()
-        tof_max = input.getTofMax()
-        ws = api.Rebin(input, params="%s, 50, %s" % (tof_min, tof_max), PreserveEvents=True)
-
         MagnetismReflectometryReduction(InputWorkspace=ws,
                                         NormalizationWorkspace=ws_norm,
                                         SignalPeakPixelRange=data_info.peak_range,
