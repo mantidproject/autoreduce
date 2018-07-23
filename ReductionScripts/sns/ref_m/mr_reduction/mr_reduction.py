@@ -159,6 +159,7 @@ class ReductionProcess(object):
             Perform the reduction
         """
         self.logfile = open("/SNS/REF_M/shared/autoreduce/MR_live.log", 'a')
+        self.logfile.write(self.logfile.write("\n\n----------\n"))
         report_list = []
 
         # Load cross-sections
@@ -181,7 +182,7 @@ class ReductionProcess(object):
 
         # Reduce each cross-section
         for ws in xs_list:
-            self.logfile.write("\n\n----------\nRun %s %s\n" % (self.run_number, str(ws)))
+            self.logfile.write("Run %s %s\n" % (self.run_number, str(ws)))
             try:
                 self.run_number = ws.getRunNumber()
                 report = self.reduce_cross_section(self.run_number, ws=ws,
