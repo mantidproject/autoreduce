@@ -158,7 +158,7 @@ class ReductionProcess(object):
         """
             Perform the reduction
         """
-        self.logfile = open("/SNS/REF_M/shared/autoreduce/MR_live.log", 'w')
+        self.logfile = open("/SNS/REF_M/shared/autoreduce/MR_live.log", 'a')
         report_list = []
 
         # Load cross-sections
