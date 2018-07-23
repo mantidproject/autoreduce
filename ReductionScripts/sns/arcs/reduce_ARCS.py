@@ -18,7 +18,6 @@ if __name__ == "__main__":
     MaskBTPParameters.append({'Pixel': '1-7,122-128'})
     MaskBTPParameters.append({'Pixel': '1-12,117-128', 'Bank': '70'})
     MaskBTPParameters.append({'Pixel': '1-14,115-128', 'Bank': '71'})
-    MaskBTPParameters.append({'Bank': '70-71'})
     MaskBTPParameters.append({'Tube': '6-8', 'Bank': '69'})
     MaskBTPParameters.append({'Tube': '1-3', 'Bank': '72'})
 
@@ -65,7 +64,7 @@ if __name__ == "__main__":
             processed_van_file = os.path.join(outdir, ProcessedVanadium)
         DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
 
-        EnergyTransferRange = [-0.6*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        EnergyTransferRange = [-2.0*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
         reduceMono(
             DGSdict, Ei, T0, EnergyTransferRange, 
             HardMaskFile, groupingFile, IntegrationRange,
