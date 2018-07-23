@@ -159,7 +159,7 @@ class ReductionProcess(object):
             Perform the reduction
         """
         self.logfile = open("/SNS/REF_M/shared/autoreduce/MR_live.log", 'a')
-        self.logfile.write(self.logfile.write("\n\n----------\n"))
+        self.logfile.write("\n\n----------\n")
         report_list = []
 
         # Load cross-sections
