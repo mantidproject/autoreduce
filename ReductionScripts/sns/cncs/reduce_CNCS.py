@@ -21,7 +21,7 @@ raw_vanadium="/SNS/CNCS/IPTS-21344/nexus/CNCS_277537.nxs.h5"
 processed_vanadium="van_277537.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.5"
+Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -40,7 +40,7 @@ beta="90.0"
 gamma="90.0"
 uVector="1,1,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-21503/shared/autoreduce/graphite/"
+sub_directory="/SNS/CNCS/IPTS-20360/shared/autoreduce/Flux/"
 
 #parameters not on the webpage
 #below remains unchanged
