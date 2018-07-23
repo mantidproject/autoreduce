@@ -182,9 +182,9 @@ class ReductionProcess(object):
 
         # Reduce each cross-section
         for ws in xs_list:
-            self.logfile.write("Run %s %s\n" % (self.run_number, str(ws)))
             try:
                 self.run_number = ws.getRunNumber()
+                self.logfile.write("Run %s %s\n" % (self.run_number, str(ws)))
                 report = self.reduce_cross_section(self.run_number, ws=ws,
                                                    data_info=data_info,
                                                    apply_norm=apply_norm,
