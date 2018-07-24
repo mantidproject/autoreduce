@@ -240,7 +240,7 @@ class ReductionProcess(object):
         entry = ws.getRun().getProperty("cross_section_id").value
         self.ipts = ws.getRun().getProperty("experiment_identifier").value
         logger.notice("R%s [%s] DATA TYPE: %s [ref=%s] [%s events]" % (run_number, entry, data_info.data_type, data_info.cross_section, ws.getNumberEvents()))
-        self.logfile.write("R%s [%s] DATA TYPE: %s [ref=%s] [%s events]" % (run_number,
+        self.logfile.write("R%s [%s] DATA TYPE: %s [ref=%s] [%s events]\n" % (run_number,
                                                                             entry,
                                                                             data_info.data_type,
                                                                             data_info.cross_section,
