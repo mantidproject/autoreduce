@@ -284,7 +284,7 @@ class ReductionProcess(object):
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
         SaveNexus(InputWorkspace=reflectivity,
                   Filename=os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.nxs.h5' % (run_number, entry)))
-        return Report(ws, data_info, direct_info, reflectivity)
+        return Report(ws, data_info, direct_info, reflectivity, self.logfile)
 
     def find_direct_beam(self, scatt_ws):
         """
