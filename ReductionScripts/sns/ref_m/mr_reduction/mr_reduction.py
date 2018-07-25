@@ -249,7 +249,7 @@ class ReductionProcess(object):
                                                                             ws.getNumberEvents()))
 
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
-            self.logfile.write("  = number of events too small: %s < %s\n" % (ws.getNumberEvents(), self.min_number_events))
+            self.logfile.write("  - number of events too small: %s < %s\n" % (ws.getNumberEvents(), self.min_number_events))
             return Report(ws, data_info, data_info, None, logfile=self.logfile)
 
         # Determine the name of the direct beam workspace as needed
@@ -283,6 +283,7 @@ class ReductionProcess(object):
         reflectivity = mtd["r_%s_%s" % (run_number, entry)]
         if self.output_dir is None:
             self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
+        self.logfile.write("  - ready to write: %s" % self.output_dir)
         write_reflectivity([reflectivity],
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
         SaveNexus(InputWorkspace=reflectivity,
