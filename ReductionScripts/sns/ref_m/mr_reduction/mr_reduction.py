@@ -227,7 +227,7 @@ class ReductionProcess(object):
             html_report, script = process_collection(summary_content=ref_plot, report_list=report_list,
                                                      publish=self.publish, run_number=self.run_number, logfile=self.logfile)
         except:
-            self.log("Could not process reports %s" % sys.exc_info()[0])
+            self.log("Could not process reports %s" % sys.exc_value)
         try:
             if self.output_dir is None:
                 self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
