@@ -225,7 +225,7 @@ class ReductionProcess(object):
         logger.notice("Processing collection of %s reports" % len(report_list))
         try:
             html_report, script = process_collection(summary_content=ref_plot, report_list=report_list,
-                                                     publish=self.publish, run_number=self.run_number, logfile=self.logfile)
+                                                     publish=self.publish, run_number=self.run_number)
         except:
             self.log("Could not process reports %s" % sys.exc_value)
         try:
