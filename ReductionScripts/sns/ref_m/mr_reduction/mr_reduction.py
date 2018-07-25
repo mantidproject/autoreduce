@@ -34,7 +34,7 @@ class ReductionProcess(object):
 
     def __init__(self, data_run, data_ws=None, output_dir=None, const_q_binning=False, const_q_cutoff=0.02,
                  update_peak_range=False, use_roi_bck=False, use_tight_bck=False, bck_offset=3,
-                 huber_x_cut=4.95, use_sangle=True, use_roi=True,
+                 use_sangle=True, use_roi=True,
                  force_peak_roi=False, peak_roi=[0,0],
                  force_bck_roi=False, bck_roi=[0,0], publish=True, debug=True):
         """
@@ -72,8 +72,6 @@ class ReductionProcess(object):
         self.force_bck_roi = force_bck_roi
         self.forced_bck_roi = bck_roi
 
-        self.huber_x_cut = huber_x_cut
-
         self.use_slow_flipper_log = False
         self.publish = publish
 
@@ -109,7 +107,6 @@ class ReductionProcess(object):
                              update_peak_range=self.update_peak_range,
                              use_roi_bck=self.use_roi_bck,
                              use_tight_bck=self.use_tight_bck,
-                             huber_x_cut=self.huber_x_cut,
                              bck_offset=self.bck_offset,
                              force_peak_roi=self.force_peak_roi, peak_roi=self.forced_peak_roi,
                              force_bck_roi=self.force_bck_roi, bck_roi=self.forced_bck_roi)
@@ -308,7 +305,6 @@ class ReductionProcess(object):
         entry = scatt_ws.getRun().getProperty("cross_section_id").value
         db_finder = DirectBeamFinder(scatt_ws, skip_slits=False,
                                      tolerance=self.tolerance,
-                                     huber_x_cut=self.huber_x_cut,
                                      experiment=self.ipts)
         norm_run = db_finder.search()
         if norm_run is None:
@@ -334,7 +330,6 @@ class ReductionProcess(object):
                                                update_peak_range=self.update_peak_range,
                                                use_roi_bck=self.use_roi_bck,
                                                use_tight_bck=self.use_tight_bck,
-                                               huber_x_cut=self.huber_x_cut,
                                                bck_offset=self.bck_offset)
                         apply_norm = True
                         break
