@@ -207,7 +207,7 @@ class ReductionProcess(object):
             ipts_number = self.ipts.split('-')[1]
             matched_runs, scaling_factors = combined_curves(run=int(self.run_number), ipts=ipts_number)
             ref_plot = plot_combined(matched_runs, scaling_factors, ipts_number, publish=False)
-            self.logfile.write("  - combined curve %s" % len(ref_plot))
+            self.logfile.write("  - combined curve %s\n" % len(ref_plot))
         except:
             self.logfile.write("  - Could not generate combined curve\n")
             logger.error("Could not generate combined curve")
