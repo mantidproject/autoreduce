@@ -210,6 +210,7 @@ class ReductionProcess(object):
             self.logfile.write("  - combined curve %s\n" % len(ref_plot))
         except:
             self.logfile.write("  - Could not generate combined curve\n")
+            self.logfile.write("  - %s\n" % sys.exc_info()[1])
             logger.error("Could not generate combined curve")
             logger.error(str(sys.exc_value))
 
