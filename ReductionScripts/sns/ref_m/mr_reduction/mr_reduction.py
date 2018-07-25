@@ -283,12 +283,13 @@ class ReductionProcess(object):
         reflectivity = mtd["r_%s_%s" % (run_number, entry)]
         if self.output_dir is None:
             self.output_dir = "/SNS/REF_M/%s/shared/autoreduce/" % self.ipts
-        self.logfile.write("  - ready to write: %s" % self.output_dir)
+        self.logfile.write("  - ready to write: %s\n" % self.output_dir)
         write_reflectivity([reflectivity],
                            os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.dat' % (run_number, entry)), entry)
         SaveNexus(InputWorkspace=reflectivity,
                   Filename=os.path.join(self.output_dir, 'REF_M_%s_%s_autoreduce.nxs.h5' % (run_number, entry)))
-        return Report(ws, data_info, direct_info, reflectivity, self.logfile)
+        self.logfile.write("  - done writing\n")
+        return Report(ws, data_info, direct_info, reflectivity, logfile=self.logfile)
 
     def find_direct_beam(self, scatt_ws):
         """
