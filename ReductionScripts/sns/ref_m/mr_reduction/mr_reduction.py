@@ -192,6 +192,7 @@ class ReductionProcess(object):
                                                    direct_info=direct_info)
                 report_list.append(report)
             except:
+                self.logfile.write("  - reduction failed")
                 # No data for this cross-section, skip to the next
                 logger.error("Cross section: %s" % str(sys.exc_value))
                 report = Report(ws, data_info, direct_info, None)
@@ -247,7 +248,7 @@ class ReductionProcess(object):
                                                                             ws.getNumberEvents()))
 
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
-            return Report(ws, data_info, data_info, None)
+            return Report(ws, data_info, data_info, None, logfile=self.logfile)
 
         # Determine the name of the direct beam workspace as needed
         ws_norm = direct_info.workspace_name if apply_norm and norm_run is not None else ''
