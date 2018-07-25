@@ -28,7 +28,6 @@ if __name__=="__main__":
         Use SANGLE:       True
         Use Const-Q:      False
         Fit peak in roi:  True
-        Huber X cut:      9.5
         Use bck ROI:      False
         Force peak:       False [145, 178]
         Force background: False [50, 100]
@@ -55,7 +54,6 @@ if __name__=="__main__":
                                 output_dir=outdir,
                                 use_sangle=True,
                                 const_q_binning=False,
-                                huber_x_cut=9.5,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
                                 use_roi=True,
