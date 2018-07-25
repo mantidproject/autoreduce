@@ -5,6 +5,7 @@
 from __future__ import (absolute_import, division, print_function)
 import sys
 import os
+import time
 
 from .settings import MANTID_PATH
 sys.path.insert(0, MANTID_PATH)
@@ -159,7 +160,7 @@ class ReductionProcess(object):
             Perform the reduction
         """
         self.logfile = open("/SNS/REF_M/shared/autoreduce/MR_live.log", 'a')
-        self.logfile.write("\n\n----------\n")
+        self.logfile.write("\n\n---------- %s\n" % time.ctime())
         report_list = []
 
         # Load cross-sections
