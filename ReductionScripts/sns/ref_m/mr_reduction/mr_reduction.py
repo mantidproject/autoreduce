@@ -249,6 +249,7 @@ class ReductionProcess(object):
                                                                             ws.getNumberEvents()))
 
         if data_info.data_type < 1 or ws.getNumberEvents() < self.min_number_events:
+            self.logfile.write("  = number of events too small: %s < %s\n" % (ws.getNumberEvents(), self.min_number_events))
             return Report(ws, data_info, data_info, None, logfile=self.logfile)
 
         # Determine the name of the direct beam workspace as needed
