@@ -24,7 +24,7 @@ class ReductionProcess(object):
     """
         MR automated reduction
     """
-    tolerance=0.001
+    tolerance=0.02
     # Minimum number of events needed to go ahead with the reduction
     min_number_events=200
     pol_state = POL_STATE
