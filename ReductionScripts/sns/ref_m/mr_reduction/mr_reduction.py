@@ -36,7 +36,7 @@ class ReductionProcess(object):
                  update_peak_range=False, use_roi_bck=False, use_tight_bck=False, bck_offset=3,
                  use_sangle=True, use_roi=True,
                  force_peak_roi=False, peak_roi=[0,0],
-                 force_bck_roi=False, bck_roi=[0,0], publish=True, debug=True):
+                 force_bck_roi=False, bck_roi=[0,0], publish=True, debug=False):
         """
             The automated reduction is initializable such that most of what we need can be
             changed at initialization time. That way the post-processing framework only
