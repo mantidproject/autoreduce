@@ -85,6 +85,7 @@ class ReductionProcess(object):
         """ Debug logging """
         if self.logfile:
             self.logfile.write(msg+'\n')
+        logger.notice(msg)
 
     def _extract_data_info(self, xs_list):
         """
