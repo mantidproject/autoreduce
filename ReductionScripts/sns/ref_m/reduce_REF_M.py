@@ -56,7 +56,7 @@ if __name__=="__main__":
                                 const_q_binning=False,
                                 const_q_cutoff=None,
                                 update_peak_range=False,
-                                use_roi=False,
+                                use_roi=True,
                                 use_roi_bck=False,
                                 force_peak_roi=True, peak_roi=[160, 186],
                                 force_bck_roi=False, bck_roi=[50, 100],
