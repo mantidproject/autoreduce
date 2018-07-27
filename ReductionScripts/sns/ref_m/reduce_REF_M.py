@@ -31,7 +31,7 @@ if __name__=="__main__":
         Use bck ROI:      False
         Force peak:       False [162, 192]
         Force background: False [50, 100]
-        Use side bck:     True
+        Use side bck:     False
         Bck width:        10
 
     Not used yet:
@@ -60,6 +60,6 @@ if __name__=="__main__":
                                 use_roi_bck=False,
                                 force_peak_roi=False, peak_roi=[162, 192],
                                 force_bck_roi=False, bck_roi=[50, 100],
-                                use_tight_bck=True, bck_offset=10)
+                                use_tight_bck=False, bck_offset=10)
     red.reduce()
 
