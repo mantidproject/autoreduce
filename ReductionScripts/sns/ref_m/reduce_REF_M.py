@@ -29,7 +29,7 @@ if __name__=="__main__":
         Use Const-Q:      False
         Fit peak in roi:  False
         Use bck ROI:      False
-        Force peak:       True [160, 186]
+        Force peak:       True [162, 178]
         Force background: False [50, 100]
         Use side bck:     True
         Bck width:        10
@@ -58,7 +58,7 @@ if __name__=="__main__":
                                 update_peak_range=False,
                                 use_roi=True,
                                 use_roi_bck=False,
-                                force_peak_roi=True, peak_roi=[160, 186],
+                                force_peak_roi=True, peak_roi=[162, 178],
                                 force_bck_roi=False, bck_roi=[50, 100],
                                 use_tight_bck=True, bck_offset=10)
     red.reduce()
