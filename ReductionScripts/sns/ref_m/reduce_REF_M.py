@@ -27,9 +27,9 @@ if __name__=="__main__":
     Options:
         Use SANGLE:       True
         Use Const-Q:      False
-        Fit peak in roi:  False
+        Fit peak in roi:  True
         Use bck ROI:      False
-        Force peak:       True [162, 192]
+        Force peak:       False [162, 192]
         Force background: False [50, 100]
         Use side bck:     True
         Bck width:        10
@@ -55,10 +55,10 @@ if __name__=="__main__":
                                 use_sangle=True,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
-                                update_peak_range=False,
+                                update_peak_range=True,
                                 use_roi=True,
                                 use_roi_bck=False,
-                                force_peak_roi=True, peak_roi=[162, 192],
+                                force_peak_roi=False, peak_roi=[162, 192],
                                 force_bck_roi=False, bck_roi=[50, 100],
                                 use_tight_bck=True, bck_offset=10)
     red.reduce()
