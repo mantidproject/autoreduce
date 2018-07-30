@@ -8,7 +8,7 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_JANIS_HT_d41062_2018_07_17.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_07_19-HighRes-JANIS_LT.txt")
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_07_19-HighRes-JANIS_HT.txt")
 
 char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
