@@ -4,8 +4,8 @@ import os
 
 # get information from autoreduction
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2018_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_JANIS_LT_d41083_2018_07_19.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_07_19-HighRes-JANIS_LT.txt")
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d40481_2018_06_13.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2018_06_11-HighRes-PAC.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2018_05_26.txt")
 
 mantid.logger.information('Number events = %d' % input.getNumberEvents())
