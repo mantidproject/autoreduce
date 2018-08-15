@@ -49,7 +49,7 @@ if __name__=="__main__":
     run_number = run_number.replace('.nxs.h5', '')
 
     # Translate event data to legacy QuickNXS-compatible files.
-    if event_file_path.endswith('.h5'):
+    if not False and event_file_path.endswith('.h5'):
         mr_translate.translate(event_file_path, histo=True, sub_dir='../data')
 
     red = refm.ReductionProcess(data_run=event_file_path,
@@ -63,5 +63,6 @@ if __name__=="__main__":
                                 force_peak_roi=False, peak_roi=[162, 192],
                                 force_bck_roi=False, bck_roi=[50, 100],
                                 use_tight_bck=True, bck_offset=10)
+    red.plot_2d = False
     red.reduce()
 
