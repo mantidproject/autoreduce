@@ -33,6 +33,8 @@ if __name__=="__main__":
         Force background: False [50, 100]
         Use side bck:     True
         Bck width:        10
+        Skip conversion   False
+        Produce 2D plots  False
 
     Not used yet:
         Const-Q cutoff:   None
