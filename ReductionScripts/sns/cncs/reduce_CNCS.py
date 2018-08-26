@@ -21,16 +21,16 @@ raw_vanadium="/SNS/CNCS/IPTS-21344/nexus/CNCS_277537.nxs.h5"
 processed_vanadium="van_277537_redo.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-20.0"
-Emax="2.9"
-Estep="0.01"
-E_pars_in_mev=True
-TIB_min="44915"
-TIB_max="47315"
-T0="111.1"
+Emin="-0.95"
+Emax="0.95"
+Estep="0.002"
+E_pars_in_mev=False
+TIB_min=""
+TIB_max=""
+T0=""
 Motor_names="huber,SERotator2,OxDilRot,CCR13VRot,SEOCRot,CCR10G2Rot,Ox2WeldRot,ThreeSampleRot,Sample:Axis2.RBV,omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="1.0"
 b="1.0"
@@ -40,7 +40,7 @@ beta="90.0"
 gamma="90.0"
 uVector="0,1,0"
 vVector="0,0,1"
-sub_directory="/SNS/CNCS/IPTS-20479/shared/autoreduce/"
+sub_directory="/SNS/CNCS/IPTS-21343/shared/autoreduce/"
 
 #parameters not on the webpage
 #below remains unchanged
