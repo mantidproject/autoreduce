@@ -22,3 +22,11 @@ logger = logging.getLogger('autoreduce')
 logger.info('python:   %s' % sys.executable)
 logger.info('hostname: %s' % socket.gethostname())
 logger.info('filename: %s' % filename)
+
+tokens = filename.split('/')
+if 'ct_scans' not in tokens:
+    raise NotImplementedError("Not a ct scan: %s" % filename)
+
+from imars3d.CT_from_TIFF_metadata import autoreduce
+autoreduce(filename, local_disk_partition=outdir, parallel_nodes=20)
+
