@@ -28,4 +28,7 @@ cmd = os.path.join(here, 'launch_autoreduce.sh')
 cmd = ['bash', cmd, filename, outdir]
 cmd = ' '.join(cmd)
 log.write("Starting %r\n" % cmd)
-os.system(cmd)
+import subprocess as sp, shlex
+# os.system(cmd)
+args = shlex.split(cmd)
+sp.check_call(args, stdout=sys.stdout, stderr=sys.stdout)
