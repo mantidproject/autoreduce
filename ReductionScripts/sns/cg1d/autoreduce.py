@@ -28,6 +28,10 @@ tokens = filename.split('/')
 if 'ct_scans' not in tokens:
     raise NotImplementedError("Not a ct scan: %s" % filename)
 
+staging_dir = os.path.join(outdir, 'autoreduce.CT.staging-%s' % os.path.basename(filename))
+if not os.path.exists(staging_dir):
+    os.makedirs(staging_dir)
+os.chdir(staging_dir)
+
 from imars3d.CT_from_TIFF_metadata import autoreduce
-os.chdir(outdir)
-autoreduce(filename, local_disk_partition=outdir, parallel_nodes=20)
+autoreduce(filename, local_disk_partition=outdir, parallel_nodes=16)
