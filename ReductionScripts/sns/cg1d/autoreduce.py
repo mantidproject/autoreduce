@@ -9,8 +9,8 @@ if not(os.path.isfile(sys.argv[1])):
     print "data file ", sys.argv[1], " not found"
     sys.exit()
 else:
-    filename = sys.argv[1]
-    outdir = sys.argv[2]+'/'
+    filename = os.path.abspath(sys.argv[1])
+    outdir = os.path.abspath(sys.argv[2])
     if not os.path.exists(outdir): os.makedirs(outdir)
 
 import logging
@@ -22,11 +22,12 @@ logger = logging.getLogger('autoreduce')
 logger.info('python:   %s' % sys.executable)
 logger.info('hostname: %s' % socket.gethostname())
 logger.info('filename: %s' % filename)
+logger.info('outdir:   %s' % outdir)
 
 tokens = filename.split('/')
 if 'ct_scans' not in tokens:
     raise NotImplementedError("Not a ct scan: %s" % filename)
 
 from imars3d.CT_from_TIFF_metadata import autoreduce
+os.chdir(outdir)
 autoreduce(filename, local_disk_partition=outdir, parallel_nodes=20)
-
