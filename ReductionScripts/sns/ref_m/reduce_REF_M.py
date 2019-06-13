@@ -21,20 +21,21 @@ logger.addFilter(f)
 
 from mr_reduction import mr_reduction as refm
 from mr_reduction import mr_translate
+from mr_reduction import oncat_comm as oncat
 
 if __name__=="__main__":
     """
     Options:
-        Use SANGLE:       True
+        Use SANGLE:       False
         Use Const-Q:      False
         Fit peak in roi:  True
         Use bck ROI:      False
-        Force peak:       False [162, 192]
-        Force background: False [50, 100]
+        Force peak:       False [125, 175]
+        Force background: False [50, 70]
         Use side bck:     True
         Bck width:        10
         Skip conversion   False
-        Produce 2D plots  False
+        Produce 2D plots  True
 
     Not used yet:
         Const-Q cutoff:   None
@@ -50,19 +51,24 @@ if __name__=="__main__":
 
     # Translate event data to legacy QuickNXS-compatible files.
     if not False and event_file_path.endswith('.h5'):
-        mr_translate.translate(event_file_path, histo=True, sub_dir='../data')
+        mr_translate.translate(event_file_path, events=False, histo=True, sub_dir='../data', force=False)
 
     red = refm.ReductionProcess(data_run=event_file_path,
                                 output_dir=outdir,
-                                use_sangle=True,
+                                use_sangle=False,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
                                 use_roi=True,
                                 use_roi_bck=False,
-                                force_peak_roi=False, peak_roi=[162, 192],
-                                force_bck_roi=False, bck_roi=[50, 100],
+                                force_peak_roi=False, peak_roi=[125, 175],
+                                force_bck_roi=False, bck_roi=[50, 70],
                                 use_tight_bck=True, bck_offset=10)
-    red.plot_2d = False
+    red.plot_2d = True
     red.reduce()
+    if False and red.json_info is not None:
+        try:
+            oncat.ingest(red.json_info)
+        except:
+            logger.warning("Could not send info to ONCat")
 

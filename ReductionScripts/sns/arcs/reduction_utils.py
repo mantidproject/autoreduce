@@ -182,10 +182,12 @@ def reduceMono(
         run_number=str(mtd['__OWS'].getRunNumber())
         plot_heatmap(
             run_number, x.tolist(), y.tolist(), Zm.tolist(), 
-            x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
+            x_title=u'|Q| (1/AA)', y_title='E (meV)',
+            # x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
             x_log=False, y_log=False, instrument='ARCS', publish=True)
     except:
-        logger.error("Could not plot")
+        import traceback as tb
+        logger.error("Could not plot:\n%s" % (tb.format_exc(),))
 
     if clean:
         WS_clean()

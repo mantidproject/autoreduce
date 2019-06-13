@@ -6,8 +6,8 @@ warnings.simplefilter('ignore', RuntimeWarning)
 
 if (os.environ.has_key("MANTIDPATH")):
     del os.environ["MANTIDPATH"]
-#sys.path.insert(0,'/opt/Mantid/bin')
-sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/Mantid/bin')
+#sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.append("/SNS/REF_L/shared/autoreduce/")
 
 import mantid
@@ -29,7 +29,7 @@ run_number = run_number.replace('.nxs.h5', '')
 WL_CUTOFF = 10.0  
 
 # Default primary fraction range to be used if it is not defined in the template
-PRIMARY_FRACTION_RANGE = [116, 197]
+PRIMARY_FRACTION_RANGE = [5, 250]
 
 NORMALIZE_TO_UNITY = False
 #-------------------------------------------------------------------------
@@ -78,11 +78,11 @@ if os.path.isfile(default_file_name):
         for r in range(0, 10):
             if os.path.isfile('REFL_%s_%s_%s_auto.nxs' % (first_run_of_set, r+1, first_run_of_set+r)):
                 plot1d(first_run_of_set+r, [[x, y, dy, dx]], instrument='REF_L', 
-                       x_title=u"Q (1/\u212b)", x_log=True,
+                       x_title=u"Q (1/A)", x_log=True,
                        y_title="Reflectivity", y_log=True, show_dx=False)
     else:
         plot1d(run_number, [[x, y, dy, dx]], instrument='REF_L', 
-               x_title=u"Q (1/\u212b)", x_log=True,
+               x_title=u"Q (1/A)", x_log=True,
                y_title="Reflectivity", y_log=True, show_dx=False)
 
 

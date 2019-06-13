@@ -87,7 +87,8 @@ if van is not None:
     simpleapi.Divide(LHSWorkspace=output, RHSWorkspace=van, OutputWorkspace=output)
 
 ##### generate plot and post
-div = simpleapi.SavePlot1D(InputWorkspace=output, OutputType='plotly')
+div = simpleapi.SavePlot1D(InputWorkspace=output, OutputType='plotly',
+                           XLabel='d-spacing (A)')
 runNumber = simpleapi.mtd[output].getRunNumber()
 if runNumber > 0:  # it is 0 between runs
     mantid.logger.information('Posting plot of PG3_%s' % runNumber)

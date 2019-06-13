@@ -20,10 +20,6 @@ def write_reflectivity(ws_list, output_path, cross_section):
                          'bg_pos', 'bg_width', 'dpix', 'tth', 'number', 'File']
     dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                      'bg_pos', 'bg_width', 'fan', 'dpix', 'tth', 'number', 'DB_ID', 'File']
-    cross_sections={'Off_Off': '++', 'On_Off': '-+', 'Off_On': '+-', 'On_On': '--'}
-    pol_state = 'x'
-    if cross_section in cross_sections:
-        pol_state = cross_sections[cross_section]
 
     fd = open(output_path, 'w')
     fd.write("# Datafile created by QuickNXS 2.0.0\n")
@@ -33,7 +29,7 @@ def write_reflectivity(ws_list, output_path, cross_section):
     fd.write("# Type: Specular\n")
     run_list = [str(ws.getRunNumber()) for ws in ws_list]
     fd.write("# Input file indices: %s\n" % ','.join(run_list))
-    fd.write("# Extracted states: %s\n" % pol_state)
+    fd.write("# Extracted states: %s\n" % cross_section)
     fd.write("#\n")
     fd.write("# [Direct Beam Runs]\n")
     toks = ['%8s' % item for item in direct_beam_options]
@@ -163,10 +159,8 @@ def write_reflectivity(ws_list, output_path, cross_section):
         y = ws.readY(0)
         dy = ws.readE(0)
         dx = ws.readDx(0)
-        tth = ws.getRun().getProperty("SANGLE").getStatistics().mean * math.pi / 180.0
-        quicknxs_scale = (float(norm_x_max)-float(norm_x_min)) * (float(norm_y_max)-float(norm_y_min))
-        quicknxs_scale /= (float(peak_max)-float(peak_min)) * (float(low_res_max)-float(low_res_min))
-        quicknxs_scale *= 0.005 / math.sin(tth)
+        tth = ws.getRun().getProperty("two_theta").value * math.pi / 360.0
+        quicknxs_scale = quicknxs_scaling_factor(ws)
         for i in range(len(x)):
             data_block += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (x[i],
                                                                         y[i]*quicknxs_scale,
@@ -177,11 +171,38 @@ def write_reflectivity(ws_list, output_path, cross_section):
     fd.write("#\n")
     fd.write("# [Global Options]\n")
     fd.write("# name           value\n")
+    #TODO: set the sample dimension as an option
     fd.write("# sample_length  10\n")
+    fd.write("#\n")
+    fd.write("# [Sequence]\n")
+    if run_object.hasProperty("sequence_id"):
+        fd.write("# sequence_id %s\n" % run_object.getProperty("sequence_id").value[0])
+    if run_object.hasProperty("sequence_number"):
+        fd.write("# sequence_number %s\n" % run_object.getProperty("sequence_number").value[0])
+    if run_object.hasProperty("sequence_total"):
+        fd.write("# sequence_total %s\n" % run_object.getProperty("sequence_total").value[0])
     fd.write("#\n")
     fd.write("# [Data]\n")
     toks = [u'%12s' % item for item in [u'Qz [1/A]', u'R [a.u.]', u'dR [a.u.]', u'dQz [1/A]', u'theta [rad]']]
     fd.write(u"# %s\n" % '  '.join(toks))
-    fd.write(u"# %s\n" % data_block)
+    fd.write(u"#\n%s\n" % data_block)
 
     fd.close()
+
+def quicknxs_scaling_factor(ws):
+    """ FOR COMPATIBILITY WITH QUICKNXS """
+    run_object = ws.getRun()
+    peak_min = run_object.getProperty("scatt_peak_min").value
+    peak_max = run_object.getProperty("scatt_peak_max").value + 1.0
+    low_res_min = run_object.getProperty("scatt_low_res_min").value
+    low_res_max = run_object.getProperty("scatt_low_res_max").value + 1.0
+    norm_x_min = run_object.getProperty("norm_peak_min").value
+    norm_x_max = run_object.getProperty("norm_peak_max").value + 1.0
+    norm_y_min = run_object.getProperty("norm_low_res_min").value
+    norm_y_max = run_object.getProperty("norm_low_res_max").value + 1.0
+    tth = run_object.getProperty("two_theta").value * math.pi / 360.0
+    quicknxs_scale = (float(norm_x_max)-float(norm_x_min)) * (float(norm_y_max)-float(norm_y_min))
+    quicknxs_scale /= (float(peak_max)-float(peak_min)) * (float(low_res_max)-float(low_res_min))
+    _scale = 0.005 / math.sin(tth) if tth > 0.0002 else 1.0
+    quicknxs_scale *= _scale
+    return quicknxs_scale
