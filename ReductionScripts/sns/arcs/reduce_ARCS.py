@@ -5,8 +5,8 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/IPTS-22776/nexus/ARCS_125424.nxs.h5"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van125424.nxs"
+    RawVanadium="/SNS/ARCS/IPTS-23714/nexus/ARCS_126344.nxs.h5"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van126344.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
     MaskBTPParameters=[]
@@ -62,7 +62,7 @@ if __name__ == "__main__":
             processed_van_file = os.path.join(outdir, ProcessedVanadium)
         DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
 
-        EnergyTransferRange = [-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        EnergyTransferRange = [-0.9*EGuess,0.01*EGuess,0.9*EGuess] #Energy Binning
         reduceMono(
             DGSdict, Ei, T0, EnergyTransferRange, 
             HardMaskFile, groupingFile, IntegrationRange,
