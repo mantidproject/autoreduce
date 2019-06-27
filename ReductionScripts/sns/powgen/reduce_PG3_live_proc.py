@@ -3,9 +3,9 @@ from mantid import simpleapi
 import os
 
 # get information from autoreduction
-cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_1_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_JanisLT_d43549_2019_03_13.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_03_13-HighRes_JanisLT.txt")
+cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d43675_2019_06_25.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_06_25-HighRes-PAC.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2019_01_24_PAC_limit.txt")
 
 ##### this will clear out the cache directory
