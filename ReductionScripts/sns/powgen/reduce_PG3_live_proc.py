@@ -6,7 +6,7 @@ import os
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_PAC_d43675_2019_06_25.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_06_25-HighRes-PAC.txt")
-char_inplane = os.path.join(cal_dir, "PG3_char_2019_01_24_PAC_limit.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2019_06_25_PAC_limit.txt")
 
 ##### this will clear out the cache directory
 #filenames = [os.path.join('/tmp', item) for item in os.listdir('/tmp') if 'PG3_' in item]
