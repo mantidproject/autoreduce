@@ -23,14 +23,14 @@ MaskBTPParameters.append({'Bank': '1-2'})
 raw_vanadium="/SNS/CNCS/IPTS-22728/nexus/CNCS_308761.nxs.h5"
 processed_vanadium="processed_van_308761_no_beamstop_17C.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.2"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
 TIB_min=""
 TIB_max=""
-T0=""
+T0="190.0"
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
@@ -44,7 +44,7 @@ gamma="90.0"
 uVector="-1,1,0"
 vVector="-1,-1,2"
 sub_directory=""
-auto_tzero_flag = True
+auto_tzero_flag = False
 
 #parameters not on the webpage
 #below remains unchanged
