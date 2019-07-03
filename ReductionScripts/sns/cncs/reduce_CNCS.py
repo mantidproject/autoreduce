@@ -30,7 +30,7 @@ Estep="0.005"
 E_pars_in_mev=False
 TIB_min=""
 TIB_max=""
-T0="190.0"
+T0=""
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
@@ -44,7 +44,7 @@ gamma="90.0"
 uVector="-1,1,0"
 vVector="-1,-1,2"
 sub_directory=""
-auto_tzero_flag = False
+auto_tzero_flag = True
 
 #parameters not on the webpage
 #below remains unchanged
