@@ -8,6 +8,7 @@ sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 import numpy as np
 import scipy.optimize as opt
+import scipy.interpolate as interp
 
 #parameters section
 #this part changes with web input
