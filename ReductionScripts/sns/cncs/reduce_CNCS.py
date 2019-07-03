@@ -45,7 +45,7 @@ gamma="90.0"
 uVector="-1,1,0"
 vVector="-1,-1,2"
 sub_directory=""
-auto_tzero_flag = False
+auto_tzero_flag = True
 
 #parameters not on the webpage
 #below remains unchanged
