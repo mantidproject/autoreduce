@@ -51,7 +51,7 @@ if __name__=="__main__":
 
     # Translate event data to legacy QuickNXS-compatible files.
     if not False and event_file_path.endswith('.h5'):
-        mr_translate.translate(event_file_path, events=False, histo=True, sub_dir='../data', force=False)
+        mr_translate.translate(event_file_path, events=False, histo=True, sub_dir='../data')
 
     red = refm.ReductionProcess(data_run=event_file_path,
                                 output_dir=outdir,
@@ -66,9 +66,3 @@ if __name__=="__main__":
                                 use_tight_bck=True, bck_offset=10)
     red.plot_2d = True
     red.reduce()
-    if False and red.json_info is not None:
-        try:
-            oncat.ingest(red.json_info)
-        except:
-            logger.warning("Could not send info to ONCat")
-
