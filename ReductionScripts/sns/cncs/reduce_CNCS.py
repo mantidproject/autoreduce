@@ -299,7 +299,7 @@ if __name__ == "__main__":
     output_directory=sys.argv[2]
     
     ar_changed=check_newer_script("CNCS",output_directory)
-    DownloadInstrument(ForceUpdate=True)
+    #DownloadInstrument(ForceUpdate=True)
     
     cfgfile_path=os.path.join(output_directory,configfile)
     if not os.path.isfile(cfgfile_path):
