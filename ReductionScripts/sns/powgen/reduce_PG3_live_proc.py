@@ -5,7 +5,7 @@ import os
 # get information from autoreduction
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_PAC_d43675_2019_06_25.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_07_31-HighRes-PAC_1.05mV.txt")
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_07_31-HighRes-PAC_1.05mW.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2019_06_25_PAC_limit.txt")
 
 ##### this will clear out the cache directory
