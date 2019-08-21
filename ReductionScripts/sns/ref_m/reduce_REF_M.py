@@ -32,7 +32,7 @@ if __name__=="__main__":
         Use bck ROI:      False
         Force peak:       False [125, 175]
         Force background: False [50, 70]
-        Use side bck:     True
+        Use side bck:     False
         Bck width:        10
         Skip conversion   True
         Produce 2D plots  True
@@ -63,6 +63,6 @@ if __name__=="__main__":
                                 use_roi_bck=False,
                                 force_peak_roi=False, peak_roi=[125, 175],
                                 force_bck_roi=False, bck_roi=[50, 70],
-                                use_tight_bck=True, bck_offset=10)
+                                use_tight_bck=False, bck_offset=10)
     red.plot_2d = True
     red.reduce()
