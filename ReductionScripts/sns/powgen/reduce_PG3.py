@@ -7,7 +7,7 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_ILL_d44252_2019_08_20.h5') # contains ALL grouping
+cal_file  = os.path.join(cal_dir,'PG3_AGES_d44275_2019_08_22.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_8_22-HR-AGES.txt")
 
 char_inplane = os.path.join(cal_dir, "PG3_char_2019_08_20_AGES_limit.txt")
