@@ -10,7 +10,7 @@ cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_AGES_d44275_2019_08_22.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_8_22-HR-AGES.txt")
 
-char_inplane = os.path.join(cal_dir, "PG3_char_2019_08_20_AGES_limit.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2019_08_22_AGES_limit.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
