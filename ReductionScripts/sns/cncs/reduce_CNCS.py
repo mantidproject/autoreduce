@@ -283,9 +283,9 @@ def preprocessGrouping(ws,outdir):
 
 
 def get_colorscale_minimum(arr):
-    x=arr[numpy.isfinite(arr)]
+    x=arr[np.isfinite(arr)]
     x=x[x>0]
-    xc=x[numpy.argsort(x)][len(x)*0.02] #ignore the bottom 2%
+    xc=x[np.argsort(x)][len(x)*0.02] #ignore the bottom 2%
     return xc
 
 if __name__ == "__main__":    
