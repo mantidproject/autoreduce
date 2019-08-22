@@ -15,7 +15,7 @@ import scipy.interpolate as interp
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '121-128'})
 MaskBTPParameters.append({'Pixel': '1-8'})
-MaskBTPParameters.append({'Bank': '34-50'})
+MaskBTPParameters.append({'Bank': '35-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -282,6 +282,7 @@ def preprocessGrouping(ws,outdir):
     return dictgrouping
 
 
+
 def get_colorscale_minimum(arr):
     x=arr[np.isfinite(arr)]
     x=x[x>0]
@@ -384,7 +385,6 @@ if __name__ == "__main__":
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             change_permissions(nxspe_filename,0664)
- 
     try:
         plot_html=''
         from postprocessing.publish_plot import plot1d,plot_heatmap, publish_plot
@@ -420,8 +420,8 @@ if __name__ == "__main__":
         publish_plot("CNCS", run_number, files={'file': plot_html})
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
- 
-            
+
+       
     if create_MDnxs:
         try:
             SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
