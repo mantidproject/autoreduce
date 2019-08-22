@@ -384,6 +384,7 @@ if __name__ == "__main__":
     try:
         plot_html=''
         from postprocessing.publish_plot import plot1d,plot_heatmap, publish_plot
+        import mantid.plots.helperfunctions as hf
         s=SumSpectra("reduce")
         x=s.readX(0)
         y=s.readY(0)
