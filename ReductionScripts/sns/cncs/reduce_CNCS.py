@@ -387,7 +387,7 @@ if __name__ == "__main__":
         s=SumSpectra("reduce")
         x=s.readX(0)
         y=s.readY(0)
-        plot1=plot1d(runnum, [x[1:], y], instrument='CNCS',
+        plot1=plot1d(run_number, [x[1:], y], instrument='CNCS',
                      x_title="Energy transfer (meV)",
                      y_title="Intensity", y_log=True, publish=False)
         plot_html+="<div>{0}</div>\n".format(plot1)
@@ -409,10 +409,10 @@ if __name__ == "__main__":
         z[z<cmin]=np.nan
         Zm=np.ma.masked_where(np.isnan(z),z)
         Zm = np.log(Zm)
-        plot2=plot_heatmap(runnum, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/angstrom)', y_title='E (meV)',
+        plot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/angstrom)', y_title='E (meV)',
                            x_log=False, y_log=False, instrument='CNCS', publish=False)
         plot_html+="<div>{0}</div>\n".format(plot2)
-        publish_plot("CNCS", runnum, files={'file': plot_html})
+        publish_plot("CNCS", run_number, files={'file': plot_html})
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
  
