@@ -280,6 +280,11 @@ def preprocessGrouping(ws,outdir):
 
 
 
+def get_colorscale_minimum(arr):
+    x=arr[np.isfinite(arr)]
+    x=x[x>0]
+    xc=x[np.argsort(x)][len(x)*0.02] #ignore the bottom 2%
+    return xc
 
 if __name__ == "__main__":    
     #check number of arguments
@@ -377,7 +382,43 @@ if __name__ == "__main__":
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             change_permissions(nxspe_filename,0664)
-            
+    try:
+        plot_html=''
+        from postprocessing.publish_plot import plot1d,plot_heatmap, publish_plot
+        import mantid.plots.helperfunctions as hf
+        s=SumSpectra("reduce")
+        x=s.readX(0)
+        y=s.readY(0)
+        plot1=plot1d(run_number, [x[1:], y], instrument='CNCS',
+                     x_title="Energy transfer (meV)",
+                     y_title="Intensity", y_log=True, publish=False)
+        plot_html+="<div>{0}</div>\n".format(plot1)
+        minvals,maxvals=ConvertToMDMinMaxLocal("reduce",'|Q|','Direct')
+        xmin=minvals[0]
+        xmax=maxvals[0]
+        ymin=minvals[1]
+        ymax=maxvals[1]
+        MD=ConvertToMD("reduce",
+                       QDimensions='|Q|',
+                       dEAnalysisMode='Direct',
+                       MinValues=minvals,
+                       MaxValues=maxvals)
+        ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
+        ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
+        MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
+        x,y,z=hf.get_md_data2d_bin_bounds(MDH,hf.get_normalization(MDH)[0])
+        cmin=get_colorscale_minimum(z)
+        z[z<cmin]=np.nan
+        Zm=np.ma.masked_where(np.isnan(z),z)
+        Zm = np.log(Zm)
+        plot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/angstrom)', y_title='E (meV)',
+                           x_log=False, y_log=False, instrument='CNCS', publish=False)
+        plot_html+="<div>{0}</div>\n".format(plot2)
+        publish_plot("CNCS", run_number, files={'file': plot_html})
+    except Exception as e:
+        logger.error("Failed to publish plot\n"+str(e))
+
+       
     if create_MDnxs:
         try:
             SetUB("reduce",a=a,b=b,c=c,alpha=alpha,beta=beta,gamma=gamma,u=uVector,v=vVector)
