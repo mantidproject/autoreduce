@@ -34,7 +34,7 @@ if __name__=="__main__":
         Force background: False [50, 70]
         Use side bck:     False
         Bck width:        10
-        Skip conversion   True
+        Skip conversion   False
         Produce 2D plots  False
 
     Not used yet:
@@ -50,7 +50,7 @@ if __name__=="__main__":
     run_number = run_number.replace('.nxs.h5', '')
 
     # Translate event data to legacy QuickNXS-compatible files.
-    if not True and event_file_path.endswith('.h5'):
+    if not False and event_file_path.endswith('.h5'):
         mr_translate.translate(event_file_path, events=False, histo=True, sub_dir='../data')
 
     red = refm.ReductionProcess(data_run=event_file_path,
