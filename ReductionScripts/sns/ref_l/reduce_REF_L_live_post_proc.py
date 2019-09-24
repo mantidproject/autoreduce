@@ -6,6 +6,12 @@ import numpy as np
 import plotly.offline as py
 import plotly.graph_objs as go
 
+LIVE_DIR = "/SNS/REF_L/shared/livereduce"
+if LIVE_DIR not in sys.path:
+    sys.path.append(LIVE_DIR)
+    
+from plot_utils import plot1d
+
 def _plot2d(x, y, z, x_range=None, y_range=None, x_label="X pixel", y_label="Y pixel", title='', x_bck_range=None, y_bck_range=None):
     """
         Generate a 2D plot
@@ -198,16 +204,16 @@ def generate_plots(run_number, workspace):
     signal = np.log10(direct_summed.extractY())
     tof_axis = direct_summed.extractX()[0]/1000.0
 
-    x_tof_plot = _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
-                         x_label="TOF (ms)", y_label="Y pixel",
-                         title="r%s" % run_number)
+    #x_tof_plot = _plot2d(z=signal, y=range(signal.shape[0]), x=tof_axis,
+    #                     x_label="TOF (ms)", y_label="Y pixel",
+    #                     title="r%s" % run_number)
 
     # X-Y plot
-    _workspace = api.Integration(workspace)
-    signal = np.log10(_workspace.extractY())
-    z=np.reshape(signal, (n_x, n_y))
-    xy_plot = _plot2d(z=z.T, x=np.arange(n_x), y=np.arange(n_y),
-                      title="r%s" % run_number)
+    #_workspace = api.Integration(workspace)
+    #signal = np.log10(_workspace.extractY())
+    #z=np.reshape(signal, (n_x, n_y))
+    #xy_plot = _plot2d(z=z.T, x=np.arange(n_x), y=np.arange(n_y),
+    #                  title="r%s" % run_number)
 
     # Count per X pixel
     integrated = api.Integration(direct_summed)
@@ -226,7 +232,7 @@ def generate_plots(run_number, workspace):
                        x_label="TOF (ms)", y_label="Counts",
                        title="r%s" % run_number)
 
-    return [xy_plot, x_tof_plot, peak_pixels, tof_dist]
+    return [peak_pixels, tof_dist]
     
 output = input
 try:
@@ -235,7 +241,7 @@ except:
     run_number = 0
 
 refl_info = ""
-if False:
+if True:
     try:
         reflectivity = reduce_data(input)
         #from postprocessing.publish_plot import plot1d
@@ -251,13 +257,12 @@ if False:
                    
         x = reflectivity.readX(0)
         y = reflectivity.readY(0)
-        refl_info = _plot1d(x, y, x_range=None,
-                           x_label="Q", y_label="R",
-                           title="r%s" % run_number)
+        refl_info = plot1d([[x, y]], 
+                           x_title="Q" % run_number)
     except:
         refl_info = "<div>Could not reduce data: %s</div>\n" % sys.exc_value
 
-plots = generate_plots(run_number, input)
+plots = []#generate_plots(run_number, input)
 info = ''
 try:
     n_evts = input.getNumberEvents()
