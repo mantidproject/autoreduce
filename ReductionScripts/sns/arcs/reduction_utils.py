@@ -55,8 +55,8 @@ def preprocessData(filename):
     CorrectLogTimes('__IWS')
 
     #use detectors and first monitor to get Ei
-    #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
-    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorIndex=0,PulseInterval=1/60.00*1e6, MaximumEnergy=100.)
+    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1,version=2)
+    #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorIndex=0,PulseInterval=1/60.00*1e6, MaximumEnergy=100.)
     Efixed = result
     vtemp = np.sqrt(Efixed/5.227e-6) 
     T0 = 11.831/vtemp*1e6
