@@ -55,7 +55,8 @@ def preprocessData(filename):
     CorrectLogTimes('__IWS')
 
     #use detectors and first monitor to get Ei
-    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorSpectrumNumber=1)
     logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
     Efixed = result[0]
     T0 = result[3]
