@@ -59,7 +59,8 @@ def preprocessData(filename):
     result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorSpectrumNumber=1)
     logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
     Efixed = result[0]
-    T0 = result[3]
+    vtemp = np.sqrt(Efixed/5.227e-6) 
+    T0 = 11.831/vtemp*1e6
     logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #Add other Filters here
