@@ -57,8 +57,7 @@ def preprocessData(filename):
     #use detectors and first monitor to get Ei
     #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
     result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorIndex=0)
-    logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
-    Efixed = result[0]
+    Efixed = result
     vtemp = np.sqrt(Efixed/5.227e-6) 
     T0 = 11.831/vtemp*1e6
     logger.notice("Ei=%s, T=%s" % (Efixed,T0))
