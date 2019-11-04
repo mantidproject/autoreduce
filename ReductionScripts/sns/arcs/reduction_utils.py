@@ -39,29 +39,25 @@ def preprocessData(filename):
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     # uncomment the following if using two monitors
     getEi_from_monitors_failed = False
-    #try:
-    #    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-    #except:
-    #    getEi_from_monitors_failed = True
-    #    Efixed, T0 = Eguess, computeT0(Eguess)
+    try:
+        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    except:
+        getEi_from_monitors_failed = True
+        Efixed, T0 = Eguess, computeT0(Eguess)
         
-    
+    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
     LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
     #added to fix 500 microsecond offset on pack 35 for run 2014-B - not needed now
     #ChangeBinOffset(InputWorkspace="__IWS",OutputWorkspace="__IWS", Offset=500, IndexMin=34816, IndexMax=35839)
     #Fix that all time series log values start at the same time as the proton_charge
-    #CorrectLogTimes('__IWS')
-    Rebin(OutputWorkspace="__IWS", InputWorkspace="__IWS",Params=5,PreserveEvents=False)
-    __MonWS=Rebin(__MonWS,5,PreserveEvents=False)  
+    CorrectLogTimes('__IWS')
+
     #use detectors and first monitor to get Ei
-    #result=GetEiMonDet(version=1,DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
-    result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorIndex=0,PulseInterval=1/600.00*1e6, MaximumEnergy=100.)
-    Efixed = result
-    vtemp = np.sqrt(Efixed/5.227e-6) 
-    T0 = 11.831/vtemp*1e6
-    logger.notice("Ei=%s, T=%s" % (Efixed,T0))
+    #result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
+    #logger.notice("Ei=%s, T=%s" % (result[0], result[3]))
+    #return [Eguess,result[0],result[3]]
 
     #Add other Filters here
     #Filter chopper 3 bad events
