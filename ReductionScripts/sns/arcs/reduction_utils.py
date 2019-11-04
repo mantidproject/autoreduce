@@ -54,6 +54,7 @@ def preprocessData(filename):
     #Fix that all time series log values start at the same time as the proton_charge
     #CorrectLogTimes('__IWS')
     Rebin(OutputWorkspace="__IWS", InputWorkspace="__IWS",Params=5,PreserveEvents=False)
+    __MonWS=Rebin(__MonWS,5,PreserveEvents=False)  
     #use detectors and first monitor to get Ei
     #result=GetEiMonDet(version=1,DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,EnergyGuess=Eguess,MonitorSpectrumNumber=1)
     result=GetEiMonDet(DetectorWorkspace="__IWS",MonitorWorkspace=__MonWS,MonitorIndex=0,PulseInterval=1/600.00*1e6, MaximumEnergy=100.)
