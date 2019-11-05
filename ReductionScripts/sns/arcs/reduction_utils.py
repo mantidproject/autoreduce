@@ -39,11 +39,11 @@ def preprocessData(filename):
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     # uncomment the following if using two monitors
     getEi_from_monitors_failed = False
-    try:
-        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-    except:
-        getEi_from_monitors_failed = True
-        Efixed, T0 = Eguess, computeT0(Eguess)
+    #try:
+    #    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    #except:
+    getEi_from_monitors_failed = True
+    Efixed, T0 = Eguess, computeT0(Eguess)
         
     logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
