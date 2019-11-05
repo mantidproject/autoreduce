@@ -48,13 +48,13 @@ def t0_function(x, t_off, A_lo, p_lo, A_hi, p_hi, Ecross, Wcross):
     lx = np.log(x)
     g_hi = A_hi + lx*p_hi
     g_lo = A_lo + lx*p_lo
-return t_off + np.exp(f_lo*g_lo + f_hi*g_hi)
+    return t_off + np.exp(f_lo*g_lo + f_hi*g_hi)
 
 
 def computeT0(Ei):
     #return 125.0*numpy.power(Ei, -0.5255)
-       p_dict = {'t_off':0.48083154, 'A_lo':3.92698442, 'p_lo':0.0, 'A_hi':3.92698442, 'p_hi':-0.5, 'Ecross':72.1960582, 'Wcross':104.325307} 
-      return t0_function(Ei,**p_dict)
+    p_dict = {'t_off':0.48083154, 'A_lo':3.92698442, 'p_lo':0.0, 'A_hi':3.92698442, 'p_hi':-0.5, 'Ecross':72.1960582, 'Wcross':104.325307} 
+    return t0_function(Ei,**p_dict)
 
 
 def preprocessData(filename):
