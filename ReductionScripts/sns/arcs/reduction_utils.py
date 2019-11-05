@@ -30,9 +30,32 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
 
+def t0_function(x, t_off, A_lo, p_lo, A_hi, p_hi, Ecross, Wcross):
+    '''
+    Fit emission times at low and high incident energy using a crossover funct
+    ion
+    Model low and high parts as power laws
+    Using tanh() with a crossover energy and width
+    x: Incident energy in meV
+    t_off: Constant offset
+    A_lo,p_lo: Amplitude(ln) and power for low energy part
+    A_hi,p_hi: Amplitude(ln) and power for high energy part
+    Ecross: crossover energy
+    Wcross: crossover width
+    '''
+    f_hi = 0.5*(1. + np.tanh((x - Ecross)/Wcross))
+    f_lo = 1.-f_hi
+    lx = np.log(x)
+    g_hi = A_hi + lx*p_hi
+    g_lo = A_lo + lx*p_lo
+return t_off + np.exp(f_lo*g_lo + f_hi*g_hi)
+
 
 def computeT0(Ei):
-    return 125.0*numpy.power(Ei, -0.5255)
+    #return 125.0*numpy.power(Ei, -0.5255)
+       p_dict = {'t_off':0.48083154, 'A_lo':3.92698442, 'p_lo':0.0, 'A_hi':3.92698442, 'p_hi':-0.5, 'Ecross':72.1960582, 'Wcross':104.325307} 
+      return t0_function(Ei,**p_dict)
+
 
 def preprocessData(filename):
     __MonWS=LoadNexusMonitors(Filename=filename)
