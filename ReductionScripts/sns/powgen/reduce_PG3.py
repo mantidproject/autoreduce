@@ -7,9 +7,9 @@ sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_OC_d44084_2019_07_25.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_11_05-HighRes-OC.txt")
-char_inplane = os.path.join(cal_dir, "PG3_char_2019_07_28_OC_limit.txt")
+cal_file  = os.path.join(cal_dir,'PG3_ILL_d44252_2019_08_20.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_08_22-HR-AGES.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2019_08_22_AGES_limit.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]

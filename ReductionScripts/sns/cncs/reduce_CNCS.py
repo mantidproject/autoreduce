@@ -13,20 +13,20 @@ import scipy.interpolate as interp
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '121-128'})
-MaskBTPParameters.append({'Pixel': '1-8'})
-MaskBTPParameters.append({'Bank': '35-50'})
+MaskBTPParameters.append({'Pixel': '122-128'})
+MaskBTPParameters.append({'Pixel': '1-7'})
+MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-22728/nexus/CNCS_318700.nxs.h5"
-processed_vanadium="/SNS/CNCS/IPTS-22728/shared/autoreduce/processed_van_318700_no_beamstop_30C.nxs"
+processed_vanadium="/SNS/CNCS/IPTS-21153/shared/autoreduce/van_318700_no_beamstop_30C.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-3.0"
+grouping="4x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.1"
 Emax="0.95"
-Estep="0.0025"
+Estep="0.001"
 E_pars_in_mev=False
 TIB_min=""
 TIB_max=""

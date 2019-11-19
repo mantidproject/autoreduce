@@ -30,6 +30,7 @@ def preprocessVanadium(Raw,Processed,Parameters):
         dictvan={'SaveProcessedDetVan':'1','DetectorVanadiumInputWorkspace':'__VAN','SaveProcDetVanFilename':Processed}
     return dictvan
 
+
 def t0_function(x, t_off, A_lo, p_lo, A_hi, p_hi, Ecross, Wcross):
     '''
     Fit emission times at low and high incident energy using a crossover funct
@@ -53,7 +54,7 @@ def t0_function(x, t_off, A_lo, p_lo, A_hi, p_hi, Ecross, Wcross):
 
 def computeT0(Ei):
     #return 125.0*numpy.power(Ei, -0.5255)
-    p_dict = {'t_off':0.48083154, 'A_lo':3.92698442, 'p_lo':0.0, 'A_hi':3.92698442, 'p_hi':-0.5, 'Ecross':72.1960582, 'Wcross':104.325307} 
+    p_dict = {'t_off':0.48083154, 'A_lo':3.92698442, 'p_lo':0.0, 'A_hi':3.92698442, 'p_hi':-0.5, 'Ecross':72.1960582, 'Wcross':104.325307}
     return t0_function(Ei,**p_dict)
 
 
@@ -62,12 +63,12 @@ def preprocessData(filename):
     Eguess=__MonWS.getRun()['EnergyRequest'].getStatistics().mean
     # uncomment the following if using two monitors
     getEi_from_monitors_failed = False
-    #try:
-    #    [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
-    #except:
-    getEi_from_monitors_failed = True
-    Efixed, T0 = Eguess, computeT0(Eguess)
-        
+    try:
+        [Efixed,T0]=GetEiT0atSNS("__MonWS",Eguess)
+    except:
+        getEi_from_monitors_failed = True
+        Efixed, T0 = Eguess, computeT0(Eguess)
+
     logger.notice("Ei=%s, T=%s" % (Efixed,T0))
 
     #if Efixed!='N/A':
@@ -94,14 +95,14 @@ def CheckPacks(inputWorkspace,outdir) :
     #load pack group file where detectors are grouped 128 pixels along the tube, and 8 pixels across tubes
     packgroupfile = '/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml'
     GroupDetectors(inputWorkspace,OutputWorkspace='__IWSBanks',MapFile="/SNS/ARCS/shared/groupingfiles/ARCS_Grouped_Banks.xml")
-    runnum=str(inputWorkspace.getRunNumber())   
+    runnum=str(inputWorkspace.getRunNumber())
     #create a list object to hold zero sum packs
     zero_packs=[]
 
     #loop through histograms in the grouped, summed workspace and look for zeros
-    for j in range(mtd['__IWSBanks'].getNumberHistograms()) :		
+    for j in range(mtd['__IWSBanks'].getNumberHistograms()) :
         #get the value of summed counts from the pack
-        packvals = mtd['__IWSBanks'].extractY()[j]		
+        packvals = mtd['__IWSBanks'].extractY()[j]
         if packvals[0] == 0:
             #looping over histograms from zero, but pack id's start at 1
             #output j+1 to correct for this offset.
@@ -115,19 +116,19 @@ def CheckPacks(inputWorkspace,outdir) :
         pack_file.write("run {1} zero counts in packs: {0}".format(pack_string,runnum))
         pack_file.write("\n")
         pack_file.close()
- 
-  
+
+
 
 def WS_clean():
     DeleteWorkspace('__IWS')
     DeleteWorkspace('__OWS')
     DeleteWorkspace('__VAN')
     DeleteWorkspace('__MonWS')
-    
-    
+
+
 
 def reduceMono(
-        DGSdict, Ei, T0, EnergyTransferRange, 
+        DGSdict, Ei, T0, EnergyTransferRange,
         HardMaskFile, groupingFile, IntegrationRange,
         NormalizedVanadiumEqualToOne, angle,
         outdir, outfile, clean, NXSPE_flag):
@@ -160,15 +161,15 @@ def reduceMono(
           Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN')  #Divide the vanadium by the mean
           Multiply(LHSWorkspace='__OWS',RHSWorkspace='__meanval',OutputWorkspace='__OWS') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
           SaveNexus(InputWorkspace="__VAN", Filename= filename)
-    AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")  
+    AddSampleLog(Workspace="__OWS",LogName="psi",LogText=str(angle),LogType="Number")
     SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
     RebinToWorkspace(WorkspaceToRebin="__OWS",WorkspaceToMatch="__OWS",OutputWorkspace="__OWS",PreserveEvents='0')
     ConvertToDistribution(Workspace="__OWS") 	                           #Divide by bin width
 
-    if NXSPE_flag:            
-        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True) 
+    if NXSPE_flag:
+        SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
 
-    #plots  
+    #plots
     #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
     #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
     minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
@@ -204,7 +205,7 @@ def reduceMono(
         Zm = np.log(np.transpose(Zm))
         run_number=str(mtd['__OWS'].getRunNumber())
         plot_heatmap(
-            run_number, x.tolist(), y.tolist(), Zm.tolist(), 
+            run_number, x.tolist(), y.tolist(), Zm.tolist(),
             x_title=u'|Q| (1/AA)', y_title='E (meV)',
             # x_title=u'|Q| (1/\u212b)', y_title='E (meV)',
             x_log=False, y_log=False, instrument='ARCS', publish=True)
