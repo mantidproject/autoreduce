@@ -13,8 +13,8 @@ import scipy.interpolate as interp
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '122-128'})
-MaskBTPParameters.append({'Pixel': '1-7'})
+MaskBTPParameters.append({'Pixel': '90-128'})
+MaskBTPParameters.append({'Pixel': '1-38'})
 MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
