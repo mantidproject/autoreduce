@@ -9,7 +9,7 @@ import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_SlimSam_d45132_2019_12_11.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_12_12-HighRes-SlimSam_1.4 MW.txt")
-char_inplane = os.path.join(cal_dir, "PG3_char_2019_06_25_PAC_limit.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2019_12_12_SlimSam_limit.txt")
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
