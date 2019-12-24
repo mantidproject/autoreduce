@@ -26,12 +26,12 @@ from mr_reduction import oncat_comm as oncat
 if __name__=="__main__":
     """
     Options:
-        Use SANGLE:       False
+        Use SANGLE:       True
         Use Const-Q:      False
         Fit peak in roi:  True
-        Use bck ROI:      True
+        Use bck ROI:      False
         Force peak:       False [140, 170]
-        Force background: True [70, 110]
+        Force background: False [70, 110]
         Use side bck:     False
         Bck width:        10
         Skip conversion   False
@@ -55,14 +55,14 @@ if __name__=="__main__":
 
     red = refm.ReductionProcess(data_run=event_file_path,
                                 output_dir=outdir,
-                                use_sangle=False,
+                                use_sangle=True,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
                                 use_roi=True,
-                                use_roi_bck=True,
+                                use_roi_bck=False,
                                 force_peak_roi=False, peak_roi=[140, 170],
-                                force_bck_roi=True, bck_roi=[70, 110],
+                                force_bck_roi=False, bck_roi=[70, 110],
                                 use_tight_bck=False, bck_offset=10)
     red.plot_2d = True
     red.reduce()

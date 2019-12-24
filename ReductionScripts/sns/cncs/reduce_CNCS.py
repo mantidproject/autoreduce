@@ -13,20 +13,20 @@ import scipy.interpolate as interp
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '90-128'})
-MaskBTPParameters.append({'Pixel': '1-38'})
+MaskBTPParameters.append({'Pixel': '121-128'})
+MaskBTPParameters.append({'Pixel': '1-8'})
 MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-22728/nexus/CNCS_318700.nxs.h5"
-processed_vanadium="/SNS/CNCS/IPTS-22728/shared/autoreduce/van_318700m.nxs"
+processed_vanadium="van_318700m.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.25"
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.95"
 Emax="0.95"
-Estep="0.01"
+Estep="0.005"
 E_pars_in_mev=False
 TIB_min=""
 TIB_max=""
@@ -34,15 +34,15 @@ T0=""
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
-create_MDnxs=False
-a="6.87"
-b="6.87"
-c="19.79"
-alpha="90.0"
-beta="90.0"
-gamma="120.0"
-uVector="0.0057, 0.0013, 1.000"
-vVector="0.9268, 1.000, -0.1119"
+create_MDnxs=True
+a="1.0"
+b="1.0"
+c="1.0"
+alpha="1.0"
+beta="1.0"
+gamma="1.0"
+uVector="1,0,0"
+vVector="0,1,0"
 sub_directory=""
 auto_tzero_flag = False
 
