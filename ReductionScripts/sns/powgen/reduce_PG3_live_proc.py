@@ -4,7 +4,7 @@ import os
 
 # get information from autoreduction
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_JANIS_HT_d44334_plus_44348_2019_09_10.h5') # contains ALL grouping
+cal_file  = os.path.join(cal_dir,'PG3_PAC_d43675_2019_06_25.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2019_12_13-HighRes-HT_JANIS.txt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2019_09_13_JANIS_LT_limit.txt")
 
