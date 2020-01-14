@@ -10,13 +10,14 @@ from mantid.simpleapi import *  # noqa: E402
 import mantid  # noqa: E402
 
 ######################################################################
-########## user defined parameters
+########## user defined parameters t
 resamplex = -6000
 vanradius = 0.58
 #wavelengthMin = 0.1
 #wavelengthMax = 2.9
 ##### information for what runs to associate
 calFileDefault = '/SNS/NOM/shared/CALIBRATION/2019_1_1B_CAL/NOM_calibrate_d131573_2019_08_18.h5'
+#calFileDefault = '/SNS/NOM/shared/CALIBRATION/2019_1_1B_CAL/NOM_d131573_2019_09_05_shifter.h5'
 charFile = '/SNS/NOM/shared/CALIBRATION/2019_1_1B_CAL/NOM_char_2018_05_29-rietveld.txt'
 expiniFileDefault = "/SNS/NOM/IPTS-22783/shared/autoNOM/exp.ini"
 # 0 means use the runs specified in the exp.ini

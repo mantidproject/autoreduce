@@ -28,10 +28,10 @@ if __name__=="__main__":
     Options:
         Use SANGLE:       True
         Use Const-Q:      False
-        Fit peak in roi:  True
-        Use bck ROI:      False
-        Force peak:       False [140, 170]
-        Force background: False [70, 110]
+        Fit peak in roi:  False
+        Use bck ROI:      True
+        Force peak:       False [144, 159]
+        Force background: True [70, 110]
         Use side bck:     False
         Bck width:        10
         Skip conversion   False
@@ -58,11 +58,11 @@ if __name__=="__main__":
                                 use_sangle=True,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
-                                update_peak_range=True,
+                                update_peak_range=False,
                                 use_roi=True,
-                                use_roi_bck=False,
-                                force_peak_roi=False, peak_roi=[140, 170],
-                                force_bck_roi=False, bck_roi=[70, 110],
+                                use_roi_bck=True,
+                                force_peak_roi=False, peak_roi=[144, 159],
+                                force_bck_roi=True, bck_roi=[70, 110],
                                 use_tight_bck=False, bck_offset=10)
     red.plot_2d = True
     red.reduce()
