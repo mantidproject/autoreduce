@@ -62,7 +62,7 @@ if __name__ == "__main__":
             processed_van_file = os.path.join(outdir, ProcessedVanadium)
         DGSdict=preprocessVanadium(RawVanadium, processed_van_file, MaskBTPParameters)
 
-        EnergyTransferRange = [-0.5*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
+        EnergyTransferRange = [-0.95*EGuess,0.01*EGuess,0.95*EGuess] #Energy Binning
         reduceMono(
             DGSdict, Ei, T0, EnergyTransferRange, 
             HardMaskFile, groupingFile, IntegrationRange,
