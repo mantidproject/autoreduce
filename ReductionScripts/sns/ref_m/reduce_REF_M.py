@@ -30,7 +30,7 @@ if __name__=="__main__":
         Use Const-Q:      False
         Fit peak in roi:  False
         Use bck ROI:      True
-        Force peak:       False [144, 159]
+        Force peak:       True [174, 192]
         Force background: True [70, 110]
         Use side bck:     False
         Bck width:        10
@@ -61,7 +61,7 @@ if __name__=="__main__":
                                 update_peak_range=False,
                                 use_roi=True,
                                 use_roi_bck=True,
-                                force_peak_roi=False, peak_roi=[144, 159],
+                                force_peak_roi=True, peak_roi=[174, 192],
                                 force_bck_roi=True, bck_roi=[70, 110],
                                 use_tight_bck=False, bck_offset=10)
     red.plot_2d = True

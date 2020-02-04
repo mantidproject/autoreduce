@@ -15,8 +15,7 @@ import scipy.interpolate as interp
 MaskBTPParameters=[]
 MaskBTPParameters.append({'Pixel': '121-128'})
 MaskBTPParameters.append({'Pixel': '1-8'})
-MaskBTPParameters.append({'Bank': '34-40'})
-MaskBTPParameters.append({'Bank': '49-50'})
+MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
@@ -24,8 +23,8 @@ MaskBTPParameters.append({'Bank': '49-50'})
 raw_vanadium="/SNS/CNCS/IPTS-22728/nexus/CNCS_326713.nxs.h5"
 processed_vanadium="van_326713.nxs"
 VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.1"
+grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
