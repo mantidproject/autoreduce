@@ -5,9 +5,9 @@ import os
 # get information from autoreduction
 
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2020_1_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_PAC_HR_d45453_2020_01_04.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_01_04-HighRes-PAC_1.4 MW.txt")
-char_inplane = os.path.join(cal_dir, "PG3_char_2020_01_04_PAC_limit_1.4MW.txt")
+cal_file  = os.path.join(cal_dir,'PG3_MICAS_d45899_2020_02_11.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_02_13_HighRes_MICAS.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2020_01_09_JANIS_LT_limit.txt")
 
 ##### this will clear out the cache directory
 #filenames = [os.path.join('/tmp', item) for item in os.listdir('/tmp') if 'PG3_' in item]
