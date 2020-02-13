@@ -41,8 +41,8 @@ c="40.87"
 alpha="90.0"
 beta="90.0"
 gamma="120.0"
-uVector="-0.0078, -0.0053, 1"
-vVector="-0.3710, -0.4566, -1"
+uVector="-0.0014, 0.0003, 1"
+vVector="1, -0.0375, 0.1485"
 sub_directory=""
 auto_tzero_flag = False
 
