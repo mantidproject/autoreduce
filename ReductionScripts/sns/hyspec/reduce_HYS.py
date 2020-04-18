@@ -12,7 +12,7 @@ def do_reduction(path,outdir):
         latest_default_reduction=max(reduction_files,key=os.path.getmtime)
         latest_reduction=os.path.join(outdir,os.path.basename(latest_default_reduction))
         shutil.copy2(latest_default_reduction, latest_reduction)
-    cmd = "python {0} {1} {2}".format(latest_reduction, path, outdir)
+    cmd = "python3 {0} {1} {2}".format(latest_reduction, path, outdir)
     proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
                             universal_newlines = True,
                             cwd=outdir)
