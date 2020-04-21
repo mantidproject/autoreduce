@@ -4,12 +4,19 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 import sys,os
 from mantid.simpleapi import *
 from mantid import logger
+from io import BytesIO
+import base64
 import numpy as np
 np.seterr("ignore")
 
 from matplotlib import *
 use("agg")
 import matplotlib.pyplot as plt
+
+try:
+    from postprocessing.publish_plot import publish_plot
+except ImportError:
+    from finddata import publish_plot
 
 class processInputs(object):
     def __init__(self):
@@ -182,6 +189,7 @@ if __name__ == "__main__":
 
     # load file
     raw=Load(nexus_file)
+    runNumber = raw.getRunNumber()
     
     # Do the cross-correlation and save the file
     try:
@@ -280,5 +288,12 @@ if __name__ == "__main__":
     plt.subplot(numfig+1,1,1)
     raw=Rebin(raw,str(kmin)+','+str(kmax-kmin)+','+str(kmax))
     makeInstrumentView(raw)
-    plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
+
+    figfile = BytesIO()
+    plt.savefig(figfile, bbox_inches='tight')
     plt.close()
+
+    figfile.seek(0)
+    figdata_png = base64.b64encode(figfile.getvalue())
+    div = '<img alt="{}" src="data:image/png;base64,{}" />'.format(output_file, figdata_png)
+    request = publish_plot('CORELLI', runNumber, files={'file': div})
