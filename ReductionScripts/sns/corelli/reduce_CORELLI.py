@@ -297,3 +297,4 @@ if __name__ == "__main__":
     figdata_png = base64.b64encode(figfile.getvalue())
     div = '<img alt="{}" src="data:image/png;base64,{}" />'.format(output_file, figdata_png)
     request = publish_plot('CORELLI', runNumber, files={'file': div})
+    print(request)
