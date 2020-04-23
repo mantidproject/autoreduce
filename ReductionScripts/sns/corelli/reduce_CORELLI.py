@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 try:
     from postprocessing.publish_plot import publish_plot
 except ImportError:
-    from finddata import publish_plot
+    from finddata.publish_plot import publish_plot
 
 class processInputs(object):
     def __init__(self):
