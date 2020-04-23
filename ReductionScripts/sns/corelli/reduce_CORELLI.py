@@ -288,7 +288,6 @@ if __name__ == "__main__":
     plt.subplot(numfig+1,1,1)
     raw=Rebin(raw,str(kmin)+','+str(kmax-kmin)+','+str(kmax))
     makeInstrumentView(raw)
-    plt.savefig(os.path.join(output_directory,output_file+".png"), bbox_inches='tight')
 
     figfile = BytesIO()
     plt.savefig(figfile, bbox_inches='tight')
