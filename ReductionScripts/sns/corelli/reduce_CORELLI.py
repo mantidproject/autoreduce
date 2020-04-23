@@ -2,7 +2,6 @@
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 import sys,os
-import sys
 sys.path.insert(0,"/opt/mantid50/bin")
 sys.path.insert(1,"/opt/mantid50/lib")
 
