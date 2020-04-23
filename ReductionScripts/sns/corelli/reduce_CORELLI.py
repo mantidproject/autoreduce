@@ -298,6 +298,10 @@ if __name__ == "__main__":
 
     figfile.seek(0)
     figdata_png = base64.b64encode(figfile.getvalue())
+    try:
+        figdata_png = figdata_png.decode()
+    except:
+        pass
     div = '<div><img alt="{}" src="data:image/png;base64,{}" /></div>'.format(output_file, figdata_png)
     with open("div.txt", "w") as f:
         f.write(div)
