@@ -2,8 +2,8 @@
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 import sys,os
-sys.path.insert(0,"/opt/mantid50/bin")
-sys.path.insert(1,"/opt/mantid50/lib")
+#sys.path.insert(0,"/opt/mantid50/bin")
+#sys.path.insert(1,"/opt/mantid50/lib")
 
 from mantid.simpleapi import *
 from mantid import logger
@@ -299,5 +299,7 @@ if __name__ == "__main__":
     figfile.seek(0)
     figdata_png = base64.b64encode(figfile.getvalue())
     div = '<div><img alt="{}" src="data:image/png;base64,{}" /></div>'.format(output_file, figdata_png)
+    with open("div.txt", "w") as f:
+        f.write(div)
     request = publish_plot('CORELLI', runNumber, files={'file': div})
     print(request)
