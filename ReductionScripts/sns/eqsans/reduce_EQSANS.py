@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import sys,os
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
-sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
@@ -14,10 +12,10 @@ warnings.filterwarnings('ignore',module='numpy')
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        print("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        print("data file ", sys.argv[1], " not found")
         sys.exit()
     else:
         filename = sys.argv[1]
@@ -30,7 +28,10 @@ if __name__ == "__main__":
     data2=data2.transpose().reshape(-1,256)
     Z=ma.masked_where(data2<1,data2)
 
-    from postprocessing.publish_plot import plot_heatmap
+    try:
+        from postprocessing.publish_plot import plot_heatmap
+    except ImportError:
+        from finddata.publish_plot import plot_heatmap
     x=arange(192)+1
     y=arange(256)+1
     Z = np.log(np.transpose(Z))
