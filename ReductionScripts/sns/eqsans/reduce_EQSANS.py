@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import sys,os
+sys.path.insert(0,"/opt/mantid50/bin")
+sys.path.insert(1,"/opt/mantid50/lib")
 from mantid.simpleapi import *
 from matplotlib import *
 use("agg")
