@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 #imports section
-import sys, os, glob, filecmp, datetime, shutil, ConfigParser
+import sys, os, glob, filecmp, datetime, shutil
+try:
+    import ConfigParser
+except:
+    import configparser as ConfigParser
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
