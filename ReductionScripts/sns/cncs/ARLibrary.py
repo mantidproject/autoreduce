@@ -123,10 +123,15 @@ class ExperimentLog(object):
         return [outstr,angle,temp]
         
     def save_line(self,IWSName, **kwargs):
-        for key,value in kwargs.iteritems():
-            if key not in self.kwds:
-                self.kwds.append(key)
-        
+        try:  # python 3
+            for key,value in kwargs.items():
+                if key not in self.kwds:
+                    self.kwds.append(key)
+        except AttributeError:  # python 2
+            for key,value in kwargs.iteritems():
+                if key not in self.kwds:
+                    self.kwds.append(key)
+
         [outstr,angle,temp]=self.log_line_gen(IWSName)       
         
         header=self.firstLine+','.join(self.kwds)
