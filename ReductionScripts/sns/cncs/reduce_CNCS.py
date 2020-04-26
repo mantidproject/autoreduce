@@ -275,8 +275,8 @@ def preprocessGrouping(ws,outdir):
         ParFilename=outdir+'powdergroupfile.par'
         GenerateGroupingPowder(InputWorkspace=ws,AngleStep=0.5, GroupingFilename=GroupingFilename)
         dictgrouping={'GroupingFile':GroupingFilename}
-        change_permissions(GroupingFilename,0664)
-        change_permissions(ParFilename,0664)
+        change_permissions(GroupingFilename,0o664)
+        change_permissions(ParFilename,0o664)
     else:
         dictgrouping={'GroupingFile':''}
     return dictgrouping
@@ -313,7 +313,7 @@ if __name__ == "__main__":
         cfg.set('Reduction config','subdirectory',sub_directory)
         with open(cfgfile_path,'w') as f:
             cfg.write(f)
-        change_permissions(cfgfile_path,0664) 
+        change_permissions(cfgfile_path,0o664) 
     else:
         if ar_changed:
             cfg = ConfigParser.ConfigParser()
@@ -321,7 +321,7 @@ if __name__ == "__main__":
             cfg.set('Reduction config','subdirectory',sub_directory)
             with open(cfgfile_path,'w') as f:
                 cfg.write(f)
-            change_permissions(cfgfile_path,0664)    
+            change_permissions(cfgfile_path,0o664)    
         else:
             cfg = ConfigParser.ConfigParser()
             cfg.read(cfgfile_path)
@@ -339,7 +339,7 @@ if __name__ == "__main__":
 
     if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
         filename=DGSdict['SaveProcDetVanFilename']
-        change_permissions(filename,0664)
+        change_permissions(filename,0o664)
         LoadNexus(Filename=filename,OutputWorkspace="__VAN")
         datay = mtd['__VAN'].extractY()
         meanval = float(datay[datay>0].mean())
@@ -347,7 +347,7 @@ if __name__ == "__main__":
         Divide(LHSWorkspace='__VAN',RHSWorkspace='__meanval',OutputWorkspace='__VAN') #Divide the vanadium by the mean
         Multiply(LHSWorkspace='reduce',RHSWorkspace='__meanval',OutputWorkspace='reduce') #multiple by the mean of vanadium Normalized data = Data / (Van/meanvan) = Data *meanvan/Van
         SaveNexus(InputWorkspace="__VAN", Filename= filename) 
-        change_permissions(filename,0664)
+        change_permissions(filename,0o664)
 
     if create_elastic_nxspe:
         DGSdict['OutputWorkspace']='reduce_elastic'
@@ -372,19 +372,19 @@ if __name__ == "__main__":
         valuestringwithoutdot = str(roundedvalue).replace('.', 'p')
         nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
-        change_permissions(nxspe_filename,0664)
+        change_permissions(nxspe_filename,0o664)
         if create_elastic_nxspe:
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi="0", KiOverKfScaling='1',ParFile=output_directory+'powdergroupfile.par')
-            change_permissions(nxspe_filename,0664)
+            change_permissions(nxspe_filename,0o664)
     else:
         nxspe_filename=os.path.join(output_directory, "inelastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + ".nxspe")
         SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce", Psi=str(s1), KiOverKfScaling='1')     
-        change_permissions(nxspe_filename,0664)
+        change_permissions(nxspe_filename,0o664)
         if create_elastic_nxspe:
             nxspe_filename=os.path.join(output_directory, "elastic",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_elastic.nxspe")
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
-            change_permissions(nxspe_filename,0664)
+            change_permissions(nxspe_filename,0o664)
     try:
         plot_html=''
         from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
@@ -432,6 +432,6 @@ if __name__ == "__main__":
             ConvertToMD(InputWorkspace="reduce",QDimensions="Q3D",dEAnalysisMode="Direct",Q3DFrames="HKL",QConversionScales="HKL",OutputWorkspace="md")
             filename=os.path.join(output_directory, "MD",sub_directory,"CNCS_" + run_number + valuestringwithoutdot + "_MD.nxs")
             SaveMD(Filename=filename, InputWorkspace="md")
-            change_permissions(filename,0664)
+            change_permissions(filename,0o664)
         except:
             mantid.kernel.logger.information("Problems converting to MD")
