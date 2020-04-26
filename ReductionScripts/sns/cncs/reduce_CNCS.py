@@ -387,8 +387,11 @@ if __name__ == "__main__":
             change_permissions(nxspe_filename,0664)
     try:
         plot_html=''
-        from postprocessing.publish_plot import plot1d,plot_heatmap, publish_plot
-        import mantid.plots.helperfunctions as hf
+        from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
+        try:
+            import mantid.plots.helperfunctions as hf
+        except ImportError:
+            import mantid.plots.datafunctions as hf
         s=SumSpectra("reduce")
         x=s.readX(0)
         y=s.readY(0)
