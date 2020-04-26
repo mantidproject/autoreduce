@@ -292,10 +292,10 @@ def get_colorscale_minimum(arr):
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        print("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        print("data file ", sys.argv[1], " not found")
         sys.exit()
 
     config['default.facility']="SNS"
