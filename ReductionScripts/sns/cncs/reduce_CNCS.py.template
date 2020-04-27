@@ -389,7 +389,10 @@ if __name__ == "__main__":
     try:
         plot_html=''
         from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
-        import mantid.plots.helperfunctions as hf
+        try:
+            import mantid.plots.helperfunctions as hf
+        except ImportError:
+            import mantid.plots.datafunctions as hf
         s=SumSpectra("reduce")
         x=s.readX(0)
         y=s.readY(0)
