@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys,os,math
-sys.path.insert(0,"/mnt/software/lib/python2.6/site-packages/matplotlib-1.2.0-py2.6-linux-x86_64.egg/")
 
 sys.path.append("/opt/Mantid/bin")
 import numpy
