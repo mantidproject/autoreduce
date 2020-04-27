@@ -338,7 +338,7 @@ if __name__ == "__main__":
 
     DgsReduction(**DGSdict)
 
-    if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+    if 'SaveProcessedDetVan' in DGSdict.keys() and NormalizedVanadiumEqualToOne:
         filename=DGSdict['SaveProcDetVanFilename']
         change_permissions(filename,0o664)
         LoadNexus(Filename=filename,OutputWorkspace="__VAN")
@@ -388,7 +388,7 @@ if __name__ == "__main__":
             change_permissions(nxspe_filename,0o664)
     try:
         plot_html=''
-        from postprocessing.publish_plot import plot1d,plot_heatmap, publish_plot
+        from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
         import mantid.plots.helperfunctions as hf
         s=SumSpectra("reduce")
         x=s.readX(0)
