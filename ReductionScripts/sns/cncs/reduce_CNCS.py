@@ -341,7 +341,7 @@ if __name__ == "__main__":
 
     DgsReduction(**DGSdict)
 
-    if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+    if 'SaveProcessedDetVan' in DGSdict.keys() and NormalizedVanadiumEqualToOne:
         filename=DGSdict['SaveProcDetVanFilename']
         change_permissions(filename,0o664)
         LoadNexus(Filename=filename,OutputWorkspace="__VAN")
