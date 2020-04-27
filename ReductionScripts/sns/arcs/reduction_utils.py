@@ -200,7 +200,7 @@ def reduceMono(
     #savefig(str(outdir+outfile+".nxs.png"),bbox_inches='tight')
 
     try:
-        from postprocessing.publish_plot import plot_heatmap
+        from finddata.publish_plot import plot_heatmap
         Zm = np.log(np.transpose(Zm))
         run_number=str(mtd['__OWS'].getRunNumber())
         plot_heatmap(
