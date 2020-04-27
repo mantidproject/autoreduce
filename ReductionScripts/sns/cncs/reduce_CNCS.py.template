@@ -287,16 +287,16 @@ def preprocessGrouping(ws,outdir):
 def get_colorscale_minimum(arr):
     x=arr[np.isfinite(arr)]
     x=x[x>0]
-    xc=x[np.argsort(x)][len(x)*0.02] #ignore the bottom 2%
+    xc=x[np.argsort(x)][int(len(x)*0.02)] #ignore the bottom 2%
     return xc
 
 if __name__ == "__main__":    
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        print("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        print("data file ", sys.argv[1], " not found")
         sys.exit()
 
     config['default.facility']="SNS"
