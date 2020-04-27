@@ -151,7 +151,7 @@ def reduceMono(
     DgsReduction(**DGSdict)
     #Do normalization of vanadum to 1
     # This step only runs ONCE if the processed vanadium file is not already present.
-    if DGSdict.has_key('SaveProcessedDetVan') and NormalizedVanadiumEqualToOne:
+    if 'SaveProcessedDetVan' in DGSdict.keys() and NormalizedVanadiumEqualToOne:
           filename=DGSdict['SaveProcDetVanFilename']
           LoadNexus(Filename=filename,OutputWorkspace="__VAN")
           datay = mtd['__VAN'].extractY()
