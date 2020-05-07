@@ -353,6 +353,6 @@ class ReductionProcess(object):
                         break
                 except:
                     # No data in this cross-section
-                    logger.error("Direct beam %s: %s" % (norm_entry, sys.exc_value))
+                    logger.error("Direct beam %s: %s" % (norm_entry, sys.exc__info()[1]))
 
         return apply_norm, norm_run, direct_info
