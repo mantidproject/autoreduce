@@ -7,8 +7,8 @@ import sys
 import os
 import time
 
-from .settings import MANTID_PATH
-sys.path.insert(0, MANTID_PATH)
+# from .settings import MANTID_PATH
+# sys.path.insert(0, MANTID_PATH)
 import mantid
 from mantid.simpleapi import *
 
@@ -177,7 +177,7 @@ class ReductionProcess(object):
         _filename = None if self.data_ws is not None else self.file_path
         #if self.data_ws is not None and self.use_slow_flipper_log:
         if self.data_ws is None:
-            self.data_ws = LoadEventNexus(Filename=self.file_path, OutputWorkspace='raw_events')
+            self.data_ws = LoadEventNexus(Filename=self.file_path, NumberOfBins=1, OutputWorkspace='raw_events')
         self.run_number = self.data_ws.getRunNumber()
 
         if self.use_slow_flipper_log:
@@ -212,7 +212,7 @@ class ReductionProcess(object):
             self.log("Generated reflectivity: %s" % len(str(ref_plot)))
         except:
             self.log("Could not generate combined curve")
-            logger.error(str(sys.exc_value))
+            logger.error(str(sys.exc_info()[1]))
 
         # Generate report and script
         logger.notice("Processing collection of %s reports" % len(report_list))
@@ -221,7 +221,7 @@ class ReductionProcess(object):
                                                 publish=self.publish, run_number=self.run_number)
         except:
             html_report = ''
-            self.log("Could not process reports %s" % sys.exc_value)
+            self.log("Could not process reports %s" % sys.exc_info()[1])
 
         if self.logfile:
             self.logfile.close()
@@ -307,7 +307,7 @@ class ReductionProcess(object):
             except:
                 self.log("  - reduction failed")
                 # No data for this cross-section, skip to the next
-                logger.error("Cross section: %s" % str(sys.exc_value))
+                logger.error("Cross section: %s" % str(sys.exc_info()[1]))
                 report = Report(ws, data_info, direct_info, None, plot_2d=self.plot_2d)
                 report_list.append(report)
 
@@ -340,6 +340,7 @@ class ReductionProcess(object):
                 try:
                     ws_direct = LoadEventNexus(Filename="REF_M_%s" % norm_run,
                                                NXentryName=norm_entry,
+                                               NumberOfBins=1,
                                                OutputWorkspace="MR_%s" % norm_run)
                     if ws_direct.getNumberEvents() > DIRECT_BEAM_EVTS_MIN:
                         direct_info = DataInfo(ws_direct, norm_entry,
