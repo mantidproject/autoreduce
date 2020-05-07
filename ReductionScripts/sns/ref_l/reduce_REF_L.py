@@ -1,14 +1,14 @@
+from __future__ import (absolute_import, division, print_function, unicode_literals)
 import sys
 import os
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
 
-if (os.environ.has_key("MANTIDPATH")):
+if ("MANTIDPATH" in os.environ):
     del os.environ["MANTIDPATH"]
-sys.path.insert(0,'/opt/Mantid/bin')
-#sys.path.insert(0,'/opt/mantidnightly/bin')
-sys.path.append("/SNS/REF_L/shared/autoreduce/")
+sys.path.insert(0,"/opt/mantid50/bin")
+sys.path.insert(1,"/opt/mantid50/lib")
 
 import mantid
 from mantid.simpleapi import *
@@ -68,7 +68,10 @@ if os.path.isfile(default_file_name):
     print("Loading %s" % os.path.join(output_dir, default_file_name))
     reflectivity = LoadAscii(Filename=os.path.join(output_dir, default_file_name), Unit="MomentumTransfer")
 
-    from postprocessing.publish_plot import plot1d
+    try:
+        from postprocessing.publish_plot import plot1d
+    except ImportError:
+        from finddata.publish_plot import plot1d
     x = reflectivity.readX(0)
     y = reflectivity.readY(0)
     dy = reflectivity.readE(0)
