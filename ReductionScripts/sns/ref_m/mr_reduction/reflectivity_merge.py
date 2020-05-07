@@ -133,68 +133,67 @@ def compute_scaling_factors(matched_runs, ipts, cross_section):
         output_dir = AR_OUT_DIR_TEMPLATE % dict(ipts=ipts)
         file_path = os.path.join(output_dir, "REF_M_%s_%s_autoreduce.dat" % (i_run, cross_section))
         if os.path.isfile(file_path):
-            _run_info = open(file_path, 'r')
-            ref_data = pandas.read_csv(_run_info,
-                                       delim_whitespace=True, comment='#', names=['q','r','dr','dq', 'a'])
+            with open(file_path, 'r') as _run_info:
+                ref_data = pandas.read_csv(_run_info,
+                                           delim_whitespace=True, comment='#', names=['q','r','dr','dq', 'a'])
 
-            ws = api.CreateWorkspace(DataX=ref_data['q'], DataY=ref_data['r'], DataE=ref_data['dr'])
-            ws = api.ConvertToHistogram(ws)
-            if _previous_ws is not None:
-                _, scale = api.Stitch1D(_previous_ws, ws)
-                running_scale *= scale
-                scaling_factors.append(running_scale)
-            _previous_ws = api.CloneWorkspace(ws)
+                ws = api.CreateWorkspace(DataX=ref_data['q'], DataY=ref_data['r'], DataE=ref_data['dr'])
+                ws = api.ConvertToHistogram(ws)
+                if _previous_ws is not None:
+                    _, scale = api.Stitch1D(_previous_ws, ws)
+                    running_scale *= scale
+                    scaling_factors.append(running_scale)
+                _previous_ws = api.CloneWorkspace(ws)
 
-            # Rewind and get meta-data
-            _run_info.seek(0)
-            _direct_beams_started = 0
-            _data_runs_started = 0
-            for line in _run_info.readlines():
-                # Look for cross-section label
-                if line.find("Extracted states:") > 0:
-                    toks = line.split(':')
-                    if len(toks) > 1:
-                        _cross_section_label = toks[1].strip()
+                # Rewind and get meta-data
+                _run_info.seek(0)
+                _direct_beams_started = 0
+                _data_runs_started = 0
+                for line in _run_info.readlines():
+                    # Look for cross-section label
+                    if line.find("Extracted states:") > 0:
+                        toks = line.split(':')
+                        if len(toks) > 1:
+                            _cross_section_label = toks[1].strip()
 
-                # If we are in the data run block, copy the data we need
-                if _data_runs_started == 1 and line.find(str(i_run)) > 0:
-                    toks = ["%8s" % t for t in line.split()]
-                    if len(toks)>10:
-                        toks[1] = "%8g" % scaling_factors[run_count]
-                        run_count += 1
-                        toks[14] = "%8s" % str(run_count)
-                        _line = '  '.join(toks).strip() + '\n'
-                        data_info += _line.replace("# ", "#")
+                    # If we are in the data run block, copy the data we need
+                    if _data_runs_started == 1 and line.find(str(i_run)) > 0:
+                        toks = ["%8s" % t for t in line.split()]
+                        if len(toks)>10:
+                            toks[1] = "%8g" % scaling_factors[run_count]
+                            run_count += 1
+                            toks[14] = "%8s" % str(run_count)
+                            _line = '  '.join(toks).strip() + '\n'
+                            data_info += _line.replace("# ", "#")
 
-                # Find out whether we started the direct beam block
-                if line.find("Data Runs") > 0:
-                    _direct_beams_started = 0
-                    _data_runs_started = 1
+                    # Find out whether we started the direct beam block
+                    if line.find("Data Runs") > 0:
+                        _direct_beams_started = 0
+                        _data_runs_started = 1
 
-                # Get the direct beam info
-                if _direct_beams_started == 2:
-                    toks = ["%8s" % t for t in line.split()]
-                    if len(toks)>10:
-                        direct_beam_count += 1
-                        toks[1] = "%8g" % direct_beam_count
-                        _line = '  '.join(toks).strip() + '\n'
-                        direct_beam_info += _line.replace("# ", "#")
+                    # Get the direct beam info
+                    if _direct_beams_started == 2:
+                        toks = ["%8s" % t for t in line.split()]
+                        if len(toks)>10:
+                            direct_beam_count += 1
+                            toks[1] = "%8g" % direct_beam_count
+                            _line = '  '.join(toks).strip() + '\n'
+                            direct_beam_info += _line.replace("# ", "#")
 
-                # If we are in the direct beam block, we need to skip the column info line
-                if _direct_beams_started == 1 and line.find("DB_ID") > 0:
-                    _direct_beams_started = 2
+                    # If we are in the direct beam block, we need to skip the column info line
+                    if _direct_beams_started == 1 and line.find("DB_ID") > 0:
+                        _direct_beams_started = 2
 
-                # Find out whether we started the direct beam block
-                if line.find("Direct Beam Runs") > 0:
-                    _direct_beams_started = 1
+                    # Find out whether we started the direct beam block
+                    if line.find("Direct Beam Runs") > 0:
+                        _direct_beams_started = 1
 
             for i in range(len(ref_data['q'])):
                 data_buffer += "%12.6g  %12.6g  %12.6g  %12.6g  %12.6g\n" % (ref_data['q'][i],
                                                                              running_scale*ref_data['r'][i],
                                                                              running_scale*ref_data['dr'][i],
                                                                              ref_data['dq'][i],
-                                                                             ref_data['a'][i],
-                                                                            )
+                                                                             ref_data['a'][i],)
 
     return scaling_factors, direct_beam_info, data_info, data_buffer, _cross_section_label
 
