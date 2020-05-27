@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from reduction_utils import *
-   
+from oncatjson import genoncatjson  
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
@@ -26,10 +26,10 @@ ${mask}
 
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        print("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        print("data file ", sys.argv[1], " not found")
         sys.exit()
     else:
         filename = sys.argv[1]
@@ -65,11 +65,16 @@ ${mask}
             HardMaskFile, groupingFile, IntegrationRange,
             NormalizedVanadiumEqualToOne, angle,
             outdir, outfile, clean, NXSPE_flag)
+        logheader = 'mantid_workspace_1.logs.'   
+        genoncatjson(input_files=[filename],output_files=[outfile],outdir=outdir,
+                     fields={logheader+'ei.value': 'ei'}) #,
+                             #logheader+'calculatedt0.value': 't0'})
 
     else:  #Do this if it is whitebeam
         ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
         Rebin(InputWorkspace="__IWS",OutputWorkspace="__OWS",Params='0.1,0.005,5',PreserveEvents='0')
-        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")                                                 
+        SaveNexus(InputWorkspace="__OWS", Filename= outdir+outfile+".nxs")
+        genoncatjson(input_files=[filename],output_files=[outfile],outdir=outdir)                                                 
 
     if getEi_from_monitors_failed:
         raise ValueError("Warning: getEi from monitor data failed. Used EnergyRequest and calculated T0 accordingly")
