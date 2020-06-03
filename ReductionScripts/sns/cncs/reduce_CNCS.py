@@ -34,6 +34,7 @@ Estep="0.005"
 E_pars_in_mev=False
 TIB_min=""
 TIB_max=""
+doTIB=True
 T0=""
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
@@ -130,7 +131,7 @@ def preprocessData(filename):
     dictdata['IncidentEnergyGuess']=Ei
     dictdata['TimeZeroGuess']=t0
     dictdata['EnergyTransferRange']=ETransfer
-    dictdata['TimeIndepBackgroundSub']=True
+    dictdata['TimeIndepBackgroundSub']=doTIB
     dictdata['TibTofRangeStart']=tibmin
     dictdata['TibTofRangeEnd']=tibmax
     dictdata['IncidentBeamNormalisation']='ByCurrent'
