@@ -8,7 +8,9 @@ if __name__ == "__main__":
     RawVanadium="/SNS/ARCS/IPTS-24780/nexus/ARCS_155050.nxs.h5"
     ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van155050.nxs"
     HardMaskFile=''
-    IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
+    #IntegrationRange=[0.35,0.75] #integration range for Vanadium in angstroms
+    IntegrationRange = [1.88, 2.1] # temporary to fix 155050
+
     MaskBTPParameters=[]
     #MaskBTPParameters=[{'Pixel':"1-7,122-128"}]
     #MaskBTPParameters.append({'Bank':"70",'Pixel':"1-12,117-128"})
