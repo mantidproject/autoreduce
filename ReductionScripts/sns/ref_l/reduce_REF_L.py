@@ -1,14 +1,19 @@
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 import sys
 import os
+import json
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
 
 if ("MANTIDPATH" in os.environ):
     del os.environ["MANTIDPATH"]
-sys.path.insert(0,"/opt/mantid50/bin")
-sys.path.insert(1,"/opt/mantid50/lib")
+#sys.path.insert(0,"/opt/mantid50/bin")
+#sys.path.insert(1,"/opt/mantid50/lib")
+sys.path.insert(0,"/opt/mantidnightly/bin")
+sys.path.insert(1,"/opt/mantidnightly/lib")
+
+print(sys.path)
 
 import mantid
 from mantid.simpleapi import *
@@ -32,6 +37,17 @@ WL_CUTOFF = 10.0
 PRIMARY_FRACTION_RANGE = [5, 250]
 
 NORMALIZE_TO_UNITY = False
+
+# Allowed values: ['DirectBeam', 'WithReference']
+NORMALIZATION_TYPE = "WithReference"
+
+# Allowed values: dict or ""
+REFL1D_PARS = json.dumps(dict(back_sld=6.32,
+                              back_roughness=2.7,
+                              front_sld=0,
+                              layers=[],
+                              scale=1.0,
+                              background=0.0))
 #-------------------------------------------------------------------------
 
 
@@ -57,7 +73,9 @@ output = LRAutoReduction(#Filename=event_file_path,
                          SlitTolerance=0.06,
                          ReadSequenceFromFile=True,
                          OrderDirectBeamsByRunNumber=True,
-                         TemplateFile=template_file, FindPeaks=False)
+                         TemplateFile=template_file, FindPeaks=False,
+                         NormalizationType=NORMALIZATION_TYPE,
+                         Refl1DModelParameters=REFL1D_PARS)
 first_run_of_set=int(output[1])
 
 

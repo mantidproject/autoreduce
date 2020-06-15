@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+import sys
+sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/mantidnightly/lib')
 from reduction_utils import *
 from oncatjson import genoncatjson  
 if __name__ == "__main__":

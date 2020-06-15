@@ -26,8 +26,8 @@ MaskBTPParameters.append({'Bank': '36-50'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
 raw_vanadium="/SNS/CNCS/IPTS-25820/nexus/CNCS_336911.nxs.h5"
 processed_vanadium="van_336911.nxs"
-VanadiumIntegrationRange=[49500.0,50500.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+VanadiumIntegrationRange=[49501.0,50501.0]#integration range for Vanadium in TOF at 1.0 meV
+grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.95"
 Emax="0.95"
 Estep="0.005"
@@ -38,7 +38,7 @@ doTIB=True
 T0=""
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=False #+-0.1Ei, 5 steps
+create_elastic_nxspe=True #+-0.1Ei, 5 steps
 create_MDnxs=False
 a="1.0"
 b="1.0"

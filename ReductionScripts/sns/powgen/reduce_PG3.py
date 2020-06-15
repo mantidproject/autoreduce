@@ -49,6 +49,9 @@ else:
     guide = None
 print(guide)
 
+# longer wavelengths do not have vanadium peaks
+stripPeaks = bool(float(mtd['PG3_'+runNumber+'_meta'].run()['LambdaRequest'].value[0]) < 4.5)
+
 # second run with all pixels together - use calibration file grouping
 SNSPowderReduction(Filename=eventFileAbs,
                    PreserveEvents=True,PushDataPositive="AddMinimum",
@@ -60,6 +63,7 @@ SNSPowderReduction(Filename=eventFileAbs,
                    Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
+                   StripVanadiumPeaks=stripPeaks,
                    ScaleData =100,
                    CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
@@ -92,7 +96,7 @@ if createPDF:
                         Qmin=.9, QMax=30., DeltaR=.01, Rmax=100.)
     SavePDFGui(InputWorkspace='PG3_'+runNumber+'_Gr',
                Filename=os.path.join(outputDir,'PG3_'+runNumber+'.gr'))
-else: 
+else:
     print('not creating S(Q)')
 
 # interactive plots
@@ -115,7 +119,7 @@ try:
         else:
             html = SavePlot1D(InputWorkspace=plotting_workspace_name,
                              OutputType='plotly', XLabel='d-spacing (A)')
-        from postprocessing.publish_plot import publish_plot
+        from finddata.publish_plot import publish_plot
         request = publish_plot('PG3', runNumber, files={'file':html})
         print("post returned %d" % request.status_code)
         print("resulting document:")

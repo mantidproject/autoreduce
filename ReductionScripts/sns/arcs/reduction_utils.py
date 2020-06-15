@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys,os,math
-
-sys.path.append("/opt/Mantid/bin")
+sys.path.append("/opt/mantidnightly/bin")
+sys.path.append("/opt/mantidnightly/lib")
 import numpy
 numpy.seterr(all='ignore') # added Dec 8, 2016 to suppress divide by zero warning following what is done in HYSPEC autoreduce script
 from ARLibrary import * #note that ARLibrary would set mantidpath as well

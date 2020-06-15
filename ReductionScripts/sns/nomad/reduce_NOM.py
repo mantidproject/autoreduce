@@ -322,7 +322,7 @@ if post_image:
                      YLabel='G(r)', XLabel='r')
     html += '<div>{}</div>'.format(div)
 
-    from postprocessing.publish_plot import publish_plot
+    from finddata.publish_plot import publish_plot
     request = publish_plot('NOM', runNumber, files={'file': html})
     print("post returned %d" % request.status_code)
     print("resulting document:")

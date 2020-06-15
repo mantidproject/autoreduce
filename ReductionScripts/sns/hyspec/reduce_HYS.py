@@ -1,6 +1,7 @@
 import sys,os,glob, subprocess, shutil
 import os
 import subprocess
+sys.path.append(os.path.join("/opt/Mantid/bin"))  # tell autoreduction to use mantid stable
 from mantid.simpleapi import logger
 
 def do_reduction(path,outdir):
@@ -17,7 +18,7 @@ def do_reduction(path,outdir):
                             universal_newlines = True,
                             cwd=outdir)
     proc.communicate()
-        
+
 
 
 if __name__ == "__main__":
@@ -31,4 +32,4 @@ if __name__ == "__main__":
     else:
         path = sys.argv[1]
         out_dir = sys.argv[2]
-        do_reduction(path, out_dir)           
+        do_reduction(path, out_dir)
