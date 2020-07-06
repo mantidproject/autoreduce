@@ -42,7 +42,7 @@ NORMALIZE_TO_UNITY = False
 NORMALIZATION_TYPE = "WithReference"
 
 # Allowed values: dict or ""
-REFL1D_PARS = json.dumps(dict(back_sld=6.32,
+REFL1D_PARS = json.dumps(dict(back_sld=6.4,
                               back_roughness=2.7,
                               front_sld=0,
                               layers=[],
