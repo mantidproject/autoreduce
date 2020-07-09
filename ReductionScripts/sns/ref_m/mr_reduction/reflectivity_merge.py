@@ -332,6 +332,8 @@ def combined_curves(run, ipts, logfile=None):
 
     # Match the given run with previous runs if they are overlapping in Q
     matched_runs = match_run_with_sequence(run, ipts, high_stat_xs, logfile)
+    if logfile:
+        logfile.write("-> matched: %s\n" % matched_runs)
     api.logger.notice("Matched runs: %s" % str(matched_runs))
 
     # Compute scaling factors for this cross section
