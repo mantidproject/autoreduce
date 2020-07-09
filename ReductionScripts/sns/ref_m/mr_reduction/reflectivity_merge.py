@@ -119,7 +119,10 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
                 matched_runs.append([str(_run), lowest_q])
                 _lowest_q_available = _lowest_q_available and lowest_q is not None
     if _lowest_q_available:
+        
         match_series = [item[0] for item in sorted(matched_runs, key=lambda a:a[1])]
+        if logfile:
+            logfile.write(str(match_series)+'\n')
         return match_series
     return sorted(matched_runs)
 
