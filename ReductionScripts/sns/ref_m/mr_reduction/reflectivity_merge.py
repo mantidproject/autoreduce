@@ -112,7 +112,7 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
         if item.endswith("%s_autoreduce.dat" % cross_section):
             _run, _group_id, lowest_q = _extract_sequence_id(os.path.join(data_dir, item))
             if logfile:
-                logfile.write("   - %s: %s %s" % (item, _run, _group_id))
+                logfile.write("   - %s: %s %s\n" % (item, _run, _group_id))
             if _group_id == group_id:
                 matched_runs.append([str(_run), lowest_q])
                 _lowest_q_available = _lowest_q_available and lowest_q is not None
