@@ -337,7 +337,7 @@ def combined_curves(run, ipts):
 
     xs_buffers = apply_scaling_factors(matched_runs, ipts, high_stat_xs, scaling_factors)
     xs_buffers.append((high_stat_xs, data_buffer))
-    info += "INFO: %s" % len(xs_buffers)
+
     file_list = []
     for item in xs_buffers:
         if item[1]:
