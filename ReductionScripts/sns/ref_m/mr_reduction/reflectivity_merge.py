@@ -99,7 +99,7 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
     file_path = os.path.join(data_dir, "REF_M_%s_%s_autoreduce.dat" % (run, cross_section))
     _, group_id, _ = _extract_sequence_id(file_path)
     if logfile:
-        logfile.write("   - Matching %s %s\n" %(run, group_id))
+        logfile.write("   - Matching %s grp=%s\n" %(run, group_id))
 
     # If we don't have a group id, just group together runs of increasing q-values
     if group_id is None:
@@ -111,6 +111,8 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
     for item in os.listdir(data_dir):
         if item.endswith("%s_autoreduce.dat" % cross_section):
             _run, _group_id, lowest_q = _extract_sequence_id(os.path.join(data_dir, item))
+            if logfile:
+                logfile.write("   - %s: %s %s" % (item, _run, _group_id))
             if _group_id == group_id:
                 matched_runs.append([str(_run), lowest_q])
                 _lowest_q_available = _lowest_q_available and lowest_q is not None
