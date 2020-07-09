@@ -204,8 +204,7 @@ class ReductionProcess(object):
             from .reflectivity_merge import combined_curves, plot_combined, combined_catalog_info
 
             #ipts_number = self.ipts.split('-')[1]
-            matched_runs, scaling_factors, outputs, info = combined_curves(run=int(self.run_number), ipts=self.ipts)
-            self.log(info)
+            matched_runs, scaling_factors, outputs = combined_curves(run=int(self.run_number), ipts=self.ipts)
             if not self.live:
                 self.json_info = combined_catalog_info(matched_runs, self.ipts, outputs, run_number=self.run_number)
             self.log("Matched runs: %s" % str(matched_runs))

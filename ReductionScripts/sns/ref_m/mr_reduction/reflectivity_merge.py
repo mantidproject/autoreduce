@@ -317,7 +317,6 @@ def combined_curves(run, ipts):
     """
         Produce combined R(q)
     """
-    info = ''
     # Select the cross section with the best statistics
     high_stat_xs = select_cross_section(run, ipts)
     api.logger.notice("High xs: %s" % high_stat_xs)
@@ -347,7 +346,7 @@ def combined_curves(run, ipts):
                                                           data_info, item[1], xs_label)
             file_list.append(_file_path)
 
-    return matched_runs, scaling_factors, file_list, info
+    return matched_runs, scaling_factors, file_list
 
 def combined_catalog_info(matched_runs, ipts, output_files, run_number=None):
     """
