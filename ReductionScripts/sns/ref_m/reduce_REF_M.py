@@ -37,7 +37,7 @@ if __name__=="__main__":
         Use side bck:     False
         Bck width:        10
         Skip conversion   False
-        Produce 2D plots  False
+        Produce 2D plots  True
 
     Not used yet:
         Const-Q cutoff:   None
@@ -62,5 +62,5 @@ if __name__=="__main__":
                                 force_peak_roi=False, peak_roi=[176, 200],
                                 force_bck_roi=False, bck_roi=[70, 110],
                                 use_tight_bck=False, bck_offset=10)
-    red.plot_2d = False
+    red.plot_2d = True
     red.reduce()
