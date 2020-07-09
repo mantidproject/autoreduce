@@ -82,7 +82,7 @@ def _extract_sequence_id(file_path):
                     return run_number, group_id, lowest_q
     return run_number, group_id, lowest_q
 
-def match_run_with_sequence(run, ipts, cross_section, logfile=None):
+def match_run_with_sequence(run, ipts, cross_section):
     """
         Return a list of matching runs to be stitched
 
@@ -98,8 +98,6 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
     # Check to see if we have the sequence information
     file_path = os.path.join(data_dir, "REF_M_%s_%s_autoreduce.dat" % (run, cross_section))
     _, group_id, _ = _extract_sequence_id(file_path)
-    if logfile:
-        logfile.write("   - Matching %s grp=%s\n" %(run, group_id))
 
     # If we don't have a group id, just group together runs of increasing q-values
     if group_id is None:
@@ -111,18 +109,11 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
     for item in os.listdir(data_dir):
         if item.endswith("%s_autoreduce.dat" % cross_section):
             _run, _group_id, lowest_q = _extract_sequence_id(os.path.join(data_dir, item))
-            if logfile:
-                logfile.write("   - %s: %s %s\n" % (item, _run, _group_id))
             if _group_id == group_id:
-                if logfile:
-                    logfile.write("   - match!\n")
                 matched_runs.append([str(_run), lowest_q])
                 _lowest_q_available = _lowest_q_available and lowest_q is not None
     if _lowest_q_available:
-        
         match_series = [item[0] for item in sorted(matched_runs, key=lambda a:a[1])]
-        if logfile:
-            logfile.write(str(match_series)+'\n')
         return match_series
     return sorted(matched_runs)
 
@@ -322,7 +313,7 @@ def plot_combined(matched_runs, scaling_factors, ipts, publish=True):
         api.logger.error("No publisher module found")
     return None
 
-def combined_curves(run, ipts, logfile=None):
+def combined_curves(run, ipts):
     """
         Produce combined R(q)
     """
@@ -331,9 +322,7 @@ def combined_curves(run, ipts, logfile=None):
     api.logger.notice("High xs: %s" % high_stat_xs)
 
     # Match the given run with previous runs if they are overlapping in Q
-    matched_runs = match_run_with_sequence(run, ipts, high_stat_xs, logfile)
-    if logfile:
-        logfile.write("-> matched: %s\n" % matched_runs)
+    matched_runs = match_run_with_sequence(run, ipts, high_stat_xs)
     api.logger.notice("Matched runs: %s" % str(matched_runs))
 
     # Compute scaling factors for this cross section
