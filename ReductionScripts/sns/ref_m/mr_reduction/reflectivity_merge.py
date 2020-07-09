@@ -99,7 +99,7 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
     file_path = os.path.join(data_dir, "REF_M_%s_%s_autoreduce.dat" % (run, cross_section))
     _, group_id, _ = _extract_sequence_id(file_path)
     if logfile:
-        logfile.write("   - Matching %s %s" %(run, group_id))
+        logfile.write("   - Matching %s %s\n" %(run, group_id))
 
     # If we don't have a group id, just group together runs of increasing q-values
     if group_id is None:
