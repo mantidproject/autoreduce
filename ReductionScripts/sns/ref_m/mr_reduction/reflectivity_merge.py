@@ -114,6 +114,8 @@ def match_run_with_sequence(run, ipts, cross_section, logfile=None):
             if logfile:
                 logfile.write("   - %s: %s %s\n" % (item, _run, _group_id))
             if _group_id == group_id:
+                if logfile:
+                    logfile.write("   - match!\n")
                 matched_runs.append([str(_run), lowest_q])
                 _lowest_q_available = _lowest_q_available and lowest_q is not None
     if _lowest_q_available:
