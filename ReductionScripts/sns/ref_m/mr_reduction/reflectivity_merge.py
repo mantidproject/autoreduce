@@ -340,7 +340,7 @@ def combined_curves(run, ipts, logfile=None):
     try:
         scaling_factors, direct_beam_info, data_info, data_buffer, xs_label = compute_scaling_factors(matched_runs, ipts, high_stat_xs)
     except:
-        return matched_runs, [1.0,], ['']
+        return matched_runs, np.ones(len(matched_runs)), ['']*len(matched_runs)
 
     # Write combined python script
     write_reduction_script(matched_runs, scaling_factors, ipts)
