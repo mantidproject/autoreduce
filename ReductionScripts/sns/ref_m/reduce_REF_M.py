@@ -28,7 +28,7 @@ from mr_reduction import oncat_comm as oncat
 if __name__=="__main__":
     """
     Options:
-        Use SANGLE:       True
+        Use SANGLE:       False
         Use Const-Q:      False
         Fit peak in roi:  True
         Use bck ROI:      False
@@ -53,7 +53,7 @@ if __name__=="__main__":
 
     red = refm.ReductionProcess(data_run=event_file_path,
                                 output_dir=outdir,
-                                use_sangle=True,
+                                use_sangle=False,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
