@@ -75,8 +75,8 @@ if __name__ == "__main__":
             outdir, outfile, clean, NXSPE_flag)
         logheader = 'mantid_workspace_1.logs.'   
         genoncatjson(input_files=[filename],output_files=[outfile],outdir=outdir,
-                     fields={logheader+'ei.value': 'ei'}) #,
-                             #logheader+'calculatedt0.value': 't0'})
+                     fields={logheader+'ei.value': 'ei',
+                             logheader+'calculatedt0.value': 't0'})
 
     else:  #Do this if it is whitebeam
         ConvertUnits(InputWorkspace="__IWS",OutputWorkspace="__IWS",Target='dSpacing')
