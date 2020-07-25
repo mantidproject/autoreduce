@@ -39,7 +39,8 @@ PRIMARY_FRACTION_RANGE = [5, 250]
 NORMALIZE_TO_UNITY = False
 
 # Allowed values: ['DirectBeam', 'WithReference']
-NORMALIZATION_TYPE = "WithReference"
+#NORMALIZATION_TYPE = "WithReference"
+NORMALIZATION_TYPE = "DirectBeam"
 
 # Allowed values: dict or ""
 REFL1D_PARS = json.dumps(dict(back_sld=6.4,
