@@ -34,21 +34,29 @@ run_number = run_number.replace('.nxs.h5', '')
 WL_CUTOFF = 10.0  
 
 # Default primary fraction range to be used if it is not defined in the template
-PRIMARY_FRACTION_RANGE = [5, 250]
+PRIMARY_FRACTION_RANGE = [5, 290]
 
 NORMALIZE_TO_UNITY = False
 
 # Allowed values: ['DirectBeam', 'WithReference']
-#NORMALIZATION_TYPE = "WithReference"
-NORMALIZATION_TYPE = "DirectBeam"
+NORMALIZATION_TYPE = "WithReference"
+#NORMALIZATION_TYPE = "DirectBeam"
 
 # Allowed values: dict or ""
+# D2O
 REFL1D_PARS = json.dumps(dict(back_sld=6.4,
                               back_roughness=2.7,
                               front_sld=0,
                               layers=[],
                               scale=1.0,
                               background=0.0))
+# Quartz
+#REFL1D_PARS = json.dumps(dict(back_sld=4.09,
+#                              back_roughness=4.28,
+#                              front_sld=0,
+#                              layers=[],
+#                              scale=0.9169,
+#                              background=3.753e-07))
 #-------------------------------------------------------------------------
 
 
