@@ -7,6 +7,8 @@ try:
 except:
     import configparser as ConfigParser
 sys.path.append("/SNS/CNCS/shared/autoreduce")
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils")
+import plotting_utils.plotting_utils as pu
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
