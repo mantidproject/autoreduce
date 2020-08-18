@@ -429,7 +429,7 @@ if __name__ == "__main__":
         plot_html+="<div>{0}</div>\n".format(plot2)
         """
         plot_html = pu.create_powder_plots(mtd['reduce'])
-        pu.publish_plot("CNCS", run_number, files={'file': plot_html})
+        pu.publish_plot("CNCS", run_number, plot_html)
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
 
