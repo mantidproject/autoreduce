@@ -393,7 +393,7 @@ if __name__ == "__main__":
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             change_permissions(nxspe_filename,0o664)
     try:
-        plot_html=''
+        """plot_html=''
         from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
         try:
             import mantid.plots.helperfunctions as hf
@@ -427,7 +427,9 @@ if __name__ == "__main__":
         plot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/angstrom)', y_title='E (meV)',
                            x_log=False, y_log=False, instrument='CNCS', publish=False)
         plot_html+="<div>{0}</div>\n".format(plot2)
-        publish_plot("CNCS", run_number, files={'file': plot_html})
+        """
+        plot_html = pu.create_powder_plots(mtd['reduce'])
+        pu.publish_plot("CNCS", run_number, files={'file': plot_html})
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
 
