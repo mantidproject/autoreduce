@@ -428,7 +428,7 @@ if __name__ == "__main__":
                            x_log=False, y_log=False, instrument='CNCS', publish=False)
         plot_html+="<div>{0}</div>\n".format(plot2)
         """
-        plot_html = pu.create_powder_plots(mtd['reduce'])
+        plot_html = pu.create_powder_plots(mtd['reduce'], plot_type='1d')
         pu.publish_plot("CNCS", run_number, plot_html)
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
