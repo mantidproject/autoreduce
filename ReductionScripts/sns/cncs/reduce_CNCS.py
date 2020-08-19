@@ -6,6 +6,8 @@ try:
     import ConfigParser
 except:
     import configparser as ConfigParser
+sys.path.insert(0,'/opt/mantidnightly/bin')
+sys.path.insert(0,'/opt/mantidnightly/lib')
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 sys.path.append("/SNS/CNCS/shared/autoreduce/autureduction_utils/plotting_utils/")
 import plotting_utils as pu
