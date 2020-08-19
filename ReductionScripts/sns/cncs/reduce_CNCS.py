@@ -443,7 +443,7 @@ if __name__ == "__main__":
         else:
             sa = None
             
-        pu.create_plots(mtd['reduce_ev'], output_directory, solid_angle=sa)
+        plot_html += pu.create_plots(mtd['reduce_ev'], output_directory, solid_angle=sa)
         pu.publish_plot("CNCS", run_number, plot_html)
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
