@@ -430,6 +430,18 @@ if __name__ == "__main__":
         """
         plot_html = pu.create_powder_plots(mtd['reduce'], plot_type='both')  # default 'both', alternatives 1D', '2D'
         logger.notice(str(DGSdict))
+        DGSdict['IncidentBeamNormalisation']='None'
+        DGSdict['SofPhiEIsDistribution']=False
+        DGSdict['GroupingFile']=''
+        DGSdict['UseProcessedDetVan']=False
+        DGSdict['DetectorVanadiumInputWorkspace']=''
+        DGSdict['OutputWorkspace']='reduce_ev'
+        
+        if mtd.doesExist('__VAN'):
+            sa = mtd['__VAN']
+        else:
+            sa = None
+
         pu.publish_plot("CNCS", run_number, plot_html)
     except Exception as e:
         logger.error("Failed to publish plot\n"+str(e))
