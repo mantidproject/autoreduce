@@ -9,7 +9,7 @@ except:
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
 sys.path.append("/SNS/CNCS/shared/autoreduce")
-sys.path.append("/SNS/CNCS/shared/autoreduce/autureduction_utils/plotting_utils/")
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
 import plotting_utils as pu
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
