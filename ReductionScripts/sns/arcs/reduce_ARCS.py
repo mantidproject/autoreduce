@@ -2,7 +2,7 @@
 import sys
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
-sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
+sys.path.append("/SNS/ARCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 from reduction_utils import *
 from oncatjson import genoncatjson  
 import copy_script
