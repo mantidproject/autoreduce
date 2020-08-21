@@ -9,7 +9,7 @@ def do_reduction(path,outdir):
     reduction_files=glob.glob(os.path.join(outdir,'reduce_HYS_*.py'))
     default_reduction_files=glob.glob(os.path.join('/SNS/HYS/shared/templates/reduce_HYS_*.py'))
     latest_default_reduction=max(default_reduction_files,key=os.path.getmtime)
-    now = datetime.now().strftime('%Y-%m-%d_%H:%M')
+    now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
     filename = os.path.join(outdir, 'reduce_HYS_{}.py'.format(now))
     if reduction_files!=[]:
         latest_reduction=max(reduction_files,key=os.path.getmtime)
