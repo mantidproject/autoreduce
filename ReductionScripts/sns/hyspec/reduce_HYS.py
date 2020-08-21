@@ -7,7 +7,7 @@ from mantid.simpleapi import logger
 def do_reduction(path,outdir):
     reduction_files=glob.glob(os.path.join(outdir,'reduce_HYS_*.py'))
     default_reduction_files=glob.glob(os.path.join('/SNS/HYS/shared/templates/reduce_HYS_*.py'))
-    latest_default_reduction=max(reduction_files,key=os.path.getmtime)
+    latest_default_reduction=max(default_reduction_files,key=os.path.getmtime)
     if reduction_files!=[]:
         latest_reduction=max(reduction_files,key=os.path.getmtime)
         if max([latest_default_reduction, latest_reduction], key=os.path.getmtime) == latest_default_reduction:
