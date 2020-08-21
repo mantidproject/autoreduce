@@ -2,6 +2,8 @@
 import sys,os,math
 sys.path.insert(0,"/opt/mantidnightly/bin")
 sys.path.insert(0,"/opt/mantidnightly/lib")
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
+import plotting_utils as pu
 import numpy
 numpy.seterr(all='ignore') # added Dec 8, 2016 to suppress divide by zero warning following what is done in HYSPEC autoreduce script
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
@@ -169,6 +171,9 @@ def reduceMono(
         SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
 
     #plots
+    plot_html = pu.create_powder_plots(mtd['__OWS'], plot_type='both')  # default 'both', alternatives 1D', '2D'
+    pu.publish_plot("ARCS", run_number, plot_html)
+    """
     #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
     #minvals,maxvals=ConvertToMDHelper('__OWS','|Q|','Direct')
     minvals,maxvals=ConvertToMDMinMaxGlobal('__OWS','|Q|','Direct')
@@ -211,7 +216,7 @@ def reduceMono(
     except:
         import traceback as tb
         logger.error("Could not plot:\n%s" % (tb.format_exc(),))
-
+    """
     if clean:
         WS_clean()
     return
