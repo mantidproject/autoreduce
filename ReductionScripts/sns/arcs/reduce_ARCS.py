@@ -2,8 +2,11 @@
 import sys
 sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 from reduction_utils import *
 from oncatjson import genoncatjson  
+import copy_script
+
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
@@ -43,6 +46,7 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         outdir = sys.argv[2]+'/'
         if not os.path.exists(outdir): os.makedirs(outdir)
+    copy_script.copy_gui_script('ARCS', outdir)
 
     [EGuess,Ei,T0, getEi_from_monitors_failed]=preprocessData(filename)
     elog=ExperimentLog()
