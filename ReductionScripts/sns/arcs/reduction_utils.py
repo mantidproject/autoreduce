@@ -172,6 +172,20 @@ def reduceMono(
 
     #plots
     plot_html = pu.create_powder_plots(mtd['__OWS'], plot_type='both')  # default 'both', alternatives 1D', '2D'
+    DGSdict['IncidentBeamNormalisation']='None'
+    DGSdict['SofPhiEIsDistribution']=False
+    DGSdict['GroupingFile']=''
+    DGSdict['UseProcessedDetVan']=False
+    DGSdict['DetectorVanadiumInputWorkspace']=''
+    DGSdict['OutputWorkspace']='reduce_ev'
+    DgsReduction(**DGSdict)
+        
+    if mtd.doesExist('__VAN'):
+        sa = mtd['__VAN']
+    else:
+        sa = None
+            
+    plot_html += pu.create_plots(mtd['reduce_ev'], output_directory, solid_angle=sa)
     pu.publish_plot("ARCS", run_number, plot_html)
     """
     #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
