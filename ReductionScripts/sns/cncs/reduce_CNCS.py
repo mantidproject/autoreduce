@@ -10,7 +10,9 @@ sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 import plotting_utils as pu
+import copy_script
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
 sys.path.append("/opt/Mantid/bin")
 from mantid.simpleapi import *
@@ -312,6 +314,8 @@ if __name__ == "__main__":
     output_directory=sys.argv[2]
     
     ar_changed=check_newer_script("CNCS",output_directory)
+    # create the autoreduction plotting setup script
+    copy_script.copy_gui_script('CNCS', output_directory)
     #DownloadInstrument(ForceUpdate=True)
     
     cfgfile_path=os.path.join(output_directory,configfile)
