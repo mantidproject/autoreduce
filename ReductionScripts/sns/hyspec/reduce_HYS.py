@@ -10,7 +10,9 @@ def do_reduction(path,outdir):
     latest_default_reduction=max(reduction_files,key=os.path.getmtime)
     if reduction_files!=[]:
         latest_reduction=max(reduction_files,key=os.path.getmtime)
-        print(max([latest_default_reduction, latest_reduction], key=os.path.getmtime))
+        if max([latest_default_reduction, latest_reduction], key=os.path.getmtime) == latest_default_reduction:
+            latest_reduction=os.path.join(outdir,os.path.basename(latest_default_reduction))
+            shutil.copy2(latest_default_reduction, latest_reduction)
     else:
         latest_reduction=os.path.join(outdir,os.path.basename(latest_default_reduction))
         shutil.copy2(latest_default_reduction, latest_reduction)
