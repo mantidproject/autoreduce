@@ -171,6 +171,7 @@ def reduceMono(
         SaveNXSPE(InputWorkspace="__OWS", Filename= outdir+outfile+".nxspe",Efixed=Ei,Psi=angle,KiOverKfScaling=True)
 
     #plots
+    run_number=str(mtd['__OWS'].getRunNumber())
     plot_html = pu.create_powder_plots(mtd['__OWS'], plot_type='both')  # default 'both', alternatives 1D', '2D'
     DGSdict['IncidentBeamNormalisation']='None'
     DGSdict['SofPhiEIsDistribution']=False
