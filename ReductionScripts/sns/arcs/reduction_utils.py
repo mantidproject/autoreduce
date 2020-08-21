@@ -185,7 +185,7 @@ def reduceMono(
     else:
         sa = None
             
-    plot_html += pu.create_plots(mtd['reduce_ev'], output_directory, solid_angle=sa)
+    plot_html += pu.create_plots(mtd['reduce_ev'], outdir, solid_angle=sa)
     pu.publish_plot("ARCS", run_number, plot_html)
     """
     #Update ConvertToMDHelper to new algorithm name per mandtid changeset 9396 - JLN 2014-8-13
