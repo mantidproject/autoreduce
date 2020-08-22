@@ -30,7 +30,7 @@ if __name__=="__main__":
     Options:
         Use SANGLE:       False
         Use Const-Q:      False
-        Fit peak in roi:  True
+        Fit peak in roi:  False
         Use bck ROI:      True
         Force peak:       False [176, 200]
         Force background: True [75, 110]
@@ -56,7 +56,7 @@ if __name__=="__main__":
                                 use_sangle=False,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
-                                update_peak_range=True,
+                                update_peak_range=False,
                                 use_roi=True,
                                 use_roi_bck=True,
                                 force_peak_roi=False, peak_roi=[176, 200],
