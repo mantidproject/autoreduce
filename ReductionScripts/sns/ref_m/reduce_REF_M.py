@@ -42,9 +42,9 @@ if __name__=="__main__":
         Const-Q cutoff:   None
 
 START_JSON
-{"use_sangle":"False", "use_const_q":"False", "fit_peak_in_roi":"True", "use_roi_bck":"True",
- "force_peak":"False", "peak_min":176, "peak_max":200, "force_background":"False",
- "bck_min":75, "bck_max":110, "use_side_bck":"False", "bck_width":10
+{"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":True, "use_roi_bck":True,
+ "force_peak":False, "peak_min":176, "peak_max":200, "force_background":False,
+ "bck_min":75, "bck_max":110, "use_side_bck":False, "bck_width":10
 }
 END_JSON
     """
