@@ -11,7 +11,7 @@ if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
-    RawVanadium="/SNS/ARCS/IPTS-24780/nexus/ARCS_164652.nxs.h5"
+    RawVanadium="/SNS/ARCS/IPTS-26003/nexus/ARCS_164652.nxs.h5"
     ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van164652.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35, 0.75] #integration range for Vanadium in angstroms
