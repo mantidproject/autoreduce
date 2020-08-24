@@ -2,7 +2,7 @@
 import sys,os,math
 sys.path.insert(0,"/opt/mantidnightly/bin")
 sys.path.insert(0,"/opt/mantidnightly/lib")
-sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
+sys.path.append("/SNS/ARCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
 import plotting_utils as pu
 import numpy
 numpy.seterr(all='ignore') # added Dec 8, 2016 to suppress divide by zero warning following what is done in HYSPEC autoreduce script
