@@ -172,7 +172,7 @@ def reduceMono(
 
     #plots
     run_number=str(mtd['__OWS'].getRunNumber())
-    plot_html = pu.create_powder_plots(mtd['__OWS'], plot_type='both')  # default 'both', alternatives 1D', '2D'
+    plot_html = pu.create_powder_plots(mtd['__OWS'], plot_type='both', slice_first=True)  # default 'both', alternatives 1D', '2D'
     DGSdict['IncidentBeamNormalisation']='None'
     DGSdict['SofPhiEIsDistribution']=False
     DGSdict['GroupingFile']=''
