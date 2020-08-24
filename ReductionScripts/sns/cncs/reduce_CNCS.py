@@ -10,11 +10,12 @@ sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
-sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
+ sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 import plotting_utils as pu
 import copy_script
+
 from ARLibrary import * #note that ARLibrary would set mantidpath as well
-sys.path.append("/opt/Mantid/bin")
+
 from mantid.simpleapi import *
 import numpy as np
 import scipy.optimize as opt
@@ -30,8 +31,8 @@ MaskBTPParameters.append({'Bank': '36-50'})
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
 #MaskBTPParameters.append({'Pixel': '1-7,122-128'})
 #MaskBTPParameters.append({'Bank': '36-50'})#8T magnet
-raw_vanadium="/SNS/CNCS/IPTS-25820/nexus/CNCS_336911.nxs.h5"
-processed_vanadium="van_336911.nxs"
+raw_vanadium="/SNS/CNCS/IPTS-25820/nexus/CNCS_347159.nxs.h5"
+processed_vanadium="van_347159.nxs"
 VanadiumIntegrationRange=[49501.0,50501.0]#integration range for Vanadium in TOF at 1.0 meV
 grouping="powder" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
 Emin="-0.95"
@@ -399,41 +400,6 @@ if __name__ == "__main__":
             SaveNXSPE(Filename=nxspe_filename, InputWorkspace="reduce_elastic", Psi=str(s1), KiOverKfScaling='1')
             change_permissions(nxspe_filename,0o664)
     try:
-        """plot_html=''
-        from finddata.publish_plot import plot1d,plot_heatmap, publish_plot
-        try:
-            import mantid.plots.helperfunctions as hf
-        except ImportError:
-            import mantid.plots.datafunctions as hf
-        s=SumSpectra("reduce")
-        x=s.readX(0)
-        y=s.readY(0)
-        plot1=plot1d(run_number, [x[1:], y], instrument='CNCS',
-                     x_title="Energy transfer (meV)",
-                     y_title="Intensity", y_log=True, publish=False)
-        plot_html+="<div>{0}</div>\n".format(plot1)
-        minvals,maxvals=ConvertToMDMinMaxLocal("reduce",'|Q|','Direct')
-        xmin=minvals[0]
-        xmax=maxvals[0]
-        ymin=minvals[1]
-        ymax=maxvals[1]
-        MD=ConvertToMD("reduce",
-                       QDimensions='|Q|',
-                       dEAnalysisMode='Direct',
-                       MinValues=minvals,
-                       MaxValues=maxvals)
-        ad0='|Q|,'+str(xmin)+','+str(xmax)+',100'
-        ad1='DeltaE,'+str(ymin)+','+str(ymax)+',100'
-        MDH=BinMD(InputWorkspace=MD,AlignedDim0=ad0,AlignedDim1=ad1)
-        x,y,z=hf.get_md_data2d_bin_bounds(MDH,hf.get_normalization(MDH)[0])
-        cmin=get_colorscale_minimum(z)
-        z[z<cmin]=np.nan
-        Zm=np.ma.masked_where(np.isnan(z),z)
-        Zm = np.log(Zm)
-        plot2=plot_heatmap(run_number, x.tolist(), y.tolist(), Zm.tolist(), x_title=u'|Q| (1/angstrom)', y_title='E (meV)',
-                           x_log=False, y_log=False, instrument='CNCS', publish=False)
-        plot_html+="<div>{0}</div>\n".format(plot2)
-        """
         plot_html = pu.create_powder_plots(mtd['reduce'], plot_type='both')  # default 'both', alternatives 1D', '2D'
         logger.notice(str(DGSdict))
         DGSdict['IncidentBeamNormalisation']='None'
