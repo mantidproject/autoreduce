@@ -10,7 +10,7 @@ sys.path.insert(0,'/opt/mantidnightly/bin')
 sys.path.insert(0,'/opt/mantidnightly/lib')
 sys.path.append("/SNS/CNCS/shared/autoreduce")
 sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_utils/")
- sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
+sys.path.append("/SNS/CNCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 import plotting_utils as pu
 import copy_script
 
