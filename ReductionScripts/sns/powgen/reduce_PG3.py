@@ -6,7 +6,7 @@ from sumRun_PG3 import addLineToCsv
 sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *
 import mantid
-cal_dir = '/SNS/PG3/shared/CALIBRATION/2019_1_11A_CAL/'
+cal_dir = '/SNS/PG3/shared/CALIBRATION/2020_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_PAC_HR_d46168_2020_05_06.h5') # contains ALL grouping
 char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_05_06-HighRes-PAC_1.4 MW.txt")
 
