@@ -8,9 +8,9 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2020_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_PAC_HR_d46168_2020_05_06.h5') # contains ALL grouping
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_05_06-HighRes-PAC_1.4 MW.txt")
-
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_05_06-HighRes-PAC_1.4 MWtxt")
 char_inplane = os.path.join(cal_dir, "PG3_char_2020_01_04_PAC_limit_1.4MW.txt")
+
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
 QfitRange = [30.,50.]
@@ -49,30 +49,8 @@ else:
     guide = None
 print(guide)
 
-# first run with only in-plane
-'''# uncomment if we want in-plane back
-SNSPowderReduction(Filename=eventFileAbs,
-                   PreserveEvents=True,PushDataPositive="AddMinimum",
-                   CalibrationFile=cal_file,
-                   CharacterizationRunsFile=char_backgrounds+','+char_inplane,
-                   OutputFilePrefix='IP_',
-                   GroupingFile=group_inplane,
-                   LowResRef=0, RemovePromptPulseWidth=50,
-                   Binning=binning, BinInDspace=True,
-                   BackgroundSmoothParams="5,2",
-                   FilterBadPulses=10,
-                   ScaleData =100,
-                   CacheDir='/tmp',
-                   SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
-                   FinalDataUnits="dSpacing")
-
-GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
-                     Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
-with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
-    first_pass = input.readlines()
-os.unlink(os.path.join(outputDir,'IP_PG3_'+runNumber+'.py'))
-clearmem()
-'''
+# longer wavelengths do not have vanadium peaks
+stripPeaks = bool(float(mtd['PG3_'+runNumber+'_meta'].run()['LambdaRequest'].value[0]) < 4.5)
 
 # second run with all pixels together - use calibration file grouping
 SNSPowderReduction(Filename=eventFileAbs,
@@ -85,17 +63,13 @@ SNSPowderReduction(Filename=eventFileAbs,
                    Binning=binning, BinInDspace=True,
                    BackgroundSmoothParams="5,2",
                    FilterBadPulses=10,
+                   StripVanadiumPeaks=stripPeaks,
                    ScaleData =100,
                    CacheDir='/tmp',
                    SaveAs="gsas topas and fullprof", OutputDirectory=outputDir,
                    FinalDataUnits="dSpacing")
 GeneratePythonScript(InputWorkspace="PG3_"+runNumber,
                      Filename=os.path.join(outputDir,"PG3_"+runNumber+'.py'))
-'''# uncomment if we want in-plane back
-with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'r') as input:
-    second_pass = input.readlines()
-os.unlink(os.path.join(outputDir,'PG3_'+runNumber+'.py'))
-'''
 
 # create arbitrary normalized, correction-free S(Q)
 # this is hard-coded to the wavelength log
@@ -122,7 +96,7 @@ if createPDF:
                         Qmin=.9, QMax=30., DeltaR=.01, Rmax=100.)
     SavePDFGui(InputWorkspace='PG3_'+runNumber+'_Gr',
                Filename=os.path.join(outputDir,'PG3_'+runNumber+'.gr'))
-else: 
+else:
     print('not creating S(Q)')
 
 # interactive plots
@@ -145,7 +119,7 @@ try:
         else:
             html = SavePlot1D(InputWorkspace=plotting_workspace_name,
                              OutputType='plotly', XLabel='d-spacing (A)')
-        from postprocessing.publish_plot import publish_plot
+        from finddata.publish_plot import publish_plot
         request = publish_plot('PG3', runNumber, files={'file':html})
         print("post returned %d" % request.status_code)
         print("resulting document:")
@@ -163,28 +137,6 @@ except ImportError:
     pass # don't worry
 
 clearmem()
-
-'''
-# finally run for pdfgetn files
-PDToPDFgetN(Filename=eventFileAbs,
-            FilterBadPulses=10,
-            OutputWorkspace='PG3_'+runNumber,
-            CacheDir='/tmp',
-            PDFgetNFile=os.path.join(outputDir, 'PG3_%s.getn' % runNumber),
-            CalibrationFile=cal_all,
-            Binning=binning,
-            CharacterizationRunsFile=char_bank1,
-            RemovePromptPulseWidth=50)
-'''
-
-# copy the proper python script in place then append
-'''
-# uncomment if we want in-plane back
-with open(os.path.join(outputDir,"PG3_"+runNumber+'.py'), 'w') as output:
-    output.write(''.join(first_pass))
-    output.write('\nmtd.clear() # delete all workspaces\n')
-    output.write(''.join(second_pass))
-'''
 
 # add the line to the csv file last
 addLineToCsv('PG3', eventFileAbs,
