@@ -13,7 +13,7 @@ def do_reduction(path,outdir):
     filename = os.path.join(outdir, 'reduce_HYS_{}.py'.format(now))
     if reduction_files!=[]:
         latest_reduction=max(reduction_files,key=os.path.getmtime)
-        if max([latest_default_reduction, latest_reduction], key=os.path.getmtime) == latest_default_reduction:
+        if max([latest_default_reduction, latest_reduction], key=os.path.getmtime) != latest_reduction:
             latest_reduction=filename
             shutil.copy2(latest_default_reduction, latest_reduction)
     else:
