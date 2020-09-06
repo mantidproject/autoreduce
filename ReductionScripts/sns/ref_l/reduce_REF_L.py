@@ -73,6 +73,13 @@ elif os.path.isfile("/SNS/REF_L/shared/autoreduce/template.xml"):
 print("Using template: %s" % template_file)
 # Run the auto-reduction
 ws = LoadEventNexus(Filename=event_file_path)
+
+# Check the measurement geometry
+if ws.getRun().getProperty('BL4B:CS:ExpPl:OperatingMode').value[0] == 'Free Liquid':
+    NORMALIZATION_TYPE = "WithReference"
+else:
+    NORMALIZATION_TYPE = "DirectBeam"
+
 output = LRAutoReduction(#Filename=event_file_path,
                          InputWorkspace=ws,
                          ScaleToUnity=NORMALIZE_TO_UNITY,

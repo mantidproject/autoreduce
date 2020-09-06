@@ -30,11 +30,11 @@ if __name__=="__main__":
     Options:
         Use SANGLE:       False
         Use Const-Q:      False
-        Fit peak in roi:  True
+        Fit peak in roi:  False
         Use bck ROI:      False
-        Force peak:       False [176, 200]
+        Force peak:       True [130, 165]
         Force background: False [75, 130]
-        Use side bck:     True
+        Use side bck:     False
         Bck width:        10
         Produce 2D plots  True
 
@@ -42,9 +42,9 @@ if __name__=="__main__":
         Const-Q cutoff:   None
 
 START_JSON
-{"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":True, "use_roi_bck":False,
- "force_peak":False, "peak_min":176, "peak_max":200, "force_background":False,
- "bck_min":75, "bck_max":130, "use_side_bck":True, "bck_width":10
+{"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":False, "use_roi_bck":False,
+ "force_peak":True, "peak_min":130, "peak_max":165, "force_background":False,
+ "bck_min":75, "bck_max":130, "use_side_bck":False, "bck_width":10, "plot_2d":True
 }
 END_JSON
     """
@@ -62,11 +62,11 @@ END_JSON
                                 use_sangle=False,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
-                                update_peak_range=True,
+                                update_peak_range=False,
                                 use_roi=True,
                                 use_roi_bck=False,
-                                force_peak_roi=False, peak_roi=[176, 200],
+                                force_peak_roi=True, peak_roi=[130, 165],
                                 force_bck_roi=False, bck_roi=[75, 130],
-                                use_tight_bck=True, bck_offset=10)
+                                use_tight_bck=False, bck_offset=10)
     red.plot_2d = True
     red.reduce()
