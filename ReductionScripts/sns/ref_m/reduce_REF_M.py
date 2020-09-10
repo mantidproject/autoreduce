@@ -32,7 +32,7 @@ if __name__=="__main__":
         Use Const-Q:      False
         Fit peak in roi:  False
         Use bck ROI:      True
-        Force peak:       True [140, 173]
+        Force peak:       True [152, 161]
         Force background: True [85, 117]
         Use side bck:     False
         Bck width:        10
@@ -43,7 +43,7 @@ if __name__=="__main__":
 
 START_JSON
 {"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":False, "use_roi_bck":True,
- "force_peak":True, "peak_min":140, "peak_max":173, "force_background":True,
+ "force_peak":True, "peak_min":152, "peak_max":161, "force_background":True,
  "bck_min":85, "bck_max":117, "use_side_bck":False, "bck_width":10, "plot_2d":True
 }
 END_JSON
@@ -65,7 +65,7 @@ END_JSON
                                 update_peak_range=False,
                                 use_roi=True,
                                 use_roi_bck=True,
-                                force_peak_roi=True, peak_roi=[140, 173],
+                                force_peak_roi=True, peak_roi=[152, 161],
                                 force_bck_roi=True, bck_roi=[85, 117],
                                 use_tight_bck=False, bck_offset=10)
     red.plot_2d = True
