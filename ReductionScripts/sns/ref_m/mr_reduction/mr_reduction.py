@@ -193,7 +193,7 @@ class ReductionProcess(object):
             for ws in _xs_list:
                 if 'cross_section_id' not in ws.getRun():
                     ws.getRun()['cross_section_id'] = 'Off_Off'
-        xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered']
+        xs_list = [ws for ws in _xs_list if not ws.getRun()['cross_section_id'].value == 'unfiltered' and ws.getNumberEvents() > 0]
 
         # Reduce each cross-section
         report_list = self.reduce_workspace_group(xs_list)
