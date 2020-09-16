@@ -256,34 +256,37 @@ class ReductionProcess(object):
             self.log("  - skipping: data type=%s; events: %s [cutoff: %s]" % (data_info.data_type, ws.getNumberEvents(), self.min_number_events))
             return [Report(ws, data_info, data_info, None, logfile=self.logfile, plot_2d=self.plot_2d)]
 
-        wsg = GroupWorkspaces(InputWorkspaces=xs_list)
         try:
-            MagnetismReflectometryReduction(InputWorkspace=wsg,
-                                            NormalizationWorkspace=ws_norm,
-                                            SignalPeakPixelRange=data_info.peak_range,
-                                            SubtractSignalBackground=True,
-                                            SignalBackgroundPixelRange=data_info.background,
-                                            ApplyNormalization=apply_norm,
-                                            NormPeakPixelRange=direct_info.peak_range,
-                                            SubtractNormBackground=True,
-                                            NormBackgroundPixelRange=direct_info.background,
-                                            CutLowResDataAxis=True,
-                                            LowResDataAxisPixelRange=data_info.low_res_range,
-                                            CutLowResNormAxis=True,
-                                            LowResNormAxisPixelRange=direct_info.low_res_range,
-                                            CutTimeAxis=True,
-                                            QMin=0.001,
-                                            QStep=-0.025,
-                                            UseWLTimeAxis=False,
-                                            TimeAxisStep=40,
-                                            UseSANGLE=self.use_sangle,
-                                            TimeAxisRange=data_info.tof_range,
-                                            SpecularPixel=data_info.peak_position,
-                                            ConstantQBinning=self.const_q_binning,
-                                            ConstQTrim=0.1,
-                                            OutputWorkspace="r_%s" % run_number)
+            return self._reduce_workspace_group(xs_list)
         except:
-            self.log("Reduction failed: %s" % sys.exc_info()[1])
+            return [Report(ws, data_info, data_info, None, logfile=self.logfile, plot_2d=self.plot_2d)]
+
+    def _reduce_workspace_group(self, xs_list):
+        wsg = GroupWorkspaces(InputWorkspaces=xs_list)
+        MagnetismReflectometryReduction(InputWorkspace=wsg,
+                                        NormalizationWorkspace=ws_norm,
+                                        SignalPeakPixelRange=data_info.peak_range,
+                                        SubtractSignalBackground=True,
+                                        SignalBackgroundPixelRange=data_info.background,
+                                        ApplyNormalization=apply_norm,
+                                        NormPeakPixelRange=direct_info.peak_range,
+                                        SubtractNormBackground=True,
+                                        NormBackgroundPixelRange=direct_info.background,
+                                        CutLowResDataAxis=True,
+                                        LowResDataAxisPixelRange=data_info.low_res_range,
+                                        CutLowResNormAxis=True,
+                                        LowResNormAxisPixelRange=direct_info.low_res_range,
+                                        CutTimeAxis=True,
+                                        QMin=0.001,
+                                        QStep=-0.025,
+                                        UseWLTimeAxis=False,
+                                        TimeAxisStep=40,
+                                        UseSANGLE=self.use_sangle,
+                                        TimeAxisRange=data_info.tof_range,
+                                        SpecularPixel=data_info.peak_position,
+                                        ConstantQBinning=self.const_q_binning,
+                                        ConstQTrim=0.1,
+                                        OutputWorkspace="r_%s" % run_number)
 
         # Generate partial python script
         self.log("Workspace r_%s: %s" % (run_number, type(mtd["r_%s" % run_number])))
