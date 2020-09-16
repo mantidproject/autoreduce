@@ -256,6 +256,7 @@ class ReductionProcess(object):
             return [Report(ws, data_info, data_info, None, logfile=self.logfile, plot_2d=self.plot_2d)]
 
         wsg = GroupWorkspaces(InputWorkspaces=xs_list)
+        self.log(str(xs_list))
         MagnetismReflectometryReduction(InputWorkspace=wsg,
                                         NormalizationWorkspace=ws_norm,
                                         SignalPeakPixelRange=data_info.peak_range,
