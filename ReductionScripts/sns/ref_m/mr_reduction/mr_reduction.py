@@ -257,11 +257,11 @@ class ReductionProcess(object):
             return [Report(ws, data_info, data_info, None, logfile=self.logfile, plot_2d=self.plot_2d)]
 
         try:
-            return self._reduce_workspace_group(xs_list)
+            return self._reduce_workspace_group(xs_list, ws_norm)
         except:
             return [Report(ws, data_info, data_info, None, logfile=self.logfile, plot_2d=self.plot_2d)]
 
-    def _reduce_workspace_group(self, xs_list):
+    def _reduce_workspace_group(self, xs_list, ws_norm):
         wsg = GroupWorkspaces(InputWorkspaces=xs_list)
         MagnetismReflectometryReduction(InputWorkspace=wsg,
                                         NormalizationWorkspace=ws_norm,
