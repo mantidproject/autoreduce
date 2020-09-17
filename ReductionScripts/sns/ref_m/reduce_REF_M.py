@@ -28,7 +28,7 @@ from mr_reduction import oncat_comm as oncat
 if __name__=="__main__":
     """
     Options:
-        Use SANGLE:       True
+        Use SANGLE:       False
         Use Const-Q:      False
         Fit peak in roi:  True
         Use bck ROI:      False
@@ -42,7 +42,7 @@ if __name__=="__main__":
         Const-Q cutoff:   None
 
 START_JSON
-{"use_sangle":True, "use_const_q":False, "fit_peak_in_roi":True, "use_roi_bck":False,
+{"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":True, "use_roi_bck":False,
  "force_peak":False, "peak_min":152, "peak_max":161, "force_background":False,
  "bck_min":90, "bck_max":130, "use_side_bck":True, "bck_width":10, "plot_2d":True
 }
@@ -59,7 +59,7 @@ END_JSON
 
     red = refm.ReductionProcess(data_run=event_file_path,
                                 output_dir=outdir,
-                                use_sangle=True,
+                                use_sangle=False,
                                 const_q_binning=False,
                                 const_q_cutoff=None,
                                 update_peak_range=True,
