@@ -24,8 +24,8 @@ import scipy.interpolate as interp
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '121-128'})
-MaskBTPParameters.append({'Pixel': '1-8'})
+MaskBTPParameters.append({'Pixel': '110-128'})
+MaskBTPParameters.append({'Pixel': '1-17'})
 MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
@@ -34,8 +34,8 @@ MaskBTPParameters.append({'Bank': '36-50'})
 raw_vanadium="/SNS/CNCS/IPTS-25820/nexus/CNCS_347159.nxs.h5"
 processed_vanadium="van_347159.nxs"
 VanadiumIntegrationRange=[49501.0,50501.0]#integration range for Vanadium in TOF at 1.0 meV
-grouping="8x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
-Emin="-0.4"
+grouping="2x1" #allowed values 1x1, 2x1, 4x1, 8x1, 8x2 powder
+Emin="-0.2"
 Emax="0.95"
 Estep="0.005"
 E_pars_in_mev=False
@@ -47,14 +47,14 @@ Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
 create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
-a="8.567"
-b="8.567"
-c="12.964"
+a="4.05012"
+b="4.05012"
+c="6.75214"
 alpha="90.0"
 beta="90.0"
 gamma="120.0"
-uVector="-1.0000, -0.0159, -0.0115"
-vVector="0.0087, -0.0098, -1.0000"
+uVector="1.0000, -0.5527, 0.0294"
+vVector="0.0725, 1.0000,0.0305"
 sub_directory=""
 auto_tzero_flag = False
 

@@ -34,7 +34,7 @@ run_number = run_number.replace('.nxs.h5', '')
 WL_CUTOFF = 10.0  
 
 # Default primary fraction range to be used if it is not defined in the template
-PRIMARY_FRACTION_RANGE = [5, 290]
+PRIMARY_FRACTION_RANGE = [5, 296]
 
 NORMALIZE_TO_UNITY = False
 

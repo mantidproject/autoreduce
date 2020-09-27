@@ -37,6 +37,7 @@ if __name__=="__main__":
         Use side bck:     True
         Bck width:        10
         Produce 2D plots  True
+        Q step:           -0.02
 
     Not used yet:
         Const-Q cutoff:   None
@@ -44,8 +45,7 @@ if __name__=="__main__":
 START_JSON
 {"use_sangle":False, "use_const_q":False, "fit_peak_in_roi":True, "use_roi_bck":False,
  "force_peak":False, "peak_min":152, "peak_max":161, "force_background":False,
- "bck_min":90, "bck_max":130, "use_side_bck":True, "bck_width":10, "plot_2d":True
-}
+ "bck_min":90, "bck_max":130, "use_side_bck":True, "bck_width":10, "plot_2d":True, "q_step":-0.02}
 END_JSON
     """
 
@@ -65,6 +65,7 @@ END_JSON
                                 update_peak_range=True,
                                 use_roi=True,
                                 use_roi_bck=False,
+                                q_step=-0.02,
                                 force_peak_roi=False, peak_roi=[152, 161],
                                 force_bck_roi=False, bck_roi=[90, 130],
                                 use_tight_bck=True, bck_offset=10)
