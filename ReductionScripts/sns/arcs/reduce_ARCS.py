@@ -12,7 +12,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/IPTS-26003/nexus/ARCS_164652.nxs.h5"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van164652_ge.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van164652_Ge.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35, 0.75] #integration range for Vanadium in angstroms
     #IntegrationRange = [4.3, 4.6] # temporary to fix 155050
