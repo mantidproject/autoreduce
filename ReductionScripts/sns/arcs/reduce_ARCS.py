@@ -12,7 +12,7 @@ if __name__ == "__main__":
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="/SNS/ARCS/IPTS-26003/nexus/ARCS_164652.nxs.h5"
-    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van164652.nxs"
+    ProcessedVanadium="/SNS/ARCS/shared/autoreduce/vanadium_files/van164652_ge.nxs"
     HardMaskFile=''
     IntegrationRange=[0.35, 0.75] #integration range for Vanadium in angstroms
     #IntegrationRange = [4.3, 4.6] # temporary to fix 155050
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml'  #this is the grouping file, powder.xml, 2X1.xml and so on. needs the full path for this file.
     #groupingFile='/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml'  #this worked for smaller files DLA
-    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_4X2_grouping.xml"
+    groupingFile="/SNS/ARCS/shared/autoreduce/ARCS_2X1_grouping.xml"
     clean=True
     NXSPE_flag=True
     NormalizedVanadiumEqualToOne = True
