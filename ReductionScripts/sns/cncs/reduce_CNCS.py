@@ -408,6 +408,7 @@ if __name__ == "__main__":
         DGSdict['UseProcessedDetVan']=False
         DGSdict['DetectorVanadiumInputWorkspace']=''
         DGSdict['OutputWorkspace']='reduce_ev'
+        DGSdict['EnergyTransferRange']=preprocessEnergyTransfer(Ei)
         DgsReduction(**DGSdict)
         
         if mtd.doesExist('__VAN'):
