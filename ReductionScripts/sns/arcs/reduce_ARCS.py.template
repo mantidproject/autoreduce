@@ -6,9 +6,11 @@ sys.path.append("/SNS/ARCS/shared/autoreduce/autoreduction_utils/plotting_gui/")
 from reduction_utils import *
 from oncatjson import genoncatjson  
 import copy_script
+import mantid
 
 if __name__ == "__main__":
     numpy.seterr("ignore")#ignore division by 0 warning in plots
+    mantid.kernel.config.setFacility('SNS')
     #processing parameters
      # Updated vanadium run 2014-12-15 - DLA
     RawVanadium="${raw_vanadium}"
