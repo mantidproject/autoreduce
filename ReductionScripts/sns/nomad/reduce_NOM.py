@@ -5,8 +5,9 @@ import os
 import stat
 import sys
 import json
-sys.path.append("/opt/mantidnightly/bin")
-# sys.path.append("/opt/mantid51/bin")
+sys.path.insert(0,"/opt/mantid51/bin")
+sys.path.insert(1,"/opt/mantid51/lib")
+# sys.path.append("/opt/mantidnightly/bin")
 from mantid.simpleapi import *  # noqa: E402
 import mantid  # noqa: E402
 
