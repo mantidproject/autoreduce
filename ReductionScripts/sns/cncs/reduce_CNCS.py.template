@@ -21,6 +21,8 @@ import numpy as np
 import scipy.optimize as opt
 import scipy.interpolate as interp
 
+import mantid
+mantid.kernel.config.setFacility('SNS')
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
