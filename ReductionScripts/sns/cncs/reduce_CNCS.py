@@ -26,8 +26,8 @@ mantid.kernel.config.setFacility('SNS')
 #parameters section
 #this part changes with web input
 MaskBTPParameters=[]
-MaskBTPParameters.append({'Pixel': '110-128'})
-MaskBTPParameters.append({'Pixel': '1-17'})
+MaskBTPParameters.append({'Pixel': '90-128'})
+MaskBTPParameters.append({'Pixel': '1-27'})
 MaskBTPParameters.append({'Bank': '36-50'})
 
 #MaskBTPParameters.append({'Pixel': '1-43,95-128'})
@@ -47,11 +47,11 @@ doTIB=True
 T0=""
 Motor_names="omega"
 Temperature_names="SampleTemp,sampletemp,SensorB,SensorA,temp5,temp8,sensor0normal,SensorC,Temp4"
-create_elastic_nxspe=True #+-0.1Ei, 5 steps
+create_elastic_nxspe=False #+-0.1Ei, 5 steps
 create_MDnxs=False
-a="10.34"
-b="10.34"
-c="10.34"
+a="4.154"
+b="4.154"
+c="16.504"
 alpha="90.0"
 beta="90.0"
 gamma="90.0"
@@ -404,6 +404,7 @@ if __name__ == "__main__":
     try:
         plot_html = pu.create_powder_plots(mtd['reduce'], plot_type='both')  # default 'both', alternatives 1D', '2D'
         logger.notice(str(DGSdict))
+        EGuess=DGSdict['IncidentEnergyGuess']
         DGSdict['IncidentBeamNormalisation']='None'
         DGSdict['SofPhiEIsDistribution']=False
         DGSdict['GroupingFile']=''

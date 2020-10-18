@@ -401,6 +401,7 @@ if __name__ == "__main__":
     try:
         plot_html = pu.create_powder_plots(mtd['reduce'], plot_type='both')  # default 'both', alternatives 1D', '2D'
         logger.notice(str(DGSdict))
+        EGuess=DGSdict['IncidentEnergyGuess']
         DGSdict['IncidentBeamNormalisation']='None'
         DGSdict['SofPhiEIsDistribution']=False
         DGSdict['GroupingFile']=''
