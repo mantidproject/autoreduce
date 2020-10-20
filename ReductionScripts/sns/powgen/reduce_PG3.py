@@ -9,7 +9,7 @@ from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2020_2_11A_CAL/'
 cal_file  = os.path.join(cal_dir,'PG3_MICAS_d47638_2020_10_13.h5') # contains ALL grouping 
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_10_15-HighRes_MICAS.txt") 
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_10_15-HighRes-MICAS.txt") 
 char_inplane = os.path.join(cal_dir, "PG3_char_2020_07_05_MICAS_limit.txt")
 
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
