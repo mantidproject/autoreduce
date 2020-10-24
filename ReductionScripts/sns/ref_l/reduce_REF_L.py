@@ -28,7 +28,7 @@ try:
     DIRECT_BEAM_CALC_AVAILABLE = True
 except:
     import scipy
-    print(scipy.__version__)
+    logger.notice(scipy.__version__)
     DIRECT_BEAM_CALC_AVAILABLE = False
 
 event_file_path=sys.argv[1]
