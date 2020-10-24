@@ -20,10 +20,10 @@ if ("MANTIDPATH" in os.environ):
 sys.path.insert(0,"/opt/mantidnightly/bin")
 sys.path.insert(1,"/opt/mantidnightly/lib")
 
-print(sys.path)
-
 import mantid
 from mantid.simpleapi import *
+
+from sf_calculator import ScalingFactor
 
 event_file_path=sys.argv[1]
 output_dir=sys.argv[2]
@@ -87,19 +87,35 @@ if ws.getRun().getProperty('BL4B:CS:ExpPl:OperatingMode').value[0] == 'Free Liqu
 else:
     NORMALIZATION_TYPE = "DirectBeam"
 
-output = LRAutoReduction(#Filename=event_file_path,
-                         InputWorkspace=ws,
-                         ScaleToUnity=NORMALIZE_TO_UNITY,
-                         ScalingWavelengthCutoff=WL_CUTOFF,
-                         PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
-                         OutputDirectory=output_dir,
-                         SlitTolerance=0.06,
-                         ReadSequenceFromFile=True,
-                         OrderDirectBeamsByRunNumber=True,
-                         TemplateFile=template_file, FindPeaks=False,
-                         NormalizationType=NORMALIZATION_TYPE,
-                         Refl1DModelParameters=REFL1D_PARS)
-first_run_of_set=int(output[1])
+# Determine whether this is data or whether we need to compute scaling factors
+data_type = ws.getRun().getProperty("data_type").value[0]
+if data_type == 1:
+    sequence_number = ws.getRun().getProperty("sequence_number").value[0]
+    first_run_of_set = ws.getRun().getProperty("sequence_id").value[0]
+    incident_medium = ws.getRun().getProperty("incident_medium").value[0]
+
+    _fpath = os.path.join(output_dir, "sf_%s_%s_auto.cfg" % (first_run_of_set, incident_medium))
+
+    sf = ScalingFactor(run_list=range(first_run_of_set, first_run_of_set + sequence_number),
+                       sort_by_runs=True,
+                       tof_step=200,
+                       medium=incident_medium,
+                       slit_tolerance=0.06,
+                       sf_file=_fpath)
+else:
+    output = LRAutoReduction(#Filename=event_file_path,
+                             InputWorkspace=ws,
+                             ScaleToUnity=NORMALIZE_TO_UNITY,
+                             ScalingWavelengthCutoff=WL_CUTOFF,
+                             PrimaryFractionRange=PRIMARY_FRACTION_RANGE,
+                             OutputDirectory=output_dir,
+                             SlitTolerance=0.06,
+                             ReadSequenceFromFile=True,
+                             OrderDirectBeamsByRunNumber=True,
+                             TemplateFile=template_file, FindPeaks=False,
+                             NormalizationType=NORMALIZATION_TYPE,
+                             Refl1DModelParameters=REFL1D_PARS)
+    first_run_of_set=int(output[1])
 
 
 #-------------------------------------------------------------------------
