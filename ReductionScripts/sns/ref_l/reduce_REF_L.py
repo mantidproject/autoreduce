@@ -23,7 +23,13 @@ sys.path.insert(1,"/opt/mantidnightly/lib")
 import mantid
 from mantid.simpleapi import *
 
-from sf_calculator import ScalingFactor
+try:
+    from sf_calculator import ScalingFactor
+    DIRECT_BEAM_CALC_AVAILABLE = True
+except:
+    import scipy
+    print(scipy.__version__)
+    DIRECT_BEAM_CALC_AVAILABLE = False
 
 event_file_path=sys.argv[1]
 output_dir=sys.argv[2]
@@ -89,7 +95,8 @@ else:
 
 # Determine whether this is data or whether we need to compute scaling factors
 data_type = ws.getRun().getProperty("data_type").value[0]
-if data_type == 1:
+
+if data_type == 1 and DIRECT_BEAM_CALC_AVAILABLE:
     sequence_number = ws.getRun().getProperty("sequence_number").value[0]
     first_run_of_set = ws.getRun().getProperty("sequence_id").value[0]
     incident_medium = ws.getRun().getProperty("incident_medium").value[0]
