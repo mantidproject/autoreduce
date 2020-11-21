@@ -4,13 +4,12 @@ import sys
 sys.path.append("/SNS/PG3/shared/autoreduce") # to get csv generation setup
 from sumRun_PG3 import addLineToCsv
 sys.path.append("/opt/mantidnightly/bin")
-#sys.path.append('/opt/Mantid/bin/')
 from mantid.simpleapi import *
 import mantid
 cal_dir = '/SNS/PG3/shared/CALIBRATION/2020_2_11A_CAL/'
-cal_file  = os.path.join(cal_dir,'PG3_PAC_HR_d46168_2020_05_06.h5') # contains ALL grouping 
-char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_11_04-HighRes-PAC_1.4 MW.txt") 
-char_inplane = os.path.join(cal_dir, "PG3_char_2020_01_04_PAC_limit_1.4MW.txt")
+cal_file  = os.path.join(cal_dir,'PG3_OC_HR_d47253_2020_09_09.h5') # contains ALL grouping
+char_backgrounds = os.path.join(cal_dir, "PG3_char_2020_11_16-HighRes-OC_1.4 MW.txt")
+char_inplane = os.path.join(cal_dir, "PG3_char_2019_09_09_OC_limit.txt")
 
 group_inplane = os.path.join(cal_dir, 'grouping', 'PG3_Grouping-IP.xml')
 binning = -0.0008
